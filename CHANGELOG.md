@@ -2,6 +2,24 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.6.0
+
+The logo on a grid (spec docs/brand-remake.md D9, §4): 1 square = 100 units, so every size is a round number. The shapes and the motion do not change; their sizes do.
+
+**Breaking:** the logo, `MARK_PATH` and `SLASH_RUN` change.
+- The icon is 3 × 3 squares (`MARK_PATH` 292 × 292, `MARK_W`, `MARK_H` 292); its slash runs 2 across for 3 down. `SLASH_RUN` is 0.6667 (was 0.7157), so the slash wipes are a little steeper.
+- Round-join stroke 8 (was 6.63): `LOGO_STROKE`, and the new `MARK_STROKE` in ui.
+- The English word is as high as the icon (x-height 200, ascender and descender 50). The Arabic word is as wide as the English, with a long س; in the row version the icon is exactly in the middle.
+- Gaps and clear space 1 square (`LOGO_SQUARE` 100); the stacked version uses half-size words; its minimum size is 48 px (was 44 px).
+- `LOADER_VIEWBOX` is `-620 -50 1240 400` (was `-400 -40 800 300`): the loader is wider for its height.
+
+Packages
+- tokens: `LOGO_SIZES` (the grid) and `LOGO_SIZES_0_5` (the 0.5 sizes, kept for a rollback; a test checks that they give the 0.5.1 output), `buildLogo(sizes)` and `buildLoader(sizes)`.
+- ui: `Spinner` draws its parts from `MARK_PATH`.
+
+Docs
+- Brand page: the construction drawn on the grid, the new sizes, clear space and minimum sizes. The SVG downloads are new.
+
 ## 0.5.1
 
 React Server Components (Next.js App Router) support. The first release published from GitHub Actions with npm trusted publishing (npm adds provenance). No breaking change: every export keeps its name.

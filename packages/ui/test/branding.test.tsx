@@ -28,7 +28,7 @@ describe("no brand: Percent's own logo and spinner", () => {
   test("Arabic", () => expect(parts("ar")).toMatchSnapshot());
 });
 
-const MARK = 'd="M0 0H70.8';
+const MARK = 'd="M0 0H92';
 const branded = (node: ReactNode, brand: BrandSlots, lang: "en" | "ar" = "en") =>
   renderToStaticMarkup(
     <PercentProvider lang={lang} brand={brand}>
@@ -146,7 +146,7 @@ test("a nested provider without brand keeps the outer brand (no % mark inside)",
     </PercentProvider>,
   );
   expect(out).toContain('id="outer-mark"');
-  expect(out).not.toContain('d="M0 0H70.8');
+  expect(out).not.toContain('d="M0 0H92');
   expect(out).toContain('aria-label="X (يفتح في علامة تبويب جديدة)"');
 });
 const OUTER_BRAND = { mark: <i id="outer-mark" /> };

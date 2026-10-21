@@ -164,8 +164,8 @@
     {
       "name": "brand-mark",
       "type": "registry:lib",
-      "title": "MARK_PATH, MARK_W, MARK_H",
-      "description": "@percentsa/ui: MARK_PATH, MARK_W, MARK_H",
+      "title": "MARK_PATH, MARK_W, MARK_H, MARK_STROKE",
+      "description": "@percentsa/ui: MARK_PATH, MARK_W, MARK_H, MARK_STROKE",
       "files": [
         {
           "path": "packages/ui/src/components/brand-mark.ts",
@@ -177,7 +177,8 @@
         "exports": [
           "MARK_PATH",
           "MARK_W",
-          "MARK_H"
+          "MARK_H",
+          "MARK_STROKE"
         ]
       }
     },
@@ -2521,6 +2522,16 @@
       "type": "registry:ui",
       "title": "MARK_H",
       "description": "MARK_H: adds @percentsa/brand-mark.",
+      "registryDependencies": [
+        "@percentsa/brand-mark"
+      ],
+      "files": []
+    },
+    {
+      "name": "mark_stroke",
+      "type": "registry:ui",
+      "title": "MARK_STROKE",
+      "description": "MARK_STROKE: adds @percentsa/brand-mark.",
       "registryDependencies": [
         "@percentsa/brand-mark"
       ],

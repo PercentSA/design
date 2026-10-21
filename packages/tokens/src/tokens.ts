@@ -92,8 +92,8 @@ export const easing = {
   wipe: "cubic-bezier(0.6, 0, 0.2, 1)",
 } as const;
 
-/** Horizontal run of the % mark's slash per unit of height (158.3 / 221.2). Wipes use this angle; it never mirrors. */
-export const SLASH_RUN = 0.7157;
+/** Horizontal run of the % mark's slash per unit of height (2 across for 3 down). Wipes use this angle; it never mirrors. */
+export const SLASH_RUN = 0.6667;
 
 export const layer = { base: 0, sticky: 20, header: 40, overlay: 50, toast: 60, cursor: 70 } as const;
 

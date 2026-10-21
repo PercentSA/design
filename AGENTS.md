@@ -8,7 +8,8 @@ The design system gives Percent's projects and client projects one design langua
 
 ```
 packages/tokens   @percentsa/tokens  src/tokens.ts is the only source of token values; scripts/build.ts writes dist/*.css + tokens.json
-                                     src/logo.ts: the logo geometry and 7 versions; src/logo-motion.ts: the loader frames
+                                     src/logo.ts: the logo geometry and 7 versions from LOGO_SIZES (the grid; LOGO_SIZES_0_5 keeps
+                                     the 0.5 sizes for a rollback); src/logo-motion.ts: the loader frames
 packages/ui       @percentsa/ui      React components, hooks, formatters, Saudi validators, styles.css
 packages/motion   @percentsa/motion  Signature motion (scramble, reveal, slash wipe, marquee, magnet, cursor, counter)
 apps/docs         Public docs site (React Router 8, EN + AR, dark + light). Imports the packages' src (Vite alias), so no package build is needed.

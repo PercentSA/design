@@ -64,7 +64,7 @@ const ARABIC = Object.values(LOGO_ARABIC).map(quadPath).sort();
 describe("LogoLoader", () => {
   test("server markup: the still icon, hidden from screen readers", () => {
     const out = renderToStaticMarkup(<LogoLoader />);
-    expect(out).toContain('viewBox="-400 -40 800 300"');
+    expect(out).toContain('viewBox="-620 -50 1240 400"');
     expect(out).toContain('aria-hidden="true"');
     for (const d of still(0)) expect(out).toContain(`d="${d}"`);
   });
