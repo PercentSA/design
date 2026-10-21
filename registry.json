@@ -32,12 +32,13 @@
       "name": "actions",
       "type": "registry:ui",
       "title": "Button, ButtonGroup, Toggle, SegmentedControl",
-      "description": "@percentsa/ui: buttonClass, Button, ButtonGroup, Toggle, SegmentedControl, ToggleGroup, CopyButton, BackToTop",
+      "description": "@percentsa/ui: Button, ButtonGroup, Toggle, SegmentedControl, ToggleGroup, CopyButton, BackToTop",
       "dependencies": [
         "lucide-react",
         "radix-ui"
       ],
       "registryDependencies": [
+        "@percentsa/button-class",
         "@percentsa/cn",
         "@percentsa/provider",
         "@percentsa/sliding-indicator",
@@ -52,7 +53,6 @@
       ],
       "meta": {
         "exports": [
-          "buttonClass",
           "Button",
           "ButtonGroup",
           "Toggle",
@@ -72,7 +72,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@percentsa/actions",
+        "@percentsa/button-class",
         "@percentsa/cn",
         "@percentsa/navigation",
         "@percentsa/overlays",
@@ -138,12 +138,13 @@
       "name": "avatar",
       "type": "registry:ui",
       "title": "Avatar, AvatarGroup",
-      "description": "@percentsa/ui: initials, Avatar, AvatarGroup",
+      "description": "@percentsa/ui: Avatar, AvatarGroup",
       "dependencies": [
         "radix-ui"
       ],
       "registryDependencies": [
         "@percentsa/cn",
+        "@percentsa/initials",
         "@percentsa/provider"
       ],
       "files": [
@@ -155,21 +156,41 @@
       ],
       "meta": {
         "exports": [
-          "initials",
           "Avatar",
           "AvatarGroup"
         ]
       }
     },
     {
+      "name": "brand-mark",
+      "type": "registry:lib",
+      "title": "MARK_PATH, MARK_W, MARK_H",
+      "description": "@percentsa/ui: MARK_PATH, MARK_W, MARK_H",
+      "files": [
+        {
+          "path": "packages/ui/src/components/brand-mark.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/brand-mark.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "MARK_PATH",
+          "MARK_W",
+          "MARK_H"
+        ]
+      }
+    },
+    {
       "name": "brand",
       "type": "registry:ui",
-      "title": "MARK_PATH, MARK_W, MARK_H, Mark",
-      "description": "@percentsa/ui: MARK_PATH, MARK_W, MARK_H, Mark, Logo, MadeInKsa",
+      "title": "Mark, Logo, MadeInKsa",
+      "description": "@percentsa/ui: Mark, Logo, MadeInKsa",
       "dependencies": [
         "@percentsa/tokens"
       ],
       "registryDependencies": [
+        "@percentsa/brand-mark",
         "@percentsa/cn",
         "@percentsa/flag-sa",
         "@percentsa/provider"
@@ -183,12 +204,30 @@
       ],
       "meta": {
         "exports": [
-          "MARK_PATH",
-          "MARK_W",
-          "MARK_H",
           "Mark",
           "Logo",
           "MadeInKsa"
+        ]
+      }
+    },
+    {
+      "name": "button-class",
+      "type": "registry:lib",
+      "title": "buttonClass",
+      "description": "@percentsa/ui: buttonClass",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/button-class.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/button-class.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "buttonClass"
         ]
       }
     },
@@ -234,7 +273,7 @@
         "@percentsa/actions",
         "@percentsa/cn",
         "@percentsa/field",
-        "@percentsa/inputs",
+        "@percentsa/input-classes",
         "@percentsa/provider",
         "@percentsa/saudi-calendar",
         "@percentsa/saudi-date"
@@ -331,10 +370,10 @@
       "description": "@percentsa/ui: useChart, useChartWidth, ChartFrame",
       "registryDependencies": [
         "@percentsa/cn",
+        "@percentsa/format-number",
         "@percentsa/legend",
         "@percentsa/provider",
         "@percentsa/scale",
-        "@percentsa/text",
         "@percentsa/utility"
       ],
       "files": [
@@ -359,10 +398,10 @@
       "description": "@percentsa/ui: DonutChart",
       "registryDependencies": [
         "@percentsa/chart-frame",
+        "@percentsa/format-number",
         "@percentsa/legend",
         "@percentsa/provider",
-        "@percentsa/scale",
-        "@percentsa/text"
+        "@percentsa/scale"
       ],
       "files": [
         {
@@ -540,6 +579,7 @@
       ],
       "registryDependencies": [
         "@percentsa/cn",
+        "@percentsa/input-classes",
         "@percentsa/inputs",
         "@percentsa/provider",
         "@percentsa/saudi-normalize"
@@ -568,7 +608,7 @@
       ],
       "registryDependencies": [
         "@percentsa/cn",
-        "@percentsa/inputs",
+        "@percentsa/input-classes",
         "@percentsa/provider",
         "@percentsa/saudi-normalize",
         "@percentsa/text",
@@ -592,10 +632,11 @@
       "name": "consent",
       "type": "registry:ui",
       "title": "ConsentBanner",
-      "description": "@percentsa/ui: readConsent, ConsentBanner",
+      "description": "@percentsa/ui: ConsentBanner",
       "registryDependencies": [
         "@percentsa/actions",
         "@percentsa/cn",
+        "@percentsa/consent-cookie",
         "@percentsa/provider"
       ],
       "files": [
@@ -607,7 +648,6 @@
       ],
       "meta": {
         "exports": [
-          "readConsent",
           "ConsentBanner"
         ]
       }
@@ -707,13 +747,14 @@
       "name": "file-drop",
       "type": "registry:ui",
       "title": "FileDrop",
-      "description": "@percentsa/ui: acceptsFile, formatFileSize, FileDrop",
+      "description": "@percentsa/ui: FileDrop",
       "dependencies": [
         "lucide-react"
       ],
       "registryDependencies": [
         "@percentsa/cn",
         "@percentsa/field",
+        "@percentsa/files",
         "@percentsa/provider"
       ],
       "files": [
@@ -725,8 +766,6 @@
       ],
       "meta": {
         "exports": [
-          "acceptsFile",
-          "formatFileSize",
           "FileDrop"
         ]
       }
@@ -745,7 +784,7 @@
         "@percentsa/cn",
         "@percentsa/feedback",
         "@percentsa/flip",
-        "@percentsa/inputs",
+        "@percentsa/input-classes",
         "@percentsa/provider",
         "@percentsa/special-inputs"
       ],
@@ -763,10 +802,33 @@
       }
     },
     {
+      "name": "input-classes",
+      "type": "registry:lib",
+      "title": "FIELD_BOX, TEXT_BOX, MENU_ITEM",
+      "description": "@percentsa/ui: FIELD_BOX, TEXT_BOX, MENU_ITEM",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/input-classes.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/input-classes.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FIELD_BOX",
+          "TEXT_BOX",
+          "MENU_ITEM"
+        ]
+      }
+    },
+    {
       "name": "inputs",
       "type": "registry:ui",
-      "title": "FIELD_BOX, TEXT_BOX, Input, Textarea",
-      "description": "@percentsa/ui: FIELD_BOX, TEXT_BOX, Input, Textarea, MENU_ITEM, Select, Slider",
+      "title": "Input, Textarea, Select, Slider",
+      "description": "@percentsa/ui: Input, Textarea, Select, Slider",
       "dependencies": [
         "lucide-react",
         "radix-ui"
@@ -774,6 +836,7 @@
       "registryDependencies": [
         "@percentsa/cn",
         "@percentsa/field",
+        "@percentsa/input-classes",
         "@percentsa/provider"
       ],
       "files": [
@@ -785,11 +848,8 @@
       ],
       "meta": {
         "exports": [
-          "FIELD_BOX",
-          "TEXT_BOX",
           "Input",
           "Textarea",
-          "MENU_ITEM",
           "Select",
           "Slider"
         ]
@@ -802,6 +862,7 @@
       "description": "@percentsa/ui: Invoice",
       "registryDependencies": [
         "@percentsa/cn",
+        "@percentsa/format-number",
         "@percentsa/localized",
         "@percentsa/provider",
         "@percentsa/qr-code",
@@ -809,8 +870,7 @@
         "@percentsa/saudi-date",
         "@percentsa/saudi-invoice",
         "@percentsa/saudi-money",
-        "@percentsa/strings",
-        "@percentsa/text"
+        "@percentsa/strings"
       ],
       "files": [
         {
@@ -949,7 +1009,7 @@
       ],
       "registryDependencies": [
         "@percentsa/cn",
-        "@percentsa/inputs",
+        "@percentsa/input-classes",
         "@percentsa/provider"
       ],
       "files": [
@@ -997,13 +1057,14 @@
       "name": "navigation",
       "type": "registry:ui",
       "title": "SkipLink, Tabs, Breadcrumbs, Pagination",
-      "description": "@percentsa/ui: SkipLink, Tabs, Breadcrumbs, paginationRange, Pagination, Steps",
+      "description": "@percentsa/ui: SkipLink, Tabs, Breadcrumbs, Pagination, Steps",
       "dependencies": [
         "lucide-react",
         "radix-ui"
       ],
       "registryDependencies": [
         "@percentsa/cn",
+        "@percentsa/pagination",
         "@percentsa/provider",
         "@percentsa/sliding-indicator"
       ],
@@ -1019,7 +1080,6 @@
           "SkipLink",
           "Tabs",
           "Breadcrumbs",
-          "paginationRange",
           "Pagination",
           "Steps"
         ]
@@ -1036,6 +1096,7 @@
       ],
       "registryDependencies": [
         "@percentsa/actions",
+        "@percentsa/button-class",
         "@percentsa/cn",
         "@percentsa/provider"
       ],
@@ -1142,8 +1203,8 @@
       "title": "LangSwitch, MobileMenu, SiteHeader, SiteFooter",
       "description": "@percentsa/ui: LangSwitch, MobileMenu, SiteHeader, SiteFooter",
       "registryDependencies": [
-        "@percentsa/actions",
         "@percentsa/brand",
+        "@percentsa/button-class",
         "@percentsa/cn",
         "@percentsa/navigation",
         "@percentsa/provider"
@@ -1215,7 +1276,7 @@
       "title": "Spinner",
       "description": "@percentsa/ui: Spinner",
       "registryDependencies": [
-        "@percentsa/brand",
+        "@percentsa/brand-mark",
         "@percentsa/cn",
         "@percentsa/provider"
       ],
@@ -1288,14 +1349,14 @@
       "name": "text",
       "type": "registry:ui",
       "title": "Display, Heading, Text, Label",
-      "description": "@percentsa/ui: Display, Heading, Text, Label, Link, Code, Kbd, Blockquote, Prose, Highlight, formatNumber, FormattedNumber",
+      "description": "@percentsa/ui: Display, Heading, Text, Label, Link, Code, Kbd, Blockquote, Prose, Highlight, FormattedNumber",
       "dependencies": [
         "lucide-react",
         "radix-ui"
       ],
       "registryDependencies": [
         "@percentsa/cn",
-        "@percentsa/localized",
+        "@percentsa/format-number",
         "@percentsa/provider"
       ],
       "files": [
@@ -1317,22 +1378,41 @@
           "Blockquote",
           "Prose",
           "Highlight",
-          "formatNumber",
           "FormattedNumber"
+        ]
+      }
+    },
+    {
+      "name": "theme-script",
+      "type": "registry:lib",
+      "title": "THEME_KEY, THEME_SCRIPT",
+      "description": "@percentsa/ui: THEME_KEY, THEME_SCRIPT",
+      "files": [
+        {
+          "path": "packages/ui/src/components/theme-script.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/theme-script.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "THEME_KEY",
+          "THEME_SCRIPT"
         ]
       }
     },
     {
       "name": "theme",
       "type": "registry:ui",
-      "title": "THEME_SCRIPT, ThemeSwitch",
-      "description": "@percentsa/ui: THEME_SCRIPT, useTheme, ThemeSwitch",
+      "title": "ThemeSwitch",
+      "description": "@percentsa/ui: useTheme, ThemeSwitch",
       "dependencies": [
         "lucide-react"
       ],
       "registryDependencies": [
         "@percentsa/actions",
-        "@percentsa/provider"
+        "@percentsa/provider",
+        "@percentsa/theme-script"
       ],
       "files": [
         {
@@ -1343,7 +1423,6 @@
       ],
       "meta": {
         "exports": [
-          "THEME_SCRIPT",
           "useTheme",
           "ThemeSwitch"
         ]
@@ -1358,9 +1437,9 @@
         "lucide-react"
       ],
       "registryDependencies": [
-        "@percentsa/avatar",
         "@percentsa/cn",
-        "@percentsa/file-drop",
+        "@percentsa/files",
+        "@percentsa/initials",
         "@percentsa/provider"
       ],
       "files": [
@@ -1407,7 +1486,7 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@percentsa/actions",
+        "@percentsa/button-class",
         "@percentsa/cn",
         "@percentsa/provider"
       ],
@@ -1540,6 +1619,44 @@
       }
     },
     {
+      "name": "consent-cookie",
+      "type": "registry:lib",
+      "title": "CONSENT_COOKIE",
+      "description": "@percentsa/ui: CONSENT_COOKIE, readConsent",
+      "files": [
+        {
+          "path": "packages/ui/src/lib/consent-cookie.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/lib/consent-cookie.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "CONSENT_COOKIE",
+          "readConsent"
+        ]
+      }
+    },
+    {
+      "name": "files",
+      "type": "registry:lib",
+      "title": "acceptsFile, formatFileSize",
+      "description": "@percentsa/ui: acceptsFile, formatFileSize",
+      "files": [
+        {
+          "path": "packages/ui/src/lib/files.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/lib/files.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "acceptsFile",
+          "formatFileSize"
+        ]
+      }
+    },
+    {
       "name": "flip",
       "type": "registry:lib",
       "title": "useFlip",
@@ -1554,6 +1671,63 @@
       "meta": {
         "exports": [
           "useFlip"
+        ]
+      }
+    },
+    {
+      "name": "format-number",
+      "type": "registry:lib",
+      "title": "formatNumber",
+      "description": "@percentsa/ui: formatNumber",
+      "registryDependencies": [
+        "@percentsa/localized"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/lib/format-number.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/lib/format-number.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "formatNumber"
+        ]
+      }
+    },
+    {
+      "name": "initials",
+      "type": "registry:lib",
+      "title": "initials",
+      "description": "@percentsa/ui: initials",
+      "files": [
+        {
+          "path": "packages/ui/src/lib/initials.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/lib/initials.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "initials"
+        ]
+      }
+    },
+    {
+      "name": "pagination",
+      "type": "registry:lib",
+      "title": "paginationRange",
+      "description": "@percentsa/ui: paginationRange",
+      "files": [
+        {
+          "path": "packages/ui/src/lib/pagination.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/lib/pagination.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "paginationRange"
         ]
       }
     },
@@ -1727,13 +1901,36 @@
       }
     },
     {
+      "name": "saudi-money-format",
+      "type": "registry:lib",
+      "title": "RIYAL_VIEWBOX, RIYAL_W, RIYAL_H, RIYAL_PATHS",
+      "description": "@percentsa/ui: RIYAL_VIEWBOX, RIYAL_W, RIYAL_H, RIYAL_PATHS, formatMoney",
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/money-format.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/money-format.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "RIYAL_VIEWBOX",
+          "RIYAL_W",
+          "RIYAL_H",
+          "RIYAL_PATHS",
+          "formatMoney"
+        ]
+      }
+    },
+    {
       "name": "saudi-money",
       "type": "registry:ui",
-      "title": "RIYAL_VIEWBOX, RIYAL_W, RIYAL_H, RIYAL_PATHS",
-      "description": "@percentsa/ui: RIYAL_VIEWBOX, RIYAL_W, RIYAL_H, RIYAL_PATHS, RiyalSign, formatMoney, Money",
+      "title": "RiyalSign, Money",
+      "description": "@percentsa/ui: RiyalSign, Money",
       "registryDependencies": [
         "@percentsa/cn",
-        "@percentsa/provider"
+        "@percentsa/provider",
+        "@percentsa/saudi-money-format"
       ],
       "files": [
         {
@@ -1744,12 +1941,7 @@
       ],
       "meta": {
         "exports": [
-          "RIYAL_VIEWBOX",
-          "RIYAL_W",
-          "RIYAL_H",
-          "RIYAL_PATHS",
           "RiyalSign",
-          "formatMoney",
           "Money"
         ]
       }
@@ -1840,7 +2032,10 @@
       "name": "motion-counter",
       "type": "registry:ui",
       "title": "Counter",
-      "description": "@percentsa/motion: counterValue, Counter",
+      "description": "@percentsa/motion: Counter",
+      "registryDependencies": [
+        "@percentsa/motion-math"
+      ],
       "files": [
         {
           "path": "packages/motion/src/counter.tsx",
@@ -1850,7 +2045,6 @@
       ],
       "meta": {
         "exports": [
-          "counterValue",
           "Counter"
         ]
       }
@@ -1880,7 +2074,10 @@
       "name": "motion-magnet",
       "type": "registry:ui",
       "title": "Magnetic",
-      "description": "@percentsa/motion: magnetOffset, useMagnetic, Magnetic",
+      "description": "@percentsa/motion: useMagnetic, Magnetic",
+      "registryDependencies": [
+        "@percentsa/motion-math"
+      ],
       "files": [
         {
           "path": "packages/motion/src/magnet.tsx",
@@ -1890,7 +2087,6 @@
       ],
       "meta": {
         "exports": [
-          "magnetOffset",
           "useMagnetic",
           "Magnetic"
         ]
@@ -1914,6 +2110,32 @@
       "meta": {
         "exports": [
           "Marquee"
+        ]
+      }
+    },
+    {
+      "name": "motion-math",
+      "type": "registry:lib",
+      "title": "counterValue, magnetOffset, slashRunPercent, boostTarget",
+      "description": "@percentsa/motion: counterValue, magnetOffset, slashRunPercent, boostTarget, easeRate, loopHeadroom",
+      "registryDependencies": [
+        "@percentsa/motion-slash"
+      ],
+      "files": [
+        {
+          "path": "packages/motion/src/math.ts",
+          "type": "registry:lib",
+          "target": "components/percent/motion/math.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "counterValue",
+          "magnetOffset",
+          "slashRunPercent",
+          "boostTarget",
+          "easeRate",
+          "loopHeadroom"
         ]
       }
     },
@@ -1978,10 +2200,7 @@
       "name": "motion-reveal",
       "type": "registry:ui",
       "title": "Reveal, SlashReveal",
-      "description": "@percentsa/motion: useReveal, Reveal, slashRunPercent, SlashReveal",
-      "registryDependencies": [
-        "@percentsa/motion-slash"
-      ],
+      "description": "@percentsa/motion: useReveal, Reveal, SlashReveal",
       "files": [
         {
           "path": "packages/motion/src/reveal.tsx",
@@ -1993,7 +2212,6 @@
         "exports": [
           "useReveal",
           "Reveal",
-          "slashRunPercent",
           "SlashReveal"
         ]
       }
@@ -2066,8 +2284,11 @@
     {
       "name": "motion-scroll-boost",
       "type": "registry:lib",
-      "title": "boostTarget, easeRate, loopHeadroom, useScrollBoost",
-      "description": "@percentsa/motion: boostTarget, easeRate, loopHeadroom, useScrollBoost",
+      "title": "useScrollBoost",
+      "description": "@percentsa/motion: useScrollBoost",
+      "registryDependencies": [
+        "@percentsa/motion-math"
+      ],
       "files": [
         {
           "path": "packages/motion/src/scroll-boost.ts",
@@ -2077,9 +2298,6 @@
       ],
       "meta": {
         "exports": [
-          "boostTarget",
-          "easeRate",
-          "loopHeadroom",
           "useScrollBoost"
         ]
       }
@@ -2282,9 +2500,9 @@
       "name": "mark_path",
       "type": "registry:ui",
       "title": "MARK_PATH",
-      "description": "MARK_PATH: adds @percentsa/brand.",
+      "description": "MARK_PATH: adds @percentsa/brand-mark.",
       "registryDependencies": [
-        "@percentsa/brand"
+        "@percentsa/brand-mark"
       ],
       "files": []
     },
@@ -2292,9 +2510,9 @@
       "name": "mark_w",
       "type": "registry:ui",
       "title": "MARK_W",
-      "description": "MARK_W: adds @percentsa/brand.",
+      "description": "MARK_W: adds @percentsa/brand-mark.",
       "registryDependencies": [
-        "@percentsa/brand"
+        "@percentsa/brand-mark"
       ],
       "files": []
     },
@@ -2302,9 +2520,9 @@
       "name": "mark_h",
       "type": "registry:ui",
       "title": "MARK_H",
-      "description": "MARK_H: adds @percentsa/brand.",
+      "description": "MARK_H: adds @percentsa/brand-mark.",
       "registryDependencies": [
-        "@percentsa/brand"
+        "@percentsa/brand-mark"
       ],
       "files": []
     },
@@ -2582,9 +2800,9 @@
       "name": "field_box",
       "type": "registry:ui",
       "title": "FIELD_BOX",
-      "description": "FIELD_BOX: adds @percentsa/inputs.",
+      "description": "FIELD_BOX: adds @percentsa/input-classes.",
       "registryDependencies": [
-        "@percentsa/inputs"
+        "@percentsa/input-classes"
       ],
       "files": []
     },
@@ -2592,9 +2810,19 @@
       "name": "text_box",
       "type": "registry:ui",
       "title": "TEXT_BOX",
-      "description": "TEXT_BOX: adds @percentsa/inputs.",
+      "description": "TEXT_BOX: adds @percentsa/input-classes.",
       "registryDependencies": [
-        "@percentsa/inputs"
+        "@percentsa/input-classes"
+      ],
+      "files": []
+    },
+    {
+      "name": "menu_item",
+      "type": "registry:ui",
+      "title": "MENU_ITEM",
+      "description": "MENU_ITEM: adds @percentsa/input-classes.",
+      "registryDependencies": [
+        "@percentsa/input-classes"
       ],
       "files": []
     },
@@ -2613,16 +2841,6 @@
       "type": "registry:ui",
       "title": "Textarea",
       "description": "Textarea: adds @percentsa/inputs.",
-      "registryDependencies": [
-        "@percentsa/inputs"
-      ],
-      "files": []
-    },
-    {
-      "name": "menu_item",
-      "type": "registry:ui",
-      "title": "MENU_ITEM",
-      "description": "MENU_ITEM: adds @percentsa/inputs.",
       "registryDependencies": [
         "@percentsa/inputs"
       ],
@@ -2823,16 +3041,6 @@
       "type": "registry:ui",
       "title": "Breadcrumbs",
       "description": "Breadcrumbs: adds @percentsa/navigation.",
-      "registryDependencies": [
-        "@percentsa/navigation"
-      ],
-      "files": []
-    },
-    {
-      "name": "pagination",
-      "type": "registry:ui",
-      "title": "Pagination",
-      "description": "Pagination: adds @percentsa/navigation.",
       "registryDependencies": [
         "@percentsa/navigation"
       ],
@@ -3259,12 +3467,22 @@
       "files": []
     },
     {
+      "name": "theme_key",
+      "type": "registry:ui",
+      "title": "THEME_KEY",
+      "description": "THEME_KEY: adds @percentsa/theme-script.",
+      "registryDependencies": [
+        "@percentsa/theme-script"
+      ],
+      "files": []
+    },
+    {
       "name": "theme_script",
       "type": "registry:ui",
       "title": "THEME_SCRIPT",
-      "description": "THEME_SCRIPT: adds @percentsa/theme.",
+      "description": "THEME_SCRIPT: adds @percentsa/theme-script.",
       "registryDependencies": [
-        "@percentsa/theme"
+        "@percentsa/theme-script"
       ],
       "files": []
     },
@@ -3319,6 +3537,16 @@
       "files": []
     },
     {
+      "name": "consent_cookie",
+      "type": "registry:ui",
+      "title": "CONSENT_COOKIE",
+      "description": "CONSENT_COOKIE: adds @percentsa/consent-cookie.",
+      "registryDependencies": [
+        "@percentsa/consent-cookie"
+      ],
+      "files": []
+    },
+    {
       "name": "percent-provider",
       "type": "registry:ui",
       "title": "PercentProvider",
@@ -3332,9 +3560,9 @@
       "name": "riyal_viewbox",
       "type": "registry:ui",
       "title": "RIYAL_VIEWBOX",
-      "description": "RIYAL_VIEWBOX: adds @percentsa/saudi-money.",
+      "description": "RIYAL_VIEWBOX: adds @percentsa/saudi-money-format.",
       "registryDependencies": [
-        "@percentsa/saudi-money"
+        "@percentsa/saudi-money-format"
       ],
       "files": []
     },
@@ -3342,9 +3570,9 @@
       "name": "riyal_w",
       "type": "registry:ui",
       "title": "RIYAL_W",
-      "description": "RIYAL_W: adds @percentsa/saudi-money.",
+      "description": "RIYAL_W: adds @percentsa/saudi-money-format.",
       "registryDependencies": [
-        "@percentsa/saudi-money"
+        "@percentsa/saudi-money-format"
       ],
       "files": []
     },
@@ -3352,9 +3580,9 @@
       "name": "riyal_h",
       "type": "registry:ui",
       "title": "RIYAL_H",
-      "description": "RIYAL_H: adds @percentsa/saudi-money.",
+      "description": "RIYAL_H: adds @percentsa/saudi-money-format.",
       "registryDependencies": [
-        "@percentsa/saudi-money"
+        "@percentsa/saudi-money-format"
       ],
       "files": []
     },
@@ -3362,9 +3590,9 @@
       "name": "riyal_paths",
       "type": "registry:ui",
       "title": "RIYAL_PATHS",
-      "description": "RIYAL_PATHS: adds @percentsa/saudi-money.",
+      "description": "RIYAL_PATHS: adds @percentsa/saudi-money-format.",
       "registryDependencies": [
-        "@percentsa/saudi-money"
+        "@percentsa/saudi-money-format"
       ],
       "files": []
     },

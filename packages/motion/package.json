@@ -39,7 +39,7 @@
     "./styles.css": "./styles.css"
   },
   "scripts": {
-    "build": "rm -rf dist && bun build src/index.ts --outdir dist --format esm --packages external --tsconfig-override tsconfig.build.json && tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build": "rm -rf dist && tsc -p tsconfig.build.json && bun ../../scripts/dist-imports.ts dist",
     "typecheck": "tsc --noEmit -p ."
   },
   "peerDependencies": {

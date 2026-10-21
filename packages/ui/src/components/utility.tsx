@@ -1,3 +1,5 @@
+"use client";
+
 import { useSyncExternalStore, type ReactNode } from "react";
 import { VisuallyHidden as RadixVisuallyHidden } from "radix-ui";
 

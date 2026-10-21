@@ -1,3 +1,5 @@
+"use client";
+
 import { cn } from "../../lib/cn";
 import { useDir } from "../../provider";
 import { extent, linearScale, linePath } from "./scale";

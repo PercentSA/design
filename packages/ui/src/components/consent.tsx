@@ -1,16 +1,11 @@
+"use client";
+
 import { useEffect, useState } from "react";
 import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
 import { Button } from "./actions";
-
-export type Consent = "granted" | "denied";
-const COOKIE = "consent";
-
-/** The visitor's choice from a Cookie header (server) or document.cookie; null when not chosen yet. */
-export function readConsent(cookie: string): Consent | null {
-  const v = cookie.match(/(?:^|;\s*)consent=(granted|denied)/)?.[1];
-  return (v as Consent | undefined) ?? null;
-}
+import { CONSENT_COOKIE, readConsent } from "../lib/consent-cookie";
+import type { Consent } from "../lib/consent-cookie";
 
 /**
  * Cookie consent for analytics (PDPL). Rejecting is as easy as accepting. The choice is kept for
@@ -24,7 +19,7 @@ export function ConsentBanner({ policyHref, onChange, className }: { policyHref?
   useEffect(() => setOpen(readConsent(document.cookie) === null), []);
   if (!open) return null;
   const choose = (c: Consent) => {
-    document.cookie = `${COOKIE}=${c}; Path=/; Max-Age=${60 * 60 * 24 * 180}; SameSite=Lax`;
+    document.cookie = `${CONSENT_COOKIE}=${c}; Path=/; Max-Age=${60 * 60 * 24 * 180}; SameSite=Lax`;
     setOpen(false);
     onChange?.(c);
   };

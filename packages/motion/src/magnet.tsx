@@ -1,9 +1,7 @@
+"use client";
+
 import { useEffect, useRef, type ReactNode, type RefObject } from "react";
-
-const clamp = (v: number, max: number) => Math.max(-max, Math.min(max, v));
-
-/** Offset of a magnetic button toward the pointer; dx, dy = pointer minus button center. */
-export const magnetOffset = (dx: number, dy: number, max = 6) => ({ x: clamp(dx * 0.25, max), y: clamp(dy * 0.25, max) });
+import { magnetOffset } from "./math";
 
 const ZONE = 24;
 

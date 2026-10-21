@@ -1,3 +1,5 @@
+"use client";
+
 import { useId, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { dirOf } from "../i18n/localized";
@@ -8,7 +10,7 @@ import { formatDate } from "../saudi/date";
 import { invoiceTotals, zatcaTlv } from "../saudi/invoice";
 import { Money } from "../saudi/money";
 import { QrCode } from "./qr-code";
-import { formatNumber } from "./text";
+import { formatNumber } from "../lib/format-number";
 
 export type InvoiceParty = { name: string; vatNumber?: string; crNumber?: string; address?: ReactNode };
 export type InvoiceLine = { description: ReactNode; quantity: number; unitPrice: number; vatRate?: number };

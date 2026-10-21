@@ -2,6 +2,19 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.5.1
+
+React Server Components (Next.js App Router) support. The first release published from GitHub Actions with npm trusted publishing (npm adds provenance). No breaking change: every export keeps its name.
+
+Packages
+- `ui` and `motion` ship one ESM file per source file instead of one bundle. Client modules (hooks, context, events) start with `"use client"`; the package index and the plain modules do not.
+- Functions and constants moved to modules without the directive, so a server component can call them: `formatMoney`, the `RIYAL_*` constants, `buttonClass`, `formatNumber`, `FIELD_BOX`, `TEXT_BOX`, `MENU_ITEM`, `acceptsFile`, `formatFileSize`, `paginationRange`, `THEME_SCRIPT`, `initials`, `readConsent`, `MARK_*`, and in motion `counterValue`, `magnetOffset`, `slashRunPercent`, `boostTarget`, `easeRate`, `loopHeadroom`.
+- Relative imports in `dist` (JS and declarations) end in `.js`: TypeScript `"moduleResolution": "nodenext"` and `node16` now work, not only `bundler`.
+- New type export: `ButtonSize`.
+
+Docs
+- README: how to use the packages in React Server Components, and `PercentProvider` in a client file of the app.
+
 ## 0.5.0
 
 First public release: the code is MIT licensed, the packages are public on npm, and installing needs no token. From 0.5.1, releases publish from GitHub Actions with npm trusted publishing (no token), so npm adds provenance. Includes 0.4.1, which was not published alone.

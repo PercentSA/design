@@ -39,7 +39,7 @@
     "./tokens.json": "./dist/tokens.json"
   },
   "scripts": {
-    "build": "rm -rf dist && bun scripts/build.ts && bun build src/index.ts --outdir dist --format esm --packages external && tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "build": "rm -rf dist && bun scripts/build.ts && bun build src/index.ts --outdir dist --format esm --packages external && tsc -p tsconfig.build.json --emitDeclarationOnly && bun ../../scripts/dist-imports.ts dist",
     "typecheck": "tsc --noEmit -p ."
   }
 }

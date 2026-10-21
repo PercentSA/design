@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, type RefObject } from "react";
 import { SLASH_RUN } from "./slash";
 

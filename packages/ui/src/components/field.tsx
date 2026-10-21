@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useId, type AriaAttributes, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";

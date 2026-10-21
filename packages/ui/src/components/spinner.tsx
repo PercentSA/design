@@ -1,6 +1,8 @@
+"use client";
+
 import { cn } from "../lib/cn";
 import { useBrand, useStrings } from "../provider";
-import { MARK_H, MARK_W } from "./brand";
+import { MARK_H, MARK_W } from "./brand-mark";
 
 // The three parts of the % mark light up in reading order: square, slash, square.
 const PARTS = ["M0 0H70.8V70.8H0Z", "M160.3 0H228L70.3 221.2H2Z", "M159.2 150.4H230V221.2H159.2Z"];

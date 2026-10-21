@@ -1,3 +1,5 @@
+"use client";
+
 import { Children, isValidElement, useRef, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useFlip } from "../lib/flip";

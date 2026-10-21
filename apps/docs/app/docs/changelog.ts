@@ -14,8 +14,19 @@ const c = (kind: ChangeKind, text: string) => ({ kind, text });
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
-    version: "0.5.0",
+    version: "0.5.1",
     date: null,
+    summary: "The packages now work in React Server Components, for example the Next.js App Router. Nothing changes for existing projects.",
+    changes: [
+      c("new", "Works with React Server Components: interactive components are marked as client components, and functions such as formatMoney and buttonClass can run on the server."),
+      c("better", "TypeScript finds the types with every module setting, including nodenext."),
+      c("new", "The README shows how to set up the provider in a Next.js app."),
+      c("better", "Published straight from GitHub with npm provenance, so you can check where each version came from."),
+    ],
+  },
+  {
+    version: "0.5.0",
+    date: "2026-10-21",
     summary: "First public release: open source (MIT) and on npm, with no token needed to install. The new Percent logo: the % icon with the Arabic and English names, in seven versions, and a loader that moves between them. Includes the 0.4.1 changes.",
     changes: [
       c("new", "One logo component draws all seven versions: the icon, each name alone, the icon with one name, both names in a row, and both names stacked."),

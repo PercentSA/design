@@ -1,3 +1,5 @@
+"use client";
+
 import { useId, useState, type ComponentProps, type ReactNode } from "react";
 import { Check } from "lucide-react";
 import { Checkbox as RadixCheckbox, RadioGroup as RadixRadioGroup, Switch as RadixSwitch } from "radix-ui";

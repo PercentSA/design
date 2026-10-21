@@ -1,7 +1,9 @@
+"use client";
+
 import { useEffect, useRef, useState, type MouseEventHandler, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useBrand, useLang, useLinkComponent, useStrings, useText } from "../provider";
-import { buttonClass } from "./actions";
+import { buttonClass } from "./button-class";
 import { Logo, MadeInKsa, Mark } from "./brand";
 import { SkipLink } from "./navigation";
 

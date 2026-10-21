@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useEffect, useLayoutEffect, useRef, useState, type MouseEvent, type ReactNode } from "react";
 import { createSwitchController, type ScrambleTarget, type SwitchController } from "./switch-controller";
 

@@ -1,3 +1,5 @@
+"use client";
+
 import { useLayoutEffect, useRef, useState, type CSSProperties } from "react";
 import { cn } from "./cn";
 

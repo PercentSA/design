@@ -1,19 +1,15 @@
+"use client";
+
 import { useSyncExternalStore } from "react";
 import { Monitor, Moon, Sun } from "lucide-react";
 import { useStrings, useText } from "../provider";
 import { SegmentedControl } from "./actions";
+import { THEME_KEY } from "./theme-script";
 
 export type ThemeMode = "system" | "light" | "dark";
 
-const KEY = "p-theme";
 const MODES: ThemeMode[] = ["system", "light", "dark"];
 const isMode = (v: unknown): v is ThemeMode => MODES.includes(v as ThemeMode);
-
-/**
- * Put in <head> before the stylesheets: applies the stored choice to <html data-theme> before first paint.
- * With nothing stored (or storage blocked), the page's own data-theme stays.
- */
-export const THEME_SCRIPT = `try{var t=localStorage.getItem("${KEY}");if(t==="system"||t==="light"||t==="dark")document.documentElement.dataset.theme=t}catch(e){}`;
 
 // <html data-theme> is the one source of truth, so every switch on the page shows the same mode.
 const subscribe = (onChange: () => void) => {
@@ -29,7 +25,7 @@ const read = () => {
 const setTheme = (t: ThemeMode) => {
   document.documentElement.dataset.theme = t;
   try {
-    localStorage.setItem(KEY, t);
+    localStorage.setItem(THEME_KEY, t);
   } catch {
     // Blocked storage (private mode): the mode still applies to this page.
   }

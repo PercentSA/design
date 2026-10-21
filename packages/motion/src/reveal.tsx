@@ -1,5 +1,6 @@
+"use client";
+
 import { useEffect, useRef, type ElementType, type HTMLAttributes, type ReactNode, type RefObject } from "react";
-import { SLASH_RUN } from "./slash";
 
 /**
  * Marks the element `data-shown` once, when a fifth of it is on screen, or when it fills a fifth of
@@ -33,9 +34,6 @@ export function Reveal({ as: As = "div", stagger, className, ...rest }: HTMLAttr
   useReveal(ref);
   return <As ref={ref} data-reveal={stagger ? "stagger" : "rise"} className={className} {...rest} />;
 }
-
-/** Horizontal run of the % slash over a box of this aspect (width / height), in % of the width. */
-export const slashRunPercent = (aspect: number) => Math.round((SLASH_RUN / aspect) * 10000) / 100;
 
 /**
  * Media that opens with a wipe whose edge has the angle of the % slash (never mirrored), moving in

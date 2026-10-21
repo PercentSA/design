@@ -1,9 +1,11 @@
+"use client";
+
 import { useLayoutEffect, useSyncExternalStore, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { Toast as RadixToast } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useDir, useStrings } from "../provider";
-import { buttonClass } from "./actions";
+import { buttonClass } from "./button-class";
 
 type ToastData = {
   id: number;

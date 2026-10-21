@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Play/pause and one dot per step of a looping scene (the percent.sa Services animation). The active
  * dot fills with `progress`. Large motion that keeps playing under reduced motion must have this control.

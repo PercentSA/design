@@ -1,8 +1,10 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { ContextMenu as RadixContextMenu, DropdownMenu as RadixDropdown } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useLinkComponent, useStrings } from "../provider";
-import { MENU_ITEM } from "./inputs";
+import { MENU_ITEM } from "./input-classes";
 
 export type MenuItem =
   | "separator"

@@ -1,9 +1,12 @@
+"use client";
+
 import { useCallback, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { AlertDialog as RadixAlert, Dialog as RadixDialog, HoverCard as RadixHoverCard, Popover as RadixPopover, Tooltip as RadixTooltip } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useDir, useStrings } from "../provider";
-import { Button, buttonClass } from "./actions";
+import { Button } from "./actions";
+import { buttonClass } from "./button-class";
 
 type OpenState = { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void };
 

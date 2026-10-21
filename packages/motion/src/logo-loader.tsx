@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useId, useRef, useState } from "react";
 import { LOADER_LOOP_MS, LOADER_VIEWBOX, LOGO_STROKE, logoLoaderFrame } from "@percentsa/tokens";
 

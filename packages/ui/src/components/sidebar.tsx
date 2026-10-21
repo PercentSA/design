@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useId, useState, type ReactNode } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { cn } from "../lib/cn";

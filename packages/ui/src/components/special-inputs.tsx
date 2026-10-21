@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useId, useState, type ComponentProps } from "react";
 import { Eye, EyeOff, Minus, Plus, Search } from "lucide-react";
 import { unstable_OneTimePasswordField as Otp } from "radix-ui";
