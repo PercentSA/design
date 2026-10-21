@@ -15,12 +15,12 @@ const c = (kind: ChangeKind, text: string) => ({ kind, text });
 export const RELEASES: Release[] = [
   {
     version: "0.5.1",
-    date: null,
+    date: "2026-10-21",
     summary: "The packages now work in React Server Components, for example the Next.js App Router. Nothing changes for existing projects.",
     changes: [
       c("new", "Works with React Server Components: interactive components are marked as client components, and functions such as formatMoney and buttonClass can run on the server."),
       c("better", "TypeScript finds the types with every module setting, including nodenext."),
-      c("new", "The README shows how to set up the provider in a Next.js app."),
+      c("new", "A Server components page in the docs shows what works on the server, how to set up the provider in a Next.js app, and how to handle events."),
       c("better", "Published straight from GitHub with npm provenance, so you can check where each version came from."),
     ],
   },

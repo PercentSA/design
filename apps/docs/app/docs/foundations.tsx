@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { BrandPage } from "./brand-page";
 import { Desc } from "./desc";
+import { ServerComponentsPage } from "./server-components-page";
 import { brandCss, COLOR_TOKENS, color, contrast, density, duration, easing, layer, radius, SLASH_RUN, THEMES, type Brand } from "@percentsa/tokens";
 import { Code, Display, Grid, Heading, isolate, Label, Mark, Stack, STRINGS, Surface, Text, useLang, type Localized } from "@percentsa/ui";
 
@@ -308,6 +309,7 @@ export const FOUNDATIONS: Foundation[] = [
   { slug: "motion", title: { en: "Motion", ar: "الحركة" }, desc: { en: "Durations, easings, the slash angle and the reduced-motion policy.", ar: "المدد ومنحنيات الحركة وزاوية الخط وسياسة تقليل الحركة." }, Page: Motion },
   { slug: "language", title: { en: "Language and direction", ar: "اللغة والاتجاه" }, desc: { en: "English and Arabic, RTL rules and built-in strings.", ar: "العربية والإنجليزية وقواعد الاتجاه والنصوص المضمنة." }, Page: Language },
   { slug: "theming", title: { en: "Theming", ar: "المظاهر" }, desc: { en: "Dark, light and system modes, and project brands.", ar: "الوضع الداكن والفاتح ووضع الجهاز، وهويات المشاريع." }, Page: Theming },
+  { slug: "server-components", title: { en: "Server components", ar: "مكونات الخادم" }, desc: { en: "Use the packages in React Server Components, for example the Next.js App Router.", ar: "استخدام الحزم مع مكونات خادم React، مثل App Router في Next.js." }, Page: ServerComponentsPage },
 ];
 
 export const findFoundation = (slug: string) => FOUNDATIONS.find((f) => f.slug === slug);

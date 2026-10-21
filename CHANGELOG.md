@@ -14,6 +14,7 @@ Packages
 
 Docs
 - README: how to use the packages in React Server Components, and `PercentProvider` in a client file of the app.
+- Server components page (Foundations): what works in a server component and what needs a client component, the provider setup, a server page and a client component for events. The samples build in Next.js 16.
 
 ## 0.5.0
 
