@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useMemo, type ComponentProps, type ComponentType, type ReactNode } from "react";
 import { Direction } from "radix-ui";
 import { dirOf, type Dir, type Lang } from "./i18n/localized";

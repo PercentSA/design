@@ -1,6 +1,8 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { useDir, useLang, useStrings } from "../../provider";
-import { formatNumber } from "../text";
+import { formatNumber } from "../../lib/format-number";
 import { ChartFrame, useChartWidth } from "./chart-frame";
 import { ChartLegend, lookOf, useFill } from "./legend";
 import { donutAngles, type Point } from "./scale";

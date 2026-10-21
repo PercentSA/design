@@ -1,3 +1,5 @@
+"use client";
+
 import { useId, type HTMLAttributes, type ReactNode, type TableHTMLAttributes, type TdHTMLAttributes, type ThHTMLAttributes } from "react";
 import { cn } from "../lib/cn";
 

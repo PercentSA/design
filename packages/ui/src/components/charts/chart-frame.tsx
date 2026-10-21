@@ -1,7 +1,9 @@
+"use client";
+
 import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode, type Ref } from "react";
 import { cn } from "../../lib/cn";
 import { useDir, useLang, useStrings } from "../../provider";
-import { formatNumber } from "../text";
+import { formatNumber } from "../../lib/format-number";
 import { LiveRegion } from "../utility";
 import { Swatch } from "./legend";
 import type { Point } from "./scale";

@@ -1,3 +1,5 @@
+"use client";
+
 import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { ChevronDown } from "lucide-react";
 import { Accordion as RadixAccordion } from "radix-ui";

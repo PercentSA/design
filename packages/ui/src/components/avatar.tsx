@@ -1,21 +1,10 @@
+"use client";
+
 import { Children, type ReactNode } from "react";
 import { Avatar as RadixAvatar } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
-
-/**
- * First letters of the first two words, Latin in upper case: "sara ahmed" → "SA". Arabic skips the
- * article "ال": "محمد العتيبي" → "مع".
- */
-export function initials(name: string) {
-  return name
-    .trim()
-    .split(/\s+/)
-    .slice(0, 2)
-    .map((word) => [...(word.length > 2 && word.startsWith("ال") ? word.slice(2) : word)][0] ?? "")
-    .join("")
-    .toUpperCase();
-}
+import { initials } from "../lib/initials";
 
 const SIZE = { sm: "size-7 text-[11px]", md: "size-9 text-xs", lg: "size-12 text-sm" } as const;
 const CIRCLE = "inline-grid shrink-0 place-items-center overflow-hidden rounded-pill bg-surface-2 font-medium text-fg-2 select-none";

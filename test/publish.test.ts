@@ -6,6 +6,7 @@ import { pathToFileURL } from "node:url";
 const ROOT = resolve(import.meta.dir, "..");
 const PACKAGES = ["tokens", "ui", "motion"] as const;
 const run = (cmd: string[], cwd = ROOT) => Bun.spawnSync(cmd, { cwd, stdout: "pipe", stderr: "pipe" });
+const distFiles = (pkg: string) => [...new Bun.Glob("**/*.js").scanSync(resolve(ROOT, `packages/${pkg}/dist`))];
 
 describe("published packages", () => {
   beforeAll(() => {
@@ -20,8 +21,26 @@ describe("published packages", () => {
 
   // One geometry: ui and motion import the logo from @percentsa/tokens, they never bundle a copy of it.
   test.each(["ui", "motion"] as const)("@percentsa/%s imports @percentsa/tokens, no copy of it", (pkg) => {
-    const js = readFileSync(resolve(ROOT, `packages/${pkg}/dist/index.js`), "utf8");
+    const js = distFiles(pkg).map((f) => readFileSync(resolve(ROOT, `packages/${pkg}/dist`, f), "utf8")).join("\n");
     expect([js.includes('from "@percentsa/tokens"'), js.includes("tokens/src")]).toEqual([true, false]);
+  });
+
+  // One file per module: each client module keeps its "use client" line; the index has none.
+  test.each(["ui", "motion"] as const)("@percentsa/%s: dist keeps \"use client\" per module", (pkg) => {
+    const marked = (path: string) => readFileSync(path, "utf8").startsWith('"use client";');
+    const wrong = distFiles(pkg).filter((f) => {
+      const src = resolve(ROOT, `packages/${pkg}/src`, f.replace(/\.js$/, ""));
+      return marked(resolve(ROOT, `packages/${pkg}/dist`, f)) !== marked(existsSync(`${src}.tsx`) ? `${src}.tsx` : `${src}.ts`);
+    });
+    expect([wrong, marked(resolve(ROOT, `packages/${pkg}/dist/index.js`))]).toEqual([[], false]);
+  });
+
+  // Node ESM and TypeScript "nodenext" need the file name in relative imports (scripts/dist-imports.ts).
+  test.each(PACKAGES)("@percentsa/%s: relative imports in dist name the file", (pkg) => {
+    const dist = resolve(ROOT, `packages/${pkg}/dist`);
+    const bare = [...new Bun.Glob("**/*.{js,d.ts}").scanSync(dist)]
+      .filter((f) => /(?:from|import)\s*\(?\s*"\.{1,2}\/[^"]*(?<!\.js)"/.test(readFileSync(resolve(dist, f), "utf8")));
+    expect(bare).toEqual([]);
   });
 
   // A server-rendered app imports the package in Node (React Router SSR externalizes node_modules).

@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { PercentProvider } from "../src/provider";
-import { buttonClass } from "../src/components/actions";
+import { buttonClass } from "../src/components/button-class";
 import { ChoiceCardGroup, RadioGroup } from "../src/components/choices";
 import { Slider } from "../src/components/inputs";
 import { Steps, Tabs } from "../src/components/navigation";

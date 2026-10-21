@@ -1,13 +1,7 @@
+"use client";
+
 import { useEffect, type RefObject } from "react";
-
-/** Loop speed for a scroll speed in px/ms: faster in the scroll direction, backwards when scrolling up. */
-export const boostTarget = (pxPerMs: number) => Math.min(4, Math.max(-4, 1 + pxPerMs * 3));
-
-/** Move `rate` toward `target` (time constant 150 ms), so the loop slows back to normal in about 0.5 s. */
-export const easeRate = (rate: number, target: number, dtMs: number) => target + (rate - target) * Math.exp(-dtMs / 150);
-
-/** The same frame of a loop, `1000` loops later: backwards playback then never reaches time 0, where it would stop. */
-export const loopHeadroom = (time: number, duration: number) => time + duration * 1000;
+import { boostTarget, easeRate, loopHeadroom } from "./math";
 
 /**
  * Couples the CSS loops inside `root` (`.p-marquee-list`) to the page scroll. It never changes the scroll.

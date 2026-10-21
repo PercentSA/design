@@ -1,9 +1,11 @@
+"use client";
+
 import type { ComponentProps, ElementType, HTMLAttributes, ReactNode } from "react";
 import { ArrowUpRight } from "lucide-react";
 import { Slot } from "radix-ui";
 import { cn } from "../lib/cn";
-import type { Lang } from "../i18n/localized";
 import { useLang, useLinkComponent, useStrings } from "../provider";
+import { formatNumber } from "../lib/format-number";
 
 type Poly<E extends ElementType> = HTMLAttributes<HTMLElement> & { as?: E };
 
@@ -103,10 +105,6 @@ export const Prose = ({ className, ...rest }: HTMLAttributes<HTMLDivElement>) =>
 export const Highlight = ({ className, ...rest }: HTMLAttributes<HTMLElement>) => (
   <mark className={cn("rounded-sm bg-fg px-0.5 text-bg", className)} {...rest} />
 );
-
-/** Western digits in both languages; Arabic words for compact units ("1.3 مليون"). */
-export const formatNumber = (value: number, lang: Lang = "en", options?: Intl.NumberFormatOptions) =>
-  new Intl.NumberFormat(lang === "ar" ? "ar-SA-u-nu-latn" : "en-US", options).format(value);
 
 export function FormattedNumber({ value, options, className }: { value: number; options?: Intl.NumberFormatOptions; className?: string }) {
   return (

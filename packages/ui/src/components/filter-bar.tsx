@@ -1,3 +1,5 @@
+"use client";
+
 import { useRef } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { DropdownMenu as RadixDropdown } from "radix-ui";
@@ -6,7 +8,7 @@ import { useFlip } from "../lib/flip";
 import { useStrings, useText } from "../provider";
 import { Button } from "./actions";
 import { Badge, Tag } from "./feedback";
-import { MENU_ITEM } from "./inputs";
+import { MENU_ITEM } from "./input-classes";
 import { SearchInput } from "./special-inputs";
 
 /** One filter: a button with a menu. `multiple` gives checkbox items, otherwise radio items (one choice). Labels are text: they also name the tags. */

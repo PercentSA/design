@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useId, useMemo, useRef, useState, type ComponentProps } from "react";
 import { CalendarDays, ChevronLeft, ChevronRight } from "lucide-react";
 import { Popover } from "radix-ui";
@@ -18,7 +20,7 @@ import {
 import { formatDate, type CalendarKind } from "../saudi/date";
 import { SegmentedControl } from "./actions";
 import { useFieldControl, useFieldLabelId } from "./field";
-import { TEXT_BOX } from "./inputs";
+import { TEXT_BOX } from "./input-classes";
 
 const NAV_BTN = "grid size-9 place-items-center rounded-pill text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg [&_svg]:size-4";
 

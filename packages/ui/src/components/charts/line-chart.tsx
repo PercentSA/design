@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo } from "react";
 import { Axes, cartesian } from "./cartesian";
 import { ChartFrame, useChart, useChartWidth, type ChartProps } from "./chart-frame";

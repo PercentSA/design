@@ -1,10 +1,13 @@
+"use client";
+
 import { useId, useRef, useState, type ComponentProps } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { Popover } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
 import { searchKey } from "../saudi/normalize";
-import { Input, MENU_ITEM } from "./inputs";
+import { Input } from "./inputs";
+import { MENU_ITEM } from "./input-classes";
 
 // The highlighted option of a long list stays in view (runs when the highlight lands on an option).
 const inView = (el: HTMLElement | null) => el?.scrollIntoView?.({ block: "nearest" });

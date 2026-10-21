@@ -1,10 +1,12 @@
+"use client";
+
 import { useEffect, useId, useRef, useState, type ReactNode } from "react";
 import { Search } from "lucide-react";
 import { Dialog as RadixDialog } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
 import { searchKey } from "../saudi/normalize";
-import { MENU_ITEM } from "./inputs";
+import { MENU_ITEM } from "./input-classes";
 import { Kbd } from "./text";
 import { VisuallyHidden } from "./utility";
 

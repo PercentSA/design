@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useRef, type ElementType, type HTMLAttributes } from "react";
 import { useReveal } from "./reveal";
 

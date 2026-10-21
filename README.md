@@ -35,7 +35,30 @@ npm, pnpm and yarn work too. Needs React 19 and Tailwind CSS v4.
 
 Set `data-theme` (`dark`, `light` or `system`) and `data-density` on `<html>`: menus, dialogs and toasts render in `<body>`, outside any themed wrapper.
 
-Apps use TypeScript `"moduleResolution": "bundler"` (Vite, React Router, Next.js): the type declarations use extensionless imports.
+TypeScript: `"moduleResolution"` `bundler`, `node16` and `nodenext` all work.
+
+### React Server Components (Next.js App Router)
+
+Components with state, effects or events are client components: their files start with `"use client"`. Functions and constants (`formatMoney`, `buttonClass`, `THEME_SCRIPT`, `formatDate`, the validators, …) are in files without it, so a server component can call them. A server component can render any component, but it can pass only data as props: functions (`onClick`, `onValueChange`, `link`) need a client component.
+
+`PercentProvider` takes functions (`link`, `text`), so put it in a client file of your app:
+
+```tsx
+// app/providers.tsx
+"use client";
+import NextLink from "next/link";
+import { PercentProvider } from "@percentsa/ui";
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  return (
+    <PercentProvider lang="en" link={({ href, ...p }) => <NextLink href={href!} {...p} />}>
+      {children}
+    </PercentProvider>
+  );
+}
+```
+
+Then use `<Providers>` in `app/layout.tsx`.
 
 ## Your brand
 

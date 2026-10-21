@@ -49,6 +49,7 @@ Run `bun test` and `bun run typecheck` before every commit.
 14. The Percent name and logo (icon, wordmarks, the 7 versions, the loader, the spinner shape) are not covered by the MIT license (`TRADEMARKS.md`).
 15. The name is "Percent" in English text and "برسنت" in Arabic text (the spelling of the Arabic logo). `test/arabic-name.test.ts` fails if the misspelling with ي comes back.
 16. The logo (icon, wordmarks, 7 versions, loader) comes only from `packages/tokens/src/logo.ts`. Never redraw it or type the name in a font as a logo. The SVG files in `apps/docs/public/brand/` are generated (`bun run logo-files`).
+17. React Server Components: a `ui` or `motion` source file with hooks, context, event handlers or browser globals starts with `"use client";`; any other file does not. Exported functions and constants go in files without it (for example `button-class.ts` next to `actions.tsx`), so server code can call them. The package indexes have no directive. `test/use-client.test.ts` checks all three rules.
 
 ## Docs deployment
 
@@ -56,7 +57,7 @@ Run `bun test` and `bun run typecheck` before every commit.
 
 ## Publishing
 
-Packages build with `bun build` (one ESM file per package, dependencies external) and `tsc` (declarations only), so they load in Node for server rendering (`test/publish.test.ts`). `.github/workflows/release.yml` publishes all three to npm when a `v*` tag is pushed; the tag sets the version (`git tag v0.5.1 && git push origin v0.5.1`). Login is npm trusted publishing (no token; npm adds provenance); a version that is already on npm is skipped. Projects install with `bun add @percentsa/tokens @percentsa/ui @percentsa/motion` (no token).
+`ui` and `motion` build with `tsc`: one ESM file and one declaration file per source file, so each client module keeps its `"use client"` line. `scripts/dist-imports.ts` then adds `.js` to the relative imports in `dist`, so the packages load in Node for server rendering and work with TypeScript `nodenext` (`test/publish.test.ts`). `tokens` is one `bun build` file plus `tsc` declarations. `.github/workflows/release.yml` publishes all three to npm when a `v*` tag is pushed; the tag sets the version (`git tag v0.5.1 && git push origin v0.5.1`). Login is npm trusted publishing (no token; npm adds provenance); a version that is already on npm is skipped. Projects install with `bun add @percentsa/tokens @percentsa/ui @percentsa/motion` (no token).
 
 Each `## X.Y.Z` in CHANGELOG.md also gets a plain-words entry in `apps/docs/app/docs/changelog.ts` (the docs Changelog page; `apps/docs/test/changelog.test.ts` fails without it). Set its `date` when the tag is pushed.
 

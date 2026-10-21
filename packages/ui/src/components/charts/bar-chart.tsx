@@ -1,3 +1,5 @@
+"use client";
+
 import { Axes, cartesian } from "./cartesian";
 import { ChartFrame, useChart, useChartWidth, type ChartProps } from "./chart-frame";
 import { ChartLegend, lookOf, useFill } from "./legend";

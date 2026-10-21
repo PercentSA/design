@@ -1,3 +1,5 @@
+"use client";
+
 import { useLayoutEffect, useRef, type DependencyList, type RefObject } from "react";
 
 type Before = { rects: Map<string, DOMRect>; focus: Element | null };

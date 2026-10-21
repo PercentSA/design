@@ -1,8 +1,10 @@
+"use client";
+
 import { useEffect, useState, type ReactNode } from "react";
 import { Menu } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
-import { buttonClass } from "./actions";
+import { buttonClass } from "./button-class";
 import { SkipLink } from "./navigation";
 import { Sheet } from "./overlays";
 import { SidebarInSheet } from "./sidebar";

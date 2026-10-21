@@ -1,14 +1,14 @@
+"use client";
+
 import type { ComponentProps, ReactNode } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { Select as RadixSelect, Slider as RadixSlider } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
 import { useFieldControl, useFieldLabelId } from "./field";
+import { FIELD_BOX, TEXT_BOX, MENU_ITEM } from "./input-classes";
 
 /** The box every text control shares. Height and padding follow the density tokens. */
-export const FIELD_BOX =
-  "w-full min-w-0 rounded-field border border-line-strong bg-surface text-base text-fg transition-colors hover:border-fg-3 aria-invalid:border-danger disabled:cursor-not-allowed disabled:opacity-50";
-export const TEXT_BOX = cn(FIELD_BOX, "h-(--p-control-h) px-(--p-control-px) placeholder:text-fg-3");
 
 export function Input({
   start,
@@ -53,8 +53,6 @@ export function Textarea({ className, ...props }: ComponentProps<"textarea">) {
 export type SelectOption = { value: string; label: ReactNode; disabled?: boolean };
 
 const MENU = "z-(--p-z-overlay) overflow-hidden rounded-field border border-line bg-surface-2 text-fg shadow-overlay";
-export const MENU_ITEM =
-  "relative flex cursor-default items-center gap-2 rounded-lg py-2 ps-3 pe-8 text-sm text-fg-2 outline-none select-none data-disabled:opacity-50 data-highlighted:bg-fg/10 data-highlighted:text-fg";
 
 export function Select({
   options,

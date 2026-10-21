@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useId, useRef, useState, type DragEvent, type ReactNode } from "react";
 import { ArrowRightLeft } from "lucide-react";
 import { cn } from "../lib/cn";

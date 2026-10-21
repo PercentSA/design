@@ -1,10 +1,7 @@
-import { useEffect, useRef, useState } from "react";
+"use client";
 
-/** Ease-out cubic from `from` to `to`; t is 0..1. Whole numbers. */
-export const counterValue = (t: number, from: number, to: number) => {
-  const k = 1 - (1 - Math.min(1, Math.max(0, t))) ** 3;
-  return Math.round(from + (to - from) * k);
-};
+import { useEffect, useRef, useState } from "react";
+import { counterValue } from "./math";
 
 const western = (n: number) => n.toLocaleString("en-US");
 

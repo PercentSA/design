@@ -1,9 +1,11 @@
+"use client";
+
 import type { ReactNode } from "react";
 import { Lock, Paperclip } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
-import { initials } from "./avatar";
-import { formatFileSize } from "./file-drop";
+import { initials } from "../lib/initials";
+import { formatFileSize } from "../lib/files";
 
 export type TicketMessage = {
   id: string;
