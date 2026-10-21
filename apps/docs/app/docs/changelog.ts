@@ -14,6 +14,18 @@ const c = (kind: ChangeKind, text: string) => ({ kind, text });
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.6.0",
+    date: null,
+    summary: "The Percent logo on a grid: one square is 100 units, so every size is a round number. The logo keeps its shapes and motion; its sizes change.",
+    changes: [
+      c("better", "The icon is 3 by 3 squares, the English name is as high as the icon, and the Arabic name is as wide as the English, with a long س."),
+      c("action", "MARK_PATH and SLASH_RUN change: the icon is 292 units square, and the slash wipes are a little steeper (0.6667). Check pages that draw the mark themselves."),
+      c("action", "The loader is wider for its height (view box -620 -50 1240 400), and the stacked logo needs at least 48 px."),
+      c("new", "The sizes of the previous logo stay in the code (LOGO_SIZES_0_5), so it can come back if needed."),
+      c("better", "The Brand page draws the logo on its grid. The SVG downloads are new."),
+    ],
+  },
+  {
     version: "0.5.1",
     date: "2026-10-21",
     summary: "The packages now work in React Server Components, for example the Next.js App Router. Nothing changes for existing projects.",

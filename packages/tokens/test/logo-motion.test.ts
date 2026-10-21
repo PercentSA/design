@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { LOADER_LOOP_MS, LOADER_STAGES, LOADER_VIEWBOX, LOGO_ARABIC, LOGO_ENGLISH, LOGO_ICON, logoLoaderFrame, quadPath, type LoaderFrame, type Quad } from "../src";
+import { LOADER_LOOP_MS, LOADER_STAGES, LOADER_VIEWBOX, LOGO_ARABIC, LOGO_ENGLISH, LOGO_ICON, logoLoaderFrame, quadPath, visibleBox, type LoaderFrame, type Quad } from "../src";
 
 const paths = (f: LoaderFrame) => [...f.main, ...f.left, ...f.right].sort();
 const still = (qs: readonly Quad[]) => qs.map(quadPath).sort();
@@ -14,12 +14,20 @@ describe("logo loader frames", () => {
       ["en", 1, 1, 400], ["en", 1, 0, 1200], ["en", 0, 0, 800], ["en", 0, 1, 1200],
     ]);
     expect(LOADER_LOOP_MS).toBe(7200);
-    expect([...LOADER_VIEWBOX]).toEqual([-400, -40, 800, 300]);
+    expect([...LOADER_VIEWBOX]).toEqual([-620, -50, 1240, 400]);
   });
 
   test("it starts on the still icon, centred", () => {
     expect(paths(logoLoaderFrame(0))).toEqual(ICON);
-    expect(logoLoaderFrame(0).camera).toBeCloseTo(0.15, 5);
+    expect(logoLoaderFrame(0).camera).toBeCloseTo(0, 5);
+  });
+
+  test("the still words fit in the view box", () => {
+    const [x, y, w, h] = LOADER_VIEWBOX;
+    for (const [ms, qs] of [[2000, Object.values(LOGO_ARABIC)], [5600, [LOGO_ENGLISH.stem, LOGO_ENGLISH.armT, LOGO_ENGLISH.armB, ...LOGO_ENGLISH.left, ...LOGO_ENGLISH.right]]] as const) {
+      const b = visibleBox(qs), cam = logoLoaderFrame(ms).camera;
+      expect([b[0] + cam >= x, b[2] + cam <= x + w, b[1] >= y, b[3] <= y + h]).toEqual([true, true, true, true]);
+    }
   });
 
   test("the word holds are exactly the still wordmarks", () => {

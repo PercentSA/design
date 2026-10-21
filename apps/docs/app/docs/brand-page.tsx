@@ -1,10 +1,11 @@
 import type { CSSProperties, ReactNode } from "react";
-import { LOADER_STAGES, LOGO_LINE_Y, LOGO_SQUARE, LOGO_STROKE, LOGO_VERSIONS, logoLayout, type LogoVersion } from "@percentsa/tokens";
+import { LOADER_STAGES, LOGO_LINE_Y, LOGO_SIZES, LOGO_SQUARE, LOGO_STROKE, LOGO_VERSIONS, logoLayout, type LogoVersion } from "@percentsa/tokens";
 import { LogoLoader } from "@percentsa/motion";
 import { Grid, Heading, Logo, Mark, Stack, Surface, Text, useLang, type Localized } from "@percentsa/ui";
 
 const ICON_H = logoLayout("icon").viewBox[3]; // the visible icon height in logo units
-const XH = 140; // the x-height: the ر and the c
+const XH = LOGO_SIZES.english.xh; // the x-height: the ر and the c
+const SIN = Math.round(LOGO_SIZES.arabic.nPos * LOGO_SIZES.arabic.left); // the س: from the ر gap to the ن tooth
 
 function useL() {
   const lang = useLang();
@@ -38,15 +39,31 @@ const USE: Record<LogoVersion, Localized> = {
   stack: { en: "Bilingual spaces with less width. Each word's x-height is one square.", ar: "المساحات الأضيق بلغتين. ارتفاع كل كلمة يساوي مربعًا واحدًا." },
 };
 
-/** The logo with horizontal guides at logo-unit heights (same viewBox, so they line up). */
-function Guides({ version, ys }: { version: LogoVersion; ys: number[] }) {
-  const [x, , w] = logoLayout(version).viewBox;
+/** Grid positions o + k × square between a and b. */
+const steps = (o: number, a: number, b: number) => {
+  const k0 = Math.ceil((a - o) / LOGO_SQUARE - 1e-6), k1 = Math.floor((b - o) / LOGO_SQUARE + 1e-6);
+  return Array.from({ length: k1 - k0 + 1 }, (_, i) => o + (k0 + i) * LOGO_SQUARE);
+};
+
+/** The logo on its grid (a line every square from the icon's top-left corner) with dashed guides at logo-unit heights (same viewBox, so they line up). */
+function Guides({ version, ys = [] }: { version: LogoVersion; ys?: number[] }) {
+  const { viewBox, parts } = logoLayout(version);
+  const [x, y, w, h] = viewBox, [ox, oy] = parts[0]!.box; // the icon is the first part
+  const line = { stroke: "currentColor", vectorEffect: "non-scaling-stroke" } as const;
   return (
     <div className="relative">
       <Logo version={version} className="h-auto w-full max-w-2xl" />
-      <svg viewBox={logoLayout(version).viewBox.join(" ")} className="absolute inset-0 h-full w-full max-w-2xl overflow-visible text-fg-3" aria-hidden="true">
-        {ys.map((y) => (
-          <line key={y} x1={x - 20} x2={x + w + 20} y1={y} y2={y} stroke="currentColor" strokeWidth={1.5} strokeDasharray="6 6" vectorEffect="non-scaling-stroke" />
+      <svg viewBox={viewBox.join(" ")} className="absolute inset-0 h-full w-full max-w-2xl overflow-visible text-fg-3" aria-hidden="true">
+        <g opacity={0.6}>
+          {steps(ox, x, x + w).map((gx) => (
+            <line key={`x${gx}`} x1={gx} x2={gx} y1={y} y2={y + h} strokeWidth={1} {...line} />
+          ))}
+          {steps(oy, y, y + h).map((gy) => (
+            <line key={`y${gy}`} x1={x} x2={x + w} y1={gy} y2={gy} strokeWidth={1} {...line} />
+          ))}
+        </g>
+        {ys.map((gy) => (
+          <line key={gy} x1={x - 20} x2={x + w + 20} y1={gy} y2={gy} strokeWidth={1.5} strokeDasharray="6 6" {...line} />
         ))}
       </svg>
     </div>
@@ -140,19 +157,19 @@ export function BrandPage() {
       <Section
         title={{ en: "Construction", ar: "البناء" }}
         text={{
-          en: `One unit system: the icon is ${LOGO_SQUARE} × ${LOGO_SQUARE} squares and a slash, with a ${LOGO_STROKE} round-join stroke. The words sit on one line (y ${LOGO_LINE_Y}). The ر and the c are the same slash, as long as the x-height (${XH}). In the stacked version each word's x-height is one visible square, beside the top and bottom squares.`,
-          ar: `نظام وحدات واحد: الأيقونة مربعان بقياس ${LOGO_SQUARE} × ${LOGO_SQUARE} وخط مائل، بحد دائري الزوايا سماكته ${LOGO_STROKE}. تقع الكلمات على خط واحد (y ${LOGO_LINE_Y}). الراء وحرف c هما الخط المائل نفسه، وطولهما ارتفاع الحرف (${XH}). في النسخة المكدسة يساوي ارتفاع كل كلمة مربعًا ظاهرًا واحدًا، بجانب المربع العلوي والسفلي.`,
+          en: `One grid: 1 square = ${LOGO_SQUARE} units. The icon is 3 × 3 squares: two squares and a slash from the top-right cell to the bottom-left cell (2 across for 3 down). Every shape is drawn with a round-join stroke of ${LOGO_STROKE}, so the corners are rounded by ${LOGO_STROKE / 2}. The x-height is 2 squares (${XH}); the English ascender and descender are half a square, so the English word is as high as the icon. Strokes and dots are ${LOGO_SIZES.arabic.stroke}. The \u2068ر\u2069 and the c are the same slash. The Arabic word is as wide as the English: the \u2068ب\u2069 bar is ${LOGO_SIZES.arabic.ba} and the \u2068س\u2069 is ${SIN}. In the stacked version the words are at half size: each x-height is one square, beside the top and bottom squares.`,
+          ar: `شبكة واحدة: المربع الواحد = ${LOGO_SQUARE} وحدة. الأيقونة 3 × 3 مربعات: مربعان وخط مائل من الخلية العلوية اليمنى إلى الخلية السفلية اليسرى (2 عرضًا لكل 3 ارتفاعًا). لكل شكل حد دائري الزوايا سماكته ${LOGO_STROKE}، فتستدير الزوايا بمقدار ${LOGO_STROKE / 2}. ارتفاع الحرف مربعان (${XH})، والصواعد والنوازل في الكلمة الإنجليزية نصف مربع، فتكون الكلمة الإنجليزية بارتفاع الأيقونة. سماكة الخطوط والنقاط ${LOGO_SIZES.arabic.stroke}. الراء وحرف c هما الخط المائل نفسه. الكلمة العربية بعرض الكلمة الإنجليزية: خط الباء ${LOGO_SIZES.arabic.ba} والسين ${SIN}. في النسخة المكدسة تكون الكلمتان بنصف الحجم: ارتفاع كل منهما مربع واحد، بجانب المربع العلوي والسفلي.`,
         }}
       >
-        <Guides version="icon-en" ys={[0, LOGO_LINE_Y - XH / 2, LOGO_LINE_Y, LOGO_LINE_Y + XH / 2, 2 * LOGO_LINE_Y]} />
-        <Guides version="stack" ys={[-LOGO_STROKE / 2, LOGO_SQUARE + LOGO_STROKE / 2, 2 * LOGO_LINE_Y - LOGO_SQUARE - LOGO_STROKE / 2, 2 * LOGO_LINE_Y + LOGO_STROKE / 2]} />
+        <Guides version="icon-en" ys={[LOGO_LINE_Y - XH / 2, LOGO_LINE_Y, LOGO_LINE_Y + XH / 2]} />
+        <Guides version="stack" />
       </Section>
 
       <Section
         title={{ en: "Clear space", ar: "المساحة الفارغة" }}
         text={{
-          en: "Keep one square free on all sides: 0.31 × the icon height. Without the icon, the same distance in logo units (about half the x-height).",
-          ar: "اترك مربعًا واحدًا فارغًا من كل الجهات: 0.31 × ارتفاع الأيقونة. ودون الأيقونة، المسافة نفسها بوحدات الشعار (نحو نصف ارتفاع الحرف).",
+          en: "Keep one square free on all sides: a third of the icon height. Without the icon, the same distance in logo units (half the x-height).",
+          ar: "اترك مربعًا واحدًا فارغًا من كل الجهات: ثلث ارتفاع الأيقونة. ودون الأيقونة، المسافة نفسها بوحدات الشعار (نصف ارتفاع الحرف).",
         }}
       >
         <div className="w-fit border border-dashed border-line-strong" style={pad("icon-en", 64)}>
@@ -163,12 +180,12 @@ export function BrandPage() {
       <Section
         title={{ en: "Minimum size", ar: "أصغر مقاس" }}
         text={{
-          en: "Measured on the icon: icon alone 16 px high; versions with words 24 px; the stacked version 44 px (its words are at 0.55 scale).",
-          ar: "يُقاس على الأيقونة: الأيقونة وحدها 16 بكسل ارتفاعًا؛ والنسخ مع الكلمات 24 بكسل؛ والنسخة المكدسة 44 بكسل (كلماتها بمقياس 0.55).",
+          en: "Measured on the icon: icon alone 16 px high; versions with words 24 px; the stacked version 48 px (its words are at half size).",
+          ar: "يُقاس على الأيقونة: الأيقونة وحدها 16 بكسل ارتفاعًا؛ والنسخ مع الكلمات 24 بكسل؛ والنسخة المكدسة 48 بكسل (كلماتها بنصف الحجم).",
         }}
       >
         <div className="flex flex-wrap items-end gap-10">
-          {([["icon", 16], ["icon-en", 24], ["icon-ar", 24], ["stack", 44]] as const).map(([v, px]) => (
+          {([["icon", 16], ["icon-en", 24], ["icon-ar", 24], ["stack", 48]] as const).map(([v, px]) => (
             <div key={v} className="grid justify-items-start gap-2">
               <AtIconHeight version={v} px={px} />
               <Mono>

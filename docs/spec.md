@@ -92,7 +92,7 @@ Rules: black and white first. Green only for small status dots. `danger`/`warnin
 - Radius: `field` 12px, `card` 24px, `panel` 28px, `pill` 999px; a client theme can set all to 0–8px.
 - Border: 1px everywhere; focus ring 2px `fg`, offset 3px.
 - Elevation: flat. Overlays use `surface-2` + `line` + one shadow token (`overlay`).
-- Motion: durations `fast` 150ms, `base` 250ms, `slow` 450ms, `reveal` 900ms; easings `out` cubic-bezier(.2,.8,.2,1), `in-out` cubic-bezier(.6,0,.4,1), `wipe` cubic-bezier(.6,0,.2,1); `slash` = the % mark slash run per unit of height 0.7157.
+- Motion: durations `fast` 150ms, `base` 250ms, `slow` 450ms, `reveal` 900ms; easings `out` cubic-bezier(.2,.8,.2,1), `in-out` cubic-bezier(.6,0,.4,1), `wipe` cubic-bezier(.6,0,.2,1); `slash` = the % mark slash run per unit of height 0.6667 (2 across for 3 down; 0.7157 before 0.6.0).
 - Breakpoints: Tailwind defaults (640, 768, 1024, 1280, 1536).
 - Layers (z-index): base 0, sticky 20, header 40, overlay 50, toast 60, cursor 70.
 - Density: `comfortable` (marketing) and `compact` (apps) via `data-density="compact"` (smaller field and button heights).

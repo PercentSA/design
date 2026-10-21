@@ -30,7 +30,7 @@ export {
   type PhoneIssue,
 } from "./saudi/phone";
 export { Logo, MadeInKsa, Mark } from "./components/brand";
-export { MARK_H, MARK_PATH, MARK_W } from "./components/brand-mark";
+export { MARK_H, MARK_PATH, MARK_STROKE, MARK_W } from "./components/brand-mark";
 export { Blockquote, Code, Display, FormattedNumber, Heading, Highlight, Kbd, Label, Link, Prose, Text } from "./components/text";
 export { formatNumber } from "./lib/format-number";
 export { AspectRatio, Bleed, Container, Grid, Inline, ScrollArea, Section, Separator, Split, Stack, Surface } from "./components/layout";

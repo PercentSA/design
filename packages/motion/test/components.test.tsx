@@ -19,8 +19,8 @@ describe("maths", () => {
     }
   });
   test("slash wipe: the % slash run over the box height, as a share of the width", () => {
-    expect(slashRunPercent(4 / 3)).toBeCloseTo(53.68, 2);
-    expect(slashRunPercent(1)).toBeCloseTo(71.57, 2);
+    expect(slashRunPercent(4 / 3)).toBeCloseTo(50, 2);
+    expect(slashRunPercent(1)).toBeCloseTo(66.67, 2);
   });
 });
 

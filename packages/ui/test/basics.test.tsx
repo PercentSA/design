@@ -39,7 +39,7 @@ const ar = (node: React.ReactNode) => html(<PercentProvider lang="ar">{node}</Pe
 
 describe("brand", () => {
   test("Mark is the flat % path, decorative unless labelled", () => {
-    expect(html(<Mark />)).toContain('d="M0 0H70.8V70.8H0Z M159.2 150.4H230V221.2H159.2Z M160.3 0H228L70.3 221.2H2Z"');
+    expect(html(<Mark />)).toContain('d="M0 0H92V92H0Z M200 200H292V292H200Z M198.141 0H288.526L93.859 292H3.474Z"');
     expect(html(<Mark />)).toContain('aria-hidden="true"');
     expect(html(<Mark label="Percent" />)).toContain('aria-label="Percent"');
   });

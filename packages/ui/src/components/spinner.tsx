@@ -2,10 +2,11 @@
 
 import { cn } from "../lib/cn";
 import { useBrand, useStrings } from "../provider";
-import { MARK_H, MARK_W } from "./brand-mark";
+import { MARK_H, MARK_PATH, MARK_STROKE, MARK_W } from "./brand-mark";
 
 // The three parts of the % mark light up in reading order: square, slash, square.
-const PARTS = ["M0 0H70.8V70.8H0Z", "M160.3 0H228L70.3 221.2H2Z", "M159.2 150.4H230V221.2H159.2Z"];
+const [TL, BR, SLASH] = MARK_PATH.split(/ (?=M)/);
+const PARTS = [TL!, SLASH!, BR!];
 
 /**
  * Loading indicator drawn from the % mark. With a provider `brand`: the brand's `spinner`, else a plain ring.
@@ -24,9 +25,9 @@ export function Spinner({ className, label, decorative }: { className?: string; 
       <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" pathLength="100" strokeDasharray="25 100" />
     </svg>
   ) : (
-    <svg viewBox={`-4 -4 ${MARK_W + 8} ${MARK_H + 8}`} className={cn("p-spinner h-5 w-auto", className)} aria-hidden="true" focusable="false">
+    <svg viewBox={`${-MARK_STROKE / 2} ${-MARK_STROKE / 2} ${MARK_W + MARK_STROKE} ${MARK_H + MARK_STROKE}`} className={cn("p-spinner h-5 w-auto", className)} aria-hidden="true" focusable="false">
       {PARTS.map((d) => (
-        <path key={d} d={d} fill="currentColor" stroke="currentColor" strokeWidth={6.63} strokeLinejoin="round" />
+        <path key={d} d={d} fill="currentColor" stroke="currentColor" strokeWidth={MARK_STROKE} strokeLinejoin="round" />
       ))}
     </svg>
   );

@@ -55,7 +55,7 @@ describe("success wipe reads the CSS angle", () => {
     expect(await run("0")).toBe("200px");
   });
   test("unset: the JS SLASH_RUN", async () => {
-    expect(await run()).toBe(`${200 + 2 * 100 * SLASH_RUN}px`);
+    expect(parseFloat(await run())).toBeCloseTo(200 + 2 * 100 * SLASH_RUN, 2);
   });
 });
 
