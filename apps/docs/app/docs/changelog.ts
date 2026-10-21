@@ -15,7 +15,7 @@ const c = (kind: ChangeKind, text: string) => ({ kind, text });
 export const RELEASES: Release[] = [
   {
     version: "0.5.0",
-    date: null,
+    date: "2026-10-21",
     summary: "First public release: open source (MIT) and on npm, with no token needed to install. The new Percent logo: the % icon with the Arabic and English names, in seven versions, and a loader that moves between them. Includes the 0.4.1 changes.",
     changes: [
       c("new", "One logo component draws all seven versions: the icon, each name alone, the icon with one name, both names in a row, and both names stacked."),
