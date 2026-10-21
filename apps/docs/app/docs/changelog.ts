@@ -15,7 +15,7 @@ const c = (kind: ChangeKind, text: string) => ({ kind, text });
 export const RELEASES: Release[] = [
   {
     version: "0.6.0",
-    date: null,
+    date: "2026-10-22",
     summary: "The Percent logo on a grid: one square is 100 units, so every size is a round number. The logo keeps its shapes and motion; its sizes change.",
     changes: [
       c("better", "The icon is 3 by 3 squares, the English name is as high as the icon, and the Arabic name is as wide as the English, with a long س."),
