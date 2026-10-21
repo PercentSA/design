@@ -1,0 +1,388 @@
+/* @percentsa/ui styles. Import after tailwindcss and @percentsa/tokens/theme.css. */
+@source "./src";
+
+@layer base {
+  html {
+    background: var(--p-bg);
+    color: var(--p-fg);
+    font-family: var(--p-font-sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    scroll-behavior: smooth;
+  }
+  html[lang="ar"] {
+    line-height: 1.8;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+  }
+  /* Thin scroll bars in the theme colours (Firefox, Chrome 121+, Safari 18.2+). */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--p-line-strong) transparent;
+  }
+  ::selection {
+    background: var(--p-fg);
+    color: var(--p-bg);
+  }
+  :focus-visible {
+    outline: 2px solid var(--p-fg);
+    outline-offset: 3px;
+  }
+  [id] {
+    scroll-margin-top: 5rem;
+  }
+}
+
+@layer components {
+  /* Large headings. Arabic needs no negative tracking and a taller line. Do not add
+     Tailwind leading-* or tracking-* to .display: utilities win over these rules. */
+  .display {
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+  html[lang="ar"] .display {
+    font-weight: 700;
+    line-height: 1.28;
+    letter-spacing: 0;
+  }
+
+  .heading {
+    font-weight: 600;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  html[lang="ar"] .heading {
+    font-weight: 700;
+    line-height: 1.45;
+    letter-spacing: 0;
+  }
+
+  /* Small labels: mono uppercase in English, plain sans in Arabic. */
+  .label {
+    font: 500 12px/1 var(--p-font-mono);
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--p-fg-3);
+  }
+  html[lang="ar"] .label {
+    font-family: var(--p-font-sans);
+    font-size: 14px;
+    letter-spacing: 0;
+    text-transform: none;
+  }
+
+  /* Rich text from <Prose>. */
+  .p-prose {
+    color: var(--p-fg-2);
+    max-width: 68ch;
+  }
+  .p-prose > * + * {
+    margin-top: 1em;
+  }
+  .p-prose :is(h2, h3, h4) {
+    color: var(--p-fg);
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
+    margin-top: 2em;
+  }
+  html[lang="ar"] .p-prose :is(h2, h3, h4) {
+    font-weight: 700;
+    line-height: 1.5;
+    letter-spacing: 0;
+  }
+  .p-prose h2 {
+    font-size: 1.5rem;
+  }
+  .p-prose h3 {
+    font-size: 1.25rem;
+  }
+  .p-prose :is(strong, b) {
+    color: var(--p-fg);
+    font-weight: 600;
+  }
+  .p-prose a {
+    color: var(--p-fg);
+    text-decoration: underline;
+    text-decoration-color: var(--p-line-strong);
+    text-underline-offset: 4px;
+  }
+  .p-prose a:hover {
+    text-decoration-color: var(--p-fg);
+  }
+  .p-prose :is(ul, ol) {
+    padding-inline-start: 1.25em;
+  }
+  .p-prose ul {
+    list-style: disc;
+  }
+  .p-prose ol {
+    list-style: decimal;
+  }
+  .p-prose li + li {
+    margin-top: 0.4em;
+  }
+  .p-prose li::marker {
+    color: var(--p-fg-3);
+  }
+  .p-prose code {
+    font-family: var(--p-font-mono);
+    font-size: 0.875em;
+    background: var(--p-surface-2);
+    border-radius: 6px;
+    padding: 0.1em 0.35em;
+  }
+  .p-prose blockquote {
+    border-inline-start: 2px solid var(--p-line-strong);
+    padding-inline-start: 1.25em;
+    color: var(--p-fg);
+  }
+  .p-prose hr {
+    border: 0;
+    border-top: 1px solid var(--p-line);
+    margin-block: 2em;
+  }
+
+  /* <Spinner>: the parts of the % mark light up in turn. Opacity only, so it also runs
+     under reduced motion (it is not movement). */
+  .p-spinner path {
+    opacity: 0.2;
+    animation: p-spinner 1.2s var(--p-ease-in-out) infinite;
+  }
+  .p-spinner path:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+  .p-spinner path:nth-child(3) {
+    animation-delay: 0.4s;
+  }
+  @keyframes p-spinner {
+    0%,
+    60%,
+    100% {
+      opacity: 0.2;
+    }
+    25% {
+      opacity: 1;
+    }
+  }
+
+  /* <Spinner> of a brand without its own spinner: a ring that turns; with reduced motion it pulses like the % spinner. */
+  .p-spinner-ring {
+    animation: p-spinner-turn var(--p-duration-reveal) var(--p-ease-in-out) infinite;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .p-spinner-ring {
+      animation: p-spinner 1.2s var(--p-ease-in-out) infinite;
+    }
+  }
+  @keyframes p-spinner-turn {
+    to {
+      rotate: 360deg;
+    }
+  }
+
+  /* Overlays: short enter and exit. Radix waits for the exit animation before it removes the element. */
+  .p-overlay[data-state="open"] {
+    animation: p-fade-in var(--p-duration-base) var(--p-ease-out);
+  }
+  .p-overlay[data-state="closed"] {
+    animation: p-fade-out var(--p-duration-fast) var(--p-ease-out);
+  }
+  .p-pop[data-state="open"] {
+    animation: p-pop-in var(--p-duration-base) var(--p-ease-out);
+  }
+  .p-pop[data-state="closed"] {
+    animation: p-pop-out var(--p-duration-fast) var(--p-ease-out);
+  }
+  .p-float {
+    transform-origin: var(--radix-popper-transform-origin, center);
+  }
+  .p-float:is([data-state="open"], [data-state="delayed-open"], [data-state="instant-open"]) {
+    animation: p-pop-in var(--p-duration-fast) var(--p-ease-out);
+  }
+  .p-float[data-state="closed"] {
+    animation: p-fade-out var(--p-duration-fast) var(--p-ease-out);
+  }
+  /* Sheets enter from their side; "end" is right in LTR and left in RTL. */
+  .p-sheet {
+    --p-sheet-from: 100% 0;
+  }
+  .p-sheet[data-side="start"],
+  [dir="rtl"] .p-sheet[data-side="end"] {
+    --p-sheet-from: -100% 0;
+  }
+  [dir="rtl"] .p-sheet[data-side="start"] {
+    --p-sheet-from: 100% 0;
+  }
+  .p-sheet[data-side="bottom"] {
+    --p-sheet-from: 0 100%;
+  }
+  .p-sheet[data-state="open"] {
+    animation: p-sheet-in var(--p-duration-slow) var(--p-ease-out);
+  }
+  .p-sheet[data-state="closed"] {
+    animation: p-sheet-out var(--p-duration-base) var(--p-ease-in-out);
+  }
+  /* Drag to close (touch): the sheet follows the finger (inline translate), then springs back on release. */
+  .p-sheet {
+    transition: translate var(--p-duration-base) var(--p-ease-out);
+  }
+  .p-sheet[data-dragging] {
+    transition: none;
+  }
+  .p-toast[data-state="open"] {
+    animation: p-sheet-in var(--p-duration-base) var(--p-ease-out);
+    --p-sheet-from: 0 100%;
+  }
+  .p-toast[data-state="closed"] {
+    animation: p-fade-out var(--p-duration-fast) var(--p-ease-out);
+  }
+  .p-toast[data-swipe="move"] {
+    translate: var(--radix-toast-swipe-move-x) 0;
+  }
+  .p-toast[data-swipe="cancel"] {
+    translate: 0 0;
+    transition: translate var(--p-duration-fast) var(--p-ease-out);
+  }
+  .p-toast[data-swipe="end"] {
+    animation: p-fade-out var(--p-duration-fast) var(--p-ease-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    :is(.p-pop, .p-float, .p-sheet, .p-toast):is([data-state="open"], [data-state="delayed-open"], [data-state="instant-open"]) {
+      animation-name: p-fade-in;
+    }
+    :is(.p-pop, .p-sheet):is([data-state="closed"]) {
+      animation-name: p-fade-out;
+    }
+    .p-sheet {
+      transition: none;
+    }
+  }
+  @keyframes p-fade-in {
+    from {
+      opacity: 0;
+    }
+  }
+  @keyframes p-fade-out {
+    to {
+      opacity: 0;
+    }
+  }
+  @keyframes p-pop-in {
+    from {
+      opacity: 0;
+      scale: 0.97;
+    }
+  }
+  @keyframes p-pop-out {
+    to {
+      opacity: 0;
+      scale: 0.97;
+    }
+  }
+  @keyframes p-sheet-in {
+    from {
+      translate: var(--p-sheet-from);
+    }
+  }
+  @keyframes p-sheet-out {
+    to {
+      translate: var(--p-sheet-from);
+    }
+  }
+
+  /* <Accordion>: panels stay in the page; a closed one is hidden="until-found". The panel's one grid
+     row goes from 0 to its content height, so nothing is measured (Radix measures only new panels);
+     minmax(0, …): the content's padding does not hold the row open. A closing panel is already
+     hidden: its keyframes keep it painted. */
+  .p-accordion {
+    display: grid;
+  }
+  /* display: grid beats the browser's [hidden] rule. */
+  .p-accordion[hidden]:not([hidden="until-found"]) {
+    display: none;
+  }
+  .p-accordion[data-state="open"] {
+    animation: p-accordion-down var(--p-duration-base) var(--p-ease-out);
+  }
+  .p-accordion[data-state="closed"] {
+    animation: p-accordion-up var(--p-duration-fast) var(--p-ease-out);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .p-accordion[data-state] {
+      animation: none;
+    }
+  }
+  @keyframes p-accordion-down {
+    from {
+      grid-template-rows: minmax(0, 0fr);
+    }
+    to {
+      grid-template-rows: minmax(0, 1fr);
+    }
+  }
+  @keyframes p-accordion-up {
+    from {
+      grid-template-rows: minmax(0, 1fr);
+      content-visibility: visible;
+    }
+    to {
+      grid-template-rows: minmax(0, 0fr);
+      content-visibility: visible;
+    }
+  }
+
+  /* <MobileMenu>: the dialog fades; links and the footer rise one after another. */
+  .p-menu {
+    opacity: 0;
+    transition:
+      opacity var(--p-duration-base),
+      display var(--p-duration-base) allow-discrete,
+      overlay var(--p-duration-base) allow-discrete;
+  }
+  .p-menu[open] {
+    opacity: 1;
+  }
+  @starting-style {
+    .p-menu[open] {
+      opacity: 0;
+    }
+  }
+  .p-menu[open] :is(nav > *, .p-menu-foot) {
+    animation: p-rise 0.6s 0.1s var(--p-ease-out) both;
+  }
+  .p-menu[open] nav > :nth-child(2) {
+    animation-delay: 0.16s;
+  }
+  .p-menu[open] nav > :nth-child(3) {
+    animation-delay: 0.22s;
+  }
+  .p-menu[open] nav > :nth-child(4) {
+    animation-delay: 0.28s;
+  }
+  .p-menu[open] nav > :nth-child(n + 5) {
+    animation-delay: 0.34s;
+  }
+  .p-menu[open] .p-menu-foot {
+    animation-delay: 0.36s;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .p-menu[open] :is(nav > *, .p-menu-foot) {
+      animation-name: p-fade-in;
+    }
+  }
+  @keyframes p-rise {
+    from {
+      opacity: 0;
+      translate: 0 1.25rem;
+    }
+  }
+  /* The page behind a modal menu does not scroll. */
+  html:has(dialog[open]) {
+    overflow: hidden;
+  }
+}

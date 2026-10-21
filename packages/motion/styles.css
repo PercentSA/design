@@ -1,0 +1,519 @@
+/* @percentsa/motion styles. Import after @percentsa/tokens/theme.css. Hidden start states apply
+   only under html.js (set by a head script before first paint), so pages without JavaScript show
+   everything. Reduced motion: no scramble, no marquee movement, no magnet; reveals become fades. */
+@source "./src";
+
+/* In the components layer, so Tailwind utilities on the same elements win. */
+@layer components {
+  /* <ScrambleText>: the overlay covers the real text, which keeps its box and stays in the
+     accessibility tree (opacity, not visibility). */
+  .p-sx {
+    position: relative;
+    /* An inline-block does not get its parent link's underline; take it over. */
+    text-decoration: inherit;
+  }
+  .p-sx-f {
+    position: absolute;
+    inset: 0;
+    white-space: inherit;
+    pointer-events: none;
+  }
+  .p-sx[data-busy] > .p-sx-r {
+    opacity: 0;
+  }
+  /* Noise can be wider than the real word; inline text must not wrap to a second line. */
+  .p-sx[data-sx="inline"] > .p-sx-f {
+    white-space: nowrap;
+  }
+
+  /* <Reveal>: rise once into view; "stagger" makes the children rise one after another. */
+  [data-reveal="rise"],
+  [data-reveal="stagger"] > * {
+    transition:
+      opacity 0.6s,
+      translate 0.6s var(--p-ease-out);
+  }
+  [data-reveal="stagger"] > :nth-child(2) {
+    transition-delay: 0.08s;
+  }
+  [data-reveal="stagger"] > :nth-child(3) {
+    transition-delay: 0.16s;
+  }
+  [data-reveal="stagger"] > :nth-child(4) {
+    transition-delay: 0.24s;
+  }
+  [data-reveal="stagger"] > :nth-child(n + 5) {
+    transition-delay: 0.32s;
+  }
+  .js [data-reveal="rise"]:not([data-shown]),
+  .js [data-reveal="stagger"]:not([data-shown]) > * {
+    opacity: 0;
+    translate: 0 16px;
+  }
+
+  /* <SlashReveal>: the edge has the angle of the % slash and never mirrors; it moves in the reading
+     direction. --p-run = the slash's horizontal run over the box height, in % of the width
+     (--p-aspect = width / height, set inline by SlashReveal). */
+  .p-slash {
+    --p-run: calc(var(--p-slash-run) / var(--p-aspect) * 100%);
+    height: 100%;
+    overflow: hidden;
+    border-radius: inherit;
+    clip-path: polygon(0 0, calc(100% + var(--p-run)) 0, 100% 100%, 0 100%);
+    transition: clip-path var(--p-duration-reveal) var(--p-ease-wipe);
+  }
+  .p-slash:dir(rtl) {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, calc(0% - var(--p-run)) 100%);
+  }
+  .p-slash > * {
+    width: 100%;
+    height: 100%;
+  }
+  .p-slash > :is(img, video, canvas) {
+    display: block;
+    object-fit: cover;
+  }
+  .js [data-reveal="slash"]:not([data-shown]) > .p-slash {
+    clip-path: polygon(0 0, 0 0, calc(0% - var(--p-run)) 100%, 0 100%);
+  }
+  .js [data-reveal="slash"]:not([data-shown]) > .p-slash:dir(rtl) {
+    clip-path: polygon(calc(100% + var(--p-run)) 0, 100% 0, 100% 100%, 100% 100%);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal="rise"],
+    [data-reveal="stagger"] > * {
+      transition: opacity 0.4s;
+    }
+    .js [data-reveal="rise"]:not([data-shown]),
+    .js [data-reveal="stagger"]:not([data-shown]) > * {
+      translate: none;
+    }
+    .p-slash,
+    .p-slash:dir(rtl),
+    .js [data-reveal="slash"]:not([data-shown]) > .p-slash,
+    .js [data-reveal="slash"]:not([data-shown]) > .p-slash:dir(rtl) {
+      clip-path: none;
+      transition: opacity 0.4s;
+    }
+    .js [data-reveal="slash"]:not([data-shown]) > .p-slash {
+      opacity: 0;
+    }
+  }
+
+  /* Printing shows everything, also what the reader never scrolled to. */
+  @media print {
+    .js [data-reveal="rise"]:not([data-shown]),
+    .js [data-reveal="stagger"]:not([data-shown]) > * {
+      opacity: 1;
+      translate: none;
+    }
+    .js [data-reveal="slash"]:not([data-shown]) > .p-slash,
+    .js [data-reveal="slash"]:not([data-shown]) > .p-slash:dir(rtl) {
+      clip-path: none;
+      opacity: 1;
+    }
+  }
+
+  /* <RevealText>: each word rises out of its own mask after --p-rt-delay (its line and its place in
+     the line, set after layout). The mask reaches past the word box, so accents and descenders are
+     not cut; the hidden word waits below the mask's reach. */
+  .p-rt-w {
+    display: inline-block;
+    clip-path: inset(-0.5em -0.3em -0.25em);
+  }
+  .p-rt-w > span {
+    display: inline-block;
+    transition: translate var(--p-duration-reveal) var(--p-ease-out) var(--p-rt-delay, 0ms);
+  }
+  .js [data-reveal="text"]:not([data-shown]) .p-rt-w > span {
+    translate: 0 calc(100% + 0.5em);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    [data-reveal="text"] {
+      transition: opacity var(--p-duration-slow);
+    }
+    .js [data-reveal="text"]:not([data-shown]) {
+      opacity: 0;
+    }
+    .js [data-reveal="text"]:not([data-shown]) .p-rt-w > span {
+      translate: none;
+    }
+  }
+  @media print {
+    .js [data-reveal="text"]:not([data-shown]) {
+      opacity: 1;
+    }
+    .js [data-reveal="text"]:not([data-shown]) .p-rt-w > span {
+      translate: none;
+    }
+  }
+
+  /* <NumberRoll>: each digit column clips a 0–9 stack that moves to its digit (--p-digit). A column
+     added after the first render rolls in from 0. Off screen ([data-still]): no roll. Copying the
+     number copies the screen-reader text, not the stacks. */
+  .p-roll-v {
+    user-select: none;
+  }
+  .p-roll-d {
+    position: relative;
+    display: inline-block;
+    clip-path: inset(0 -0.1em);
+  }
+  .p-roll-d > :first-child {
+    visibility: hidden;
+  }
+  .p-roll-s {
+    position: absolute;
+    top: 0;
+    inset-inline: 0;
+    white-space: pre;
+    text-align: center;
+    translate: 0 calc(var(--p-digit) * -10%);
+    transition: translate var(--p-duration-slow) var(--p-ease-out);
+  }
+  .p-roll-s[data-enter] {
+    animation: p-roll-in var(--p-duration-slow) var(--p-ease-out);
+  }
+  .p-roll[data-still] .p-roll-s {
+    transition: none;
+    animation: none;
+  }
+  @keyframes p-roll-in {
+    from {
+      translate: 0 0;
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .p-roll-s {
+      transition: none;
+      animation: none;
+    }
+  }
+
+  /* <Counter>: hidden until it starts counting, so the server's final number never jumps back to the start. */
+  @media (prefers-reduced-motion: no-preference) {
+    .js [data-counter]:not([data-run]) > [aria-hidden] {
+      visibility: hidden;
+    }
+  }
+
+  /* <Marquee> */
+  .p-marquee-box {
+    position: relative;
+  }
+  .p-marquee {
+    display: flex;
+    overflow: hidden;
+    mask-image: linear-gradient(to right, transparent, #000 8%, #000 92%, transparent);
+  }
+  .p-marquee-list {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    gap: 4rem;
+    padding-inline-end: 4rem;
+    animation: p-marquee var(--p-marquee-s, 45s) linear infinite;
+  }
+  [dir="rtl"] .p-marquee-list {
+    animation-name: p-marquee-rtl;
+  }
+  /* Pause on hover, on keyboard focus inside the row, with the pause button (WCAG 2.2.2), and off screen. */
+  .p-marquee:hover .p-marquee-list,
+  .p-marquee:focus-within .p-marquee-list,
+  .p-marquee[data-offscreen] .p-marquee-list,
+  [data-paused] .p-marquee-list {
+    animation-play-state: paused;
+  }
+  .p-marquee-pp {
+    position: absolute;
+    inset-inline-end: 0.75rem;
+    top: 50%;
+    translate: 0 -50%;
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid var(--p-line-strong);
+    border-radius: 999px;
+    background: var(--p-bg);
+    color: var(--p-fg-2);
+    transition: color var(--p-duration-fast);
+  }
+  .p-marquee-pp:hover {
+    color: var(--p-fg);
+  }
+  .p-marquee-pp svg {
+    width: 10px;
+    height: 10px;
+    fill: currentColor;
+  }
+  @keyframes p-marquee {
+    to {
+      transform: translateX(-100%);
+    }
+  }
+  @keyframes p-marquee-rtl {
+    to {
+      transform: translateX(100%);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .p-marquee {
+      overflow-x: auto;
+      mask-image: none;
+    }
+    .p-marquee-pp {
+      display: none;
+    }
+    .p-marquee-list {
+      animation: none;
+    }
+    .p-marquee-list[aria-hidden] {
+      display: none;
+    }
+  }
+
+  /* <Magnetic> springs back after the pointer leaves. */
+  .p-magnetic {
+    display: inline-flex;
+    transition: transform 0.3s var(--p-ease-out);
+  }
+
+  /* <ViewCursor> */
+  .p-view-cursor {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: var(--p-z-cursor);
+    pointer-events: none;
+  }
+  .p-view-cursor > span {
+    position: absolute;
+    top: -40px;
+    left: -40px;
+    display: grid;
+    place-items: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: var(--p-primary);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--p-primary-fg);
+    transform: scale(0);
+    transition: transform 0.2s var(--p-ease-out);
+  }
+  .p-view-cursor[data-on] > span {
+    transform: scale(1);
+  }
+  html[data-cursor-view] [data-cursor="view"] {
+    cursor: none;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .p-view-cursor > span {
+      transition: none;
+    }
+  }
+
+  /* useSuccessWipe(): the band that sweeps across the box. */
+  .p-wipe {
+    position: absolute;
+    inset-block: 0;
+    z-index: 2;
+    display: none;
+    background: var(--p-primary);
+    pointer-events: none;
+  }
+  [data-wiping] {
+    overflow: hidden;
+  }
+  [data-wiping] > .p-wipe {
+    display: block;
+  }
+
+  /* <ScenePlayer>: 24 px touch targets around 8 px dots; the active dot grows and fills. */
+  .p-scene {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 5px;
+    border: 1px solid var(--p-line-strong);
+    border-radius: var(--p-radius-pill);
+    background: color-mix(in srgb, var(--p-surface) 88%, transparent);
+  }
+  .p-scene-pp {
+    display: grid;
+    place-items: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: var(--p-primary);
+  }
+  .p-scene-pp svg {
+    width: 11px;
+    height: 11px;
+    fill: var(--p-primary-fg);
+  }
+  .p-scene-dots {
+    display: flex;
+    align-items: center;
+    padding-inline: 2px;
+  }
+  .p-scene-dot {
+    display: grid;
+    place-items: center;
+    height: 24px;
+    padding-inline: 8px;
+  }
+  .p-scene-dot > span {
+    position: relative;
+    width: 8px;
+    height: 8px;
+    overflow: hidden;
+    border-radius: var(--p-radius-pill);
+    background: var(--p-fg-3);
+    transition: width var(--p-duration-slow) var(--p-ease-out);
+  }
+  .p-scene-dot[data-on] > span {
+    width: 44px;
+  }
+  .p-scene-dot i {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    background: var(--p-primary);
+  }
+}
+
+/* Page transitions (View Transitions API). Opt in on <html>: data-page-transition="fade" (a short
+   cross-fade) or "slash" (the new page wipes in over the old one behind an edge at the slash angle,
+   in the reading direction). Navigate with React Router's viewTransition. Without the attribute
+   nothing changes; browsers without the API navigate as usual. Reduced motion: no animation. */
+@layer components {
+  @media (prefers-reduced-motion: no-preference) {
+    html[data-page-transition="fade"]::view-transition-group(root),
+    html[data-page-transition="fade"]::view-transition-old(root),
+    html[data-page-transition="fade"]::view-transition-new(root) {
+      animation-duration: var(--p-duration-fast);
+      animation-timing-function: var(--p-ease-out);
+    }
+    html[data-page-transition="slash"]::view-transition-old(root) {
+      animation: none;
+    }
+    /* --p-run: the slash's horizontal run over the height of the page. */
+    html[data-page-transition="slash"]::view-transition-new(root) {
+      --p-run: calc(var(--p-slash-run) * 100vh);
+      animation: p-page-slash var(--p-duration-slow) var(--p-ease-wipe) both;
+    }
+    html[data-page-transition="slash"][dir="rtl"]::view-transition-new(root) {
+      animation-name: p-page-slash-rtl;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html[data-page-transition]::view-transition-group(*),
+    html[data-page-transition]::view-transition-old(*),
+    html[data-page-transition]::view-transition-new(*) {
+      animation: none;
+    }
+  }
+  @keyframes p-page-slash {
+    from {
+      clip-path: polygon(0 0, 0 0, calc(0px - var(--p-run)) 100%, 0 100%);
+    }
+    to {
+      clip-path: polygon(0 0, calc(100% + var(--p-run)) 0, 100% 100%, 0 100%);
+    }
+  }
+  @keyframes p-page-slash-rtl {
+    from {
+      clip-path: polygon(calc(100% + var(--p-run)) 0, 100% 0, 100% 100%, 100% 100%);
+    }
+    to {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, calc(0px - var(--p-run)) 100%);
+    }
+  }
+}
+
+/* .p-slash-hover: for outline (secondary) and ghost buttons and links, not primary buttons (their
+   fill is already fg). On hover and keyboard focus a fill in fg wipes in behind an edge at the slash
+   angle (never mirrored), in the reading direction, and wipes back out; the text turns bg. The fill
+   is a gradient with a hard edge through its middle, at least three boxes wide: its fg half waits
+   before the start side and slides over the box. No hover state on touch (hover: hover).
+   The gradient needs lh and atan() (Chrome 111, Safari 16.4, Firefox 120): without them it would
+   hide the label or show a half fill at rest, so there the plain fill fades in, as with reduced motion.
+   Outside the layers: the Button variants set their hover colours and transition-colors as
+   utilities, which win over the components layer. */
+.p-slash-hover {
+  transition:
+    background-position var(--p-duration-base) var(--p-ease-wipe),
+    background-color var(--p-duration-base),
+    color var(--p-duration-base) var(--p-ease-wipe),
+    border-color var(--p-duration-base),
+    text-decoration-color var(--p-duration-base);
+}
+.p-slash-hover:focus-visible {
+  color: var(--p-bg);
+  border-color: var(--p-fg);
+  text-decoration-color: currentColor;
+}
+@media (hover: hover) {
+  .p-slash-hover:hover {
+    color: var(--p-bg);
+    border-color: var(--p-fg);
+    text-decoration-color: currentColor;
+  }
+}
+@supports (width: 1lh) and (rotate: atan(1)) {
+  .p-slash-hover {
+    background-image: linear-gradient(calc(90deg + atan(var(--p-slash-run))), var(--p-fg) 50%, transparent 50%);
+    /* The extra width (one box, at least a line) keeps the slanted edge off the box at rest. */
+    background-size: calc(200% + max(100%, 1lh)) 100%;
+    background-repeat: no-repeat;
+    background-origin: border-box;
+    background-position: 100% 0;
+  }
+  .p-slash-hover:dir(rtl) {
+    background-image: linear-gradient(calc(270deg + atan(var(--p-slash-run))), var(--p-fg) 50%, transparent 50%);
+    background-position: 0 0;
+  }
+  .p-slash-hover:focus-visible {
+    background-position: 0 0;
+  }
+  .p-slash-hover:dir(rtl):focus-visible {
+    background-position: 100% 0;
+  }
+  @media (hover: hover) {
+    .p-slash-hover:hover {
+      background-position: 0 0;
+    }
+    .p-slash-hover:dir(rtl):hover {
+      background-position: 100% 0;
+    }
+  }
+}
+@supports not ((width: 1lh) and (rotate: atan(1))) {
+  .p-slash-hover:focus-visible {
+    background-color: var(--p-fg);
+  }
+  @media (hover: hover) {
+    .p-slash-hover:hover {
+      background-color: var(--p-fg);
+    }
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .p-slash-hover,
+  .p-slash-hover:dir(rtl) {
+    background-image: none;
+  }
+  .p-slash-hover:focus-visible {
+    background-color: var(--p-fg);
+  }
+}
+@media (prefers-reduced-motion: reduce) and (hover: hover) {
+  .p-slash-hover:hover {
+    background-color: var(--p-fg);
+  }
+}

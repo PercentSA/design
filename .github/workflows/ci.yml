@@ -1,0 +1,26 @@
+# Checks every pull request and every push to main: types, build, tests.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      # test/publish.test.ts loads each package in Node.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      # Build first: the docs server test and the publish test need the built packages.
+      - run: bun run build
+      - run: bun test

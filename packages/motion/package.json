@@ -1,0 +1,50 @@
+{
+  "name": "@percentsa/motion",
+  "version": "0.1.0",
+  "description": "Percent signature motion for React: scramble, slash reveal, marquee, magnet, cursor.",
+  "license": "MIT",
+  "author": "Percent (https://percent.sa)",
+  "homepage": "https://design.percent.sa",
+  "bugs": "https://github.com/PercentSA/design/issues",
+  "keywords": [
+    "react",
+    "animation",
+    "motion",
+    "rtl",
+    "arabic",
+    "design-system"
+  ],
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PercentSA/design.git",
+    "directory": "packages/motion"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist",
+    "src",
+    "styles.css"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./styles.css": "./styles.css"
+  },
+  "scripts": {
+    "build": "rm -rf dist && bun build src/index.ts --outdir dist --format esm --packages external --tsconfig-override tsconfig.build.json && tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "peerDependencies": {
+    "@percentsa/tokens": "workspace:^",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  }
+}

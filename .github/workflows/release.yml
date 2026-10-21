@@ -1,0 +1,44 @@
+# Publishes @percentsa/tokens, @percentsa/ui and @percentsa/motion to npm.
+# Release: git tag v0.5.1 && git push origin v0.5.1  (the tag sets the version of all three).
+# Login: npm trusted publishing (each package names this repo and release.yml on npmjs.com); no token.
+# npm adds provenance. A version that is already on npm is skipped (0.5.0 was published by hand).
+name: Release
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: oven-sh/setup-bun@v2
+      # test/publish.test.ts loads each package in Node; trusted publishing needs npm 11.5.1 or later.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - run: npm install -g npm@latest
+      - run: bun install --frozen-lockfile
+      - run: bun run typecheck
+      - name: Version from the tag
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          for p in tokens ui motion; do (cd "packages/$p" && bun pm pkg set version="$version"); done
+      # bun pm pack takes the workspace:^ range of @percentsa/tokens from bun.lock: update it to this version.
+      - run: bun install
+      - run: bun run build
+      - run: bun test
+      - name: Publish
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          mkdir -p packs
+          for p in tokens ui motion; do
+            if npm view "@percentsa/$p@$version" version > /dev/null 2>&1; then echo "@percentsa/$p@$version is on npm already"; continue; fi
+            (cd "packages/$p" && bun pm pack --destination ../../packs)
+            npm publish "./packs/percentsa-$p-$version.tgz" --access public
+          done

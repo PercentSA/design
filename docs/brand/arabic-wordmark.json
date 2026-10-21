@@ -1,0 +1,6 @@
+{
+ "note": "Arabic wordmark approved 2026-10-17, changed 2026-10-20: the ر is as long as the English c (raH, the English x-height, centred on the line) and the ب dot's bottom sits on the ر's bottom (its gap below the line is no longer dotGap). Units: logo 228 high (Mark path 221.2 + round-join stroke 6.63). Geometry: docs/brand/portal-loader.html (W, slashCut).",
+ "stroke": 28.5, "left": 332, "ba": 180, "gap": 11.5, "dot": 1.15, "dotGap": 0.95, "tooth": 0.55,
+ "nPos": 0.41, "tPos": 0.72, "cut": "slash", "slant": "vertical", "baTooth": "off",
+ "raH": 140, "baDot": "bottom on the ر bottom"
+}

@@ -1,0 +1,4 @@
+[test]
+# A browser DOM for every test file. It must exist before Radix is first imported:
+# Radix chooses its layout-effect hook at import time.
+preload = ["./test-setup.ts"]

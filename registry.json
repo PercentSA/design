@@ -1,0 +1,3552 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry.json",
+  "name": "percentsa",
+  "homepage": "https://github.com/PercentSA/design",
+  "items": [
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "@percentsa/ui: Accordion",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/accordion.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/accordion.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Accordion"
+        ]
+      }
+    },
+    {
+      "name": "actions",
+      "type": "registry:ui",
+      "title": "Button, ButtonGroup, Toggle, SegmentedControl",
+      "description": "@percentsa/ui: buttonClass, Button, ButtonGroup, Toggle, SegmentedControl, ToggleGroup, CopyButton, BackToTop",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider",
+        "@percentsa/sliding-indicator",
+        "@percentsa/spinner"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/actions.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/actions.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "buttonClass",
+          "Button",
+          "ButtonGroup",
+          "Toggle",
+          "SegmentedControl",
+          "ToggleGroup",
+          "CopyButton",
+          "BackToTop"
+        ]
+      }
+    },
+    {
+      "name": "app-shell",
+      "type": "registry:ui",
+      "title": "AppShell",
+      "description": "@percentsa/ui: AppShell",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/navigation",
+        "@percentsa/overlays",
+        "@percentsa/provider",
+        "@percentsa/sidebar",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/app-shell.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/app-shell.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "AppShell"
+        ]
+      }
+    },
+    {
+      "name": "flag-sa",
+      "type": "registry:lib",
+      "title": "FLAG_SA",
+      "description": "@percentsa/ui: FLAG_SA",
+      "files": [
+        {
+          "path": "packages/ui/src/components/assets/flag-sa.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/assets/flag-sa.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FLAG_SA"
+        ]
+      }
+    },
+    {
+      "name": "auth-layout",
+      "type": "registry:ui",
+      "title": "AuthLayout",
+      "description": "@percentsa/ui: AuthLayout",
+      "registryDependencies": [
+        "@percentsa/brand",
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/auth-layout.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/auth-layout.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "AuthLayout"
+        ]
+      }
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar, AvatarGroup",
+      "description": "@percentsa/ui: initials, Avatar, AvatarGroup",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/avatar.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/avatar.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "initials",
+          "Avatar",
+          "AvatarGroup"
+        ]
+      }
+    },
+    {
+      "name": "brand",
+      "type": "registry:ui",
+      "title": "MARK_PATH, MARK_W, MARK_H, Mark",
+      "description": "@percentsa/ui: MARK_PATH, MARK_W, MARK_H, Mark, Logo, MadeInKsa",
+      "dependencies": [
+        "@percentsa/tokens"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/flag-sa",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/brand.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/brand.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "MARK_PATH",
+          "MARK_W",
+          "MARK_H",
+          "Mark",
+          "Logo",
+          "MadeInKsa"
+        ]
+      }
+    },
+    {
+      "name": "calendar-view",
+      "type": "registry:ui",
+      "title": "CalendarView",
+      "description": "@percentsa/ui: CalendarView",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/overlays",
+        "@percentsa/provider",
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/calendar-view.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/calendar-view.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "CalendarView"
+        ]
+      }
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar, DatePicker",
+      "description": "@percentsa/ui: Calendar, DatePicker",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/calendar.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/calendar.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Calendar",
+          "DatePicker"
+        ]
+      }
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "STRETCHED_LINK, ABOVE_STRETCHED_LINK, Card",
+      "description": "@percentsa/ui: STRETCHED_LINK, ABOVE_STRETCHED_LINK, Card",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/layout",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/card.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/card.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "STRETCHED_LINK",
+          "ABOVE_STRETCHED_LINK",
+          "Card"
+        ]
+      }
+    },
+    {
+      "name": "bar-chart",
+      "type": "registry:ui",
+      "title": "BarChart",
+      "description": "@percentsa/ui: BarChart",
+      "registryDependencies": [
+        "@percentsa/cartesian",
+        "@percentsa/chart-frame",
+        "@percentsa/legend",
+        "@percentsa/scale"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/charts/bar-chart.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/charts/bar-chart.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "BarChart"
+        ]
+      }
+    },
+    {
+      "name": "cartesian",
+      "type": "registry:ui",
+      "title": "Axes",
+      "description": "@percentsa/ui: cartesian, Axes",
+      "registryDependencies": [
+        "@percentsa/scale"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/charts/cartesian.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/charts/cartesian.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "cartesian",
+          "Axes"
+        ]
+      }
+    },
+    {
+      "name": "chart-frame",
+      "type": "registry:ui",
+      "title": "ChartFrame",
+      "description": "@percentsa/ui: useChart, useChartWidth, ChartFrame",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/legend",
+        "@percentsa/provider",
+        "@percentsa/scale",
+        "@percentsa/text",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/charts/chart-frame.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/charts/chart-frame.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "useChart",
+          "useChartWidth",
+          "ChartFrame"
+        ]
+      }
+    },
+    {
+      "name": "donut-chart",
+      "type": "registry:ui",
+      "title": "DonutChart",
+      "description": "@percentsa/ui: DonutChart",
+      "registryDependencies": [
+        "@percentsa/chart-frame",
+        "@percentsa/legend",
+        "@percentsa/provider",
+        "@percentsa/scale",
+        "@percentsa/text"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/charts/donut-chart.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/charts/donut-chart.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "DonutChart"
+        ]
+      }
+    },
+    {
+      "name": "legend",
+      "type": "registry:ui",
+      "title": "Marker, Swatch, ChartLegend",
+      "description": "@percentsa/ui: lookOf, Marker, useFill, Swatch, ChartLegend",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/charts/legend.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/charts/legend.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "lookOf",
+          "Marker",
+          "useFill",
+          "Swatch",
+          "ChartLegend"
+        ]
+      }
+    },
+    {
+      "name": "line-chart",
+      "type": "registry:ui",
+      "title": "LineChart, AreaChart",
+      "description": "@percentsa/ui: LineChart, AreaChart",
+      "registryDependencies": [
+        "@percentsa/cartesian",
+        "@percentsa/chart-frame",
+        "@percentsa/legend",
+        "@percentsa/scale"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/charts/line-chart.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/charts/line-chart.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LineChart",
+          "AreaChart"
+        ]
+      }
+    },
+    {
+      "name": "scale",
+      "type": "registry:lib",
+      "title": "niceTicks, linearScale, bandScale, extent",
+      "description": "@percentsa/ui: niceTicks, linearScale, bandScale, extent, runs, nearest, linePath, areaPath, stack, donutAngles",
+      "files": [
+        {
+          "path": "packages/ui/src/components/charts/scale.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/charts/scale.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "niceTicks",
+          "linearScale",
+          "bandScale",
+          "extent",
+          "runs",
+          "nearest",
+          "linePath",
+          "areaPath",
+          "stack",
+          "donutAngles"
+        ]
+      }
+    },
+    {
+      "name": "sparkline",
+      "type": "registry:ui",
+      "title": "Sparkline",
+      "description": "@percentsa/ui: Sparkline",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider",
+        "@percentsa/scale"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/charts/sparkline.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/charts/sparkline.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Sparkline"
+        ]
+      }
+    },
+    {
+      "name": "choices",
+      "type": "registry:ui",
+      "title": "Checkbox, Switch, RadioGroup, ChipGroup",
+      "description": "@percentsa/ui: Checkbox, Switch, RadioGroup, ChipGroup, ChoiceCardGroup",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/choices.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/choices.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Checkbox",
+          "Switch",
+          "RadioGroup",
+          "ChipGroup",
+          "ChoiceCardGroup"
+        ]
+      }
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "CodeBlock",
+      "description": "@percentsa/ui: CodeBlock",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/code-block.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/code-block.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "CodeBlock"
+        ]
+      }
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "@percentsa/ui: Combobox",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-normalize"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/combobox.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/combobox.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Combobox"
+        ]
+      }
+    },
+    {
+      "name": "command-palette",
+      "type": "registry:ui",
+      "title": "CommandPalette",
+      "description": "@percentsa/ui: useCommandShortcut, CommandPalette",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-normalize",
+        "@percentsa/text",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/command-palette.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/command-palette.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "useCommandShortcut",
+          "CommandPalette"
+        ]
+      }
+    },
+    {
+      "name": "consent",
+      "type": "registry:ui",
+      "title": "ConsentBanner",
+      "description": "@percentsa/ui: readConsent, ConsentBanner",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/consent.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/consent.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "readConsent",
+          "ConsentBanner"
+        ]
+      }
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "DataTable",
+      "description": "@percentsa/ui: DataTable",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/choices",
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/navigation",
+        "@percentsa/provider",
+        "@percentsa/table",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/data-table.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/data-table.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "DataTable"
+        ]
+      }
+    },
+    {
+      "name": "feedback",
+      "type": "registry:ui",
+      "title": "Alert, Badge, Tag, StatusDot",
+      "description": "@percentsa/ui: Alert, Badge, Tag, StatusDot, Progress, ProgressRing, Skeleton, EmptyState",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/brand",
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/feedback.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/feedback.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Alert",
+          "Badge",
+          "Tag",
+          "StatusDot",
+          "Progress",
+          "ProgressRing",
+          "Skeleton",
+          "EmptyState"
+        ]
+      }
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field, Fieldset, Honeypot",
+      "description": "@percentsa/ui: fieldContext, useFieldControl, useFieldLabelId, Field, Fieldset, Honeypot",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/field.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/field.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "fieldContext",
+          "useFieldControl",
+          "useFieldLabelId",
+          "Field",
+          "Fieldset",
+          "Honeypot"
+        ]
+      }
+    },
+    {
+      "name": "file-drop",
+      "type": "registry:ui",
+      "title": "FileDrop",
+      "description": "@percentsa/ui: acceptsFile, formatFileSize, FileDrop",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/file-drop.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/file-drop.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "acceptsFile",
+          "formatFileSize",
+          "FileDrop"
+        ]
+      }
+    },
+    {
+      "name": "filter-bar",
+      "type": "registry:ui",
+      "title": "FilterBar",
+      "description": "@percentsa/ui: FilterBar",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/flip",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/special-inputs"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/filter-bar.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/filter-bar.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FilterBar"
+        ]
+      }
+    },
+    {
+      "name": "inputs",
+      "type": "registry:ui",
+      "title": "FIELD_BOX, TEXT_BOX, Input, Textarea",
+      "description": "@percentsa/ui: FIELD_BOX, TEXT_BOX, Input, Textarea, MENU_ITEM, Select, Slider",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/inputs.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/inputs.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FIELD_BOX",
+          "TEXT_BOX",
+          "Input",
+          "Textarea",
+          "MENU_ITEM",
+          "Select",
+          "Slider"
+        ]
+      }
+    },
+    {
+      "name": "invoice",
+      "type": "registry:ui",
+      "title": "Invoice",
+      "description": "@percentsa/ui: Invoice",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/localized",
+        "@percentsa/provider",
+        "@percentsa/qr-code",
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date",
+        "@percentsa/saudi-invoice",
+        "@percentsa/saudi-money",
+        "@percentsa/strings",
+        "@percentsa/text"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/invoice.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/invoice.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Invoice"
+        ]
+      }
+    },
+    {
+      "name": "json-viewer",
+      "type": "registry:ui",
+      "title": "JsonViewer",
+      "description": "@percentsa/ui: JsonViewer",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/json-viewer.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/json-viewer.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "JsonViewer"
+        ]
+      }
+    },
+    {
+      "name": "kanban",
+      "type": "registry:ui",
+      "title": "Kanban",
+      "description": "@percentsa/ui: dropIndex, Kanban",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/flip",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/kanban.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/kanban.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "dropIndex",
+          "Kanban"
+        ]
+      }
+    },
+    {
+      "name": "layout",
+      "type": "registry:ui",
+      "title": "Container, Section, Stack, Inline",
+      "description": "@percentsa/ui: Container, Section, Stack, Inline, Grid, Split, AspectRatio, Separator, ScrollArea, Surface, Bleed",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/layout.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/layout.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Container",
+          "Section",
+          "Stack",
+          "Inline",
+          "Grid",
+          "Split",
+          "AspectRatio",
+          "Separator",
+          "ScrollArea",
+          "Surface",
+          "Bleed"
+        ]
+      }
+    },
+    {
+      "name": "list",
+      "type": "registry:ui",
+      "title": "List, ListItem, DescriptionList",
+      "description": "@percentsa/ui: List, ListItem, DescriptionList",
+      "registryDependencies": [
+        "@percentsa/card",
+        "@percentsa/cn",
+        "@percentsa/flip",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/list.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/list.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "List",
+          "ListItem",
+          "DescriptionList"
+        ]
+      }
+    },
+    {
+      "name": "menus",
+      "type": "registry:ui",
+      "title": "DropdownMenu, ContextMenu",
+      "description": "@percentsa/ui: DropdownMenu, ContextMenu",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/inputs",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/menus.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/menus.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "DropdownMenu",
+          "ContextMenu"
+        ]
+      }
+    },
+    {
+      "name": "national-address",
+      "type": "registry:ui",
+      "title": "NationalAddress",
+      "description": "@percentsa/ui: NationalAddress",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-digits",
+        "@percentsa/saudi-normalize",
+        "@percentsa/special-inputs"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/national-address.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/national-address.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "NationalAddress"
+        ]
+      }
+    },
+    {
+      "name": "navigation",
+      "type": "registry:ui",
+      "title": "SkipLink, Tabs, Breadcrumbs, Pagination",
+      "description": "@percentsa/ui: SkipLink, Tabs, Breadcrumbs, paginationRange, Pagination, Steps",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider",
+        "@percentsa/sliding-indicator"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/navigation.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/navigation.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "SkipLink",
+          "Tabs",
+          "Breadcrumbs",
+          "paginationRange",
+          "Pagination",
+          "Steps"
+        ]
+      }
+    },
+    {
+      "name": "overlays",
+      "type": "registry:ui",
+      "title": "Dialog, DialogClose, AlertDialog, Sheet",
+      "description": "@percentsa/ui: Dialog, DialogClose, AlertDialog, Sheet, Popover, HoverCard, Tooltip",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/overlays.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/overlays.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Dialog",
+          "DialogClose",
+          "AlertDialog",
+          "Sheet",
+          "Popover",
+          "HoverCard",
+          "Tooltip"
+        ]
+      }
+    },
+    {
+      "name": "qr-code",
+      "type": "registry:ui",
+      "title": "QrCode, ZatcaQr",
+      "description": "@percentsa/ui: QrCode, ZatcaQr",
+      "dependencies": [
+        "uqr"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/saudi-invoice"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/qr-code.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/qr-code.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "QrCode",
+          "ZatcaQr"
+        ]
+      }
+    },
+    {
+      "name": "settings",
+      "type": "registry:ui",
+      "title": "SettingsSection, SettingsRow",
+      "description": "@percentsa/ui: SettingsSection, SettingsRow",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/field"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/settings.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/settings.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "SettingsSection",
+          "SettingsRow"
+        ]
+      }
+    },
+    {
+      "name": "sidebar",
+      "type": "registry:ui",
+      "title": "SidebarInSheet, Sidebar",
+      "description": "@percentsa/ui: SidebarInSheet, Sidebar",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/overlays",
+        "@percentsa/provider",
+        "@percentsa/sliding-indicator"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/sidebar.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/sidebar.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "SidebarInSheet",
+          "Sidebar"
+        ]
+      }
+    },
+    {
+      "name": "site",
+      "type": "registry:ui",
+      "title": "LangSwitch, MobileMenu, SiteHeader, SiteFooter",
+      "description": "@percentsa/ui: LangSwitch, MobileMenu, SiteHeader, SiteFooter",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/brand",
+        "@percentsa/cn",
+        "@percentsa/navigation",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/site.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/site.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LangSwitch",
+          "MobileMenu",
+          "SiteHeader",
+          "SiteFooter"
+        ]
+      }
+    },
+    {
+      "name": "special-inputs",
+      "type": "registry:ui",
+      "title": "PasswordInput, SearchInput, NumberInput, MoneyInput",
+      "description": "@percentsa/ui: reformat, PasswordInput, SearchInput, NumberInput, MoneyInput, IbanInput, NationalIdInput, CrInput, VatInput, OtpInput, PhoneInput, DigitsInput",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-digits",
+        "@percentsa/saudi-errors",
+        "@percentsa/saudi-money",
+        "@percentsa/saudi-normalize",
+        "@percentsa/saudi-phone",
+        "@percentsa/saudi-validators"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/special-inputs.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/special-inputs.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "reformat",
+          "PasswordInput",
+          "SearchInput",
+          "NumberInput",
+          "MoneyInput",
+          "IbanInput",
+          "NationalIdInput",
+          "CrInput",
+          "VatInput",
+          "OtpInput",
+          "PhoneInput",
+          "DigitsInput"
+        ]
+      }
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "@percentsa/ui: Spinner",
+      "registryDependencies": [
+        "@percentsa/brand",
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/spinner.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/spinner.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Spinner"
+        ]
+      }
+    },
+    {
+      "name": "stat",
+      "type": "registry:ui",
+      "title": "Stat",
+      "description": "@percentsa/ui: Stat",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/layout",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/stat.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/stat.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Stat"
+        ]
+      }
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table, TableHeader, TableBody, TableRow",
+      "description": "@percentsa/ui: Table, TableHeader, TableBody, TableRow, TableHead, TableCell",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/table.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/table.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Table",
+          "TableHeader",
+          "TableBody",
+          "TableRow",
+          "TableHead",
+          "TableCell"
+        ]
+      }
+    },
+    {
+      "name": "text",
+      "type": "registry:ui",
+      "title": "Display, Heading, Text, Label",
+      "description": "@percentsa/ui: Display, Heading, Text, Label, Link, Code, Kbd, Blockquote, Prose, Highlight, formatNumber, FormattedNumber",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/localized",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/text.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/text.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Display",
+          "Heading",
+          "Text",
+          "Label",
+          "Link",
+          "Code",
+          "Kbd",
+          "Blockquote",
+          "Prose",
+          "Highlight",
+          "formatNumber",
+          "FormattedNumber"
+        ]
+      }
+    },
+    {
+      "name": "theme",
+      "type": "registry:ui",
+      "title": "THEME_SCRIPT, ThemeSwitch",
+      "description": "@percentsa/ui: THEME_SCRIPT, useTheme, ThemeSwitch",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/theme.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/theme.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "THEME_SCRIPT",
+          "useTheme",
+          "ThemeSwitch"
+        ]
+      }
+    },
+    {
+      "name": "ticket-view",
+      "type": "registry:ui",
+      "title": "TicketView",
+      "description": "@percentsa/ui: TicketView",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/avatar",
+        "@percentsa/cn",
+        "@percentsa/file-drop",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/ticket-view.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/ticket-view.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TicketView"
+        ]
+      }
+    },
+    {
+      "name": "timeline",
+      "type": "registry:ui",
+      "title": "Timeline",
+      "description": "@percentsa/ui: Timeline",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/timeline.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/timeline.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Timeline"
+        ]
+      }
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toaster",
+      "description": "@percentsa/ui: toast, dismissToast, Toaster",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/toast.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/toast.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "toast",
+          "dismissToast",
+          "Toaster"
+        ]
+      }
+    },
+    {
+      "name": "tree",
+      "type": "registry:ui",
+      "title": "Tree",
+      "description": "@percentsa/ui: Tree",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/tree.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/tree.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Tree"
+        ]
+      }
+    },
+    {
+      "name": "utility",
+      "type": "registry:ui",
+      "title": "VisuallyHidden, LiveRegion",
+      "description": "@percentsa/ui: VisuallyHidden, LiveRegion, useMediaQuery, useReducedMotion",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/utility.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/utility.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "VisuallyHidden",
+          "LiveRegion",
+          "useMediaQuery",
+          "useReducedMotion"
+        ]
+      }
+    },
+    {
+      "name": "localized",
+      "type": "registry:lib",
+      "title": "LANGS",
+      "description": "@percentsa/ui: LANGS, localize, dirOf, isolate",
+      "files": [
+        {
+          "path": "packages/ui/src/i18n/localized.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/i18n/localized.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LANGS",
+          "localize",
+          "dirOf",
+          "isolate"
+        ]
+      }
+    },
+    {
+      "name": "strings",
+      "type": "registry:lib",
+      "title": "STRINGS",
+      "description": "@percentsa/ui: STRINGS",
+      "registryDependencies": [
+        "@percentsa/localized"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/i18n/strings.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/i18n/strings.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "STRINGS"
+        ]
+      }
+    },
+    {
+      "name": "cn",
+      "type": "registry:lib",
+      "title": "cn",
+      "description": "@percentsa/ui: cn",
+      "dependencies": [
+        "clsx",
+        "tailwind-merge"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/lib/cn.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/lib/cn.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "cn"
+        ]
+      }
+    },
+    {
+      "name": "flip",
+      "type": "registry:lib",
+      "title": "useFlip",
+      "description": "@percentsa/ui: useFlip",
+      "files": [
+        {
+          "path": "packages/ui/src/lib/flip.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/lib/flip.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "useFlip"
+        ]
+      }
+    },
+    {
+      "name": "sliding-indicator",
+      "type": "registry:lib",
+      "title": "useSlidingIndicator",
+      "description": "@percentsa/ui: useSlidingIndicator",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/lib/sliding-indicator.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/lib/sliding-indicator.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "useSlidingIndicator"
+        ]
+      }
+    },
+    {
+      "name": "provider",
+      "type": "registry:ui",
+      "title": "PercentProvider",
+      "description": "@percentsa/ui: PercentProvider, useLang, useDir, useStrings, useLinkComponent, useText, useBrand",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/localized",
+        "@percentsa/strings"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/provider.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/provider.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PercentProvider",
+          "useLang",
+          "useDir",
+          "useStrings",
+          "useLinkComponent",
+          "useText",
+          "useBrand"
+        ]
+      }
+    },
+    {
+      "name": "saudi-calendar",
+      "type": "registry:lib",
+      "title": "fromPlain, addDays, todayPlain, partsOf",
+      "description": "@percentsa/ui: fromPlain, addDays, todayPlain, partsOf, monthOf, shiftView, monthDays, monthGrid, addMonths, moveFocus, viewLabel, weekdayNames",
+      "registryDependencies": [
+        "@percentsa/localized",
+        "@percentsa/saudi-date"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/calendar.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/calendar.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "fromPlain",
+          "addDays",
+          "todayPlain",
+          "partsOf",
+          "monthOf",
+          "shiftView",
+          "monthDays",
+          "monthGrid",
+          "addMonths",
+          "moveFocus",
+          "viewLabel",
+          "weekdayNames"
+        ]
+      }
+    },
+    {
+      "name": "saudi-date",
+      "type": "registry:lib",
+      "title": "formatDate, hijriParts",
+      "description": "@percentsa/ui: formatDate, hijriParts",
+      "registryDependencies": [
+        "@percentsa/localized"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/date.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/date.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "formatDate",
+          "hijriParts"
+        ]
+      }
+    },
+    {
+      "name": "saudi-digits",
+      "type": "registry:lib",
+      "title": "toWesternDigits",
+      "description": "@percentsa/ui: toWesternDigits",
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/digits.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/digits.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "toWesternDigits"
+        ]
+      }
+    },
+    {
+      "name": "saudi-errors",
+      "type": "registry:lib",
+      "title": "saudiError, phoneIssueMessage",
+      "description": "@percentsa/ui: saudiError, phoneIssueMessage",
+      "registryDependencies": [
+        "@percentsa/localized",
+        "@percentsa/saudi-phone",
+        "@percentsa/saudi-validators",
+        "@percentsa/strings"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/errors.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/errors.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "saudiError",
+          "phoneIssueMessage"
+        ]
+      }
+    },
+    {
+      "name": "saudi-invoice",
+      "type": "registry:lib",
+      "title": "invoiceTotals, zatcaTlv",
+      "description": "@percentsa/ui: invoiceTotals, zatcaTlv",
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/invoice.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/invoice.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "invoiceTotals",
+          "zatcaTlv"
+        ]
+      }
+    },
+    {
+      "name": "saudi-money",
+      "type": "registry:ui",
+      "title": "RIYAL_VIEWBOX, RIYAL_W, RIYAL_H, RIYAL_PATHS",
+      "description": "@percentsa/ui: RIYAL_VIEWBOX, RIYAL_W, RIYAL_H, RIYAL_PATHS, RiyalSign, formatMoney, Money",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/money.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/saudi/money.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "RIYAL_VIEWBOX",
+          "RIYAL_W",
+          "RIYAL_H",
+          "RIYAL_PATHS",
+          "RiyalSign",
+          "formatMoney",
+          "Money"
+        ]
+      }
+    },
+    {
+      "name": "saudi-normalize",
+      "type": "registry:lib",
+      "title": "normalizeDigits, normalizeAmount, normalizeSignedAmount, stepNumber",
+      "description": "@percentsa/ui: normalizeDigits, normalizeAmount, normalizeSignedAmount, stepNumber, parseAmount, normalizeIban, searchKey",
+      "registryDependencies": [
+        "@percentsa/saudi-digits"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/normalize.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/normalize.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "normalizeDigits",
+          "normalizeAmount",
+          "normalizeSignedAmount",
+          "stepNumber",
+          "parseAmount",
+          "normalizeIban",
+          "searchKey"
+        ]
+      }
+    },
+    {
+      "name": "saudi-phone",
+      "type": "registry:lib",
+      "title": "GCC_PHONE_COUNTRIES",
+      "description": "@percentsa/ui: GCC_PHONE_COUNTRIES, getPhoneCountry, getPhoneIssue, normalizePhone",
+      "registryDependencies": [
+        "@percentsa/localized",
+        "@percentsa/saudi-digits"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/phone.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/phone.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "GCC_PHONE_COUNTRIES",
+          "getPhoneCountry",
+          "getPhoneIssue",
+          "normalizePhone"
+        ]
+      }
+    },
+    {
+      "name": "saudi-validators",
+      "type": "registry:lib",
+      "title": "isSaudiIban, formatIban, getSaudiIdType, isNationalId",
+      "description": "@percentsa/ui: isSaudiIban, formatIban, getSaudiIdType, isNationalId, isCrNumber, isVatNumber, isShortAddress, isBuildingNumber, isAdditionalNumber, isPostalCode",
+      "registryDependencies": [
+        "@percentsa/saudi-digits"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/validators.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/validators.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "isSaudiIban",
+          "formatIban",
+          "getSaudiIdType",
+          "isNationalId",
+          "isCrNumber",
+          "isVatNumber",
+          "isShortAddress",
+          "isBuildingNumber",
+          "isAdditionalNumber",
+          "isPostalCode"
+        ]
+      }
+    },
+    {
+      "name": "motion-counter",
+      "type": "registry:ui",
+      "title": "Counter",
+      "description": "@percentsa/motion: counterValue, Counter",
+      "files": [
+        {
+          "path": "packages/motion/src/counter.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/counter.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "counterValue",
+          "Counter"
+        ]
+      }
+    },
+    {
+      "name": "motion-logo-loader",
+      "type": "registry:ui",
+      "title": "LogoLoader",
+      "description": "@percentsa/motion: LogoLoader",
+      "dependencies": [
+        "@percentsa/tokens"
+      ],
+      "files": [
+        {
+          "path": "packages/motion/src/logo-loader.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/logo-loader.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LogoLoader"
+        ]
+      }
+    },
+    {
+      "name": "motion-magnet",
+      "type": "registry:ui",
+      "title": "Magnetic",
+      "description": "@percentsa/motion: magnetOffset, useMagnetic, Magnetic",
+      "files": [
+        {
+          "path": "packages/motion/src/magnet.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/magnet.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "magnetOffset",
+          "useMagnetic",
+          "Magnetic"
+        ]
+      }
+    },
+    {
+      "name": "motion-marquee",
+      "type": "registry:ui",
+      "title": "Marquee",
+      "description": "@percentsa/motion: Marquee",
+      "registryDependencies": [
+        "@percentsa/motion-scroll-boost"
+      ],
+      "files": [
+        {
+          "path": "packages/motion/src/marquee.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/marquee.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Marquee"
+        ]
+      }
+    },
+    {
+      "name": "motion-number-roll",
+      "type": "registry:ui",
+      "title": "NumberRoll",
+      "description": "@percentsa/motion: NumberRoll",
+      "files": [
+        {
+          "path": "packages/motion/src/number-roll.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/number-roll.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "NumberRoll"
+        ]
+      }
+    },
+    {
+      "name": "motion-play-once",
+      "type": "registry:lib",
+      "title": "usePlayOnce",
+      "description": "@percentsa/motion: usePlayOnce",
+      "files": [
+        {
+          "path": "packages/motion/src/play-once.ts",
+          "type": "registry:lib",
+          "target": "components/percent/motion/play-once.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "usePlayOnce"
+        ]
+      }
+    },
+    {
+      "name": "motion-reveal-text",
+      "type": "registry:ui",
+      "title": "RevealText",
+      "description": "@percentsa/motion: RevealText",
+      "registryDependencies": [
+        "@percentsa/motion-reveal"
+      ],
+      "files": [
+        {
+          "path": "packages/motion/src/reveal-text.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/reveal-text.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "RevealText"
+        ]
+      }
+    },
+    {
+      "name": "motion-reveal",
+      "type": "registry:ui",
+      "title": "Reveal, SlashReveal",
+      "description": "@percentsa/motion: useReveal, Reveal, slashRunPercent, SlashReveal",
+      "registryDependencies": [
+        "@percentsa/motion-slash"
+      ],
+      "files": [
+        {
+          "path": "packages/motion/src/reveal.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/reveal.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "useReveal",
+          "Reveal",
+          "slashRunPercent",
+          "SlashReveal"
+        ]
+      }
+    },
+    {
+      "name": "motion-scene-player",
+      "type": "registry:ui",
+      "title": "ScenePlayer",
+      "description": "@percentsa/motion: ScenePlayer",
+      "files": [
+        {
+          "path": "packages/motion/src/scene-player.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/scene-player.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ScenePlayer"
+        ]
+      }
+    },
+    {
+      "name": "motion-scramble-provider",
+      "type": "registry:ui",
+      "title": "ScrambleProvider, ScrambleText",
+      "description": "@percentsa/motion: ScrambleProvider, useScramble, useScrambleSwitch, ScrambleText",
+      "registryDependencies": [
+        "@percentsa/motion-switch-controller"
+      ],
+      "files": [
+        {
+          "path": "packages/motion/src/scramble-provider.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/scramble-provider.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ScrambleProvider",
+          "useScramble",
+          "useScrambleSwitch",
+          "ScrambleText"
+        ]
+      }
+    },
+    {
+      "name": "motion-scramble",
+      "type": "registry:lib",
+      "title": "LATIN_NOISE, ARABIC_NOISE, SWITCH",
+      "description": "@percentsa/motion: LATIN_NOISE, ARABIC_NOISE, noiseSetFor, SWITCH, resolveDuration, scrambleFrame",
+      "files": [
+        {
+          "path": "packages/motion/src/scramble.ts",
+          "type": "registry:lib",
+          "target": "components/percent/motion/scramble.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LATIN_NOISE",
+          "ARABIC_NOISE",
+          "noiseSetFor",
+          "SWITCH",
+          "resolveDuration",
+          "scrambleFrame"
+        ]
+      }
+    },
+    {
+      "name": "motion-scroll-boost",
+      "type": "registry:lib",
+      "title": "boostTarget, easeRate, loopHeadroom, useScrollBoost",
+      "description": "@percentsa/motion: boostTarget, easeRate, loopHeadroom, useScrollBoost",
+      "files": [
+        {
+          "path": "packages/motion/src/scroll-boost.ts",
+          "type": "registry:lib",
+          "target": "components/percent/motion/scroll-boost.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "boostTarget",
+          "easeRate",
+          "loopHeadroom",
+          "useScrollBoost"
+        ]
+      }
+    },
+    {
+      "name": "motion-slash",
+      "type": "registry:lib",
+      "title": "SLASH_RUN",
+      "description": "@percentsa/motion: SLASH_RUN",
+      "files": [
+        {
+          "path": "packages/motion/src/slash.ts",
+          "type": "registry:lib",
+          "target": "components/percent/motion/slash.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "SLASH_RUN"
+        ]
+      }
+    },
+    {
+      "name": "motion-success-wipe",
+      "type": "registry:lib",
+      "title": "useSuccessWipe",
+      "description": "@percentsa/motion: useSuccessWipe",
+      "registryDependencies": [
+        "@percentsa/motion-slash"
+      ],
+      "files": [
+        {
+          "path": "packages/motion/src/success-wipe.ts",
+          "type": "registry:lib",
+          "target": "components/percent/motion/success-wipe.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "useSuccessWipe"
+        ]
+      }
+    },
+    {
+      "name": "motion-switch-controller",
+      "type": "registry:lib",
+      "title": "createSwitchController",
+      "description": "@percentsa/motion: createSwitchController",
+      "registryDependencies": [
+        "@percentsa/motion-scramble"
+      ],
+      "files": [
+        {
+          "path": "packages/motion/src/switch-controller.ts",
+          "type": "registry:lib",
+          "target": "components/percent/motion/switch-controller.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "createSwitchController"
+        ]
+      }
+    },
+    {
+      "name": "motion-view-cursor",
+      "type": "registry:ui",
+      "title": "ViewCursor",
+      "description": "@percentsa/motion: ViewCursor",
+      "files": [
+        {
+          "path": "packages/motion/src/view-cursor.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/motion/view-cursor.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ViewCursor"
+        ]
+      }
+    },
+    {
+      "name": "styles",
+      "type": "registry:file",
+      "title": "@percentsa/ui styles",
+      "description": "Component CSS of @percentsa/ui. Import it after @percentsa/tokens/theme.css.",
+      "files": [
+        {
+          "path": "packages/ui/styles.css",
+          "type": "registry:file",
+          "target": "components/percent/ui/styles.css"
+        }
+      ]
+    },
+    {
+      "name": "motion-styles",
+      "type": "registry:file",
+      "title": "@percentsa/motion styles",
+      "description": "Component CSS of @percentsa/motion. Import it after @percentsa/tokens/theme.css.",
+      "files": [
+        {
+          "path": "packages/motion/styles.css",
+          "type": "registry:file",
+          "target": "components/percent/motion/styles.css"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Button: adds @percentsa/actions.",
+      "registryDependencies": [
+        "@percentsa/actions"
+      ],
+      "files": []
+    },
+    {
+      "name": "button-group",
+      "type": "registry:ui",
+      "title": "ButtonGroup",
+      "description": "ButtonGroup: adds @percentsa/actions.",
+      "registryDependencies": [
+        "@percentsa/actions"
+      ],
+      "files": []
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "Toggle: adds @percentsa/actions.",
+      "registryDependencies": [
+        "@percentsa/actions"
+      ],
+      "files": []
+    },
+    {
+      "name": "segmented-control",
+      "type": "registry:ui",
+      "title": "SegmentedControl",
+      "description": "SegmentedControl: adds @percentsa/actions.",
+      "registryDependencies": [
+        "@percentsa/actions"
+      ],
+      "files": []
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "ToggleGroup",
+      "description": "ToggleGroup: adds @percentsa/actions.",
+      "registryDependencies": [
+        "@percentsa/actions"
+      ],
+      "files": []
+    },
+    {
+      "name": "copy-button",
+      "type": "registry:ui",
+      "title": "CopyButton",
+      "description": "CopyButton: adds @percentsa/actions.",
+      "registryDependencies": [
+        "@percentsa/actions"
+      ],
+      "files": []
+    },
+    {
+      "name": "back-to-top",
+      "type": "registry:ui",
+      "title": "BackToTop",
+      "description": "BackToTop: adds @percentsa/actions.",
+      "registryDependencies": [
+        "@percentsa/actions"
+      ],
+      "files": []
+    },
+    {
+      "name": "flag_sa",
+      "type": "registry:ui",
+      "title": "FLAG_SA",
+      "description": "FLAG_SA: adds @percentsa/flag-sa.",
+      "registryDependencies": [
+        "@percentsa/flag-sa"
+      ],
+      "files": []
+    },
+    {
+      "name": "avatar-group",
+      "type": "registry:ui",
+      "title": "AvatarGroup",
+      "description": "AvatarGroup: adds @percentsa/avatar.",
+      "registryDependencies": [
+        "@percentsa/avatar"
+      ],
+      "files": []
+    },
+    {
+      "name": "mark_path",
+      "type": "registry:ui",
+      "title": "MARK_PATH",
+      "description": "MARK_PATH: adds @percentsa/brand.",
+      "registryDependencies": [
+        "@percentsa/brand"
+      ],
+      "files": []
+    },
+    {
+      "name": "mark_w",
+      "type": "registry:ui",
+      "title": "MARK_W",
+      "description": "MARK_W: adds @percentsa/brand.",
+      "registryDependencies": [
+        "@percentsa/brand"
+      ],
+      "files": []
+    },
+    {
+      "name": "mark_h",
+      "type": "registry:ui",
+      "title": "MARK_H",
+      "description": "MARK_H: adds @percentsa/brand.",
+      "registryDependencies": [
+        "@percentsa/brand"
+      ],
+      "files": []
+    },
+    {
+      "name": "mark",
+      "type": "registry:ui",
+      "title": "Mark",
+      "description": "Mark: adds @percentsa/brand.",
+      "registryDependencies": [
+        "@percentsa/brand"
+      ],
+      "files": []
+    },
+    {
+      "name": "logo",
+      "type": "registry:ui",
+      "title": "Logo",
+      "description": "Logo: adds @percentsa/brand.",
+      "registryDependencies": [
+        "@percentsa/brand"
+      ],
+      "files": []
+    },
+    {
+      "name": "made-in-ksa",
+      "type": "registry:ui",
+      "title": "MadeInKsa",
+      "description": "MadeInKsa: adds @percentsa/brand.",
+      "registryDependencies": [
+        "@percentsa/brand"
+      ],
+      "files": []
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "DatePicker",
+      "description": "DatePicker: adds @percentsa/calendar.",
+      "registryDependencies": [
+        "@percentsa/calendar"
+      ],
+      "files": []
+    },
+    {
+      "name": "stretched_link",
+      "type": "registry:ui",
+      "title": "STRETCHED_LINK",
+      "description": "STRETCHED_LINK: adds @percentsa/card.",
+      "registryDependencies": [
+        "@percentsa/card"
+      ],
+      "files": []
+    },
+    {
+      "name": "above_stretched_link",
+      "type": "registry:ui",
+      "title": "ABOVE_STRETCHED_LINK",
+      "description": "ABOVE_STRETCHED_LINK: adds @percentsa/card.",
+      "registryDependencies": [
+        "@percentsa/card"
+      ],
+      "files": []
+    },
+    {
+      "name": "axes",
+      "type": "registry:ui",
+      "title": "Axes",
+      "description": "Axes: adds @percentsa/cartesian.",
+      "registryDependencies": [
+        "@percentsa/cartesian"
+      ],
+      "files": []
+    },
+    {
+      "name": "marker",
+      "type": "registry:ui",
+      "title": "Marker",
+      "description": "Marker: adds @percentsa/legend.",
+      "registryDependencies": [
+        "@percentsa/legend"
+      ],
+      "files": []
+    },
+    {
+      "name": "swatch",
+      "type": "registry:ui",
+      "title": "Swatch",
+      "description": "Swatch: adds @percentsa/legend.",
+      "registryDependencies": [
+        "@percentsa/legend"
+      ],
+      "files": []
+    },
+    {
+      "name": "chart-legend",
+      "type": "registry:ui",
+      "title": "ChartLegend",
+      "description": "ChartLegend: adds @percentsa/legend.",
+      "registryDependencies": [
+        "@percentsa/legend"
+      ],
+      "files": []
+    },
+    {
+      "name": "area-chart",
+      "type": "registry:ui",
+      "title": "AreaChart",
+      "description": "AreaChart: adds @percentsa/line-chart.",
+      "registryDependencies": [
+        "@percentsa/line-chart"
+      ],
+      "files": []
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "Checkbox: adds @percentsa/choices.",
+      "registryDependencies": [
+        "@percentsa/choices"
+      ],
+      "files": []
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "Switch: adds @percentsa/choices.",
+      "registryDependencies": [
+        "@percentsa/choices"
+      ],
+      "files": []
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "RadioGroup",
+      "description": "RadioGroup: adds @percentsa/choices.",
+      "registryDependencies": [
+        "@percentsa/choices"
+      ],
+      "files": []
+    },
+    {
+      "name": "chip-group",
+      "type": "registry:ui",
+      "title": "ChipGroup",
+      "description": "ChipGroup: adds @percentsa/choices.",
+      "registryDependencies": [
+        "@percentsa/choices"
+      ],
+      "files": []
+    },
+    {
+      "name": "choice-card-group",
+      "type": "registry:ui",
+      "title": "ChoiceCardGroup",
+      "description": "ChoiceCardGroup: adds @percentsa/choices.",
+      "registryDependencies": [
+        "@percentsa/choices"
+      ],
+      "files": []
+    },
+    {
+      "name": "consent-banner",
+      "type": "registry:ui",
+      "title": "ConsentBanner",
+      "description": "ConsentBanner: adds @percentsa/consent.",
+      "registryDependencies": [
+        "@percentsa/consent"
+      ],
+      "files": []
+    },
+    {
+      "name": "alert",
+      "type": "registry:ui",
+      "title": "Alert",
+      "description": "Alert: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "Badge: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "tag",
+      "type": "registry:ui",
+      "title": "Tag",
+      "description": "Tag: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "status-dot",
+      "type": "registry:ui",
+      "title": "StatusDot",
+      "description": "StatusDot: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "Progress: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "progress-ring",
+      "type": "registry:ui",
+      "title": "ProgressRing",
+      "description": "ProgressRing: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "skeleton",
+      "type": "registry:ui",
+      "title": "Skeleton",
+      "description": "Skeleton: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "empty-state",
+      "type": "registry:ui",
+      "title": "EmptyState",
+      "description": "EmptyState: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "fieldset",
+      "type": "registry:ui",
+      "title": "Fieldset",
+      "description": "Fieldset: adds @percentsa/field.",
+      "registryDependencies": [
+        "@percentsa/field"
+      ],
+      "files": []
+    },
+    {
+      "name": "honeypot",
+      "type": "registry:ui",
+      "title": "Honeypot",
+      "description": "Honeypot: adds @percentsa/field.",
+      "registryDependencies": [
+        "@percentsa/field"
+      ],
+      "files": []
+    },
+    {
+      "name": "field_box",
+      "type": "registry:ui",
+      "title": "FIELD_BOX",
+      "description": "FIELD_BOX: adds @percentsa/inputs.",
+      "registryDependencies": [
+        "@percentsa/inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "text_box",
+      "type": "registry:ui",
+      "title": "TEXT_BOX",
+      "description": "TEXT_BOX: adds @percentsa/inputs.",
+      "registryDependencies": [
+        "@percentsa/inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Input: adds @percentsa/inputs.",
+      "registryDependencies": [
+        "@percentsa/inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "textarea",
+      "type": "registry:ui",
+      "title": "Textarea",
+      "description": "Textarea: adds @percentsa/inputs.",
+      "registryDependencies": [
+        "@percentsa/inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "menu_item",
+      "type": "registry:ui",
+      "title": "MENU_ITEM",
+      "description": "MENU_ITEM: adds @percentsa/inputs.",
+      "registryDependencies": [
+        "@percentsa/inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Select: adds @percentsa/inputs.",
+      "registryDependencies": [
+        "@percentsa/inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "Slider: adds @percentsa/inputs.",
+      "registryDependencies": [
+        "@percentsa/inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "container",
+      "type": "registry:ui",
+      "title": "Container",
+      "description": "Container: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "section",
+      "type": "registry:ui",
+      "title": "Section",
+      "description": "Section: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "stack",
+      "type": "registry:ui",
+      "title": "Stack",
+      "description": "Stack: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "inline",
+      "type": "registry:ui",
+      "title": "Inline",
+      "description": "Inline: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "grid",
+      "type": "registry:ui",
+      "title": "Grid",
+      "description": "Grid: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "split",
+      "type": "registry:ui",
+      "title": "Split",
+      "description": "Split: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "aspect-ratio",
+      "type": "registry:ui",
+      "title": "AspectRatio",
+      "description": "AspectRatio: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "separator",
+      "type": "registry:ui",
+      "title": "Separator",
+      "description": "Separator: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "scroll-area",
+      "type": "registry:ui",
+      "title": "ScrollArea",
+      "description": "ScrollArea: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "surface",
+      "type": "registry:ui",
+      "title": "Surface",
+      "description": "Surface: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "bleed",
+      "type": "registry:ui",
+      "title": "Bleed",
+      "description": "Bleed: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "list-item",
+      "type": "registry:ui",
+      "title": "ListItem",
+      "description": "ListItem: adds @percentsa/list.",
+      "registryDependencies": [
+        "@percentsa/list"
+      ],
+      "files": []
+    },
+    {
+      "name": "description-list",
+      "type": "registry:ui",
+      "title": "DescriptionList",
+      "description": "DescriptionList: adds @percentsa/list.",
+      "registryDependencies": [
+        "@percentsa/list"
+      ],
+      "files": []
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "DropdownMenu",
+      "description": "DropdownMenu: adds @percentsa/menus.",
+      "registryDependencies": [
+        "@percentsa/menus"
+      ],
+      "files": []
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "ContextMenu",
+      "description": "ContextMenu: adds @percentsa/menus.",
+      "registryDependencies": [
+        "@percentsa/menus"
+      ],
+      "files": []
+    },
+    {
+      "name": "skip-link",
+      "type": "registry:ui",
+      "title": "SkipLink",
+      "description": "SkipLink: adds @percentsa/navigation.",
+      "registryDependencies": [
+        "@percentsa/navigation"
+      ],
+      "files": []
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Tabs: adds @percentsa/navigation.",
+      "registryDependencies": [
+        "@percentsa/navigation"
+      ],
+      "files": []
+    },
+    {
+      "name": "breadcrumbs",
+      "type": "registry:ui",
+      "title": "Breadcrumbs",
+      "description": "Breadcrumbs: adds @percentsa/navigation.",
+      "registryDependencies": [
+        "@percentsa/navigation"
+      ],
+      "files": []
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Pagination: adds @percentsa/navigation.",
+      "registryDependencies": [
+        "@percentsa/navigation"
+      ],
+      "files": []
+    },
+    {
+      "name": "steps",
+      "type": "registry:ui",
+      "title": "Steps",
+      "description": "Steps: adds @percentsa/navigation.",
+      "registryDependencies": [
+        "@percentsa/navigation"
+      ],
+      "files": []
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "Dialog: adds @percentsa/overlays.",
+      "registryDependencies": [
+        "@percentsa/overlays"
+      ],
+      "files": []
+    },
+    {
+      "name": "dialog-close",
+      "type": "registry:ui",
+      "title": "DialogClose",
+      "description": "DialogClose: adds @percentsa/overlays.",
+      "registryDependencies": [
+        "@percentsa/overlays"
+      ],
+      "files": []
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "AlertDialog",
+      "description": "AlertDialog: adds @percentsa/overlays.",
+      "registryDependencies": [
+        "@percentsa/overlays"
+      ],
+      "files": []
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "Sheet: adds @percentsa/overlays.",
+      "registryDependencies": [
+        "@percentsa/overlays"
+      ],
+      "files": []
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "Popover: adds @percentsa/overlays.",
+      "registryDependencies": [
+        "@percentsa/overlays"
+      ],
+      "files": []
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "HoverCard",
+      "description": "HoverCard: adds @percentsa/overlays.",
+      "registryDependencies": [
+        "@percentsa/overlays"
+      ],
+      "files": []
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "Tooltip: adds @percentsa/overlays.",
+      "registryDependencies": [
+        "@percentsa/overlays"
+      ],
+      "files": []
+    },
+    {
+      "name": "zatca-qr",
+      "type": "registry:ui",
+      "title": "ZatcaQr",
+      "description": "ZatcaQr: adds @percentsa/qr-code.",
+      "registryDependencies": [
+        "@percentsa/qr-code"
+      ],
+      "files": []
+    },
+    {
+      "name": "settings-section",
+      "type": "registry:ui",
+      "title": "SettingsSection",
+      "description": "SettingsSection: adds @percentsa/settings.",
+      "registryDependencies": [
+        "@percentsa/settings"
+      ],
+      "files": []
+    },
+    {
+      "name": "settings-row",
+      "type": "registry:ui",
+      "title": "SettingsRow",
+      "description": "SettingsRow: adds @percentsa/settings.",
+      "registryDependencies": [
+        "@percentsa/settings"
+      ],
+      "files": []
+    },
+    {
+      "name": "sidebar-in-sheet",
+      "type": "registry:ui",
+      "title": "SidebarInSheet",
+      "description": "SidebarInSheet: adds @percentsa/sidebar.",
+      "registryDependencies": [
+        "@percentsa/sidebar"
+      ],
+      "files": []
+    },
+    {
+      "name": "lang-switch",
+      "type": "registry:ui",
+      "title": "LangSwitch",
+      "description": "LangSwitch: adds @percentsa/site.",
+      "registryDependencies": [
+        "@percentsa/site"
+      ],
+      "files": []
+    },
+    {
+      "name": "mobile-menu",
+      "type": "registry:ui",
+      "title": "MobileMenu",
+      "description": "MobileMenu: adds @percentsa/site.",
+      "registryDependencies": [
+        "@percentsa/site"
+      ],
+      "files": []
+    },
+    {
+      "name": "site-header",
+      "type": "registry:ui",
+      "title": "SiteHeader",
+      "description": "SiteHeader: adds @percentsa/site.",
+      "registryDependencies": [
+        "@percentsa/site"
+      ],
+      "files": []
+    },
+    {
+      "name": "site-footer",
+      "type": "registry:ui",
+      "title": "SiteFooter",
+      "description": "SiteFooter: adds @percentsa/site.",
+      "registryDependencies": [
+        "@percentsa/site"
+      ],
+      "files": []
+    },
+    {
+      "name": "password-input",
+      "type": "registry:ui",
+      "title": "PasswordInput",
+      "description": "PasswordInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "search-input",
+      "type": "registry:ui",
+      "title": "SearchInput",
+      "description": "SearchInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "number-input",
+      "type": "registry:ui",
+      "title": "NumberInput",
+      "description": "NumberInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "money-input",
+      "type": "registry:ui",
+      "title": "MoneyInput",
+      "description": "MoneyInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "iban-input",
+      "type": "registry:ui",
+      "title": "IbanInput",
+      "description": "IbanInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "national-id-input",
+      "type": "registry:ui",
+      "title": "NationalIdInput",
+      "description": "NationalIdInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "cr-input",
+      "type": "registry:ui",
+      "title": "CrInput",
+      "description": "CrInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "vat-input",
+      "type": "registry:ui",
+      "title": "VatInput",
+      "description": "VatInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "otp-input",
+      "type": "registry:ui",
+      "title": "OtpInput",
+      "description": "OtpInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "phone-input",
+      "type": "registry:ui",
+      "title": "PhoneInput",
+      "description": "PhoneInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "digits-input",
+      "type": "registry:ui",
+      "title": "DigitsInput",
+      "description": "DigitsInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "table-header",
+      "type": "registry:ui",
+      "title": "TableHeader",
+      "description": "TableHeader: adds @percentsa/table.",
+      "registryDependencies": [
+        "@percentsa/table"
+      ],
+      "files": []
+    },
+    {
+      "name": "table-body",
+      "type": "registry:ui",
+      "title": "TableBody",
+      "description": "TableBody: adds @percentsa/table.",
+      "registryDependencies": [
+        "@percentsa/table"
+      ],
+      "files": []
+    },
+    {
+      "name": "table-row",
+      "type": "registry:ui",
+      "title": "TableRow",
+      "description": "TableRow: adds @percentsa/table.",
+      "registryDependencies": [
+        "@percentsa/table"
+      ],
+      "files": []
+    },
+    {
+      "name": "table-head",
+      "type": "registry:ui",
+      "title": "TableHead",
+      "description": "TableHead: adds @percentsa/table.",
+      "registryDependencies": [
+        "@percentsa/table"
+      ],
+      "files": []
+    },
+    {
+      "name": "table-cell",
+      "type": "registry:ui",
+      "title": "TableCell",
+      "description": "TableCell: adds @percentsa/table.",
+      "registryDependencies": [
+        "@percentsa/table"
+      ],
+      "files": []
+    },
+    {
+      "name": "display",
+      "type": "registry:ui",
+      "title": "Display",
+      "description": "Display: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "heading",
+      "type": "registry:ui",
+      "title": "Heading",
+      "description": "Heading: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "label",
+      "type": "registry:ui",
+      "title": "Label",
+      "description": "Label: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "link",
+      "type": "registry:ui",
+      "title": "Link",
+      "description": "Link: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "code",
+      "type": "registry:ui",
+      "title": "Code",
+      "description": "Code: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "kbd",
+      "type": "registry:ui",
+      "title": "Kbd",
+      "description": "Kbd: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "blockquote",
+      "type": "registry:ui",
+      "title": "Blockquote",
+      "description": "Blockquote: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "prose",
+      "type": "registry:ui",
+      "title": "Prose",
+      "description": "Prose: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "highlight",
+      "type": "registry:ui",
+      "title": "Highlight",
+      "description": "Highlight: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "formatted-number",
+      "type": "registry:ui",
+      "title": "FormattedNumber",
+      "description": "FormattedNumber: adds @percentsa/text.",
+      "registryDependencies": [
+        "@percentsa/text"
+      ],
+      "files": []
+    },
+    {
+      "name": "theme_script",
+      "type": "registry:ui",
+      "title": "THEME_SCRIPT",
+      "description": "THEME_SCRIPT: adds @percentsa/theme.",
+      "registryDependencies": [
+        "@percentsa/theme"
+      ],
+      "files": []
+    },
+    {
+      "name": "theme-switch",
+      "type": "registry:ui",
+      "title": "ThemeSwitch",
+      "description": "ThemeSwitch: adds @percentsa/theme.",
+      "registryDependencies": [
+        "@percentsa/theme"
+      ],
+      "files": []
+    },
+    {
+      "name": "toaster",
+      "type": "registry:ui",
+      "title": "Toaster",
+      "description": "Toaster: adds @percentsa/toast.",
+      "registryDependencies": [
+        "@percentsa/toast"
+      ],
+      "files": []
+    },
+    {
+      "name": "visually-hidden",
+      "type": "registry:ui",
+      "title": "VisuallyHidden",
+      "description": "VisuallyHidden: adds @percentsa/utility.",
+      "registryDependencies": [
+        "@percentsa/utility"
+      ],
+      "files": []
+    },
+    {
+      "name": "live-region",
+      "type": "registry:ui",
+      "title": "LiveRegion",
+      "description": "LiveRegion: adds @percentsa/utility.",
+      "registryDependencies": [
+        "@percentsa/utility"
+      ],
+      "files": []
+    },
+    {
+      "name": "langs",
+      "type": "registry:ui",
+      "title": "LANGS",
+      "description": "LANGS: adds @percentsa/localized.",
+      "registryDependencies": [
+        "@percentsa/localized"
+      ],
+      "files": []
+    },
+    {
+      "name": "percent-provider",
+      "type": "registry:ui",
+      "title": "PercentProvider",
+      "description": "PercentProvider: adds @percentsa/provider.",
+      "registryDependencies": [
+        "@percentsa/provider"
+      ],
+      "files": []
+    },
+    {
+      "name": "riyal_viewbox",
+      "type": "registry:ui",
+      "title": "RIYAL_VIEWBOX",
+      "description": "RIYAL_VIEWBOX: adds @percentsa/saudi-money.",
+      "registryDependencies": [
+        "@percentsa/saudi-money"
+      ],
+      "files": []
+    },
+    {
+      "name": "riyal_w",
+      "type": "registry:ui",
+      "title": "RIYAL_W",
+      "description": "RIYAL_W: adds @percentsa/saudi-money.",
+      "registryDependencies": [
+        "@percentsa/saudi-money"
+      ],
+      "files": []
+    },
+    {
+      "name": "riyal_h",
+      "type": "registry:ui",
+      "title": "RIYAL_H",
+      "description": "RIYAL_H: adds @percentsa/saudi-money.",
+      "registryDependencies": [
+        "@percentsa/saudi-money"
+      ],
+      "files": []
+    },
+    {
+      "name": "riyal_paths",
+      "type": "registry:ui",
+      "title": "RIYAL_PATHS",
+      "description": "RIYAL_PATHS: adds @percentsa/saudi-money.",
+      "registryDependencies": [
+        "@percentsa/saudi-money"
+      ],
+      "files": []
+    },
+    {
+      "name": "riyal-sign",
+      "type": "registry:ui",
+      "title": "RiyalSign",
+      "description": "RiyalSign: adds @percentsa/saudi-money.",
+      "registryDependencies": [
+        "@percentsa/saudi-money"
+      ],
+      "files": []
+    },
+    {
+      "name": "money",
+      "type": "registry:ui",
+      "title": "Money",
+      "description": "Money: adds @percentsa/saudi-money.",
+      "registryDependencies": [
+        "@percentsa/saudi-money"
+      ],
+      "files": []
+    },
+    {
+      "name": "gcc_phone_countries",
+      "type": "registry:ui",
+      "title": "GCC_PHONE_COUNTRIES",
+      "description": "GCC_PHONE_COUNTRIES: adds @percentsa/saudi-phone.",
+      "registryDependencies": [
+        "@percentsa/saudi-phone"
+      ],
+      "files": []
+    },
+    {
+      "name": "counter",
+      "type": "registry:ui",
+      "title": "Counter",
+      "description": "Counter: adds @percentsa/motion-counter.",
+      "registryDependencies": [
+        "@percentsa/motion-counter"
+      ],
+      "files": []
+    },
+    {
+      "name": "logo-loader",
+      "type": "registry:ui",
+      "title": "LogoLoader",
+      "description": "LogoLoader: adds @percentsa/motion-logo-loader.",
+      "registryDependencies": [
+        "@percentsa/motion-logo-loader"
+      ],
+      "files": []
+    },
+    {
+      "name": "magnetic",
+      "type": "registry:ui",
+      "title": "Magnetic",
+      "description": "Magnetic: adds @percentsa/motion-magnet.",
+      "registryDependencies": [
+        "@percentsa/motion-magnet"
+      ],
+      "files": []
+    },
+    {
+      "name": "marquee",
+      "type": "registry:ui",
+      "title": "Marquee",
+      "description": "Marquee: adds @percentsa/motion-marquee.",
+      "registryDependencies": [
+        "@percentsa/motion-marquee"
+      ],
+      "files": []
+    },
+    {
+      "name": "number-roll",
+      "type": "registry:ui",
+      "title": "NumberRoll",
+      "description": "NumberRoll: adds @percentsa/motion-number-roll.",
+      "registryDependencies": [
+        "@percentsa/motion-number-roll"
+      ],
+      "files": []
+    },
+    {
+      "name": "reveal-text",
+      "type": "registry:ui",
+      "title": "RevealText",
+      "description": "RevealText: adds @percentsa/motion-reveal-text.",
+      "registryDependencies": [
+        "@percentsa/motion-reveal-text"
+      ],
+      "files": []
+    },
+    {
+      "name": "reveal",
+      "type": "registry:ui",
+      "title": "Reveal",
+      "description": "Reveal: adds @percentsa/motion-reveal.",
+      "registryDependencies": [
+        "@percentsa/motion-reveal"
+      ],
+      "files": []
+    },
+    {
+      "name": "slash-reveal",
+      "type": "registry:ui",
+      "title": "SlashReveal",
+      "description": "SlashReveal: adds @percentsa/motion-reveal.",
+      "registryDependencies": [
+        "@percentsa/motion-reveal"
+      ],
+      "files": []
+    },
+    {
+      "name": "scene-player",
+      "type": "registry:ui",
+      "title": "ScenePlayer",
+      "description": "ScenePlayer: adds @percentsa/motion-scene-player.",
+      "registryDependencies": [
+        "@percentsa/motion-scene-player"
+      ],
+      "files": []
+    },
+    {
+      "name": "scramble-provider",
+      "type": "registry:ui",
+      "title": "ScrambleProvider",
+      "description": "ScrambleProvider: adds @percentsa/motion-scramble-provider.",
+      "registryDependencies": [
+        "@percentsa/motion-scramble-provider"
+      ],
+      "files": []
+    },
+    {
+      "name": "scramble-text",
+      "type": "registry:ui",
+      "title": "ScrambleText",
+      "description": "ScrambleText: adds @percentsa/motion-scramble-provider.",
+      "registryDependencies": [
+        "@percentsa/motion-scramble-provider"
+      ],
+      "files": []
+    },
+    {
+      "name": "latin_noise",
+      "type": "registry:ui",
+      "title": "LATIN_NOISE",
+      "description": "LATIN_NOISE: adds @percentsa/motion-scramble.",
+      "registryDependencies": [
+        "@percentsa/motion-scramble"
+      ],
+      "files": []
+    },
+    {
+      "name": "arabic_noise",
+      "type": "registry:ui",
+      "title": "ARABIC_NOISE",
+      "description": "ARABIC_NOISE: adds @percentsa/motion-scramble.",
+      "registryDependencies": [
+        "@percentsa/motion-scramble"
+      ],
+      "files": []
+    },
+    {
+      "name": "slash_run",
+      "type": "registry:ui",
+      "title": "SLASH_RUN",
+      "description": "SLASH_RUN: adds @percentsa/motion-slash.",
+      "registryDependencies": [
+        "@percentsa/motion-slash"
+      ],
+      "files": []
+    },
+    {
+      "name": "view-cursor",
+      "type": "registry:ui",
+      "title": "ViewCursor",
+      "description": "ViewCursor: adds @percentsa/motion-view-cursor.",
+      "registryDependencies": [
+        "@percentsa/motion-view-cursor"
+      ],
+      "files": []
+    }
+  ]
+}

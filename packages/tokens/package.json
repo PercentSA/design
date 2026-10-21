@@ -1,0 +1,45 @@
+{
+  "name": "@percentsa/tokens",
+  "version": "0.1.0",
+  "description": "Percent design tokens: CSS variables, Tailwind v4 theme, JSON, brand files.",
+  "license": "MIT",
+  "author": "Percent (https://percent.sa)",
+  "homepage": "https://design.percent.sa",
+  "bugs": "https://github.com/PercentSA/design/issues",
+  "keywords": [
+    "design-tokens",
+    "css-variables",
+    "tailwindcss",
+    "theme",
+    "rtl",
+    "arabic"
+  ],
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PercentSA/design.git",
+    "directory": "packages/tokens"
+  },
+  "sideEffects": [
+    "*.css"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    },
+    "./tokens.css": "./dist/tokens.css",
+    "./theme.css": "./dist/theme.css",
+    "./tokens.json": "./dist/tokens.json"
+  },
+  "scripts": {
+    "build": "rm -rf dist && bun scripts/build.ts && bun build src/index.ts --outdir dist --format esm --packages external && tsc -p tsconfig.build.json --emitDeclarationOnly",
+    "typecheck": "tsc --noEmit -p ."
+  }
+}

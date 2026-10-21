@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Percent: Portal loader (reference)</title>
+<style>
+  :root { color-scheme: dark; --line: #262626; --muted: #9a9a9a; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0a0a0a; color: #f2f2f2; font: 14px/1.5 system-ui, sans-serif; }
+  main { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  h1 { font-size: 20px; margin: 0 0 4px; font-weight: 600; }
+  .sub { color: var(--muted); margin: 0 0 16px; max-width: 980px; font-size: 13px; }
+  .bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-bottom: 12px; color: var(--muted); font-size: 13px; }
+  .bar button { background: #fff; color: #000; border: 0; border-radius: 6px; padding: 6px 14px; font: inherit; font-weight: 600; cursor: pointer; }
+  .seg { display: inline-flex; gap: 4px; }
+  .seg button { background: #161616; color: #ddd; border: 1px solid var(--line); font-weight: 500; padding: 5px 10px; }
+  .seg button[aria-pressed="true"] { background: #fff; color: #000; border-color: #fff; font-weight: 600; }
+  .bar input { width: 360px; accent-color: #fff; }
+  .stageName { color: #fff; font-size: 13px; font-variant-numeric: tabular-nums; min-width: 90px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(600px, 1fr)); gap: 16px; }
+  .card { background: #000; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px; cursor: pointer; }
+  .card:hover { border-color: #555; }
+  .card.selected { border-color: #fff; box-shadow: 0 0 0 1px #fff; }
+  .card h3 { margin: 0; font-size: 15px; font-weight: 600; }
+  .card p { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .stage { height: 230px; margin-top: 8px; }
+  .stage svg { width: 100%; height: 100%; display: block; }
+  .statics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 16px; }
+  .statics .card { cursor: default; }
+  .statics .stage { height: 150px; }
+  .tag { display: inline-block; font-size: 11px; color: #000; background: #fff; border-radius: 4px; padding: 0 6px; margin-inline-start: 6px; vertical-align: 2px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Portal with the final wordmarks</h1>
+  <p class="sub">Approved: the ر is as long as the English c (140 of 228, centred on the line), and the ب dot sits with its bottom on the ر's bottom. The motion is a first pass; polish comes later.</p>
+  <div class="statics" style="grid-template-columns: repeat(2, 1fr)">
+    <div class="card"><h3>Arabic</h3><div class="stage"><svg data-v="P" data-w="ar"></svg></div></div>
+    <div class="card"><h3>English</h3><div class="stage"><svg data-v="P" data-w="en"></svg></div></div>
+  </div>
+  <div class="bar">
+    <button id="play" type="button">Pause</button>
+    <span class="seg" id="speed"><button type="button" data-s="1" aria-pressed="true">1×</button><button type="button" data-s="0.5">0.5×</button><button type="button" data-s="0.25">0.25×</button></span>
+    <label>Scrub the loop (pauses): <input id="scrub" type="range" min="0" max="1" step="0.0005" value="0"></label>
+    <span class="stageName" id="stageName"></span>
+  </div>
+  <div class="cards">
+    <div class="card">
+      <h3>P · Portal</h3>
+      <p>The squares slide into the slash; the word slides out of it on both sides.</p>
+      <div class="stage"><svg data-v="P"></svg></div>
+    </div>
+  </div>
+</main>
+<script>
+// ---------- Geometry: the same construction as the tuner and <Mark> (path + round-join stroke 6.63) ----------
+const SW = 6.63, E = SW / 2, H = 221.2, YC = H / 2, RUN = 158 / 221.2, COS = 1 / Math.hypot(1, RUN), XT = YC * RUN;
+const P = { stroke: 28.5, left: 332, ba: 180, gap: 11.5, dot: 1.15, dotGap: 0.95, tooth: 0.55, nPos: 0.41, tPos: 0.72 };
+const flat = (pts) => pts.flat();
+function bar(x0, x1, y0, y1, cutL, cutR) {
+  const yt = y0 + E, yb = y1 - E, yc = (y0 + y1) / 2;
+  const L = (y) => (cutL === "slash" ? x0 + E / COS + (yc - y) * RUN : x0 + E);
+  const R = (y) => (cutR === "slash" ? x1 - E / COS + (yc - y) * RUN : x1 - E);
+  return flat([[L(yt), yt], [R(yt), yt], [R(yb), yb], [L(yb), yb]]);
+}
+const tooth = (xc, y0, y1, s) => flat([[xc - s / 2 + E, y0 + E], [xc + s / 2 - E, y0 + E], [xc + s / 2 - E, y1 - E], [xc - s / 2 + E, y1 - E]]);
+const sq = (x, y, d) => flat([[x + E, y + E], [x + d - E, y + E], [x + d - E, y + d - E], [x + E, y + d - E]]);
+const slashQ = (w) => [XT - w / 2, 0, XT + w / 2, 0, -XT + w / 2, H, -XT - w / 2, H]; // path width w
+const rc = (cx, cy, w, h) => [cx - w / 2, cy - h / 2, cx + w / 2, cy - h / 2, cx + w / 2, cy + h / 2, cx - w / 2, cy + h / 2];
+const rx = (x0, y0, x1, y1) => [x0, y0, x1, y0, x1, y1, x0, y1];
+const polar = (deg, r) => [r * Math.cos((deg * Math.PI) / 180), YC + r * Math.sin((deg * Math.PI) / 180)];
+
+const RA_H = 140; // the ر is as long as the English c (the x-height), centred on the line
+// A slash of path width w, cut to visible height h, centred on the line.
+const slashCut = (w, h) => {
+  const y0 = YC - h / 2 + E, y1 = YC + h / 2 - E, x = (y) => XT - y * RUN;
+  return [x(y0) - w / 2, y0, x(y0) + w / 2, y0, x(y1) + w / 2, y1, x(y1) - w / 2, y1];
+};
+const W = (() => {
+  const s = P.stroke, d = P.dot * s, dg = P.dotGap * s, th = P.tooth * s, yT = YC - s / 2, yB = YC + s / 2, wv = s / COS;
+  const xbR = wv / 2 + P.ba, xlR = -wv / 2 - P.gap, xlL = xlR - P.left, nx = xlR - P.nPos * P.left, tx = xlR - P.tPos * P.left, dd = 0.3 * d;
+  return {
+    slash: slashCut((s - SW) / COS, RA_H),
+    bb: bar(0, xbR, yT, yB, "straight", "slash"),
+    bd: sq(xbR - (s / 2) * RUN - d, YC + RA_H / 2 - d, d), // bottom on the ر's bottom
+    lb: bar(xlL, xlR, yT, yB, "straight", "slash"),
+    tu: tooth(xlL + s / 2, yT - th, yB, s),
+    nt: tooth(nx, yT - th, yB, s),
+    nd: sq(nx - d / 2, yT - th - dg - d, d),
+    td1: sq(tx - dd / 2 - d, yT - dg - d, d),
+    td2: sq(tx + dd / 2, yT - dg - d, d),
+    w0: (s - SW) / COS,
+  };
+})();
+// The logo (<Mark> path) with its slash centred on the word's slash.
+const TL = rx(-115.15, 0, -44.35, 70.8), BR = rx(44.05, 150.4, 114.85, 221.2), TLc = [-79.75, 35.4], BRc = [79.45, 185.8];
+
+// ---------- Versions: keyframes [t, quad, r] (r = extra corner rounding) ----------
+const Z = (x, y) => rc(x, y, 0, 0);
+const turnLeft = (c0, w0, h0) => [ // 1A/1B: orbit 180° → 223.3° around the slash centre, stretch on the way, squash on landing
+  [0.42, rc(c0, YC, w0, h0), 6],
+  [0.53, rc(...polar(193, 78), 66, 66), 15],
+  [0.64, rc(...polar(206, 92), 60, 78), 12],
+  [0.74, rc(...polar(217, 103), 62, 80), 8],
+  [0.83, rc(TLc[0], 33.5, 77, 66), 3],
+  [0.92, rc(TLc[0], 35.6, 69, 73), 1],
+  [1, TL, 0],
+];
+const turnRight = (c0, w0, h0) => [
+  [0.42, rc(c0, YC, w0, h0), 6],
+  [0.53, rc(...polar(10, 62), 68, 54), 16],
+  [0.64, rc(...polar(24, 84), 62, 72), 14],
+  [0.74, rc(...polar(35, 100), 62, 80), 8],
+  [0.83, rc(BRc[0], 187.5, 77, 66), 3],
+  [0.92, rc(BRc[0], 185.6, 69, 73), 1],
+  [1, BR, 0],
+];
+const slashTurn = (mid) => [[0, W.slash, 0], [0.42, slashQ(mid), 0], [0.83, slashQ(71), 0], [0.92, slashQ(66.5), 0], [1, slashQ(67.7), 0]];
+const slashSplit = [[0, W.slash, 0], [0.5, slashQ(47), 0], [0.85, slashQ(70.5), 0], [0.94, slashQ(67), 0], [1, slashQ(67.7), 0]];
+const hold = (q, t) => [[0, q, 0], [t, q, 0]];
+
+// ---------- English word (approved 2026-10-18): the tuner construction, grouped by side ----------
+const EN = { xh: 140, w: 102, g: 12, asc: 0.35, desc: 0.35, cH: 1, cArm: 0.5, rcGap: -15, ceGap: 45, rArm: 0.86, eBar: 0.52, tW: 0.67 };
+const RQ = (x0, y0, x1, y1) => [[x0, y0], [x1, y0], [x1, y1], [x0, y1]];
+function hb(x0, x1, y0, y1, runL = 0, runR = 0) {
+  const yc = (y0 + y1) / 2, Lx = (y) => x0 + (yc - y) * runL, Rx = (y) => x1 + (yc - y) * runR;
+  return [[Lx(y0), y0], [Rx(y0), y0], [Rx(y1), y1], [Lx(y1), y1]];
+}
+const shear = (q, k) => q.map(([x, y]) => [x + (YC - y) * k * RUN, y]);
+function inset(q, e) {
+  const lines = q.map((a, i) => {
+    const b = q[(i + 1) % 4], dx = b[0] - a[0], dy = b[1] - a[1], l = Math.hypot(dx, dy) || 1;
+    return { p: [a[0] - (dy / l) * e, a[1] + (dx / l) * e], d: [dx, dy] };
+  });
+  return lines.map((l2, i) => {
+    const l1 = lines[(i + 3) % 4], cr = l1.d[0] * l2.d[1] - l1.d[1] * l2.d[0];
+    if (Math.abs(cr) < 1e-9) return l2.p;
+    const t = ((l2.p[0] - l1.p[0]) * l2.d[1] - (l2.p[1] - l1.p[1]) * l2.d[0]) / cr;
+    return [l1.p[0] + l1.d[0] * t, l1.p[1] + l1.d[1] * t];
+  });
+}
+function enWord(p) {
+  const s = 28.5, top = YC - p.xh / 2, bot = YC + p.xh / 2, w = p.w, left = [], right = [], c = {};
+  let x = 0, cMid = 0, side = left;
+  const letter = (ch) => {
+    const k = ch === "c" ? 1 : 0, sx = s * Math.hypot(1, k * RUN), cr = RUN * (1 - k), q = [];
+    let adv;
+    if (ch === "p") { q.push(RQ(x, top, x + sx, bot + p.desc * p.xh), RQ(x, top, x + w, top + s), RQ(x + w - sx, top, x + w, bot), RQ(x, bot - s, x + w, bot)); adv = w; }
+    if (ch === "e") {
+      const ym = top + p.eBar * (p.xh - s);
+      q.push(RQ(x, top, x + w, top + s), RQ(x, top, x + sx, bot), hb(x, x + w, bot - s, bot, 0, cr), RQ(x, ym, x + w, ym + s), RQ(x + w - sx, top, x + w, ym + s));
+      adv = w;
+    }
+    if (ch === "r") { const rw = p.rArm * w; q.push(RQ(x, top, x + rw * 0 + sx, bot), hb(x, x + rw, top, top + s, 0, cr)); adv = rw; }
+    if (ch === "n") { q.push(RQ(x, top, x + sx, bot), RQ(x, top, x + w, top + s), RQ(x + w - sx, top, x + w, bot)); adv = w; }
+    if (ch === "t") {
+      const tw = p.tW * w, st = x + (tw - sx) * 0.4;
+      q.push(hb(x, x + tw, top, top + s, cr, cr), RQ(st, top - p.asc * p.xh, st + sx, bot), hb(st, x + tw, bot - s, bot, 0, cr));
+      adv = tw;
+    }
+    if (ch === "c") {
+      const ch2 = p.cH * p.xh, c0 = YC - ch2 / 2, c1 = YC + ch2 / 2, arm = p.cArm * w;
+      c.stem = shear(RQ(x, c0, x + sx, c1), 1);
+      c.top = shear(hb(x, x + sx + arm, c0, c0 + s, 0, cr), 1);
+      c.bot = shear(hb(x, x + sx + arm, c1 - s, c1, 0, cr), 1);
+      c.armY = [c0 + s / 2, c1 - s / 2];
+      cMid = x + sx / 2;
+      side = right;
+      return sx + arm;
+    }
+    side.push(...q);
+    return adv;
+  };
+  [..."percent"].forEach((ch, i, all) => {
+    if (ch === "c") x += p.rcGap;
+    x += letter(ch);
+    if (ch === "c") x += p.ceGap;
+    if (i < all.length - 1) x += p.g;
+  });
+  const fix = (q) => inset(q.map(([qx, qy]) => [qx - cMid, qy]), E).flat();
+  return { left: left.map(fix), right: right.map(fix), stem: fix(c.stem), armT: fix(c.top), armB: fix(c.bot), armY: c.armY };
+}
+const ENW = enWord(EN);
+const box8 = (q) => [Math.min(q[0], q[2], q[4], q[6]), Math.min(q[1], q[3], q[5], q[7]), Math.max(q[0], q[2], q[4], q[6]), Math.max(q[1], q[3], q[5], q[7])];
+const unionBox = (qs) => qs.map(box8).reduce((a, b) => [Math.min(a[0], b[0]), Math.min(a[1], b[1]), Math.max(a[2], b[2]), Math.max(a[3], b[3])]);
+// The squash: each side is pressed horizontally toward the c (and stretches a little in height).
+const press = (q, from, to, sy) => q.map((v, i) => (i % 2 ? YC + (v - YC) * sy : to[0] + ((v - from[0]) / (from[1] - from[0])) * (to[1] - to[0])));
+const lbx = unionBox(ENW.left), rbx = unionBox(ENW.right);
+const enShapes = { slash: [[0, ENW.stem, 0], [0.42, slashQ(44), 0], [0.83, slashQ(71), 0], [0.92, slashQ(66.5), 0], [1, slashQ(67.7), 0]] };
+// The c's arms go into its stem.
+enShapes.armT = [[0, ENW.armT, 0], [0.18, Z((YC - ENW.armY[0]) * RUN, ENW.armY[0]), 0]];
+enShapes.armB = [[0, ENW.armB, 0], [0.18, Z((YC - ENW.armY[1]) * RUN, ENW.armY[1]), 0]];
+ENW.left.forEach((q, i) => (enShapes["L" + i] = [[0, q, 0], [0.22, press(q, [lbx[0], lbx[2]], [-175, -32], 1.1), 2], ...turnLeft(-62, 76, 56)]));
+ENW.right.forEach((q, i) => (enShapes["R" + i] = [[0, q, 0], [0.22, press(q, [rbx[0], rbx[2]], [32, 175], 1.1), 2], ...turnRight(60, 76, 56)]));
+const leftNear = "L" + (ENW.left.length - 2), rightNear = "R1"; // the r stem, the first e's stem: nearest the c
+const V = {
+  ar: {
+    shapes: {
+      slash: slashTurn(44),
+      lb: [[0, W.lb, 0], [0.2, rc(-115, YC, 170, 29), 2], [0.42, rc(-68, YC, 76, 56), 6], ...turnLeft(-68, 76, 56).slice(1)],
+      bb: [[0, W.bb, 0], [0.2, rx(3.3, 93.6, 125, 127.6), 2], ...turnRight(39, 78, 50)],
+      tu: [[0, W.tu, 0], [0.2, rx(-198, 100, -180, 121), 0], [0.35, Z(-100, YC), 0]],
+      nt: [[0, W.nt, 0], [0.2, rx(-110, 100, -90, 121), 0], [0.35, Z(-80, YC), 0]],
+      nd: [[0, W.nd, 0], [0.14, rc(-128, 74, 24, 30), 4], [0.24, rc(-100, 102, 18, 18), 6], [0.34, Z(-80, YC), 0]],
+      td1: [[0, W.td1, 0], [0.14, rc(-226, 76, 24, 28), 4], [0.25, rc(-150, 103, 18, 18), 6], [0.34, Z(-90, YC), 0]],
+      td2: [[0, W.td2, 0], [0.14, rc(-194, 76, 24, 28), 4], [0.25, rc(-138, 103, 18, 18), 6], [0.34, Z(-90, YC), 0]],
+      bd: [[0, W.bd, 0], [0.14, rc(118, 148, 24, 28), 4], [0.24, rc(80, 118, 18, 18), 6], [0.34, Z(50, YC), 0]],
+    },
+    necks: [["nd", "lb", 9, 0, 0.35], ["td1", "lb", 9, 0, 0.35], ["td2", "lb", 9, 0, 0.35], ["td1", "td2", 9, 0, 0.3], ["bd", "bb", 9, 0, 0.35],
+      ["lb", "slash", 9, 0.25, 0.46], ["lb", "slash", 28, 0.42, 0.75], ["bb", "slash", 28, 0.4, 0.75]],
+  },
+  en: {
+    shapes: enShapes,
+    necks: [[leftNear, "slash", 9, 0.15, 0.46], [leftNear, "slash", 28, 0.42, 0.75], [rightNear, "slash", 9, 0.15, 0.46], [rightNear, "slash", 28, 0.42, 0.75]],
+  },
+};
+
+// ---------- Monotone cubic interpolation (Fritsch–Butland), flat at both ends ----------
+function prep(kf) {
+  const ts = kf.map((k) => k[0]);
+  const comps = Array.from({ length: 9 }, (_, c) => kf.map((k) => (c < 8 ? k[1][c] : k[2])));
+  const slopes = comps.map((vs) => {
+    const n = ts.length, m = new Array(n).fill(0);
+    for (let k = 1; k < n - 1; k++) {
+      const h0 = ts[k] - ts[k - 1], h1 = ts[k + 1] - ts[k];
+      const d0 = (vs[k] - vs[k - 1]) / h0, d1 = (vs[k + 1] - vs[k]) / h1;
+      m[k] = d0 * d1 <= 0 ? 0 : (3 * (h0 + h1)) / ((2 * h1 + h0) / d0 + (h1 + 2 * h0) / d1);
+    }
+    return m;
+  });
+  return { ts, comps, slopes };
+}
+function at({ ts, comps, slopes }, t) {
+  const n = ts.length;
+  if (t <= ts[0]) return comps.map((v) => v[0]);
+  if (t >= ts[n - 1]) return comps.map((v) => v[n - 1]);
+  let i = 0;
+  while (t > ts[i + 1]) i++;
+  const h = ts[i + 1] - ts[i], s = (t - ts[i]) / h, s2 = s * s, s3 = s2 * s;
+  return comps.map((v, c) => (2 * s3 - 3 * s2 + 1) * v[i] + (s3 - 2 * s2 + s) * h * slopes[c][i] + (-2 * s3 + 3 * s2) * v[i + 1] + (s3 - s2) * h * slopes[c][i + 1]);
+}
+
+
+// ---------- Drawing ----------
+const f2 = (n) => n.toFixed(2);
+function roundQuad(q, r) {
+  const p = [[q[0], q[1]], [q[2], q[3]], [q[4], q[5]], [q[6], q[7]]];
+  if (r < 0.5) return "M" + p.map((c) => c.map(f2).join(" ")).join("L") + "Z";
+  let d = "";
+  for (let i = 0; i < 4; i++) {
+    const c = p[i], a0 = p[(i + 3) % 4], b0 = p[(i + 1) % 4];
+    const la = Math.hypot(a0[0] - c[0], a0[1] - c[1]) || 1, lb = Math.hypot(b0[0] - c[0], b0[1] - c[1]) || 1;
+    const ka = Math.min(r, la / 2) / la, kb = Math.min(r, lb / 2) / lb;
+    const a = [c[0] + (a0[0] - c[0]) * ka, c[1] + (a0[1] - c[1]) * ka], b = [c[0] + (b0[0] - c[0]) * kb, c[1] + (b0[1] - c[1]) * kb];
+    d += (i ? "L" : "M") + a.map(f2).join(" ") + "Q" + c.map(f2).join(" ") + " " + b.map(f2).join(" ");
+  }
+  return d + "Z";
+}
+const bbox = (q) => [Math.min(q[0], q[2], q[4], q[6]), Math.min(q[1], q[3], q[5], q[7]), Math.max(q[0], q[2], q[4], q[6]), Math.max(q[1], q[3], q[5], q[7])];
+// The point on a part's outline nearest to p, kept off the rounded corners (r); null when p is inside.
+function edgeNear(q, r, p) {
+  const pts = [[q[0], q[1]], [q[2], q[3]], [q[4], q[5]], [q[6], q[7]]];
+  let inside = true, best = null;
+  for (let i = 0; i < 4; i++) {
+    const a = pts[i], b = pts[(i + 1) % 4], ex = b[0] - a[0], ey = b[1] - a[1], len = Math.hypot(ex, ey);
+    if (ex * (p[1] - a[1]) - ey * (p[0] - a[0]) < 0) inside = false;
+    if (len < 1e-6) continue;
+    const e = [ex / len, ey / len], lo = Math.min(len / 2, r), hi = len - lo;
+    const sp = Math.max(lo, Math.min(hi, (p[0] - a[0]) * e[0] + (p[1] - a[1]) * e[1]));
+    const c = [a[0] + e[0] * sp, a[1] + e[1] * sp], dd = Math.hypot(c[0] - p[0], c[1] - p[1]);
+    if (!best || dd < best.dd) best = { a, e, lo, hi, sp, c, dd };
+  }
+  return inside ? null : best;
+}
+// A liquid bridge between two parts that are about to touch or just broke apart (visible gap < G).
+// Each end sits along the straight part of the nearest edge, so it never sticks out of a part.
+function neck(A, B, G) {
+  const ba = bbox(A.q), bb = bbox(B.q);
+  if ((ba[2] - ba[0]) * (ba[3] - ba[1]) < 4 || (bb[2] - bb[0]) * (bb[3] - bb[1]) < 4) return "";
+  const centre = (b) => [(b[0] + b[2]) / 2, (b[1] + b[3]) / 2];
+  let eb = edgeNear(B.q, B.r, A.slash ? centre(bb) : centre(ba));
+  let ea = eb && edgeNear(A.q, A.r, eb.c);
+  eb = ea && edgeNear(B.q, B.r, ea.c);
+  ea = eb && edgeNear(A.q, A.r, eb.c);
+  if (!ea || !eb) return "";
+  const pa = ea.c, pb = eb.c, dist = Math.hypot(pb[0] - pa[0], pb[1] - pa[1]), gap = dist - SW;
+  if (dist < 0.5 || gap <= 0 || gap >= G) return "";
+  const size = (b, isS) => (isS ? Infinity : Math.min(b[2] - b[0], b[3] - b[1]) + SW);
+  const w0 = Math.min(56, 0.8 * Math.min(size(ba, A.slash), size(bb, B.slash)));
+  const f = gap / G, wEnd = w0 * (1 - f * f), waist = 0.85 * w0 * Math.pow(1 - f, 1.5);
+  const u = [(pb[0] - pa[0]) / dist, (pb[1] - pa[1]) / dist], n = [-u[1], u[0]];
+  const ends = (ed, other) => {
+    const s1 = Math.max(ed.lo, ed.sp - wEnd / 2), s2 = Math.min(ed.hi, ed.sp + wEnd / 2);
+    let nx = -ed.e[1], ny = ed.e[0];
+    if (nx * (other[0] - ed.c[0]) + ny * (other[1] - ed.c[1]) < 0) { nx = -nx; ny = -ny; }
+    const pt = (sv) => [ed.a[0] + ed.e[0] * sv - nx * 2, ed.a[1] + ed.e[1] * sv - ny * 2]; // 2 units inside the part
+    const p1 = pt(s1), p2 = pt(s2), side = (p) => n[0] * (p[0] - ed.c[0]) + n[1] * (p[1] - ed.c[1]);
+    return side(p1) >= side(p2) ? [p1, p2] : [p2, p1];
+  };
+  const [a1, a2] = ends(ea, pb), [b1, b2] = ends(eb, pa);
+  const m = [(pa[0] + pb[0]) / 2, (pa[1] + pb[1]) / 2], m1 = [m[0] + (n[0] * waist) / 2, m[1] + (n[1] * waist) / 2], m2 = [m[0] - (n[0] * waist) / 2, m[1] - (n[1] * waist) / 2];
+  const c1 = [2 * m1[0] - (a1[0] + b1[0]) / 2, 2 * m1[1] - (a1[1] + b1[1]) / 2], c2 = [2 * m2[0] - (a2[0] + b2[0]) / 2, 2 * m2[1] - (a2[1] + b2[1]) / 2];
+  const P2 = (p) => p.map(f2).join(" ");
+  return `M${P2(a1)}Q${P2(c1)} ${P2(b1)}L${P2(b2)}Q${P2(c2)} ${P2(a2)}Z`;
+}
+
+for (const v of Object.values(V)) for (const k in v.shapes) v.shapes[k] = prep(v.shapes[k]);
+
+
+// ---------- New ideas: keyframes written logo → word (u: 0 = logo, 1 = word); the engine runs t = 1 - u ----------
+const shift = (q, dx, dy = 0) => q.map((v, i) => (i % 2 ? v + dy : v + dx));
+const ctr = (q) => [(q[0] + q[2] + q[4] + q[6]) / 4, (q[1] + q[3] + q[5] + q[7]) / 4];
+const scaleQ = (q, kx, ky = kx, o = ctr(q)) => q.map((v, i) => (i % 2 ? o[1] + (v - o[1]) * ky : o[0] + (v - o[0]) * kx));
+const lerpQ = (a, b, k) => a.map((v, i) => v + (b[i] - v) * k);
+// A part folded onto one edge: "right" = onto its right end, "left", "bottom".
+function collapse(q, side) {
+  const c = q.slice();
+  if (side === "right") { c[0] = q[2]; c[1] = q[3]; c[6] = q[4]; c[7] = q[5]; }
+  if (side === "left") { c[2] = q[0]; c[3] = q[1]; c[4] = q[6]; c[5] = q[7]; }
+  if (side === "bottom") { c[0] = q[6]; c[1] = q[7]; c[2] = q[4]; c[3] = q[5]; }
+  return c;
+}
+const ZQ = (q) => Z(...ctr(q));
+// Keyframes in u → engine keyframes in t, sorted, one per time.
+function U(kf) {
+  const out = [];
+  for (const [u, q, r] of kf.map(([u, q, r = 0]) => [1 - u, q, r]).sort((a, b) => a[0] - b[0])) {
+    if (out.length && Math.abs(out[out.length - 1][0] - u) < 1e-6) out[out.length - 1] = [u, q, r];
+    else out.push([u, q, r]);
+  }
+  if (out[0][0] > 0) out.unshift([0, out[0][1], out[0][2]]);
+  if (out[out.length - 1][0] < 1) out.push([1, out[out.length - 1][1], out[out.length - 1][2]]);
+  return out;
+}
+const grow = (q, side, u0, u1, extra = []) => [[0, collapse(q, side)], [u0, collapse(q, side)], ...extra, [u1, q]];
+const pop = (q, u0, u1) => [[0, ZQ(q)], [u0, ZQ(q)], [u0 + (u1 - u0) * 0.65, scaleQ(q, 1.22), 3], [u1, q]];
+function make(def, wordCx) {
+  const shapes = {}, groups = {};
+  for (const k in def.shapes) {
+    const s = def.shapes[k], kf = Array.isArray(s) ? s : s.kf;
+    shapes[k] = prep(U(kf));
+    if (s.g) groups[k] = s.g;
+  }
+  const necks = (def.necks || []).map(([a, b, G, u0, u1]) => [a, b, G, 1 - u1, 1 - u0]);
+  return { shapes, groups, necks, wordCx, clip: !!def.clip, clipGap: def.clipGap || 0, wipe: def.wipe };
+}
+const LOGO = slashQ(67.7);
+const SW0 = (P.stroke - SW) / COS; // the word slash and the c stem: path width
+const bot = YC + EN.xh / 2, topE = YC - EN.xh / 2;
+const allEn = [...ENW.left, ...ENW.right];
+const xmin = lbx[0], xmax = rbx[2];
+
+// P · Portal
+const slideIn = (q, d, delay = 0) => [[0, shift(q, d)], [0.36 + delay, shift(q, d)], [0.86, shift(q, -Math.sign(d) * 9)], [1, q]];
+const through = { sqL: { g: "L", kf: [[0, TL], [0.34, shift(TL, 175, 165)]] }, sqR: { g: "R", kf: [[0, BR], [0.34, shift(BR, -175, -165)]] } };
+const P_ar = {
+  clip: true,
+  shapes: {
+    slash: [[0, LOGO], [0.3, slashQ(SW0)], [0.42, W.slash]], ...through, // the same as English
+    lb: { g: "L", kf: slideIn(W.lb, 430) }, tu: { g: "L", kf: slideIn(W.tu, 430, 0.04) }, nt: { g: "L", kf: slideIn(W.nt, 430, 0.03) },
+    nd: { g: "L", kf: slideIn(W.nd, 430, 0.05) }, td1: { g: "L", kf: slideIn(W.td1, 430, 0.07) }, td2: { g: "L", kf: slideIn(W.td2, 430, 0.07) },
+    bb: { g: "R", kf: slideIn(W.bb, -270) }, bd: { g: "R", kf: slideIn(W.bd, -270, 0.05) },
+  },
+};
+const dL = 90 - xmin, dR = -90 - xmax;
+const P_en = { clip: true, clipGap: E / COS + 6, shapes: { slash: [[0, LOGO], [0.3, slashQ(SW0)], [0.42, ENW.stem]], ...through, armT: grow(ENW.armT, "left", 0.7, 0.86), armB: grow(ENW.armB, "left", 0.72, 0.88) } }; // arms last: the letters slide out past the bare stem
+ENW.left.forEach((q, i) => (P_en.shapes["L" + i] = { g: "L", kf: slideIn(q, dL) }));
+ENW.right.forEach((q, i) => (P_en.shapes["R" + i] = { g: "R", kf: slideIn(q, dR) }));
+
+// W · Typing: a caret types the word, one even step per letter (the slash is already there).
+const CW = 16 - SW, CV = 8, CG = E + 3 + CV; // caret path width; half its visible width; caret x to a letter's end
+const caretAt = (cx, h = EN.xh - SW) => rc(cx, YC, CW, h);
+const X = (x) => rx(x, 0, x, 0); // a bare x (the wipe edge): zero area, never drawn
+const T0 = 0.16, T1 = 0.86;
+// stops: caret x before the first letter and after each letter; edge: caret x → wipe edge.
+function typing(stops, from, edge) {
+  const n = stops.length - 1, D = (T1 - T0) / n, caret = [[0, from]], wipe = [[0, X(edge(stops[0]))]];
+  for (let i = 0; i < n; i++) {
+    const u = T0 + i * D;
+    caret.push([u, caretAt(stops[i])], [u + 0.6 * D, caretAt(stops[i + 1])]);
+    wipe.push([u, X(edge(stops[i]))], [u + 0.6 * D, X(edge(stops[i + 1]))]);
+  }
+  caret.push([T1, caretAt(stops[n])], [T1 + 0.08, caretAt(stops[n], 0)]);
+  return { caret, wipe, step: (i) => [T0 + i * D, T0 + (i + 0.6) * D] };
+}
+const typed = (def, qs) => qs.forEach(([k, q]) => (def.shapes[k] = { g: "T", kf: [[0, q]] }));
+// Arabic, right to left: ب with ر (the slash), then س, ن, ت. The caret stops right next to the next hidden part.
+const arStop = (q) => bbox(q)[2] + E + 2 - CV;
+const tyAr = typing([W.bb[2] + CG, -(W.w0 / 2 + E / COS) - 3 - CV, arStop(W.nd), arStop(W.td2), W.lb[0] - CG], BR, (cx) => cx + CV);
+const W_ar = {
+  wipe: "rtl",
+  shapes: {
+    slash: [[0, LOGO], [T0, W.slash]],
+    sq: [[0, TL], [0.12, rc(38, 56, 20, 20)], [T0, Z(38, 56)]],
+    caret: tyAr.caret, wipe: tyAr.wipe,
+  },
+};
+typed(W_ar, ["bb", "bd", "lb", "nt", "tu", "nd", "td1", "td2"].map((k) => [k, W[k]]));
+// English, left to right: p e r, the c arms (the c stem is the slash), e n t.
+const enEnds = [ENW.left.slice(0, 4), ENW.left.slice(4, 9), ENW.left.slice(9), [ENW.armT, ENW.armB], ENW.right.slice(0, 5), ENW.right.slice(5, 8), ENW.right.slice(8)].map((qs) => unionBox(qs)[2]);
+const tyEn = typing([xmin - CG, ...enEnds.map((x) => x + CG)], TL, (cx) => cx - CV);
+const [c0, c1] = tyEn.step(3);
+const W_en = {
+  wipe: "ltr",
+  shapes: {
+    slash: [[0, LOGO], [T0, ENW.stem]],
+    sq: [[0, BR], [0.12, rc(-38, 165, 20, 20)], [T0, Z(-38, 165)]],
+    caret: tyEn.caret, wipe: tyEn.wipe,
+    armT: grow(ENW.armT, "left", c0, c1), armB: grow(ENW.armB, "left", c0, c1),
+  },
+};
+typed(W_en, allEn.map((q, i) => ["E" + i, q]));
+
+// F · Pour
+const lbJ = shift(W.lb, 22); // still joined to the slash while it pours
+const F_ar = {
+  shapes: {
+    slash: [[0, LOGO], [0.45, W.slash]],
+    bb: [[0, collapse(W.bb, "left")], [0.08, collapse(W.bb, "left")], [0.3, lerpQ(collapse(W.bb, "left"), W.bb, 0.55), 10], [0.5, W.bb]],
+    lb: [[0, collapse(lbJ, "right")], [0.08, collapse(lbJ, "right")], [0.3, lerpQ(collapse(lbJ, "right"), lbJ, 0.55), 10], [0.52, lbJ, 4], [0.64, W.lb]],
+    nt: grow(W.nt, "bottom", 0.42, 0.55),
+    tu: grow(W.tu, "bottom", 0.5, 0.62),
+    nd: [[0, TL], [0.12, rc(-80, 46, 62, 56), 24], [0.3, rc(-170, 50, 52, 40), 16], [0.5, W.nd]],
+    td1: [[0, TL], [0.12, rc(-80, 46, 62, 56), 24], [0.3, rc(-170, 50, 52, 40), 16], [0.46, rc(-262, 54, 64, 34), 12], [0.62, W.td1]],
+    td2: [[0, TL], [0.12, rc(-80, 46, 62, 56), 24], [0.3, rc(-170, 50, 52, 40), 16], [0.46, rc(-262, 54, 64, 34), 12], [0.62, W.td2]],
+    bd: [[0, BR], [0.12, rc(80, 194, 62, 50), 22], [0.32, rc(140, 170, 44, 38), 14], [0.5, W.bd]],
+  },
+  necks: [["nd", "td1", 20, 0.3, 0.55], ["td1", "td2", 12, 0.46, 0.7], ["lb", "slash", 28, 0.5, 0.8]],
+};
+// English: a stream along the baseline from the c; the letters fill up from it, nearest first.
+const sTop = bot - P.stroke + E, sBot = bot - E;
+const sL = rx(xmin + E, sTop, -30, sBot), sR = rx(-45, sTop, xmax - E, sBot);
+const drain = (q) => rx(q[0], sBot - 1, q[2], sBot);
+const maxD = Math.max(-xmin, xmax);
+const F_en = {
+  shapes: {
+    slash: [[0, LOGO], [0.38, ENW.stem]],
+    armT: grow(ENW.armT, "left", 0.3, 0.45), armB: grow(ENW.armB, "left", 0.32, 0.47),
+    sL: [[0, collapse(sL, "right")], [0.06, collapse(sL, "right")], [0.34, sL], [0.62, sL], [0.76, drain(sL)], [0.8, ZQ(sL)]],
+    sR: [[0, collapse(sR, "left")], [0.06, collapse(sR, "left")], [0.34, sR], [0.62, sR], [0.76, drain(sR)], [0.8, ZQ(sR)]],
+    dL: [[0, TL], [0.12, rc(-80, 60, 60, 60), 24], [0.26, rc(-110, 150, 30, 36), 14], [0.32, Z(-110, 166)]],
+    dR: [[0, BR], [0.12, rc(80, 180, 60, 50), 22], [0.24, rc(110, 168, 34, 26), 12], [0.3, Z(110, 166)]],
+  },
+  necks: [["dL", "sL", 12, 0.15, 0.32]],
+};
+allEn.forEach((q, i) => {
+  const c = ctr(q), u0 = 0.3 + (0.28 * Math.abs(c[0])) / maxD, b = bbox(q);
+  const over = q.map((v, j) => (j % 2 ? b[3] - (b[3] - v) * 1.08 : v)); // a little too high, then settles (liquid)
+  F_en.shapes["E" + i] = [[0, collapse(q, "bottom")], [u0, collapse(q, "bottom")], [u0 + 0.13, over, 2], [u0 + 0.19, q]];
+});
+
+const centreX = (qs) => { const b = unionBox(qs); return (b[0] + b[2]) / 2; };
+const AR_CX = centreX(Object.entries(W).filter(([k]) => k !== "w0").map(([, q]) => q));
+const EN_CX = centreX([...allEn, ENW.stem, ENW.armT, ENW.armB]);
+V.ar.wordCx = AR_CX; V.en.wordCx = EN_CX; V.ar.groups = {}; V.en.groups = {};
+const VARS = {
+  "1A": { ar: V.ar, en: V.en },
+  P: { ar: make(P_ar, AR_CX), en: make(P_en, EN_CX) },
+  W: { ar: make(W_ar, AR_CX), en: make(W_en, EN_CX) },
+  F: { ar: make(F_ar, AR_CX), en: make(F_en, EN_CX) },
+};
+
+const area = (q) => Math.abs((q[0] * q[3] - q[2] * q[1]) + (q[2] * q[5] - q[4] * q[3]) + (q[4] * q[7] - q[6] * q[5]) + (q[6] * q[1] - q[0] * q[7])) / 2;
+const LOGO_CX = -0.15;
+const drift = (v, t) => -(v.wordCx + (LOGO_CX - v.wordCx) * (t * t * (3 - 2 * t)));
+// The half-plane on one side of a slash edge (the line through the edge, extended).
+function halfPlane(q, side, gap = 0) {
+  // Left parts show only left of the slash's left edge, right parts only right of its right edge: they pass through the slash.
+  // gap: a dark space between the slash and the parts as they come out.
+  const g = side === "L" ? -gap : gap;
+  const [ax, ay, bx, by] = (side === "L" ? [q[0], q[1], q[6], q[7]] : [q[2], q[3], q[4], q[5]]).map((v, i) => (i % 2 ? v : v + g));
+  const x = (y) => ax + ((y - ay) * (bx - ax)) / (by - ay || 1e-6);
+  return side === "L" ? `-3000,-800 ${x(-800)},-800 ${x(1100)},1100 -3000,1100` : `${x(-800)},-800 3000,-800 3000,1100 ${x(1100)},1100`;
+}
+const svgs = [...document.querySelectorAll("svg[data-v]")];
+function setup(svg, n) {
+  svg.setAttribute("viewBox", "-400 -40 800 300");
+  svg.innerHTML = `<defs><clipPath id="cl${n}"><polygon/></clipPath><clipPath id="cr${n}"><polygon/></clipPath><clipPath id="ct${n}"><polygon/></clipPath></defs>` +
+    `<g class="cam" fill="#fff" stroke="#fff" stroke-width="${SW}" stroke-linejoin="round"><g class="m"></g><g class="l" clip-path="url(#cl${n})"></g><g class="r" clip-path="url(#cr${n})"></g><g class="t" clip-path="url(#ct${n})"></g></g>`;
+  svg.cam = svg.querySelector(".cam");
+  svg.gm = svg.querySelector(".m"); svg.gl = svg.querySelector(".l"); svg.gr = svg.querySelector(".r"); svg.gt = svg.querySelector(".t");
+  svg.pl = svg.querySelector(`#cl${n} polygon`); svg.pr = svg.querySelector(`#cr${n} polygon`); svg.pt = svg.querySelector(`#ct${n} polygon`);
+}
+svgs.forEach(setup);
+function draw(svg, v, t) {
+  const cur = {}, out = { m: "", L: "", R: "", T: "" };
+  for (const k in v.shapes) {
+    const s = at(v.shapes[k], t), q = s.slice(0, 8);
+    cur[k] = { q, r: s[8], slash: k === "slash" };
+    if (area(q) < 1) continue; // folded flat or absorbed: not drawn (the stroke would show a line)
+    out[v.groups[k] || "m"] += `<path d="${roundQuad(q, s[8])}"/>`;
+  }
+  for (const [a, b, G, t0, t1] of v.necks) {
+    if (t < t0 || t > t1 || !cur[a] || !cur[b]) continue;
+    const p = neck(cur[a], cur[b], G);
+    if (p) out.m += `<path d="${p}"/>`;
+  }
+  svg.pl.setAttribute("points", halfPlane(cur.slash.q, "L", v.clipGap));
+  svg.pr.setAttribute("points", halfPlane(cur.slash.q, "R", v.clipGap));
+  if (v.wipe) { // typed parts show only on the written side of the caret
+    const x = cur.wipe.q[0];
+    svg.pt.setAttribute("points", v.wipe === "rtl" ? `${x},-800 3000,-800 3000,1100 ${x},1100` : `-3000,-800 ${x},-800 ${x},1100 -3000,1100`);
+  }
+  svg.cam.setAttribute("transform", `translate(${f2(drift(v, t))} 0)`);
+  svg.gm.innerHTML = out.m; svg.gl.innerHTML = out.L; svg.gr.innerHTML = out.R; svg.gt.innerHTML = out.T;
+}
+
+// ---------- The loop: [word, t from, t to, ms] (t: 0 = word, 1 = logo) ----------
+const SEQ = [["ar", 1, 1, 400], ["ar", 1, 0, 1200], ["ar", 0, 0, 800], ["ar", 0, 1, 1200], ["en", 1, 1, 400], ["en", 1, 0, 1200], ["en", 0, 0, 800], ["en", 0, 1, 1200]];
+const LOOP = SEQ.reduce((a, s) => a + s[3], 0);
+const NAMES = ["logo", "→ Arabic", "Arabic", "→ logo", "logo", "→ English", "English", "→ logo"];
+function state(ms) {
+  let m = ((ms % LOOP) + LOOP) % LOOP;
+  for (let i = 0; i < SEQ.length; i++) {
+    const [w, a, b, d] = SEQ[i];
+    if (m < d || i === SEQ.length - 1) return { i, w, t: a + (b - a) * Math.min(1, m / d) };
+    m -= d;
+  }
+}
+const nameEl = document.getElementById("stageName");
+let playing = true, speed = 1, clock = 0, last = performance.now(), scrub = 0;
+function frame(now) {
+  clock += (now - last) * speed * (playing ? 1 : 0);
+  last = now;
+  const st = state(playing ? clock : scrub * LOOP);
+  for (const svg of svgs) draw(svg, VARS[svg.dataset.v][svg.dataset.w || st.w], svg.dataset.w ? 0 : st.t);
+  nameEl.textContent = NAMES[st.i];
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+const btn = document.getElementById("play"), range = document.getElementById("scrub");
+btn.onclick = () => { playing = !playing; btn.textContent = playing ? "Pause" : "Play"; };
+range.oninput = () => { playing = false; btn.textContent = "Play"; scrub = +range.value; };
+document.querySelectorAll("#speed button").forEach((b) => (b.onclick = () => {
+  speed = +b.dataset.s;
+  document.querySelectorAll("#speed button").forEach((x) => x.setAttribute("aria-pressed", x === b));
+}));
+</script>
+</body>
+</html>

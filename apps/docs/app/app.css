@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@import "@percentsa/tokens/theme.css";
+@import "@percentsa/ui/styles.css";
+@import "@percentsa/motion/styles.css";
+/* This site's fonts. Fonts are a brand setting: the packages ship none. */
+@import "@fontsource-variable/geist";
+@import "@fontsource-variable/geist-mono";
+@import "@fontsource/ibm-plex-sans-arabic/arabic-400.css";
+@import "@fontsource/ibm-plex-sans-arabic/arabic-500.css";
+@import "@fontsource/ibm-plex-sans-arabic/arabic-600.css";
+@import "@fontsource/ibm-plex-sans-arabic/arabic-700.css";
+
+:root {
+  --p-font-sans: "Geist Variable", "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --p-font-sans-ar: "IBM Plex Sans Arabic", "Geist Variable", system-ui, sans-serif;
+  --p-font-mono: "Geist Mono Variable", ui-monospace, monospace;
+}
+
+/* Example stage: a faint dot grid behind every live example. */
+.stage {
+  background-image: radial-gradient(var(--p-line) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* usePlayOnce example: the bars grow from the start side while [data-play] is set. */
+.demo-bar {
+  transform-origin: left;
+}
+[dir="rtl"] .demo-bar {
+  transform-origin: right;
+}
+[data-play] .demo-bar {
+  animation: demo-grow 0.9s var(--p-ease-out) both;
+}
+[data-play] .demo-bar:nth-child(2) {
+  animation-delay: 0.1s;
+}
+[data-play] .demo-bar:nth-child(3) {
+  animation-delay: 0.2s;
+}
+[data-play] .demo-bar:nth-child(4) {
+  animation-delay: 0.3s;
+}
+@keyframes demo-grow {
+  from {
+    scale: 0 1;
+  }
+}

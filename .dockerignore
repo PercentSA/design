@@ -1,0 +1,7 @@
+# Dot files and folders (git, secrets, local tool folders) and build output never go into the image or its build stages.
+.*
+**/.*
+**/node_modules
+**/dist
+**/build
+docs

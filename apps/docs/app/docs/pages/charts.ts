@@ -1,0 +1,58 @@
+import { p, type DocPage } from "../page";
+
+export const pages: DocPage[] = [
+  p(
+    "line-chart",
+    "LineChart",
+    "charts",
+    "LineChart, type ChartSeries",
+    ["LineChartExample"],
+    "Values over time as lines. Series take the brand chart colours (--p-chart-1 to --p-chart-5; default greys) and also differ by dash pattern and marker shape; patterns={false} removes the dashes. In Arabic time runs from right to left. Focus the chart and use the arrow keys to read each value.",
+    "قيم عبر الزمن على شكل خطوط. تأخذ السلاسل ألوان الرسوم في الهوية (من ‎--p-chart-1 إلى ‎--p-chart-5، والافتراضي درجات الرمادي) وتختلف أيضًا بنمط التقطيع وشكل العلامة؛ ويزيل patterns={false} التقطيع. في العربية يسير الزمن من اليمين إلى اليسار. ركّز على الرسم واستخدم مفاتيح الأسهم لقراءة كل قيمة.",
+  ),
+  p(
+    "area-chart",
+    "AreaChart",
+    "charts",
+    "AreaChart",
+    ["AreaChartExample"],
+    "Values over time as filled areas, side by side or stacked to show the total.",
+    "قيم عبر الزمن على شكل مساحات ملوّنة، متجاورة أو متراكبة لإظهار المجموع.",
+  ),
+  p(
+    "bar-chart",
+    "BarChart",
+    "charts",
+    "BarChart",
+    ["BarChartExample", "BarChartHorizontalExample"],
+    "Compares values by category: vertical or horizontal bars, grouped or stacked. Bars after the first series are hatched; patterns={false} removes the hatches when the brand colours differ enough.",
+    "يقارن القيم حسب الفئة: أعمدة رأسية أو أفقية، متجاورة أو متراكبة. أعمدة السلاسل بعد الأولى مخططة؛ ويزيل patterns={false} التخطيط إذا كانت ألوان الهوية مختلفة بما يكفي.",
+  ),
+  p(
+    "donut-chart",
+    "DonutChart",
+    "charts",
+    "DonutChart",
+    ["DonutChartExample"],
+    "Parts of a whole, with a total in the centre and a legend with percentages. Use it for five parts or fewer.",
+    "أجزاء من كلٍّ، مع المجموع في الوسط ومفتاح بالنسب المئوية. استخدمه لخمسة أجزاء أو أقل.",
+  ),
+  p(
+    "sparkline",
+    "Sparkline",
+    "charts",
+    "Sparkline",
+    ["SparklineExample"],
+    "A small line without axes for KPI cards. It is hidden from screen readers unless you give it a title.",
+    "خط صغير دون محاور لبطاقات المؤشرات. يُخفى عن قارئات الشاشة ما لم تمنحه عنوانًا.",
+  ),
+  p(
+    "chart-legend",
+    "ChartLegend",
+    "charts",
+    "ChartLegend",
+    ["ChartLegendExample"],
+    "Names the series with the same line or fill as the chart. Charts with more than one series show it by themselves.",
+    "يسمّي السلاسل بنفس الخط أو التعبئة المستخدمة في الرسم. تعرضه الرسوم التي فيها أكثر من سلسلة تلقائيًا.",
+  ),
+];

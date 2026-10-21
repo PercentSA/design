@@ -1,0 +1,26 @@
+{
+  "name": "percent-design",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "build": "bun run --filter '@percentsa/tokens' build && bun run --filter '@percentsa/ui' build && bun run --filter '@percentsa/motion' build",
+    "test": "bun test",
+    "typecheck": "bun run --filter '*' typecheck",
+    "dev": "bun run --filter '@percentsa/tokens' build && bun run --filter docs dev",
+    "registry": "bun scripts/registry.ts",
+    "logo-files": "bun scripts/logo-files.ts"
+  },
+  "devDependencies": {
+    "@happy-dom/global-registrator": "^21.0.1",
+    "@types/bun": "^1.4.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0",
+    "typescript": "^7.0.2"
+  }
+}
