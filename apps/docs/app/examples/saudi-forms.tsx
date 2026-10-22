@@ -7,6 +7,7 @@ import {
   Field,
   FileDrop,
   IbanInput,
+  ImageField,
   isNationalId,
   MoneyInput,
   NationalAddress,
@@ -121,6 +122,24 @@ export function FileDropExample() {
   return (
     <Field label={t("Attachments", "المرفقات")} className="w-full max-w-md">
       <FileDrop name="files" accept=".pdf,image/*" multiple maxSizeMb={5} />
+    </Field>
+  );
+}
+
+export function ImageFieldExample() {
+  const t = useT();
+  const [logo, setLogo] = useState<string | null>(null);
+  return (
+    <Field label={t("Store logo", "شعار المتجر")} hint={t("Square, PNG or JPG", "مربع، بصيغة PNG أو JPG")} className="w-full max-w-md">
+      <ImageField
+        value={logo}
+        onValueChange={setLogo}
+        // A real app sends the file to its storage and returns the file's URL.
+        upload={(file) => new Promise((done) => setTimeout(() => done(URL.createObjectURL(file)), 800))}
+        alt={t("Store logo", "شعار المتجر")}
+        aspect="1 / 1"
+        name="logo"
+      />
     </Field>
   );
 }

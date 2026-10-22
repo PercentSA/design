@@ -866,6 +866,31 @@
       }
     },
     {
+      "name": "image-field",
+      "type": "registry:ui",
+      "title": "ImageField",
+      "description": "@percentsa/ui: ImageField",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/file-drop",
+        "@percentsa/provider",
+        "@percentsa/spinner"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/image-field.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/image-field.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ImageField"
+        ]
+      }
+    },
+    {
       "name": "input-classes",
       "type": "registry:lib",
       "title": "FIELD_BOX, TEXT_BOX, MENU_ITEM",

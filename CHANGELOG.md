@@ -12,6 +12,8 @@ ERP parts for documents, records, forms and reports. No breaking change.
 - FormField on the new entry @percentsa/ui/react-hook-form: binds a react-hook-form field to Field (label, hint, error, ids). react-hook-form is an optional peer; @percentsa/ui alone does not need it.
 - FormSheet: an edit form in a sheet with a sticky footer, a pending state and a guard for unsaved changes. RecordSection: a record's facts as text, with its edit action.
 - AlertDialog without a trigger gives focus back to the element that had it before it opened (was: the page).
+- ImageField: an image upload with preview, replace, remove and an upload callback.
+- FileDrop disabled.
 
 ## 0.7.0
 

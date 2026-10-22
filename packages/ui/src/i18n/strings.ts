@@ -120,6 +120,10 @@ const en = {
   discard: "Discard",
   keepEditing: "Keep editing",
   notSet: "Not set",
+  uploading: "Uploading",
+  replaceImage: "Replace image",
+  removeImage: "Remove image",
+  uploadFailed: "Could not upload the image. Try again.",
   invoice: {
     taxInvoice: "Tax invoice",
     simplifiedTaxInvoice: "Simplified tax invoice",
@@ -307,6 +311,10 @@ const ar: Strings = {
   discard: "تجاهل",
   keepEditing: "متابعة التعديل",
   notSet: "غير محدد",
+  uploading: "جارٍ الرفع",
+  replaceImage: "استبدال الصورة",
+  removeImage: "إزالة الصورة",
+  uploadFailed: "تعذّر رفع الصورة. حاول مرة أخرى.",
   invoice: {
     taxInvoice: "فاتورة ضريبية",
     simplifiedTaxInvoice: "فاتورة ضريبية مبسطة",

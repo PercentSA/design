@@ -24,6 +24,8 @@ export const RELEASES: Release[] = [
       c("new", "FormField connects a react-hook-form field to Field: the label, the hint and the field's error message, with the ids screen readers need. It comes from its own import, @percentsa/ui/react-hook-form. Projects that do not use react-hook-form do not need to install it."),
       c("new", "FormSheet is an edit form in a sheet. Save and Cancel stay at the bottom, Save shows a spinner while the form saves, and closing the sheet with unsaved changes asks first. RecordSection shows a record's facts with an Edit button, and \"Not set\" where a value is empty."),
       c("fixed", "An AlertDialog opened without a trigger (from a menu or a sheet) gives focus back to where it was when it closes."),
+      c("new", "ImageField uploads an image, for example a logo or a product photo. It shows a preview with Replace and Remove, refuses a wrong file type or a file that is too large before the upload, and keeps the old image if the upload fails."),
+      c("new", "FileDrop can be disabled."),
     ],
   },
   {
