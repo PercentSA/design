@@ -14,6 +14,14 @@ const c = (kind: ChangeKind, text: string) => ({ kind, text });
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.7.0",
+    date: null,
+    summary: "Parts for app screens and lists. Nothing changes for existing projects.",
+    changes: [
+      c("new", "TimeText shows a date or time the short way, in Riyadh time: \"3:45 PM\" today, \"Yesterday 3:45 PM\", \"12 September, 3:45 PM\" this year. Hover, focus or tap shows the exact value. formatDateTime, formatRelative and formatTimeOfDay give the same text for tables, exports and printouts."),
+    ],
+  },
+  {
     version: "0.6.0",
     date: "2026-10-22",
     summary: "The Percent logo on a grid: one square is 100 units, so every size is a round number. The logo keeps its shapes and motion; its sizes change.",

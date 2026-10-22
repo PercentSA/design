@@ -2,6 +2,12 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.7.0
+
+Parts for app shells and lists. No breaking change.
+
+- TimeText, formatDateTime, formatRelative, formatTimeOfDay: dates and times in Riyadh time, 12-hour clock, relative words, the exact value on hover or tap.
+
 ## 0.6.0
 
 The logo on a grid (spec docs/brand-remake.md D9, §4): 1 square = 100 units, so every size is a round number. The shapes and the motion do not change; their sizes do.

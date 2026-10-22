@@ -1457,6 +1457,30 @@
       }
     },
     {
+      "name": "time-text",
+      "type": "registry:ui",
+      "title": "TimeText",
+      "description": "@percentsa/ui: TimeText",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/overlays",
+        "@percentsa/provider",
+        "@percentsa/saudi-date-time"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/time-text.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/time-text.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TimeText"
+        ]
+      }
+    },
+    {
       "name": "timeline",
       "type": "registry:ui",
       "title": "Timeline",
@@ -1814,6 +1838,31 @@
           "moveFocus",
           "viewLabel",
           "weekdayNames"
+        ]
+      }
+    },
+    {
+      "name": "saudi-date-time",
+      "type": "registry:lib",
+      "title": "formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay",
+      "description": "@percentsa/ui: formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay",
+      "registryDependencies": [
+        "@percentsa/localized",
+        "@percentsa/strings"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/date-time.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/date-time.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "formatDateTime",
+          "dateTimeAttribute",
+          "formatRelative",
+          "formatTimeOfDay"
         ]
       }
     },
