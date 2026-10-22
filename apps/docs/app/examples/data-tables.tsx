@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileText, Globe, LayoutDashboard, Plus, Receipt, Smartphone } from "lucide-react";
-import { Badge, Button, Card, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, toast, useLang } from "@percentsa/ui";
+import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, toast, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function CardExample() {
@@ -143,6 +143,31 @@ export function DataTableListExample() {
         { label: t("Delete", "حذف"), danger: true, onSelect: done(t("Invoice deleted", "حُذفت الفاتورة")) },
       ]}
     />
+  );
+}
+
+/** ColumnsMenu hides columns (Invoice stays), with a rows-per-page choice and a header that stays in view. */
+export function ColumnsMenuExample() {
+  const t = useT();
+  const columns = useInvoiceColumns().map((c) => (c.key === "id" ? { ...c, hideable: false } : c));
+  const [hidden, setHidden] = useState<string[]>([]);
+  const [size, setSize] = useState(10);
+  return (
+    <div className="grid w-full gap-3">
+      <ColumnsMenu className="justify-self-end" columns={columns} hidden={hidden} onHiddenChange={setHidden} />
+      <DataTable
+        columns={columns}
+        rows={INVOICES}
+        getRowId={(r) => r.id}
+        caption={t("Invoices", "الفواتير")}
+        hideCaption
+        hiddenColumns={hidden}
+        pageSize={size}
+        pageSizeOptions={[5, 10, 25]}
+        onPageSizeChange={setSize}
+        stickyHeader
+      />
+    </div>
   );
 }
 

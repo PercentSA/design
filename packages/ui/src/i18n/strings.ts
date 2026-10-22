@@ -108,6 +108,8 @@ const en = {
   neededPermission: (name: string) => `Needed permission: ${name}`,
   moreActions: "More actions",
   rowActions: "Row actions",
+  columns: "Columns",
+  rowsPerPage: "Rows per page",
   invoice: {
     taxInvoice: "Tax invoice",
     simplifiedTaxInvoice: "Simplified tax invoice",
@@ -272,6 +274,8 @@ const ar: Strings = {
   neededPermission: (name) => `الصلاحية المطلوبة: ${name}`,
   moreActions: "إجراءات أخرى",
   rowActions: "إجراءات الصف",
+  columns: "الأعمدة",
+  rowsPerPage: "عدد الصفوف",
   invoice: {
     taxInvoice: "فاتورة ضريبية",
     simplifiedTaxInvoice: "فاتورة ضريبية مبسطة",

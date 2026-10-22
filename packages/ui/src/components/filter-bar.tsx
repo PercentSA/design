@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useRef, type ReactNode } from "react";
 import { Check, ChevronDown } from "lucide-react";
 import { DropdownMenu as RadixDropdown } from "radix-ui";
 import { cn } from "../lib/cn";
@@ -31,12 +31,15 @@ export function FilterBar({
   filters,
   value,
   onValueChange,
+  actions,
   className,
 }: {
   search?: { value: string; onValueChange: (value: string) => void; placeholder?: string };
   filters: FilterDef[];
   value: FilterValue;
   onValueChange: (value: FilterValue) => void;
+  /** The list's other controls (date range, columns, refresh, "⋯"), at the end of the first row. */
+  actions?: ReactNode;
   className?: string;
 }) {
   const s = useStrings();
@@ -115,6 +118,7 @@ export function FilterBar({
             </RadixDropdown.Root>
           );
         })}
+        {actions && <div className="ms-auto flex flex-wrap items-center gap-2">{actions}</div>}
       </div>
       {active.length > 0 && (
         <div className="flex flex-wrap items-center gap-2">

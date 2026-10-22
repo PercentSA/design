@@ -100,6 +100,7 @@ export { AuthLayout } from "./components/auth-layout";
 export { Card } from "./components/card";
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type TableAlign } from "./components/table";
 export { DataTable, type DataTableColumn, type DataTableProps, type DataTableSort } from "./components/data-table";
+export { ColumnsMenu } from "./components/columns-menu";
 export { DescriptionList, List, ListItem } from "./components/list";
 export { Kanban, type KanbanColumn } from "./components/kanban";
 export { CalendarView, type CalendarEvent } from "./components/calendar-view";

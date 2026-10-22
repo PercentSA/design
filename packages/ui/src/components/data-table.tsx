@@ -8,6 +8,7 @@ import { buttonClass } from "./button-class";
 import { ABOVE_STRETCHED_LINK, STRETCHED_LINK } from "./card";
 import { Checkbox } from "./choices";
 import { EmptyState, Skeleton } from "./feedback";
+import { Select } from "./inputs";
 import { DropdownMenu, type MenuItem } from "./menus";
 import { Pagination } from "./navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type TableAlign } from "./table";
@@ -62,6 +63,13 @@ export type DataTableProps<Row> = {
   rowActions?: (row: Row) => MenuItem[];
   /** Below 768 px each row is a card: the first cell is its title, and the other cells show their header. Default false. */
   cards?: boolean;
+  /** Keys of columns not shown (from ColumnsMenu). */
+  hiddenColumns?: string[];
+  /** Shows a "Rows per page" choice. Controlled: set `pageSize` in `onPageSizeChange`. A change goes to page 1. */
+  pageSizeOptions?: number[];
+  onPageSizeChange?: (size: number) => void;
+  /** The table scrolls in its own box (up to 70% of the screen height), and the header row stays in view. */
+  stickyHeader?: boolean;
   className?: string;
 };
 
@@ -76,7 +84,7 @@ const ACTIONS_KEY = "p-row-actions";
 
 /** A table with sorting, row selection, pages, loading and empty states. Client-side by default; server-side with `pageCount`. */
 export function DataTable<Row>({
-  columns,
+  columns: allColumns,
   rows,
   getRowId,
   caption,
@@ -97,8 +105,13 @@ export function DataTable<Row>({
   rowHref,
   rowActions,
   cards,
+  hiddenColumns,
+  pageSizeOptions,
+  onPageSizeChange,
+  stickyHeader,
   className,
 }: DataTableProps<Row>) {
+  const columns = hiddenColumns ? allColumns.filter((c) => !hiddenColumns.includes(c.key)) : allColumns;
   const s = useStrings();
   const t = useText();
   const lang = useLang();
@@ -114,7 +127,8 @@ export function DataTable<Row>({
   const chosen = (selected ?? innerSelected).filter((id) => server || rowIds.has(id));
   const chosenSet = new Set(chosen);
 
-  const sortColumn = columns.find((c) => c.key === order?.key);
+  // A hidden column keeps its sort.
+  const sortColumn = allColumns.find((c) => c.key === order?.key);
   const direction = order?.direction;
   const collator = useMemo(() => new Intl.Collator(lang, { numeric: true }), [lang]);
   // Sorted again only when the rows, the sort or the column change, not on every selection click.
@@ -158,8 +172,14 @@ export function DataTable<Row>({
   const withActions = (cells: ReactNode[], cell: () => ReactNode) => (rowActions ? [...cells, cell()] : cells);
   return (
     <div className={className}>
-      <Table caption={caption} hideCaption={hideCaption} aria-busy={loading || undefined} className={cn(cards && "max-md:[&>table]:block")}>
-        <TableHeader className={cards ? "max-md:sr-only" : undefined}>
+      <Table
+        caption={caption}
+        hideCaption={hideCaption}
+        aria-busy={loading || undefined}
+        className={cn(cards && "max-md:[&>table]:block", stickyHeader && "max-h-[70dvh] overflow-auto")}
+      >
+        {/* z-sticky: above the row controls that sit over a row link (z-1). */}
+        <TableHeader className={cn(stickyHeader && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "max-md:sr-only") || undefined}>
           <TableRow>
             {selectable && (
               <TableHead className="w-10">
@@ -305,7 +325,7 @@ export function DataTable<Row>({
         </TableBody>
       </Table>
       <LiveRegion>{loading && s.loading}</LiveRegion>
-      {(selectable || pages > 1) && (
+      {(selectable || pages > 1 || pageSizeOptions) && (
         <div className="flex flex-wrap items-center gap-3 pt-4">
           {selectable && (
             <p role="status" className="text-sm text-fg-2">
@@ -313,6 +333,23 @@ export function DataTable<Row>({
             </p>
           )}
           {pages > 1 && <Pagination page={current} total={pages} onPageChange={goTo} className="ms-auto" />}
+          {pageSizeOptions && (
+            <div className={cn("flex items-center gap-2", pages <= 1 && "ms-auto")}>
+              <label htmlFor={`${uid}p`} className="text-sm text-fg-2">
+                {t(s.rowsPerPage)}
+              </label>
+              <Select
+                id={`${uid}p`}
+                className="h-(--p-control-h-sm) w-20"
+                options={pageSizeOptions.map((n) => ({ value: String(n), label: String(n) }))}
+                value={pageSize === undefined ? undefined : String(pageSize)}
+                onValueChange={(v) => {
+                  onPageSizeChange?.(Number(v));
+                  goTo(1);
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

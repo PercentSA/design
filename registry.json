@@ -572,6 +572,34 @@
       }
     },
     {
+      "name": "columns-menu",
+      "type": "registry:ui",
+      "title": "ColumnsMenu",
+      "description": "@percentsa/ui: ColumnsMenu",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/data-table",
+        "@percentsa/input-classes",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/columns-menu.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/columns-menu.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ColumnsMenu"
+        ]
+      }
+    },
+    {
       "name": "combobox",
       "type": "registry:ui",
       "title": "Combobox",
@@ -669,6 +697,7 @@
         "@percentsa/choices",
         "@percentsa/cn",
         "@percentsa/feedback",
+        "@percentsa/inputs",
         "@percentsa/menus",
         "@percentsa/navigation",
         "@percentsa/provider",

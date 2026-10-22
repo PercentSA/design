@@ -29,6 +29,15 @@ export const pages: DocPage[] = [
     "جدول بفرز وتحديد صفوف وصفحات وحالتَي التحميل والفراغ. لبيانات الخادم، تحكّم في الفرز والصفحة ومرّر pageCount؛ فيعرض الجدول الصفوف كما وصلت. الخاصية rowHref تجعل الصف كله رابطًا إلى السجل (الخلية الأولى هي الرابط، وCtrl مع النقر يفتح تبويبًا جديدًا)، ويبقى مربع الاختيار والأزرار في الصف تعمل. الخاصية rowActions تضيف قائمة «⋯» لكل صف. مع cards يصبح كل صف بطاقة تحت 768 بكسل: الخلية الأولى عنوانها، وتعرض الخلايا الأخرى عنوان عمودها، وتُحذف أعمدة hideOnCard.",
   ),
   p(
+    "columns-menu",
+    "ColumnsMenu",
+    "data",
+    "ColumnsMenu",
+    ["ColumnsMenuExample"],
+    "Shows and hides table columns. It takes the DataTable's columns and lists those that can be hidden (hideable: false keeps a column); give the hidden keys to DataTable as hiddenColumns. The example also shows pageSizeOptions (a rows-per-page choice that goes back to page 1) and stickyHeader (the table scrolls in its own box and the header row stays in view).",
+    "يُظهر أعمدة الجدول ويخفيها. يأخذ أعمدة DataTable ويعرض القابلة للإخفاء منها (hideable: false يُبقي العمود)؛ مرّر المفاتيح المخفية إلى DataTable في hiddenColumns. يعرض المثال أيضًا pageSizeOptions (اختيار عدد الصفوف في الصفحة، ويعود إلى الصفحة الأولى) وstickyHeader (يُمرَّر الجدول في إطاره، ويبقى صف العناوين ظاهرًا).",
+  ),
+  p(
     "list",
     "List",
     "data",
