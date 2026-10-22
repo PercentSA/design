@@ -124,6 +124,16 @@ function Crossed({ children }: { children: ReactNode }) {
   );
 }
 
+// The transparent MOV files are too large for the repo: they are on a GitHub release (scripts/logo-videos.ts).
+const VIDEO_RELEASE = "https://github.com/PercentSA/design/releases/download/brand-video";
+const VIDEOS: { id: "loop" | "ar" | "en"; label: Localized }[] = [
+  { id: "loop", label: { en: "Full loop · 7.2 s", ar: "الحلقة الكاملة · 7.2 ثانية" } },
+  { id: "ar", label: { en: "Icon to Arabic · 3 s", ar: "من الأيقونة إلى العربية · 3 ثوانٍ" } },
+  { id: "en", label: { en: "Icon to English · 3 s", ar: "من الأيقونة إلى الإنجليزية · 3 ثوانٍ" } },
+];
+const VIDEO_SIZES = [["16x9", "16:9"], ["1x1", "1:1"], ["9x16", "9:16"]] as const;
+const COLOUR: Record<"white" | "black", Localized> = { white: { en: "White", ar: "أبيض" }, black: { en: "Black", ar: "أسود" } };
+
 const STAGE_WORD: Record<"ar" | "en", Localized> = { ar: { en: "Arabic", ar: "العربية" }, en: { en: "English", ar: "الإنجليزية" } };
 const LOGO_WORD: Localized = { en: "logo", ar: "الشعار" };
 
@@ -286,10 +296,70 @@ export function BrandPage() {
               <div className="flex gap-4 text-sm">
                 {(["white", "black"] as const).map((c) => (
                   <a key={c} href={`/brand/percent-${v}-${c}.svg`} download className="underline underline-offset-4">
-                    {l(c === "white" ? { en: "White", ar: "أبيض" } : { en: "Black", ar: "أسود" })}
+                    {l(COLOUR[c])}
                   </a>
                 ))}
               </div>
+            </Surface>
+          ))}
+        </Grid>
+      </Section>
+
+      <Section
+        title={{ en: "Videos", ar: "الفيديو" }}
+        text={{
+          en: "The loader as video files, made from the same frames at 60 frames per second: the full loop, and the change from the icon to each word. MP4 to post, WebM for web pages, and MOV with a transparent background (ProRes 4444) for video editing. White is for dark backgrounds, black for light backgrounds.",
+          ar: "مؤشر التحميل كملفات فيديو مصنوعة من الإطارات نفسها بمعدل 60 إطارًا في الثانية: الحلقة الكاملة، والتحول من الأيقونة إلى كل كلمة. ملفات MP4 للنشر، وWebM لصفحات الويب، وMOV بخلفية شفافة (ProRes 4444) لتحرير الفيديو. الأبيض للخلفيات الداكنة، والأسود للخلفيات الفاتحة.",
+        }}
+      >
+        <Grid min="18rem" gap={4}>
+          {VIDEOS.map((v) => (
+            <Surface key={v.id} className="grid content-start gap-3 p-4">
+              <Text size="sm">{l(v.label)}</Text>
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-line text-start">
+                    <th />
+                    {(["white", "black"] as const).map((c) => (
+                      <th key={c} className="py-2 text-start font-normal text-fg-3">
+                        {l(COLOUR[c])}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {VIDEO_SIZES.map(([size, name]) => (
+                    <tr key={size} className="border-b border-line">
+                      <td className="py-2">
+                        <Mono>{name}</Mono>
+                      </td>
+                      {(["white", "black"] as const).map((c) => (
+                        <td key={c} className="py-2">
+                          <span dir="ltr" className="inline-flex gap-2">
+                            {(["mp4", "webm"] as const).map((ext) => (
+                              <a key={ext} href={`/brand-video/percent-${v.id}-${size}-${c}.${ext}`} download className="underline underline-offset-4">
+                                {ext === "mp4" ? "MP4" : "WebM"}
+                              </a>
+                            ))}
+                          </span>
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                  <tr>
+                    <td className="py-2">
+                      <Mono>{l({ en: "Transparent", ar: "شفاف" })}</Mono>
+                    </td>
+                    {(["white", "black"] as const).map((c) => (
+                      <td key={c} className="py-2">
+                        <a href={`${VIDEO_RELEASE}/percent-${v.id}-alpha-${c}.mov`} className="underline underline-offset-4">
+                          MOV
+                        </a>
+                      </td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
             </Surface>
           ))}
         </Grid>
