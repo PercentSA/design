@@ -146,6 +146,29 @@ export function DataTableListExample() {
   );
 }
 
+/** A report: the invoices grouped by status (sorted inside each group), a subtotal per group and a total row. */
+export function DataTableReportExample() {
+  const t = useT();
+  const status = { paid: t("Paid", "مدفوعة"), due: t("Due", "مستحقة"), overdue: t("Overdue", "متأخرة") };
+  const sum = (rows: Invoice[]) => <Money amount={rows.reduce((n, r) => n + r.amount, 0)} />;
+  const rows = INVOICES.slice(0, 10);
+  return (
+    <DataTable
+      className="w-full"
+      columns={useInvoiceColumns().filter((c) => c.key !== "status")}
+      rows={rows}
+      getRowId={(r) => r.id}
+      caption={t("Invoices by status", "الفواتير حسب الحالة")}
+      hideCaption
+      defaultSort={{ key: "amount", direction: "desc" }}
+      groupBy={(r) => r.status}
+      groupHeader={(key, group) => `${status[key as Invoice["status"]]} (${group.length})`}
+      groupTotals={(_, group) => ({ amount: sum(group) })}
+      totals={{ amount: sum(rows) }}
+    />
+  );
+}
+
 /** ColumnsMenu hides columns (Invoice stays), with a rows-per-page choice and a header that stays in view. */
 export function ColumnsMenuExample() {
   const t = useT();

@@ -426,5 +426,10 @@
     [data-print-area][data-print-active] {
       display: block !important;
     }
+    /* A table's total row prints once, after the last row (browsers repeat a tfoot on every page), and in one piece. */
+    tfoot {
+      display: table-row-group;
+      break-inside: avoid;
+    }
   }
 }
