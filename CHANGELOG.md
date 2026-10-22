@@ -4,7 +4,7 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 
 ## 0.8.0
 
-ERP parts for documents, records, forms and reports. No breaking change.
+ERP parts for documents, records, forms and reports. New entry `@percentsa/ui/react-hook-form` (optional peer `react-hook-form`). No breaking change.
 
 - DetailLayout: a main column and a side column (2:1) that never let a wide table push the page; one column on phones. TotalsList: document totals aligned under each other.
 - LineItemsTable: document lines with product and SKU, quantity, unit price, discount, VAT and total, a returned-quantity chip, and card rows on phones.
@@ -15,8 +15,8 @@ ERP parts for documents, records, forms and reports. No breaking change.
 - ImageField: an image upload with preview, replace, remove and an upload callback.
 - FileDrop disabled.
 - Combobox: server search (onQueryChange, loading), long lists (limit), an "add new" option (onCreate), and valueLabel for a chosen value that is not in the results.
-- PeriodPicker: a month, quarter, year or custom period for reports.
-- TimeInput (12-hour time with AM/PM, ص/م in Arabic) and DateTimePicker.
+- PeriodPicker: a month, quarter, year or custom period for reports. periodOf and periodOptions give the same periods on the server.
+- TimeInput (12-hour time with AM/PM, ص/م in Arabic) and DateTimePicker. splitTime and joinTime convert between "HH:mm" and the 12-hour clock.
 - NumberInput format: how a set value shows (TimeInput shows minutes as "05").
 - SaudiPlate (a Saudi private plate drawing), PlateInput (one field with a live plate) and parsePlate.
 
