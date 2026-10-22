@@ -76,7 +76,7 @@ export { ContextMenu, DropdownMenu, type MenuItem } from "./components/menus";
 export { dismissToast, toast, Toaster } from "./components/toast";
 export { ConsentBanner } from "./components/consent";
 export { readConsent, type Consent } from "./lib/consent-cookie";
-export { Alert, Badge, EmptyState, Progress, ProgressRing, Skeleton, StatusDot, Tag } from "./components/feedback";
+export { Alert, Badge, EmptyState, Forbidden, NotFound, Progress, ProgressRing, Skeleton, StatusBadge, StatusDot, Tag, type StatusTone } from "./components/feedback";
 export { Breadcrumbs, Pagination, SkipLink, Steps, Tabs, type Crumb, type StepItem, type TabItem } from "./components/navigation";
 export { paginationRange } from "./lib/pagination";
 export { LangSwitch, MobileMenu, SiteFooter, SiteHeader, type FooterGroup, type NavItem, type SiteWidth, type SocialLink } from "./components/site";

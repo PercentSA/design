@@ -9,6 +9,7 @@ Parts for app shells and lists. No breaking change.
 - TimeText, formatDateTime, formatRelative, formatTimeOfDay: dates and times in Riyadh time, 12-hour clock, relative words, the exact value on hover or tap.
 - formatMoney and Money: decimals up to 6 for unit prices (maxDecimals) and brackets for negative amounts (accounting). formatPhone, phoneLinks and PhoneText: phone numbers for display, with call and WhatsApp links.
 - formatMoney and Money: a result of zero has no minus sign (was "-0.00"), and a non-finite amount shows "—" (was "NaN").
+- StatusBadge: a badge with a coloured dot in five tones; the colour is on the dot only. EmptyState tone="error" with a retry button. NotFound and Forbidden page states.
 
 ## 0.6.0
 

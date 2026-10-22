@@ -686,15 +686,18 @@
     {
       "name": "feedback",
       "type": "registry:ui",
-      "title": "Alert, Badge, Tag, StatusDot",
-      "description": "@percentsa/ui: Alert, Badge, Tag, StatusDot, Progress, ProgressRing, Skeleton, EmptyState",
+      "title": "Alert, Badge, Tag, StatusBadge",
+      "description": "@percentsa/ui: Alert, Badge, Tag, StatusBadge, StatusDot, Progress, ProgressRing, Skeleton, EmptyState, NotFound, Forbidden",
       "dependencies": [
         "lucide-react",
         "radix-ui"
       ],
       "registryDependencies": [
+        "@percentsa/actions",
         "@percentsa/brand",
+        "@percentsa/button-class",
         "@percentsa/cn",
+        "@percentsa/navigation",
         "@percentsa/provider"
       ],
       "files": [
@@ -709,11 +712,14 @@
           "Alert",
           "Badge",
           "Tag",
+          "StatusBadge",
           "StatusDot",
           "Progress",
           "ProgressRing",
           "Skeleton",
-          "EmptyState"
+          "EmptyState",
+          "NotFound",
+          "Forbidden"
         ]
       }
     },
@@ -2815,6 +2821,16 @@
       "files": []
     },
     {
+      "name": "status-badge",
+      "type": "registry:ui",
+      "title": "StatusBadge",
+      "description": "StatusBadge: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
       "name": "status-dot",
       "type": "registry:ui",
       "title": "StatusDot",
@@ -2859,6 +2875,26 @@
       "type": "registry:ui",
       "title": "EmptyState",
       "description": "EmptyState: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "not-found",
+      "type": "registry:ui",
+      "title": "NotFound",
+      "description": "NotFound: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "forbidden",
+      "type": "registry:ui",
+      "title": "Forbidden",
+      "description": "Forbidden: adds @percentsa/feedback.",
       "registryDependencies": [
         "@percentsa/feedback"
       ],

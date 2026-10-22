@@ -22,6 +22,8 @@ export const RELEASES: Release[] = [
       c("new", "Money and formatMoney can keep up to 6 decimals for unit prices, and can put negative amounts in brackets: (1,234.50)."),
       c("fixed", "formatMoney never shows -0.00, and shows \"—\" for an amount that is not a number, so a broken value does not look like zero."),
       c("new", "PhoneText shows a phone number as a call link (\"+966 55 000 0999\"), with an optional WhatsApp link. formatPhone and phoneLinks give the text and the links."),
+      c("new", "StatusBadge shows a status (Paid, Overdue) with a coloured dot in five tones. The colour is on the dot only, so the text stays readable."),
+      c("new", "EmptyState can show a load error with a \"Try again\" button. NotFound and Forbidden are ready pages for a missing record and for a page the user may not open."),
     ],
   },
   {
