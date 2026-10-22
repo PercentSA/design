@@ -132,3 +132,14 @@ export function formatTimeOfDay(time: string | null | undefined, { lang = "en" }
   if (!m || h > 23) return "";
   return `${h % 12 || 12}:${m[2]} ${period(lang, h >= 12)}`;
 }
+
+/** A wall time "HH:mm" on the 12-hour clock: "18:30" → 6:30 PM, "00:30" → 12:30 AM, "12:00" → 12 PM. */
+export function splitTime(time: string): { hour12: number; minute: number; pm: boolean } {
+  const [h = 0, m = 0] = time.split(":").map((n) => Number(n) || 0);
+  return { hour12: h % 12 || 12, minute: m, pm: h >= 12 };
+}
+
+/** A 12-hour time as "HH:mm" (24 hours): 12 AM is "00", 12 PM is "12". */
+export function joinTime(hour12: number, minute: number, pm: boolean): string {
+  return `${String((hour12 % 12) + (pm ? 12 : 0)).padStart(2, "0")}:${String(minute).padStart(2, "0")}`;
+}

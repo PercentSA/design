@@ -1718,6 +1718,35 @@
       }
     },
     {
+      "name": "time-input",
+      "type": "registry:ui",
+      "title": "TimeInput, DateTimePicker",
+      "description": "@percentsa/ui: TimeInput, DateTimePicker",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/calendar",
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/provider",
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date-time",
+        "@percentsa/special-inputs"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/time-input.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/time-input.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TimeInput",
+          "DateTimePicker"
+        ]
+      }
+    },
+    {
       "name": "time-text",
       "type": "registry:ui",
       "title": "TimeText",
@@ -2155,7 +2184,7 @@
       "name": "saudi-date-time",
       "type": "registry:lib",
       "title": "formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay",
-      "description": "@percentsa/ui: formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay",
+      "description": "@percentsa/ui: formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay, splitTime, joinTime",
       "registryDependencies": [
         "@percentsa/localized",
         "@percentsa/strings"
@@ -2172,7 +2201,9 @@
           "formatDateTime",
           "dateTimeAttribute",
           "formatRelative",
-          "formatTimeOfDay"
+          "formatTimeOfDay",
+          "splitTime",
+          "joinTime"
         ]
       }
     },
@@ -3947,6 +3978,16 @@
       "description": "ThemeSwitch: adds @percentsa/theme.",
       "registryDependencies": [
         "@percentsa/theme"
+      ],
+      "files": []
+    },
+    {
+      "name": "date-time-picker",
+      "type": "registry:ui",
+      "title": "DateTimePicker",
+      "description": "DateTimePicker: adds @percentsa/time-input.",
+      "registryDependencies": [
+        "@percentsa/time-input"
       ],
       "files": []
     },

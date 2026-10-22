@@ -16,6 +16,8 @@ ERP parts for documents, records, forms and reports. No breaking change.
 - FileDrop disabled.
 - Combobox: server search (onQueryChange, loading), long lists (limit), an "add new" option (onCreate), and valueLabel for a chosen value that is not in the results.
 - PeriodPicker: a month, quarter, year or custom period for reports.
+- TimeInput (12-hour time with AM/PM, ص/م in Arabic) and DateTimePicker.
+- NumberInput format: how a set value shows (TimeInput shows minutes as "05").
 
 ## 0.7.0
 

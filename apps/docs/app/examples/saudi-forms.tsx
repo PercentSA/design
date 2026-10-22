@@ -4,6 +4,7 @@ import {
   CrInput,
   DatePicker,
   DateRangePicker,
+  DateTimePicker,
   Field,
   FileDrop,
   IbanInput,
@@ -21,6 +22,7 @@ import {
   saudiError,
   Stack,
   Text,
+  TimeInput,
   todayPlain,
   useLang,
   VatInput,
@@ -168,6 +170,33 @@ export function DatePickerExample() {
   );
 }
 
+export function TimeInputExample() {
+  const t = useT();
+  const [time, setTime] = useState<string | null>("09:00");
+  return (
+    <Stack gap={3}>
+      <Field label={t("Opens at", "يفتح الساعة")}>
+        <TimeInput value={time} onValueChange={setTime} name="opens" />
+      </Field>
+      <Text size="sm" tone="subtle" dir="ltr">value: {time}</Text>
+    </Stack>
+  );
+}
+
+/** It sends a value only when the date and the time are both set. */
+export function DateTimePickerExample() {
+  const t = useT();
+  const [value, setValue] = useState<{ date: PlainDate; time: string } | null>(null);
+  return (
+    <Stack gap={3}>
+      <Field label={t("Appointment", "الموعد")}>
+        <DateTimePicker value={value} onValueChange={setValue} name="at" />
+      </Field>
+      <Text size="sm" tone="subtle" dir="ltr">value: {value ? `${value.date}T${value.time}` : "—"}</Text>
+    </Stack>
+  );
+}
+
 /** mode="range": the first click sets the start, the second the end (they swap when the end is earlier); a third starts again. */
 export function CalendarRangeExample() {
   const [range, setRange] = useState<DateRange>({ from: "2026-02-10", to: "2026-02-18" });
@@ -181,7 +210,6 @@ export function CalendarRangeExample() {
   );
 }
 
-/** A list filter: a preset closes the popover; a single day is a valid filter too ("From 12/09/2026"). */
 export function PeriodPickerExample() {
   const [period, setPeriod] = useState<Period>(() => periodOf("month", todayPlain()));
   return (
@@ -192,6 +220,7 @@ export function PeriodPickerExample() {
   );
 }
 
+/** A list filter: a preset closes the popover; a single day is a valid filter too ("From 12/09/2026"). */
 export function DateRangePickerExample() {
   const t = useT();
   const [range, setRange] = useState<DateRange>({ from: null, to: null });

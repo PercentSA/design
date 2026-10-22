@@ -7,7 +7,7 @@ export { toWesternDigits } from "./saudi/digits";
 export { Money, RiyalSign } from "./saudi/money";
 export { formatMoney, RIYAL_H, RIYAL_PATHS, RIYAL_VIEWBOX, RIYAL_W } from "./saudi/money-format";
 export { formatDate, hijriParts, type CalendarKind } from "./saudi/date";
-export { formatDateTime, formatRelative, formatTimeOfDay, type DateInput, type DateTimeStyle } from "./saudi/date-time";
+export { formatDateTime, formatRelative, formatTimeOfDay, joinTime, splitTime, type DateInput, type DateTimeStyle } from "./saudi/date-time";
 export {
   formatIban,
   getSaudiIdType,
@@ -77,6 +77,7 @@ export {
 export { Calendar, DatePicker, DateRangePicker } from "./components/calendar";
 export { periodOf, periodOptions, type Period, type PeriodKind } from "./saudi/period";
 export { PeriodPicker } from "./components/period-picker";
+export { DateTimePicker, TimeInput } from "./components/time-input";
 export { TimeText } from "./components/time-text";
 export { PhoneText } from "./components/phone-text";
 export { AlertDialog, Dialog, DialogClose, HoverCard, Popover, Sheet, Tooltip } from "./components/overlays";

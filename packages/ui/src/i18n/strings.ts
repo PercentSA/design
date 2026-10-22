@@ -133,6 +133,10 @@ const en = {
   year: "Year",
   customPeriod: "Custom",
   quarterLabel: (q: number, y: number) => `Q${q} ${y}`,
+  hour: "Hour",
+  minute: "Minute",
+  am: "AM",
+  pm: "PM",
   invoice: {
     taxInvoice: "Tax invoice",
     simplifiedTaxInvoice: "Simplified tax invoice",
@@ -333,6 +337,10 @@ const ar: Strings = {
   year: "سنة",
   customPeriod: "فترة مخصصة",
   quarterLabel: (q, y) => `الربع ${["الأول", "الثاني", "الثالث", "الرابع"][q - 1]} ${y}`,
+  hour: "الساعة",
+  minute: "الدقيقة",
+  am: "ص",
+  pm: "م",
   invoice: {
     taxInvoice: "فاتورة ضريبية",
     simplifiedTaxInvoice: "فاتورة ضريبية مبسطة",
