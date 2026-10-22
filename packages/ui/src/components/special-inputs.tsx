@@ -149,11 +149,11 @@ export const MoneyInput = ({ value, onValueChange, ...props }: InputProps & { va
 /** Saudi IBAN, shown in groups of 4. `onValueChange` gets the compact value ("SA03…"). */
 export const IbanInput = ({ value, onValueChange, ...props }: InputProps & { value: string; onValueChange: (iban: string) => void }) => (
   <Input
+    placeholder="SA00 0000 0000 0000 0000 0000"
     {...props}
     dir="ltr"
     autoComplete="off"
     spellCheck={false}
-    placeholder="SA00 0000 0000 0000 0000 0000"
     value={formatIban(value)}
     onChange={(e) => onValueChange(reformat(e.target, value, normalizeIban, formatIban))}
     className={cn("font-mono uppercase", props.className)}
@@ -279,7 +279,7 @@ export function PhoneInput({
             value: g.code,
             label: (
               <>
-                {g.name[lang]} <span dir="ltr">(+{g.dialCode})</span>
+                {s.countries[g.code]} <span dir="ltr">(+{g.dialCode})</span>
               </>
             ),
           }))}

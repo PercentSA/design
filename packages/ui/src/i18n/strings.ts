@@ -38,6 +38,8 @@ const en = {
   dropFiles: "Drop files here or choose them",
   fileLimit: (maxMb: number) => `Up to ${maxMb} MB each`,
   country: "Country calling code",
+  /** PhoneInput country names. */
+  countries: { SA: "Saudi Arabia", AE: "UAE", QA: "Qatar", KW: "Kuwait", BH: "Bahrain", OM: "Oman" },
   otpDigit: (n: number, total: number) => `Digit ${n} of ${total}`,
   previousMonth: "Previous month",
   nextMonth: "Next month",
@@ -252,6 +254,7 @@ const ar: Strings = {
   dropFiles: "أفلت الملفات هنا أو اخترها",
   fileLimit: (maxMb) => `حتى ${maxMb} ميغابايت لكل ملف`,
   country: "رمز الدولة",
+  countries: { SA: "السعودية", AE: "الإمارات", QA: "قطر", KW: "الكويت", BH: "البحرين", OM: "عمان" },
   otpDigit: (n, total) => `الرقم ${n} من ${total}`,
   previousMonth: "الشهر السابق",
   nextMonth: "الشهر التالي",

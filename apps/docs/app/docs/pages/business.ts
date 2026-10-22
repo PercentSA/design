@@ -7,8 +7,8 @@ export const pages: DocPage[] = [
     "business",
     "Invoice, invoiceTotals",
     ["InvoiceExample", "SimplifiedInvoiceExample"],
-    "A Saudi tax invoice with Arabic and English labels on one page. Amounts are computed in halalas, with VAT rounded on each line, and it prints black on white in every theme.",
-    "فاتورة ضريبية سعودية بعناوين عربية وإنجليزية في صفحة واحدة. تُحسب المبالغ بالهللات وتُقرَّب الضريبة في كل بند، وتُطبع بالأسود على الأبيض في كل سمة.",
+    "A Saudi tax invoice with Arabic and English labels on one page. Amounts are computed in halalas, with VAT rounded on each line, and it prints black on white in every theme. The labels of the page language come from the provider strings; `otherLanguageStrings` gives the labels of the second language.",
+    "فاتورة ضريبية سعودية بعناوين عربية وإنجليزية في صفحة واحدة. تُحسب المبالغ بالهللات وتُقرَّب الضريبة في كل بند، وتُطبع بالأسود على الأبيض في كل سمة. تأتي عناوين لغة الصفحة من نصوص المزوّد، وتعطي `otherLanguageStrings` عناوين اللغة الثانية.",
   ),
   p(
     "line-items-table",
