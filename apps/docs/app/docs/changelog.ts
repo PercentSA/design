@@ -22,6 +22,8 @@ export const RELEASES: Release[] = [
       c("new", "LineItemsTable shows the lines of an order or invoice: product and SKU, quantity, unit price, discount, VAT and total. The headers say whether prices include VAT, a chip shows a returned quantity, and on phones each line is a card."),
       c("new", "DataTable can show a total row at the foot, and can put the rows of a report in groups, each with a header and a subtotal. A sort works inside each group, and a printed total row stays in one piece after the last row."),
       c("new", "FormField connects a react-hook-form field to Field: the label, the hint and the field's error message, with the ids screen readers need. It comes from its own import, @percentsa/ui/react-hook-form. Projects that do not use react-hook-form do not need to install it."),
+      c("new", "FormSheet is an edit form in a sheet. Save and Cancel stay at the bottom, Save shows a spinner while the form saves, and closing the sheet with unsaved changes asks first. RecordSection shows a record's facts with an Edit button, and \"Not set\" where a value is empty."),
+      c("fixed", "An AlertDialog opened without a trigger (from a menu or a sheet) gives focus back to where it was when it closes."),
     ],
   },
   {

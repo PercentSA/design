@@ -77,6 +77,7 @@ export { Calendar, DatePicker, DateRangePicker } from "./components/calendar";
 export { TimeText } from "./components/time-text";
 export { PhoneText } from "./components/phone-text";
 export { AlertDialog, Dialog, DialogClose, HoverCard, Popover, Sheet, Tooltip } from "./components/overlays";
+export { FormSheet } from "./components/form-sheet";
 export { ContextMenu, DropdownMenu, type MenuItem } from "./components/menus";
 export { dismissToast, toast, Toaster } from "./components/toast";
 export { ConsentBanner } from "./components/consent";
@@ -104,6 +105,7 @@ export { DataTable, type DataTableColumn, type DataTableProps, type DataTableSor
 export { ColumnsMenu } from "./components/columns-menu";
 export { LineItemsTable, type LineItem } from "./components/line-items-table";
 export { DescriptionList, List, ListItem } from "./components/list";
+export { RecordSection } from "./components/record-section";
 export { Kanban, type KanbanColumn } from "./components/kanban";
 export { CalendarView, type CalendarEvent } from "./components/calendar-view";
 export { AreaChart, LineChart } from "./components/charts/line-chart";

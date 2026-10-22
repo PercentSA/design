@@ -843,6 +843,29 @@
       }
     },
     {
+      "name": "form-sheet",
+      "type": "registry:ui",
+      "title": "FormSheet",
+      "description": "@percentsa/ui: FormSheet",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/overlays",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/form-sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/form-sheet.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FormSheet"
+        ]
+      }
+    },
+    {
       "name": "input-classes",
       "type": "registry:lib",
       "title": "FIELD_BOX, TEXT_BOX, MENU_ITEM",
@@ -1306,6 +1329,29 @@
         "exports": [
           "QrCode",
           "ZatcaQr"
+        ]
+      }
+    },
+    {
+      "name": "record-section",
+      "type": "registry:ui",
+      "title": "RecordSection",
+      "description": "@percentsa/ui: RecordSection",
+      "registryDependencies": [
+        "@percentsa/card",
+        "@percentsa/list",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/record-section.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/record-section.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "RecordSection"
         ]
       }
     },

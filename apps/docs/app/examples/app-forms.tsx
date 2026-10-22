@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, Download, Ellipsis, Printer, RefreshCw } from "lucide-react";
-import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, Field, FilterBar, type FilterValue, Input, Link, Mark, OtpInput, PasswordInput, Select, SettingsRow, SettingsSection, Stack, Switch, toast } from "@percentsa/ui";
+import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SettingsRow, SettingsSection, Stack, Switch, Textarea, toast } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 // The recipes show the layout only: the forms send nothing.
@@ -273,5 +273,62 @@ export function SettingsExample() {
         }
       />
     </SettingsSection>
+  );
+}
+
+export function FormSheetExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const [saved, setSaved] = useState({ name: "", note: "" });
+  const [draft, setDraft] = useState(saved);
+  const [pending, setPending] = useState(false);
+  return (
+    <FormSheet
+      trigger={<Button variant="secondary">{t("Edit customer", "تعديل العميل")}</Button>}
+      title={t("Edit customer", "تعديل العميل")}
+      description={t("Close it after a change: it asks first.", "أغلقه بعد تعديل: سيسألك أولًا.")}
+      open={open}
+      onOpenChange={(o) => {
+        if (o) setDraft(saved);
+        setOpen(o);
+      }}
+      dirty={draft.name !== saved.name || draft.note !== saved.note}
+      pending={pending}
+      onSubmit={(e) => {
+        e.preventDefault();
+        setPending(true);
+        // The app closes the sheet when the save succeeds.
+        setTimeout(() => {
+          setSaved(draft);
+          setPending(false);
+          setOpen(false);
+          toast({ title: t("Saved", "تم الحفظ") });
+        }, 800);
+      }}
+    >
+      <Field label={t("Name", "الاسم")}>
+        <Input value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} autoComplete="name" />
+      </Field>
+      <Field label={t("Note", "ملاحظة")} optional>
+        <Textarea value={draft.note} onChange={(e) => setDraft({ ...draft, note: e.target.value })} />
+      </Field>
+    </FormSheet>
+  );
+}
+
+export function RecordSectionExample() {
+  const t = useT();
+  return (
+    <RecordSection
+      className="w-full max-w-2xl"
+      title={t("Customer", "العميل")}
+      action={<Button variant="secondary" size="sm">{t("Edit", "تعديل")}</Button>}
+      items={[
+        { term: t("Name", "الاسم"), details: t("Sara Al-Qahtani", "سارة القحطاني") },
+        { term: t("Phone", "الجوال"), details: <PhoneText value="+966550000999" /> },
+        { term: t("Email", "البريد الإلكتروني"), details: null },
+        { term: t("City", "المدينة"), details: t("Riyadh", "الرياض") },
+      ]}
+    />
   );
 }

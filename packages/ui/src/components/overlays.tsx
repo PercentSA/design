@@ -93,6 +93,8 @@ export function AlertDialog({
   const s = useStrings();
   const [inner, setInner] = useState(defaultOpen ?? false);
   const [pending, setPending] = useState(false);
+  // Without a trigger (opened from a menu or a sheet), focus goes back to where it was, not to the page.
+  const back = useRef<Element | null>(null);
   const setOpen = (o: boolean) => {
     if (open === undefined) setInner(o);
     onOpenChange?.(o);
@@ -119,6 +121,12 @@ export function AlertDialog({
         <RadixAlert.Overlay className={BACKDROP} />
         <RadixAlert.Content
           {...(description ? {} : { "aria-describedby": undefined })}
+          onOpenAutoFocus={() => (back.current = document.activeElement)}
+          onCloseAutoFocus={(e) => {
+            if (trigger || !(back.current instanceof HTMLElement) || !back.current.isConnected) return;
+            e.preventDefault();
+            back.current.focus();
+          }}
           className={cn(
             "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid w-[calc(100%-2rem)] max-w-md -translate-y-1/2 gap-6 rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2",
             PANEL,
