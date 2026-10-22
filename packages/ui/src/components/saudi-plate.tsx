@@ -15,8 +15,9 @@ const ROW = "flex min-h-0 items-center justify-center overflow-hidden whitespace
  */
 export function SaudiPlate({ letters, digits, size = "md", className }: { letters: string; digits: string; size?: keyof typeof SIZE; className?: string }) {
   const lang = useLang();
+  const s = useStrings();
   return (
-    <span role="img" aria-label={plateLabel(letters, digits, lang)} dir="ltr" className={cn("@container inline-block shrink-0 align-middle select-none", SIZE[size], className)}>
+    <span role="img" aria-label={plateLabel(letters, digits, lang, s)} dir="ltr" className={cn("@container inline-block shrink-0 align-middle select-none", SIZE[size], className)}>
       <span
         aria-hidden="true"
         className="grid aspect-[520/110] w-full grid-cols-[44fr_11fr_45fr] overflow-hidden rounded-[2.2cqw] border-[0.8cqw] border-fg bg-surface text-fg"

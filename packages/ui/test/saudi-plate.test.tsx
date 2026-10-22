@@ -105,6 +105,16 @@ describe("SaudiPlate", () => {
     expect(en).toContain("٥٥");
     expect(en).toContain(">H<");
   });
+
+  test("SaudiPlate label follows provider string overrides", () => {
+    const out = renderToStaticMarkup(
+      <PercentProvider lang="en" strings={{ plate: "Number plate" }}>
+        <SaudiPlate letters="ابح" digits="1234" />
+      </PercentProvider>,
+    );
+    expect(out).toContain('aria-label="Number plate A B J 1234"');
+    expect(plateLabel("ابح", "1234", "ar", { ...STRINGS.ar, plate: "رقم" })).toBe("رقم ا ب ح 1234");
+  });
 });
 
 describe("PlateInput", () => {

@@ -74,9 +74,9 @@ export const plateLatin = (letters: string) => [...letters].map((l) => toLatin.g
 /** Western digits as Arabic-Indic digits, for the top row: "0123" → "٠١٢٣". */
 export const plateDigitsAr = (digits: string) => digits.replace(/[0-9]/g, (d) => String.fromCharCode(0x0660 + Number(d)));
 
-/** What a screen reader says: "لوحة ا ب ح 1234" or "Plate A B J 1234". */
-export const plateLabel = (letters: string, digits: string, lang: Lang = "en") =>
-  `${STRINGS[lang].plate} ${lang === "ar" ? [...letters].join(" ") : plateLatin(letters)} ${digits}`;
+/** What a screen reader says: "لوحة ا ب ح 1234" or "Plate A B J 1234". Works on the server. */
+export const plateLabel = (letters: string, digits: string, lang: Lang = "en", strings: Strings = STRINGS[lang]) =>
+  `${strings.plate} ${lang === "ar" ? [...letters].join(" ") : plateLatin(letters)} ${digits}`;
 
 /** The plate as one search text: the Arabic letters (joined and spaced), the Latin letters, the digits in both forms. */
 export function plateSearchText(letters: string | null, digits: string | null): string {
