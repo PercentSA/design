@@ -15,6 +15,7 @@ Parts for app shells and lists. No breaking change.
 - DataTable: rowHref (the whole row opens the record), rowActions (a "⋯" menu per row) and cards (each row is a card below 768 px).
 - ColumnsMenu (show and hide columns), DataTable hiddenColumns, a rows-per-page choice and a sticky header. FilterBar actions: the list toolbar's controls at the end of the bar.
 - PrintArea and usePrint: print one part of a page on A4 (portrait or landscape) with a header on every page.
+- PercentProvider location: a clicked link shows a pending state at once, until the new page is there. Sidebar, menus, breadcrumbs, cards, list rows and table row links get it.
 
 ## 0.6.0
 

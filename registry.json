@@ -1917,7 +1917,7 @@
       "name": "provider",
       "type": "registry:ui",
       "title": "PercentProvider",
-      "description": "@percentsa/ui: PercentProvider, useLang, useDir, useStrings, useLinkComponent, useText, useBrand",
+      "description": "@percentsa/ui: PercentProvider, useLang, useDir, useStrings, useLinkComponent, useText, useBrand, usePendingHref",
       "dependencies": [
         "radix-ui"
       ],
@@ -1940,7 +1940,8 @@
           "useStrings",
           "useLinkComponent",
           "useText",
-          "useBrand"
+          "useBrand",
+          "usePendingHref"
         ]
       }
     },

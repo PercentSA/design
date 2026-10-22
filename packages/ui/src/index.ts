@@ -2,7 +2,7 @@ export { cn } from "./lib/cn";
 export { useFlip } from "./lib/flip";
 export { LANGS, dirOf, isolate, localize, type Dir, type Lang, type Localized } from "./i18n/localized";
 export { STRINGS, type Strings } from "./i18n/strings";
-export { PercentProvider, useBrand, useDir, useLang, useLinkComponent, useStrings, useText, type BrandSlots, type LinkComponent, type TextRenderer } from "./provider";
+export { PercentProvider, useBrand, useDir, useLang, useLinkComponent, usePendingHref, useStrings, useText, type BrandSlots, type LinkComponent, type TextRenderer } from "./provider";
 export { toWesternDigits } from "./saudi/digits";
 export { Money, RiyalSign } from "./saudi/money";
 export { formatMoney, RIYAL_H, RIYAL_PATHS, RIYAL_VIEWBOX, RIYAL_W } from "./saudi/money-format";

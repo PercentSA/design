@@ -30,6 +30,7 @@ export const RELEASES: Release[] = [
       c("new", "DataTable rows can open their record: the whole row is one link, and the checkbox and the \"⋯\" row menu still work. On phones, the rows can show as cards."),
       c("new", "ColumnsMenu lets people show and hide table columns. DataTable can offer a rows-per-page choice and keep its header row in view while the rows scroll. FilterBar takes the list's other controls (date range, columns, refresh) at its end, so one bar is the whole list toolbar."),
       c("new", "PrintArea and usePrint print one part of a page, such as a list, on A4 paper, black on white in any theme. The title repeats on every page, page numbers are at the bottom, and nothing else on the page prints."),
+      c("new", "Links react at once: give PercentProvider the router's location, and a clicked link in the sidebar, a menu, the breadcrumbs, a card or a table row shows a thin bar until the new page is there."),
     ],
   },
   {

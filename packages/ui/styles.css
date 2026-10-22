@@ -386,6 +386,26 @@
     overflow: hidden;
   }
 
+  /* A clicked link that waits for its page (PercentProvider location): a thin bar at its bottom edge.
+     Background longhands only, so the link keeps its background colour and its ::after (stretched links). */
+  [data-pending] {
+    cursor: progress;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-repeat: no-repeat;
+    background-position: bottom center;
+    background-size: 100% 2px;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    [data-pending] {
+      animation: p-pending 1s var(--p-ease-in-out) infinite;
+    }
+  }
+  @keyframes p-pending {
+    from {
+      background-size: 0% 2px;
+    }
+  }
+
   /* <PrintArea> + usePrint: while usePrint prints, only the chosen area (a child of body) is on paper.
      Without data-printing (Ctrl+P) the page prints as it is and the areas stay hidden. */
   @media print {

@@ -34,8 +34,8 @@ export const pages: DocPage[] = [
     "app",
     "Sidebar",
     ["SidebarExample"],
-    "App navigation in sections, with icons, badges and the current page marked; the mark slides to the new page (no slide with reduced motion). It collapses to an icon rail with tooltips.",
-    "تنقّل التطبيق في أقسام، مع أيقونات وشارات وتمييز الصفحة الحالية؛ تنزلق علامة التمييز إلى الصفحة الجديدة (دون انزلاق مع تقليل الحركة). يُطوى إلى شريط أيقونات مع تلميحات.",
+    "App navigation in sections, with icons, badges and the current page marked; the mark slides to the new page (no slide with reduced motion). It collapses to an icon rail with tooltips. Give PercentProvider the router's location, and a clicked link shows a pending bar at once, until the new page is there.",
+    "تنقّل التطبيق في أقسام، مع أيقونات وشارات وتمييز الصفحة الحالية؛ تنزلق علامة التمييز إلى الصفحة الجديدة (دون انزلاق مع تقليل الحركة). يُطوى إلى شريط أيقونات مع تلميحات. مرّر موقع الموجّه إلى PercentProvider عبر الخاصية location، فيُظهر الرابط المنقور شريط انتظار فورًا حتى تظهر الصفحة الجديدة.",
   ),
   p(
     "command-palette",
