@@ -1,6 +1,26 @@
 import { useState } from "react";
-import { ChartColumn, FileText, Inbox, LayoutDashboard, Languages, LogOut, Moon, Plus, Search, Settings, Users } from "lucide-react";
-import { AppShell, Button, type Command, CommandPalette, Heading, Kbd, Logo, Mark, Sidebar, type SidebarSection, Text, toast, useCommandShortcut, useLang } from "@percentsa/ui";
+import { ChartColumn, Copy, Download, FileText, Inbox, LayoutDashboard, Languages, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
+import {
+  AppShell,
+  Button,
+  type Command,
+  CommandPalette,
+  Dialog,
+  DialogClose,
+  Heading,
+  Kbd,
+  Logo,
+  Mark,
+  Money,
+  PageHeader,
+  Sidebar,
+  type SidebarSection,
+  StatusBadge,
+  Text,
+  toast,
+  useCommandShortcut,
+  useLang,
+} from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 function useSections(current = "#inbox"): SidebarSection[] {
@@ -153,5 +173,92 @@ export function CommandPaletteExample() {
       </Button>
       <CommandPalette open={open} onOpenChange={setOpen} commands={useCommands()} />
     </>
+  );
+}
+
+// The docs page has its own h1, so the examples use headingLevel={2}.
+
+/** A list page: the title, a count, one primary action, Export and the "⋯" menu. Below 768 px "More actions" opens the rest. */
+export function PageHeaderListExample() {
+  const t = useT();
+  const done = (title: string) => () => toast({ title });
+  return (
+    <PageHeader
+      className="w-full"
+      headingLevel={2}
+      title={t("Orders", "الطلبات")}
+      meta={t("128 orders", "128 طلبًا")}
+      primary={
+        <Button onClick={done(t("New order", "طلب جديد"))}>
+          <Plus aria-hidden />
+          {t("New order", "طلب جديد")}
+        </Button>
+      }
+      secondary={
+        <Button variant="secondary" onClick={done(t("Export started", "بدأ التصدير"))}>
+          <Download aria-hidden />
+          {t("Export", "تصدير")}
+        </Button>
+      }
+      menu={[
+        { label: t("Import from a file", "استيراد من ملف"), icon: <Upload />, onSelect: done(t("Import", "استيراد")) },
+        { label: t("Print the list", "طباعة القائمة"), icon: <Printer />, onSelect: done(t("Print", "طباعة")) },
+      ]}
+    />
+  );
+}
+
+/** A record page: back to the list, status badges and a meta line. "Send" opens a dialog; Delete goes last; a disabled item says why. */
+export function PageHeaderDocumentExample() {
+  const t = useT();
+  const done = (title: string) => () => toast({ title });
+  return (
+    <PageHeader
+      className="w-full"
+      headingLevel={2}
+      back={{ href: "#invoices", label: t("Invoices", "الفواتير") }}
+      title="INV-1042"
+      badges={
+        <>
+          <StatusBadge tone="warning">{t("Overdue", "متأخرة")}</StatusBadge>
+          <StatusBadge tone="info">{t("Sent", "مرسلة")}</StatusBadge>
+        </>
+      }
+      meta={
+        <>
+          <span>{t("Nakheel Co.", "شركة نخيل")}</span>
+          <span>{t("Due 30 September 2026", "تستحق في 30 سبتمبر 2026")}</span>
+          <Money amount={12500} decimals={2} />
+        </>
+      }
+      primary={<Button onClick={done(t("Payment recorded", "سُجّلت الدفعة"))}>{t("Record payment", "تسجيل دفعة")}</Button>}
+      secondary={
+        <Dialog
+          trigger={
+            <Button variant="secondary">
+              <Send aria-hidden />
+              {t("Send", "إرسال")}
+            </Button>
+          }
+          title={t("Send invoice", "إرسال الفاتورة")}
+          description={t("Nakheel Co. gets a link to the invoice by email.", "تصل إلى شركة نخيل رسالة بريد فيها رابط الفاتورة.")}
+          footer={
+            <DialogClose asChild>
+              <Button onClick={done(t("Invoice sent", "أُرسلت الفاتورة"))}>{t("Send", "إرسال")}</Button>
+            </DialogClose>
+          }
+        />
+      }
+      menu={[
+        { label: t("Delete", "حذف"), icon: <Trash2 />, danger: true, onSelect: done(t("Deleted", "حُذفت")) },
+        { label: t("Duplicate", "تكرار"), icon: <Copy />, onSelect: done(t("Duplicated", "تم التكرار")) },
+        {
+          label: t("Send by WhatsApp", "إرسال عبر واتساب"),
+          icon: <MessageCircle />,
+          disabled: true,
+          description: t("The customer has no mobile number.", "لا يوجد رقم جوال للعميل."),
+        },
+      ]}
+    />
   );
 }

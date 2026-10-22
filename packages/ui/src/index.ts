@@ -107,6 +107,7 @@ export { ChartLegend } from "./components/charts/legend";
 export { type ChartProps, type ChartSeries } from "./components/charts/chart-frame";
 export { bandScale, linearScale, linePath, niceTicks, stack } from "./components/charts/scale";
 export { AppShell } from "./components/app-shell";
+export { PageHeader } from "./components/page-header";
 export { Sidebar, type SidebarItem, type SidebarSection } from "./components/sidebar";
 export { CommandPalette, useCommandShortcut, type Command } from "./components/command-palette";
 export { invoiceTotals, zatcaTlv, type InvoiceLineAmounts, type ZatcaFields } from "./saudi/invoice";

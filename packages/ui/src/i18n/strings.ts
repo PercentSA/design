@@ -99,6 +99,7 @@ const en = {
   forbiddenTitle: "No access",
   forbiddenBody: "Ask an administrator for access.",
   neededPermission: (name: string) => `Needed permission: ${name}`,
+  moreActions: "More actions",
   invoice: {
     taxInvoice: "Tax invoice",
     simplifiedTaxInvoice: "Simplified tax invoice",
@@ -254,6 +255,7 @@ const ar: Strings = {
   forbiddenTitle: "لا تملك صلاحية الوصول",
   forbiddenBody: "اطلب الصلاحية من مسؤول النظام.",
   neededPermission: (name) => `الصلاحية المطلوبة: ${name}`,
+  moreActions: "إجراءات أخرى",
   invoice: {
     taxInvoice: "فاتورة ضريبية",
     simplifiedTaxInvoice: "فاتورة ضريبية مبسطة",

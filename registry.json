@@ -1127,6 +1127,34 @@
       }
     },
     {
+      "name": "page-header",
+      "type": "registry:ui",
+      "title": "PageHeader",
+      "description": "@percentsa/ui: PageHeader",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/button-class",
+        "@percentsa/cn",
+        "@percentsa/menus",
+        "@percentsa/navigation",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/page-header.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/page-header.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PageHeader"
+        ]
+      }
+    },
+    {
       "name": "phone-text",
       "type": "registry:ui",
       "title": "PhoneText",

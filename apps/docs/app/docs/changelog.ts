@@ -24,6 +24,8 @@ export const RELEASES: Release[] = [
       c("new", "PhoneText shows a phone number as a call link (\"+966 55 000 0999\"), with an optional WhatsApp link. formatPhone and phoneLinks give the text and the links."),
       c("new", "StatusBadge shows a status (Paid, Overdue) with a coloured dot in five tones. The colour is on the dot only, so the text stays readable."),
       c("new", "EmptyState can show a load error with a \"Try again\" button. NotFound and Forbidden are ready pages for a missing record and for a page the user may not open."),
+      c("new", "PageHeader is the top of a list or record page: the title with status badges, a back link to the list, one primary action, and the other actions in a \"⋯\" menu. On phones the primary action is full width and \"More actions\" opens the rest."),
+      c("new", "Menu items can show a second line under the label, for example why an item is disabled."),
     ],
   },
   {

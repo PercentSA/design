@@ -11,6 +11,15 @@ export const pages: DocPage[] = [
     "إطار التطبيق: شريط جانبي في جهة البداية من عرض 1024 بكسل، وفي لوحة منزلقة على الشاشات الأصغر، ورأس ثابت، والصفحة داخل <main>. عناصر التحكم مضغوطة ما لم تكن الكثافة مريحة. الخاصية embedded تحذف معالم <header> و<main> ورابط التخطي، لإطار داخل صفحة لها معالمها.",
   ),
   p(
+    "page-header",
+    "PageHeader",
+    "app",
+    "PageHeader",
+    ["PageHeaderListExample", "PageHeaderDocumentExample"],
+    "The top of a list or record page: the title with status badges, a meta line, a back link to the list, one primary action, secondary actions and a “⋯” menu. Below 768 px the primary action is full width and “More actions” opens the rest; secondary buttons stay mounted, so their dialogs keep working. Danger items go last. `sticky` keeps it under the AppShell header from 768 px. Menu items take a `description`, for example why an item is disabled.",
+    "أعلى صفحة قائمة أو سجل: العنوان مع شارات الحالة، وسطر معلومات، ورابط رجوع إلى القائمة، وإجراء رئيسي واحد، وإجراءات ثانوية، وقائمة «⋯». تحت 768 بكسل يملأ الإجراء الرئيسي العرض ويفتح زر «إجراءات أخرى» الباقي؛ وتبقى الأزرار الثانوية محمّلة فتستمر نوافذها في العمل. عناصر الخطر في الآخر. الخاصية sticky تُبقيه تحت رأس AppShell من 768 بكسل. تقبل عناصر القوائم description، مثل سبب تعطيل العنصر.",
+  ),
+  p(
     "sidebar",
     "Sidebar",
     "app",
