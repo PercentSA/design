@@ -14,6 +14,7 @@ import {
   isVatNumber,
   Money,
   PhoneText,
+  SaudiPlate,
   Stack,
   Text,
   TimeText,
@@ -47,6 +48,16 @@ export function PhoneTextExample() {
       <PhoneText value="0550000999" whatsapp />
       <PhoneText value="+97430000999" style="national" />
       <PhoneText value="12" />
+    </Stack>
+  );
+}
+
+export function SaudiPlateExample() {
+  return (
+    <Stack gap={3}>
+      <SaudiPlate letters="ابح" digits="1234" size="lg" />
+      <SaudiPlate letters="ه" digits="55" />
+      <SaudiPlate letters="لم" digits="0123" size="sm" />
     </Stack>
   );
 }

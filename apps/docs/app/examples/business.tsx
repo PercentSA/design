@@ -1,4 +1,4 @@
-import { Badge, Button, Field, Inline, Invoice, QrCode, Stack, Text, Textarea, TicketView, ZatcaQr, zatcaTlv } from "@percentsa/ui";
+import { Badge, Button, Field, Inline, Invoice, LineItemsTable, QrCode, Stack, Text, Textarea, TicketView, TotalsList, ZatcaQr, zatcaTlv } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 const SELLER_VAT = "310123456700003";
@@ -39,6 +39,40 @@ export function SimplifiedInvoiceExample() {
         { description: t("Flat white", "فلات وايت"), quantity: 2, unitPrice: 18.26 },
         { description: t("Date cake", "كيكة التمر"), quantity: 1, unitPrice: 21.74 },
         { description: t("Bottled water", "مياه معبأة"), quantity: 1, unitPrice: 2, vatRate: 0 },
+      ]}
+    />
+  );
+}
+
+export function LineItemsTableExample() {
+  const t = useT();
+  return (
+    <LineItemsTable
+      className="w-full max-w-4xl"
+      caption={t("Order SO-1042", "الطلب SO-1042")}
+      prices="incl"
+      lines={[
+        { id: "1", name: t("Arabic coffee, 1 kg", "قهوة عربية، 1 كغ"), sku: "COF-AR-1000", quantity: 4, unitPrice: 89.5, vat: 46.7, total: 358, href: "#COF-AR-1000" },
+        { id: "2", name: t("Paper cups, 8 oz", "أكواب ورقية، 8 أونصات"), sku: "CUP-08", quantity: 500, unit: t("pcs", "قطعة"), unitPrice: 0.4565, discount: 10, vat: 28.47, total: 218.25, returned: 50 },
+        { id: "3", name: t("Dates, Sukkari", "تمر سكري"), sku: "DAT-SUK", quantity: 2, unitPrice: 45, vat: 11.74, total: 90 },
+      ]}
+      rowActions={() => [{ label: t("Return", "إرجاع"), onSelect: () => {} }]}
+    />
+  );
+}
+
+export function TotalsListExample() {
+  const t = useT();
+  return (
+    <TotalsList
+      className="w-full max-w-sm"
+      items={[
+        { label: t("Subtotal", "المجموع"), amount: 21_190 },
+        { label: t("Discount", "الخصم"), amount: -1_190, hint: t("Spring offer, 5%", "عرض الربيع، 5%") },
+        { label: t("VAT", "الضريبة"), amount: 3_000, hint: "15%" },
+        { label: t("Total", "الإجمالي"), amount: 23_000, total: true },
+        { label: t("Paid", "المدفوع"), amount: 25_000 },
+        { label: t("Balance", "الرصيد"), amount: -2_000, accounting: true },
       ]}
     />
   );

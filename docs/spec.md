@@ -38,6 +38,7 @@ registry.json  shadcn-style registry (copy-in components), built into apps/docs/
 - Bun workspaces; `bun test`; TypeScript strict. Packages compile with `tsc` to ESM + `.d.ts`.
 - Same versions as percent.sa: React 19, React Router 8.3.1, Tailwind CSS 4.3, Vite 8, Bun.
 - Dependencies of `@percentsa/ui`: `radix-ui`, `lucide-react`, `clsx`, `tailwind-merge`. React is a peer dependency. No other UI library.
+- Optional peer `react-hook-form` (^7.55), used only by the entry `@percentsa/ui/react-hook-form`; the core entry never imports it.
 
 ### Using the system in a project
 
@@ -148,6 +149,7 @@ Categories (owner-approved list): 0 foundations, 1 brand, 2 text, 3 layout, 4 ac
 - Hijri calendar built on `Intl` (`islamic-umalqura`), no date library.
 - A date-time string without a zone (`"2026-09-27 12:45:12"`) is read as UTC, so the server and the browser show the same time.
 - The link pending state comes from `PercentProvider location` (the router's path and search): a clicked link is pending from the click until the location changes. Without `location`, links are the app's own component, unchanged.
+- `react-hook-form` is an optional peer of `@percentsa/ui` (^7.55: the first version whose `Control` type knows the values a resolver gives back). Only the entry `@percentsa/ui/react-hook-form` (`FormField`) imports it; `test/publish.test.ts` checks that the core entry never does.
 - Variants written as plain class maps (no `class-variance-authority`).
 - Built-in strings live in the system (EN/AR) because Radix needs accessible labels.
 - `@percentsa/motion` depends on React only (no motion library).

@@ -3,7 +3,7 @@ import { BrandPage } from "./brand-page";
 import { Desc } from "./desc";
 import { ServerComponentsPage } from "./server-components-page";
 import { brandCss, COLOR_TOKENS, color, contrast, density, duration, easing, layer, radius, SLASH_RUN, THEMES, type Brand } from "@percentsa/tokens";
-import { Code, Display, Grid, Heading, isolate, Label, Mark, Stack, STRINGS, Surface, Text, useLang, type Localized } from "@percentsa/ui";
+import { Code, CodeBlock, Display, Grid, Heading, isolate, Label, Mark, Stack, STRINGS, Surface, Text, useLang, type Localized } from "@percentsa/ui";
 
 type Foundation = { slug: string; title: Localized; desc: Localized; Page: () => ReactNode };
 
@@ -207,6 +207,31 @@ function Motion() {
   );
 }
 
+const OWN_WORDS: Localized[] = [
+  { en: "Pass the app's words to <PercentProvider strings>. The components then show no built-in word.", ar: "مرّر كلمات التطبيق إلى ‎<PercentProvider strings>‎. عندها لا تعرض المكونات أي كلمة مضمنة." },
+  { en: "Type each object as the exported Strings type. A missing key is then a build error, also when a new version adds a key.", ar: "اجعل نوع كل كائن Strings المُصدَّر. عندها يكون المفتاح الناقص خطأ بناء، حتى عندما يضيف إصدار جديد مفتاحًا." },
+  { en: "Keep the objects outside render (a module constant), so the reference stays the same and the components do not render again.", ar: "أبقِ الكائنات خارج العرض (ثابت في وحدة)، ليبقى المرجع نفسه ولا تُعرض المكونات من جديد." },
+  { en: "Helpers called outside components take a strings argument: saudiError, phoneIssueMessage, formatDateTime, plateIssueMessage, plateLabel. Pass the app's words.", ar: "الدوال التي تُستدعى خارج المكونات تأخذ وسيط strings: ‏saudiError وphoneIssueMessage وformatDateTime وplateIssueMessage وplateLabel. مرّر كلمات التطبيق." },
+  { en: "Invoice shows its labels in both languages: give the second language with otherLanguageStrings.", ar: "تعرض Invoice عناوينها باللغتين: مرّر اللغة الثانية عبر otherLanguageStrings." },
+];
+const OWN_WORDS_TS = `import { formatDateTime, Invoice, PercentProvider, saudiError, type Strings } from "@percentsa/ui";
+
+// app/strings.ts: every key in the app's words. A missing key is a build error.
+export const WORDS: Record<"en" | "ar", Strings> = {
+  en: { close: "Close", next: "Next" /* …every key of Strings */ },
+  ar: { close: "إغلاق", next: "التالي" /* …every key of Strings */ },
+};
+
+// A module constant: the same reference on every render.
+<PercentProvider lang={lang} strings={WORDS[lang]}>{children}</PercentProvider>;
+
+// Outside components, pass the same words.
+saudiError("iban", value, lang, WORDS[lang]);
+formatDateTime(createdAt, { lang, strings: WORDS[lang] });
+
+// Invoice: the labels of the second language.
+<Invoice {...invoice} otherLanguageStrings={WORDS[lang === "ar" ? "en" : "ar"].invoice} />;`;
+
 function Language() {
   const l = useL();
   const lang = useLang();
@@ -241,6 +266,15 @@ function Language() {
             </div>
           ))}
         </div>
+      </Stack>
+      <Stack gap={3}>
+        <Heading level={3}>{l({ en: "Give the app's own words", ar: "كلمات التطبيق نفسه" })}</Heading>
+        <ul className="grid list-disc gap-3 ps-5 text-fg-2">
+          {OWN_WORDS.map((r, i) => (
+            <li key={i}>{l(r)}</li>
+          ))}
+        </ul>
+        <CodeBlock code={OWN_WORDS_TS} filename="app/strings.tsx" />
       </Stack>
     </Stack>
   );

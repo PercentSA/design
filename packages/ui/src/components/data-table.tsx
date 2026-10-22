@@ -70,6 +70,14 @@ export type DataTableProps<Row> = {
   onPageSizeChange?: (size: number) => void;
   /** The table scrolls in its own box (up to 70% of the screen height), and the header row stays in view. */
   stickyHeader?: boolean;
+  /** A total row at the foot: values by column key. The first column shows "Total" unless it has a value. */
+  totals?: Partial<Record<string, ReactNode>>;
+  /** Reports: the rows in groups by this key, in the order the groups first appear in `rows`. A sort works inside each group. Client pages are off. */
+  groupBy?: (row: Row) => string;
+  /** The group's header row. Default: the key. */
+  groupHeader?: (key: string, rows: Row[]) => ReactNode;
+  /** A subtotal row after each group: values by column key, as `totals`. */
+  groupTotals?: (key: string, rows: Row[]) => Partial<Record<string, ReactNode>>;
   className?: string;
 };
 
@@ -109,6 +117,10 @@ export function DataTable<Row>({
   pageSizeOptions,
   onPageSizeChange,
   stickyHeader,
+  totals,
+  groupBy,
+  groupHeader,
+  groupTotals,
   className,
 }: DataTableProps<Row>) {
   const columns = hiddenColumns ? allColumns.filter((c) => !hiddenColumns.includes(c.key)) : allColumns;
@@ -143,9 +155,14 @@ export function DataTable<Row>({
     });
   }, [rows, sortColumn, direction, server, collator]);
 
-  const pages = server ? pageCount : pageSize ? Math.ceil(sorted.length / pageSize) : 1;
+  // Reports (groupBy) show all rows: no client pages.
+  const clientPages = !server && !groupBy && pageSize;
+  const pages = server ? pageCount : clientPages ? Math.ceil(sorted.length / clientPages) : 1;
   const current = Math.max(1, Math.min(page ?? innerPage, pages));
-  const visible = !server && pageSize ? sorted.slice((current - 1) * pageSize, current * pageSize) : sorted;
+  const visible = clientPages ? sorted.slice((current - 1) * clientPages, current * clientPages) : sorted;
+  // Groups keep the order in which they first appear in `rows`; the rows inside keep the sort.
+  const groups = groupBy ? new Map(rows.map((row) => [groupBy(row), [] as Row[]])) : undefined;
+  if (groups) for (const row of visible) groups.get(groupBy!(row))!.push(row);
   const goTo = (n: number) => {
     setInnerPage(n);
     onPageChange?.(n);
@@ -170,6 +187,102 @@ export function DataTable<Row>({
   const colSpan = columns.length + (selectable ? 1 : 0) + (rowActions ? 1 : 0);
   // The actions cell joins the column cells (no new child slot), so tables without rowActions render as before.
   const withActions = (cells: ReactNode[], cell: () => ReactNode) => (rowActions ? [...cells, cell()] : cells);
+  const bodyClass = cn(cards && "max-md:grid max-md:gap-3 max-md:[&_tr:last-child]:border");
+
+  // `i` makes the row's ids (for the checkbox and "⋯" names) unique in the table.
+  const renderRow = (row: Row, i: number | string) => {
+    const id = getRowId(row);
+    const isSelected = chosenSet.has(id);
+    const href = rowHref?.(row);
+    const actions = rowActions?.(row) ?? [];
+    return (
+      <TableRow
+        key={id}
+        data-state={isSelected ? "selected" : undefined}
+        // The first cell's link covers the row; the checkbox and "⋯" sit above it.
+        className={cn(href && cn("relative hover:bg-surface-2", ABOVE_STRETCHED_LINK), cards && CARD_ROW)}
+      >
+        {selectable && (
+          <TableCell className={cn(cards && "max-md:p-0")}>
+            <Checkbox
+              className="gap-0 align-middle"
+              // Named "Select row" + the first cell, so each checkbox says which row it selects.
+              aria-labelledby={`${uid}s${i} ${uid}c${i}`}
+              label={
+                <span id={`${uid}s${i}`} className="sr-only">
+                  {s.selectRow}
+                </span>
+              }
+              checked={isSelected}
+              onCheckedChange={(v) => select(v === true ? [...chosen, id] : chosen.filter((x) => x !== id))}
+            />
+          </TableCell>
+        )}
+        {withActions(
+          columns.map((c, k) => {
+            const value = c.cell ? c.cell(row) : (field(row, c.key) as ReactNode);
+            return (
+              <TableCell
+                key={c.key}
+                id={k === 0 ? `${uid}c${i}` : undefined}
+                align={c.align}
+                className={cn(cards && (k === 0 ? "max-md:min-w-0 max-md:flex-1 max-md:p-0 max-md:font-medium" : CARD_FIELD), cards && c.hideOnCard && "max-md:hidden")}
+              >
+                {k === 0 && href ? (
+                  // -outline-offset keeps the row's focus ring inside the table's scroll box.
+                  <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "max-md:after:rounded-card")}>
+                    {value}
+                  </L>
+                ) : cards && k > 0 ? (
+                  <>
+                    <span className="text-xs text-fg-3 md:hidden">{c.header}</span>
+                    <span>{value}</span>
+                  </>
+                ) : (
+                  value
+                )}
+              </TableCell>
+            );
+          }),
+          () => (
+            <TableCell key={ACTIONS_KEY} className={cn("w-10 py-1.5", cards && "max-md:p-0")}>
+              {actions.length > 0 && (
+                <DropdownMenu
+                  align="end"
+                  items={actions}
+                  trigger={
+                    // Named "Row actions" + the first cell, like the select checkbox.
+                    <button type="button" aria-labelledby={`${uid}a${i} ${uid}c${i}`} className={buttonClass("ghost", "sm", true)}>
+                      <span id={`${uid}a${i}`} className="sr-only">
+                        {s.rowActions}
+                      </span>
+                      <Ellipsis aria-hidden />
+                    </button>
+                  }
+                />
+              )}
+            </TableCell>
+          ),
+        )}
+      </TableRow>
+    );
+  };
+
+  // The total and subtotal rows: values under their columns (hidden columns hide theirs); the first column shows the label unless it has a value.
+  const totalRow = (values: Partial<Record<string, ReactNode>>, label: string) => (
+    <TableRow className="font-semibold">
+      {selectable && <TableCell />}
+      {withActions(
+        columns.map((c, k) => (
+          <TableCell key={c.key} align={c.align}>
+            {values[c.key] ?? (k === 0 ? t(label) : null)}
+          </TableCell>
+        )),
+        () => <TableCell key={ACTIONS_KEY} />,
+      )}
+    </TableRow>
+  );
+
   return (
     <div className={className}>
       <Table
@@ -222,107 +335,46 @@ export function DataTable<Row>({
             )}
           </TableRow>
         </TableHeader>
-        <TableBody className={cn(cards && "max-md:grid max-md:gap-3 max-md:[&_tr:last-child]:border")}>
-          {loading ? (
-            Array.from({ length: pageSize ?? (rows.length || 5) }, (_, i) => (
-              <TableRow key={i} className={cn(cards && CARD_ROW)}>
-                {selectable && <TableCell className={cn(cards && "max-md:hidden")} />}
-                {withActions(
-                  columns.map((c) => (
-                    <TableCell key={c.key} className={cn(cards && "max-md:basis-full max-md:p-0")}>
-                      <Skeleton className="h-4" />
-                    </TableCell>
-                  )),
-                  () => <TableCell key={ACTIONS_KEY} className={cn(cards && "max-md:hidden")} />,
-                )}
+        {groups && !loading && visible.length > 0 ? (
+          [...groups].map(([key, members], g) => (
+            <TableBody key={key} className={bodyClass}>
+              <TableRow>
+                <TableHead scope="rowgroup" colSpan={colSpan} className="bg-surface text-sm text-fg">
+                  {groupHeader ? groupHeader(key, members) : key}
+                </TableHead>
               </TableRow>
-            ))
-          ) : visible.length === 0 ? (
-            <TableRow className={cn(cards && "max-md:block")}>
-              <TableCell colSpan={colSpan} className={cn(cards && "max-md:block")}>
-                {empty ?? <EmptyState title={t(s.noResults)} className="border-0" />}
-              </TableCell>
-            </TableRow>
-          ) : (
-            visible.map((row, i) => {
-              const id = getRowId(row);
-              const isSelected = chosenSet.has(id);
-              const href = rowHref?.(row);
-              const actions = rowActions?.(row) ?? [];
-              return (
-                <TableRow
-                  key={id}
-                  data-state={isSelected ? "selected" : undefined}
-                  // The first cell's link covers the row; the checkbox and "⋯" sit above it.
-                  className={cn(href && cn("relative hover:bg-surface-2", ABOVE_STRETCHED_LINK), cards && CARD_ROW)}
-                >
-                  {selectable && (
-                    <TableCell className={cn(cards && "max-md:p-0")}>
-                      <Checkbox
-                        className="gap-0 align-middle"
-                        // Named "Select row" + the first cell, so each checkbox says which row it selects.
-                        aria-labelledby={`${uid}s${i} ${uid}c${i}`}
-                        label={
-                          <span id={`${uid}s${i}`} className="sr-only">
-                            {s.selectRow}
-                          </span>
-                        }
-                        checked={isSelected}
-                        onCheckedChange={(v) => select(v === true ? [...chosen, id] : chosen.filter((x) => x !== id))}
-                      />
-                    </TableCell>
-                  )}
+              {members.map((row, i) => renderRow(row, `${g}-${i}`))}
+              {groupTotals && totalRow(groupTotals(key, members), s.subtotal)}
+            </TableBody>
+          ))
+        ) : (
+          <TableBody className={bodyClass}>
+            {loading ? (
+              Array.from({ length: pageSize ?? (rows.length || 5) }, (_, i) => (
+                <TableRow key={i} className={cn(cards && CARD_ROW)}>
+                  {selectable && <TableCell className={cn(cards && "max-md:hidden")} />}
                   {withActions(
-                    columns.map((c, k) => {
-                      const value = c.cell ? c.cell(row) : (field(row, c.key) as ReactNode);
-                      return (
-                        <TableCell
-                          key={c.key}
-                          id={k === 0 ? `${uid}c${i}` : undefined}
-                          align={c.align}
-                          className={cn(cards && (k === 0 ? "max-md:min-w-0 max-md:flex-1 max-md:p-0 max-md:font-medium" : CARD_FIELD), cards && c.hideOnCard && "max-md:hidden")}
-                        >
-                          {k === 0 && href ? (
-                            // -outline-offset keeps the row's focus ring inside the table's scroll box.
-                            <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "max-md:after:rounded-card")}>
-                              {value}
-                            </L>
-                          ) : cards && k > 0 ? (
-                            <>
-                              <span className="text-xs text-fg-3 md:hidden">{c.header}</span>
-                              <span>{value}</span>
-                            </>
-                          ) : (
-                            value
-                          )}
-                        </TableCell>
-                      );
-                    }),
-                    () => (
-                      <TableCell key={ACTIONS_KEY} className={cn("w-10 py-1.5", cards && "max-md:p-0")}>
-                        {actions.length > 0 && (
-                          <DropdownMenu
-                            align="end"
-                            items={actions}
-                            trigger={
-                              // Named "Row actions" + the first cell, like the select checkbox.
-                              <button type="button" aria-labelledby={`${uid}a${i} ${uid}c${i}`} className={buttonClass("ghost", "sm", true)}>
-                                <span id={`${uid}a${i}`} className="sr-only">
-                                  {s.rowActions}
-                                </span>
-                                <Ellipsis aria-hidden />
-                              </button>
-                            }
-                          />
-                        )}
+                    columns.map((c) => (
+                      <TableCell key={c.key} className={cn(cards && "max-md:basis-full max-md:p-0")}>
+                        <Skeleton className="h-4" />
                       </TableCell>
-                    ),
+                    )),
+                    () => <TableCell key={ACTIONS_KEY} className={cn(cards && "max-md:hidden")} />,
                   )}
                 </TableRow>
-              );
-            })
-          )}
-        </TableBody>
+              ))
+            ) : visible.length === 0 ? (
+              <TableRow className={cn(cards && "max-md:block")}>
+                <TableCell colSpan={colSpan} className={cn(cards && "max-md:block")}>
+                  {empty ?? <EmptyState title={t(s.noResults)} className="border-0" />}
+                </TableCell>
+              </TableRow>
+            ) : (
+              visible.map((row, i) => renderRow(row, i))
+            )}
+          </TableBody>
+        )}
+        {totals && <tfoot className="border-t border-line-strong [&_tr]:border-0">{totalRow(totals, s.total)}</tfoot>}
       </Table>
       <LiveRegion>{loading && s.loading}</LiveRegion>
       {(selectable || pages > 1 || pageSizeOptions) && (

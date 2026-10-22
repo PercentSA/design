@@ -275,6 +275,7 @@
         "@percentsa/cn",
         "@percentsa/field",
         "@percentsa/input-classes",
+        "@percentsa/inputs",
         "@percentsa/provider",
         "@percentsa/saudi-calendar",
         "@percentsa/saudi-date",
@@ -843,6 +844,54 @@
       }
     },
     {
+      "name": "form-sheet",
+      "type": "registry:ui",
+      "title": "FormSheet",
+      "description": "@percentsa/ui: FormSheet",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/overlays",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/form-sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/form-sheet.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FormSheet"
+        ]
+      }
+    },
+    {
+      "name": "image-field",
+      "type": "registry:ui",
+      "title": "ImageField",
+      "description": "@percentsa/ui: ImageField",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/file-drop",
+        "@percentsa/provider",
+        "@percentsa/spinner"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/image-field.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/image-field.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ImageField"
+        ]
+      }
+    },
+    {
       "name": "input-classes",
       "type": "registry:lib",
       "title": "FIELD_BOX, TEXT_BOX, MENU_ITEM",
@@ -985,7 +1034,7 @@
       "name": "layout",
       "type": "registry:ui",
       "title": "Container, Section, Stack, Inline",
-      "description": "@percentsa/ui: Container, Section, Stack, Inline, Grid, Split, AspectRatio, Separator, ScrollArea, Surface, Bleed",
+      "description": "@percentsa/ui: Container, Section, Stack, Inline, Grid, Split, DetailLayout, AspectRatio, Separator, ScrollArea, Surface, Bleed",
       "dependencies": [
         "radix-ui"
       ],
@@ -1007,11 +1056,38 @@
           "Inline",
           "Grid",
           "Split",
+          "DetailLayout",
           "AspectRatio",
           "Separator",
           "ScrollArea",
           "Surface",
           "Bleed"
+        ]
+      }
+    },
+    {
+      "name": "line-items-table",
+      "type": "registry:ui",
+      "title": "LineItemsTable",
+      "description": "@percentsa/ui: LineItemsTable",
+      "registryDependencies": [
+        "@percentsa/data-table",
+        "@percentsa/feedback",
+        "@percentsa/format-number",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/saudi-money"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/line-items-table.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/line-items-table.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LineItemsTable"
         ]
       }
     },
@@ -1190,6 +1266,34 @@
       }
     },
     {
+      "name": "period-picker",
+      "type": "registry:ui",
+      "title": "PeriodPicker",
+      "description": "@percentsa/ui: PeriodPicker",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/calendar",
+        "@percentsa/cn",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date",
+        "@percentsa/saudi-period"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/period-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/period-picker.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PeriodPicker"
+        ]
+      }
+    },
+    {
       "name": "phone-text",
       "type": "registry:ui",
       "title": "PhoneText",
@@ -1279,6 +1383,54 @@
         "exports": [
           "QrCode",
           "ZatcaQr"
+        ]
+      }
+    },
+    {
+      "name": "record-section",
+      "type": "registry:ui",
+      "title": "RecordSection",
+      "description": "@percentsa/ui: RecordSection",
+      "registryDependencies": [
+        "@percentsa/card",
+        "@percentsa/list",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/record-section.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/record-section.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "RecordSection"
+        ]
+      }
+    },
+    {
+      "name": "saudi-plate",
+      "type": "registry:ui",
+      "title": "SaudiPlate, PlateInput",
+      "description": "@percentsa/ui: SaudiPlate, PlateInput",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-plate-rules"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/saudi-plate.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/saudi-plate.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "SaudiPlate",
+          "PlateInput"
         ]
       }
     },
@@ -1593,6 +1745,35 @@
       }
     },
     {
+      "name": "time-input",
+      "type": "registry:ui",
+      "title": "TimeInput, DateTimePicker",
+      "description": "@percentsa/ui: TimeInput, DateTimePicker",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/calendar",
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/provider",
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date-time",
+        "@percentsa/special-inputs"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/time-input.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/time-input.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TimeInput",
+          "DateTimePicker"
+        ]
+      }
+    },
+    {
       "name": "time-text",
       "type": "registry:ui",
       "title": "TimeText",
@@ -1663,6 +1844,28 @@
           "toast",
           "dismissToast",
           "Toaster"
+        ]
+      }
+    },
+    {
+      "name": "totals-list",
+      "type": "registry:ui",
+      "title": "TotalsList",
+      "description": "@percentsa/ui: TotalsList",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/saudi-money"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/totals-list.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/totals-list.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TotalsList"
         ]
       }
     },
@@ -1946,10 +2149,34 @@
       }
     },
     {
+      "name": "react-hook-form",
+      "type": "registry:ui",
+      "title": "FormField",
+      "description": "@percentsa/ui: FormField",
+      "dependencies": [
+        "react-hook-form"
+      ],
+      "registryDependencies": [
+        "@percentsa/field"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/react-hook-form.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/react-hook-form.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FormField"
+        ]
+      }
+    },
+    {
       "name": "saudi-calendar",
       "type": "registry:lib",
       "title": "fromPlain, addDays, todayPlain, partsOf",
-      "description": "@percentsa/ui: fromPlain, addDays, todayPlain, partsOf, monthOf, shiftView, monthDays, monthGrid, addMonths, nextRange, rangePreset, moveFocus, viewLabel, weekdayNames",
+      "description": "@percentsa/ui: fromPlain, addDays, todayPlain, partsOf, monthOf, shiftView, monthDays, monthGrid, addMonths, nextRange, rangePreset, moveFocus, viewLabel, monthNames, weekdayNames",
       "registryDependencies": [
         "@percentsa/localized",
         "@percentsa/saudi-date"
@@ -1976,6 +2203,7 @@
           "rangePreset",
           "moveFocus",
           "viewLabel",
+          "monthNames",
           "weekdayNames"
         ]
       }
@@ -1984,7 +2212,7 @@
       "name": "saudi-date-time",
       "type": "registry:lib",
       "title": "formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay",
-      "description": "@percentsa/ui: formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay",
+      "description": "@percentsa/ui: formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay, splitTime, joinTime",
       "registryDependencies": [
         "@percentsa/localized",
         "@percentsa/strings"
@@ -2001,7 +2229,9 @@
           "formatDateTime",
           "dateTimeAttribute",
           "formatRelative",
-          "formatTimeOfDay"
+          "formatTimeOfDay",
+          "splitTime",
+          "joinTime"
         ]
       }
     },
@@ -2163,6 +2393,29 @@
       }
     },
     {
+      "name": "saudi-period",
+      "type": "registry:lib",
+      "title": "periodOf, periodOptions",
+      "description": "@percentsa/ui: periodOf, periodOptions",
+      "registryDependencies": [
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/period.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/period.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "periodOf",
+          "periodOptions"
+        ]
+      }
+    },
+    {
       "name": "saudi-phone",
       "type": "registry:lib",
       "title": "GCC_PHONE_COUNTRIES",
@@ -2186,6 +2439,35 @@
           "normalizePhone",
           "formatPhone",
           "phoneLinks"
+        ]
+      }
+    },
+    {
+      "name": "saudi-plate-rules",
+      "type": "registry:lib",
+      "title": "PLATE_LETTERS",
+      "description": "@percentsa/ui: PLATE_LETTERS, parsePlate, plateIssueMessage, plateLatin, plateDigitsAr, plateLabel, plateSearchText",
+      "registryDependencies": [
+        "@percentsa/localized",
+        "@percentsa/saudi-digits",
+        "@percentsa/strings"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/plate-rules.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/plate-rules.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PLATE_LETTERS",
+          "parsePlate",
+          "plateIssueMessage",
+          "plateLatin",
+          "plateDigitsAr",
+          "plateLabel",
+          "plateSearchText"
         ]
       }
     },
@@ -3168,6 +3450,16 @@
       "files": []
     },
     {
+      "name": "detail-layout",
+      "type": "registry:ui",
+      "title": "DetailLayout",
+      "description": "DetailLayout: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
       "name": "aspect-ratio",
       "type": "registry:ui",
       "title": "AspectRatio",
@@ -3384,6 +3676,16 @@
       "description": "ZatcaQr: adds @percentsa/qr-code.",
       "registryDependencies": [
         "@percentsa/qr-code"
+      ],
+      "files": []
+    },
+    {
+      "name": "plate-input",
+      "type": "registry:ui",
+      "title": "PlateInput",
+      "description": "PlateInput: adds @percentsa/saudi-plate.",
+      "registryDependencies": [
+        "@percentsa/saudi-plate"
       ],
       "files": []
     },
@@ -3748,6 +4050,16 @@
       "files": []
     },
     {
+      "name": "date-time-picker",
+      "type": "registry:ui",
+      "title": "DateTimePicker",
+      "description": "DateTimePicker: adds @percentsa/time-input.",
+      "registryDependencies": [
+        "@percentsa/time-input"
+      ],
+      "files": []
+    },
+    {
       "name": "toaster",
       "type": "registry:ui",
       "title": "Toaster",
@@ -3804,6 +4116,16 @@
       "description": "PercentProvider: adds @percentsa/provider.",
       "registryDependencies": [
         "@percentsa/provider"
+      ],
+      "files": []
+    },
+    {
+      "name": "form-field",
+      "type": "registry:ui",
+      "title": "FormField",
+      "description": "FormField: adds @percentsa/react-hook-form.",
+      "registryDependencies": [
+        "@percentsa/react-hook-form"
       ],
       "files": []
     },
@@ -3874,6 +4196,16 @@
       "description": "GCC_PHONE_COUNTRIES: adds @percentsa/saudi-phone.",
       "registryDependencies": [
         "@percentsa/saudi-phone"
+      ],
+      "files": []
+    },
+    {
+      "name": "plate_letters",
+      "type": "registry:ui",
+      "title": "PLATE_LETTERS",
+      "description": "PLATE_LETTERS: adds @percentsa/saudi-plate-rules.",
+      "registryDependencies": [
+        "@percentsa/saudi-plate-rules"
       ],
       "files": []
     },

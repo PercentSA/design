@@ -14,6 +14,11 @@ export type SidebarSection = { title?: ReactNode; items: SidebarItem[] };
 /** True when AppShell shows the sidebar in its phone sheet: always expanded, no collapse toggle. */
 export const SidebarInSheet = createContext(false);
 
+const SidebarRail = createContext(false);
+
+/** True while the sidebar shows as an icon rail. False when it is expanded and in the phone sheet. For the parts in `header` and `footer`. */
+export const useSidebarRail = () => useContext(SidebarRail);
+
 const ITEM =
   "relative flex h-9 items-center gap-3 rounded-field px-3 text-sm text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg aria-[current=page]:bg-surface-2 aria-[current=page]:font-medium aria-[current=page]:text-fg [&_svg]:size-4 [&_svg]:shrink-0";
 
@@ -101,14 +106,14 @@ export function Sidebar({
         className,
       )}
     >
-      {header && <div className="flex min-h-10 shrink-0 items-center overflow-hidden px-1">{header}</div>}
+      {header && <div className="flex min-h-10 shrink-0 items-center overflow-hidden px-1"><SidebarRail.Provider value={rail}>{header}</SidebarRail.Provider></div>}
       <nav ref={navRef} aria-label={label ?? s.menu} className="relative isolate -mx-3 grid flex-1 content-start gap-4 overflow-x-hidden overflow-y-auto px-3">
         {mark && <span {...mark} className={cn(mark.className, "rounded-field bg-surface-2")} />}
         {sections.map((section, i) => (
           <Section key={i} section={section} collapsed={rail} slid={!!mark} />
         ))}
       </nav>
-      {footer && <div className="shrink-0 overflow-hidden">{footer}</div>}
+      {footer && <div className="shrink-0 overflow-hidden"><SidebarRail.Provider value={rail}>{footer}</SidebarRail.Provider></div>}
       {!inSheet && (
         <button
           type="button"

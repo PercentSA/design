@@ -5,6 +5,7 @@ export type PhoneCountryCode = "SA" | "AE" | "QA" | "KW" | "BH" | "OM";
 
 export interface PhoneCountry {
   code: PhoneCountryCode;
+  /** The built-in names. PhoneInput shows `strings.countries` from the provider, so an app can give its own. */
   name: Localized;
   dialCode: string;
   length: number;

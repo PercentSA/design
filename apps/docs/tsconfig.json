@@ -7,6 +7,7 @@
     "paths": {
       "~/*": ["./app/*"],
       "@percentsa/ui": ["../../packages/ui/src/index.ts"],
+      "@percentsa/ui/react-hook-form": ["../../packages/ui/src/react-hook-form.tsx"],
       "@percentsa/motion": ["../../packages/motion/src/index.ts"],
       "@percentsa/tokens": ["../../packages/tokens/src/index.ts"]
     },

@@ -72,28 +72,36 @@ export function SearchInput(props: Omit<ComponentProps<"input">, "type">) {
   return <Input type="search" enterKeyHint="search" aria-label={named ? undefined : s.search} start={<Search aria-hidden />} {...props} />;
 }
 
-/** Number with step buttons. Accepts Arabic digits; `value` is null while the field is empty. */
+/** Number with step buttons. Accepts Arabic digits; `value` is null while the field is empty. `format` shows a set value ("05"). */
 export function NumberInput({
   value,
   onValueChange,
   min = -Infinity,
   max = Infinity,
   step = 1,
+  format = String,
   disabled,
   ...props
-}: Omit<InputProps, "min" | "max" | "step"> & { value: number | null; onValueChange: (value: number | null) => void; min?: number; max?: number; step?: number }) {
+}: Omit<InputProps, "min" | "max" | "step"> & {
+  value: number | null;
+  onValueChange: (value: number | null) => void;
+  min?: number;
+  max?: number;
+  step?: number;
+  format?: (value: number) => string;
+}) {
   const s = useStrings();
-  const [draft, setDraft] = useState(value == null ? "" : String(value));
+  const [draft, setDraft] = useState(value == null ? "" : format(value));
   // Follow changes from outside (a reset) without fighting the draft while typing "1.".
   useEffect(() => {
-    if (parseAmount(draft) !== value) setDraft(value == null ? "" : String(value));
+    if (parseAmount(draft) !== value) setDraft(value == null ? "" : format(value));
   }, [value]);
   // At a limit the step button stays focusable (aria-disabled): a disabled button would drop focus.
   const atMin = (value ?? 0) <= min;
   const atMax = (value ?? 0) >= max;
   const set = (direction: 1 | -1) => {
     const v = stepNumber(value ?? 0, step, direction, { min, max });
-    setDraft(String(v));
+    setDraft(format(v));
     onValueChange(v);
   };
   return (
@@ -141,11 +149,11 @@ export const MoneyInput = ({ value, onValueChange, ...props }: InputProps & { va
 /** Saudi IBAN, shown in groups of 4. `onValueChange` gets the compact value ("SA03…"). */
 export const IbanInput = ({ value, onValueChange, ...props }: InputProps & { value: string; onValueChange: (iban: string) => void }) => (
   <Input
+    placeholder="SA00 0000 0000 0000 0000 0000"
     {...props}
     dir="ltr"
     autoComplete="off"
     spellCheck={false}
-    placeholder="SA00 0000 0000 0000 0000 0000"
     value={formatIban(value)}
     onChange={(e) => onValueChange(reformat(e.target, value, normalizeIban, formatIban))}
     className={cn("font-mono uppercase", props.className)}
@@ -271,7 +279,7 @@ export function PhoneInput({
             value: g.code,
             label: (
               <>
-                {g.name[lang]} <span dir="ltr">(+{g.dialCode})</span>
+                {s.countries[g.code]} <span dir="ltr">(+{g.dialCode})</span>
               </>
             ),
           }))}

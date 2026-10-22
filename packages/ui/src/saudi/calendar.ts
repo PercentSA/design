@@ -147,6 +147,12 @@ export const viewLabel = (view: MonthView, lang: Lang) =>
     fromPlain(firstDay(view)),
   );
 
+/** The 12 month names of `year` in the calendar, January or Muharram first: "September", "رمضان". */
+export function monthNames(calendar: CalendarKind, year: number, lang: Lang) {
+  const f = new Intl.DateTimeFormat(locale(lang), { calendar: CAL[calendar], numberingSystem: "latn", month: "long", timeZone: "UTC" });
+  return Array.from({ length: 12 }, (_, i) => f.format(fromPlain(firstDay({ calendar, year, month: i + 1 }))));
+}
+
 /** Weekday names from `weekStart`: short for the column, long for screen readers. */
 export function weekdayNames(lang: Lang, weekStart = 0) {
   const f = (weekday: "short" | "long") => new Intl.DateTimeFormat(locale(lang), { weekday, timeZone: "UTC" });

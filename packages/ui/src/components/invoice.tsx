@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
+import { createContext, useContext, useId, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { dirOf } from "../i18n/localized";
 import { STRINGS, type Strings } from "../i18n/strings";
@@ -23,16 +23,20 @@ type InvoiceQr =
   | { qr: true; timestamp: string; seller: InvoiceParty & { vatNumber: string } }
   | { qr?: false; timestamp?: undefined; seller: InvoiceParty };
 
+// The app's labels in the second language (Invoice `otherLanguageStrings`).
+const OtherStrings = createContext<Partial<Strings["invoice"]> | undefined>(undefined);
+
 /** A label in both languages: the page language first, the other one beside it (or under it when `stacked`). */
 function Bi({ k, stacked }: { k: Key; stacked?: boolean }) {
   const own = useStrings().invoice[k];
   const other = useLang() === "ar" ? "en" : "ar";
+  const app = useContext(OtherStrings)?.[k];
   return (
     <>
       {own}
       {stacked ? <br /> : <span aria-hidden="true" className="px-1.5 text-line-strong">|</span>}
       <span lang={other} dir={dirOf(other)} className={stacked ? "text-fg-3" : undefined}>
-        {STRINGS[other].invoice[k]}
+        {app ?? STRINGS[other].invoice[k]}
       </span>
     </>
   );
@@ -92,6 +96,7 @@ export function Invoice({
   qr,
   timestamp,
   headingLevel = 2,
+  otherLanguageStrings,
   className,
 }: InvoiceQr & {
   /** "simplified" for sales to consumers (B2C), "standard" for businesses (B2B). */
@@ -104,6 +109,11 @@ export function Invoice({
   showHijri?: boolean;
   /** Level of the invoice title; the seller, buyer and notes headings are one level lower. Default 2. */
   headingLevel?: 2 | 3 | 4 | 5 | 6;
+  /**
+   * The labels in the second language (English on an Arabic page, Arabic on an English page). The page language comes
+   * from the provider strings; these replace the built-in words of the other language.
+   */
+  otherLanguageStrings?: Partial<Strings["invoice"]>;
   className?: string;
 }) {
   const H = `h${headingLevel}` as const;
@@ -124,106 +134,108 @@ export function Invoice({
     }
   }
   return (
-    <article aria-labelledby={id} className={cn("@container rounded-card border border-line bg-bg p-6 text-fg sm:p-8", PRINT_PAPER, className)}>
-      <header className="flex flex-wrap items-start justify-between gap-6 border-b border-line pb-6">
-        <div className="grid gap-5">
-          <H id={id} className="heading text-2xl">
-            <Bi k={type === "simplified" ? "simplifiedTaxInvoice" : "taxInvoice"} stacked />
-          </H>
-          <dl className="grid gap-1.5 text-sm">
-            <div className="flex flex-wrap gap-x-2">
-              <dt className="text-fg-3">
-                <Bi k="number" />
-              </dt>
-              <dd>
-                <span dir="ltr" className="font-mono">
-                  {number}
-                </span>
-              </dd>
-            </div>
-            <div className="flex flex-wrap gap-x-2">
-              <dt className="text-fg-3">
-                <Bi k="issueDate" />
-              </dt>
-              <dd>
-                {formatDate(day, { lang })}
-                {showHijri && <span className="text-fg-3"> · {formatDate(day, { lang, calendar: "hijri" })}</span>}
-              </dd>
-            </div>
-          </dl>
-        </div>
-        {qrValue && <QrCode value={qrValue} label={s.qr} size={112} />}
-      </header>
-
-      <div className="grid gap-6 border-b border-line py-6 @lg:grid-cols-2">
-        <Party title="seller" party={seller} H={Sub} />
-        {buyer && <Party title="buyer" party={buyer} H={Sub} />}
-      </div>
-
-      <div className="overflow-x-auto py-6">
-        <table className="w-full border-collapse text-sm">
-          <thead>
-            <tr className="border-b border-line-strong text-xs">
-              {COLUMNS.map(([k, end]) => (
-                <th key={k} scope="col" className={cn("px-2 pb-2 align-bottom font-medium first:ps-0 last:pe-0", end ? "text-end" : "text-start")}>
-                  <Bi k={k} stacked />
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {lines.map((line, i) => {
-              const t = totals.lines[i]!;
-              return (
-                <tr key={i} className="border-b border-line align-top">
-                  <td className="py-3 pe-2">{line.description}</td>
-                  <td className="px-2 py-3 text-end tabular-nums">{formatNumber(line.quantity, lang)}</td>
-                  <td className="px-2 py-3 text-end">
-                    <Money amount={line.unitPrice} decimals={2} />
-                  </td>
-                  <td className="px-2 py-3 text-end tabular-nums">
-                    <span dir="ltr">{rate(line.vatRate)}</span>
-                  </td>
-                  <td className="px-2 py-3 text-end">
-                    <Money amount={t.vat} decimals={2} />
-                  </td>
-                  <td className="py-3 ps-2 text-end">
-                    <Money amount={t.total} decimals={2} />
-                  </td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
-
-      <dl className="ms-auto grid max-w-sm gap-3 text-sm">
-        {(
-          [
-            ["subtotal", totals.subtotal],
-            ["totalVat", totals.vat],
-            ["total", totals.total],
-          ] as const
-        ).map(([k, amount]) => (
-          <div key={k} className={cn("flex items-end justify-between gap-6", k === "total" ? "border-t border-line-strong pt-3 text-base font-semibold" : "text-fg-2")}>
-            <dt className="text-xs font-normal text-fg-3">
-              <Bi k={k} stacked />
-            </dt>
-            <dd className={k === "total" ? "text-fg" : undefined}>
-              <Money amount={amount} decimals={2} />
-            </dd>
+    <OtherStrings.Provider value={otherLanguageStrings}>
+      <article aria-labelledby={id} className={cn("@container rounded-card border border-line bg-bg p-6 text-fg sm:p-8", PRINT_PAPER, className)}>
+        <header className="flex flex-wrap items-start justify-between gap-6 border-b border-line pb-6">
+          <div className="grid gap-5">
+            <H id={id} className="heading text-2xl">
+              <Bi k={type === "simplified" ? "simplifiedTaxInvoice" : "taxInvoice"} stacked />
+            </H>
+            <dl className="grid gap-1.5 text-sm">
+              <div className="flex flex-wrap gap-x-2">
+                <dt className="text-fg-3">
+                  <Bi k="number" />
+                </dt>
+                <dd>
+                  <span dir="ltr" className="font-mono">
+                    {number}
+                  </span>
+                </dd>
+              </div>
+              <div className="flex flex-wrap gap-x-2">
+                <dt className="text-fg-3">
+                  <Bi k="issueDate" />
+                </dt>
+                <dd>
+                  {formatDate(day, { lang })}
+                  {showHijri && <span className="text-fg-3"> · {formatDate(day, { lang, calendar: "hijri" })}</span>}
+                </dd>
+              </div>
+            </dl>
           </div>
-        ))}
-      </dl>
+          {qrValue && <QrCode value={qrValue} label={s.qr} size={112} />}
+        </header>
 
-      {notes && (
-        <div className="mt-6 border-t border-line pt-6">
-          <Sub className="text-xs font-medium text-fg-3">
-            <Bi k="notes" />
-          </Sub>
-          <div className="mt-2 text-sm text-fg-2">{notes}</div>
+        <div className="grid gap-6 border-b border-line py-6 @lg:grid-cols-2">
+          <Party title="seller" party={seller} H={Sub} />
+          {buyer && <Party title="buyer" party={buyer} H={Sub} />}
         </div>
-      )}
-    </article>
+
+        <div className="overflow-x-auto py-6">
+          <table className="w-full border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-line-strong text-xs">
+                {COLUMNS.map(([k, end]) => (
+                  <th key={k} scope="col" className={cn("px-2 pb-2 align-bottom font-medium first:ps-0 last:pe-0", end ? "text-end" : "text-start")}>
+                    <Bi k={k} stacked />
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {lines.map((line, i) => {
+                const t = totals.lines[i]!;
+                return (
+                  <tr key={i} className="border-b border-line align-top">
+                    <td className="py-3 pe-2">{line.description}</td>
+                    <td className="px-2 py-3 text-end tabular-nums">{formatNumber(line.quantity, lang)}</td>
+                    <td className="px-2 py-3 text-end">
+                      <Money amount={line.unitPrice} decimals={2} />
+                    </td>
+                    <td className="px-2 py-3 text-end tabular-nums">
+                      <span dir="ltr">{rate(line.vatRate)}</span>
+                    </td>
+                    <td className="px-2 py-3 text-end">
+                      <Money amount={t.vat} decimals={2} />
+                    </td>
+                    <td className="py-3 ps-2 text-end">
+                      <Money amount={t.total} decimals={2} />
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+
+        <dl className="ms-auto grid max-w-sm gap-3 text-sm">
+          {(
+            [
+              ["subtotal", totals.subtotal],
+              ["totalVat", totals.vat],
+              ["total", totals.total],
+            ] as const
+          ).map(([k, amount]) => (
+            <div key={k} className={cn("flex items-end justify-between gap-6", k === "total" ? "border-t border-line-strong pt-3 text-base font-semibold" : "text-fg-2")}>
+              <dt className="text-xs font-normal text-fg-3">
+                <Bi k={k} stacked />
+              </dt>
+              <dd className={k === "total" ? "text-fg" : undefined}>
+                <Money amount={amount} decimals={2} />
+              </dd>
+            </div>
+          ))}
+        </dl>
+
+        {notes && (
+          <div className="mt-6 border-t border-line pt-6">
+            <Sub className="text-xs font-medium text-fg-3">
+              <Bi k="notes" />
+            </Sub>
+            <div className="mt-2 text-sm text-fg-2">{notes}</div>
+          </div>
+        )}
+      </article>
+    </OtherStrings.Provider>
   );
 }

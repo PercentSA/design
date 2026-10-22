@@ -17,6 +17,31 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.8.0",
+    date: "2026-10-23",
+    summary: "Parts for documents, records, forms and reports. Nothing changes for existing projects.",
+    changes: [
+      c("new", "The parts in the [Sidebar](sidebar) header and footer can ask useSidebarRail() whether the sidebar is an icon rail. In the phone sheet it is always expanded, so a user menu there shows the name and role."),
+      c("new", "[DetailLayout](detail-layout) puts a record page in two columns: the main part and a side column with details and totals. A wide table scrolls inside its column, so the page never gets wider. On phones the columns stack, main part first. [TotalsList](totals-list) shows a document's totals with the amounts under each other."),
+      c("new", "[LineItemsTable](line-items-table) shows the lines of an order or invoice: product and SKU, quantity, unit price, discount, VAT and total. The headers say whether prices include VAT, a chip shows a returned quantity, and on phones each line is a card."),
+      c("new", "DataTable can show a total row at the foot, and can put the rows of a report in groups, each with a header and a subtotal. A sort works inside each group, and a printed total row stays in one piece after the last row."),
+      c("new", "[FormField](form-field) connects a react-hook-form field to Field: the label, the hint and the field's error message, with the ids screen readers need. It comes from its own import, @percentsa/ui/react-hook-form. Projects that do not use react-hook-form do not need to install it."),
+      c("new", "[FormSheet](form-sheet) is an edit form in a sheet. Save and Cancel stay at the bottom, Save shows a spinner while the form saves, and closing the sheet with unsaved changes asks first. [RecordSection](record-section) shows a record's facts with an Edit button, and \"Not set\" where a value is empty."),
+      c("fixed", "An AlertDialog opened without a trigger (from a menu or a sheet) gives focus back to where it was when it closes."),
+      c("new", "[ImageField](image-field) uploads an image, for example a logo or a product photo. It shows a preview with Replace and Remove, refuses a wrong file type or a file that is too large before the upload, and keeps the old image if the upload fails."),
+      c("new", "FileDrop can be disabled."),
+      c("new", "Combobox can search on the server: it passes each typed query to the app and shows the results with a \"Searching\" row while they load. A long list shows its first matches and how many more there are. An \"Add\" option at the end lets people add a value that is not in the list."),
+      c("new", "[PeriodPicker](period-picker) chooses the period of a report: a month, a quarter, a year or a custom date range. Switching from a month to a quarter or a year keeps the same end, so September becomes the third quarter and then the whole year. With the Hijri calendar the periods are Hijri months, quarters and years (for example \"1448 AH\"), and the value is still the first and last Gregorian day."),
+      c("new", "[TimeInput](time-input) chooses a time of day on the 12-hour clock: hour, minute and AM/PM (ص/م in Arabic). Going from 11 to 12 crosses noon or midnight, as on a clock. [DateTimePicker](date-time-picker) puts a date and a time together, and sends a value only when both are set."),
+      c("new", "NumberInput can format the number it shows, for example a minute as \"05\"."),
+      c("new", "[SaudiPlate](saudi-plate) draws a Saudi car plate with its Arabic and Latin rows, and the emblem, «السعودية» and KSA in the middle. [PlateInput](plate-input) takes a plate as one text, in any order and in Arabic or English, and shows the plate under the field as you type, or what to fix. parsePlate reads the text on the server too."),
+      c("better", "Calendar, DatePicker and DateRangePicker have a month list and a year list, so a date years away takes two choices, not many clicks. Months outside the allowed dates cannot be chosen."),
+      c("better", "DateRangePicker can open on the Hijri calendar."),
+      c("new", "An app can give its own words for every built-in text. The phone country names now come from the strings, and an invoice takes the app's labels for its second language. The Language page shows how."),
+      c("fixed", "IbanInput shows the app's placeholder when the app gives one."),
+    ],
+  },
+  {
     version: "0.7.0",
     date: "2026-10-23",
     summary: "Parts for app screens and lists. Nothing changes for existing projects.",

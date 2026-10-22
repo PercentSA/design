@@ -1,4 +1,4 @@
-import { AspectRatio, Bleed, Container, Grid, Inline, ScrollArea, Section, Separator, Split, Stack, Surface, Text } from "@percentsa/ui";
+import { AspectRatio, Bleed, Container, DetailLayout, Grid, Inline, ScrollArea, Section, Separator, Split, Stack, Surface, Text } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 const Box = ({ children = "", className = "" }: { children?: React.ReactNode; className?: string }) => (
@@ -66,6 +66,28 @@ export function SplitExample() {
       <Box className="h-32">5</Box>
       <Box className="h-32">7</Box>
     </Split>
+  );
+}
+
+export function DetailLayoutExample() {
+  const t = useT();
+  return (
+    <DetailLayout
+      className="w-full"
+      main={
+        <Stack gap={3}>
+          <Box className="h-32">{t("Main: lines, history", "الرئيسي: البنود، السجل")}</Box>
+          <Box>{t("Notes", "ملاحظات")}</Box>
+        </Stack>
+      }
+      side={
+        <Stack gap={3}>
+          <Box>{t("Customer", "العميل")}</Box>
+          <Box className="h-20">{t("Totals", "الإجماليات")}</Box>
+        </Stack>
+      }
+      sideLabel={t("Order details", "تفاصيل الطلب")}
+    />
   );
 }
 
