@@ -275,6 +275,7 @@
         "@percentsa/cn",
         "@percentsa/field",
         "@percentsa/input-classes",
+        "@percentsa/inputs",
         "@percentsa/provider",
         "@percentsa/saudi-calendar",
         "@percentsa/saudi-date",
@@ -2174,7 +2175,7 @@
       "name": "saudi-calendar",
       "type": "registry:lib",
       "title": "fromPlain, addDays, todayPlain, partsOf",
-      "description": "@percentsa/ui: fromPlain, addDays, todayPlain, partsOf, monthOf, shiftView, monthDays, monthGrid, addMonths, nextRange, rangePreset, moveFocus, viewLabel, weekdayNames",
+      "description": "@percentsa/ui: fromPlain, addDays, todayPlain, partsOf, monthOf, shiftView, monthDays, monthGrid, addMonths, nextRange, rangePreset, moveFocus, viewLabel, monthNames, weekdayNames",
       "registryDependencies": [
         "@percentsa/localized",
         "@percentsa/saudi-date"
@@ -2201,6 +2202,7 @@
           "rangePreset",
           "moveFocus",
           "viewLabel",
+          "monthNames",
           "weekdayNames"
         ]
       }

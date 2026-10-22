@@ -8,6 +8,7 @@ import { useDir, useLang, useStrings, useText } from "../provider";
 import {
   fromPlain,
   monthGrid,
+  monthNames,
   monthOf,
   moveFocus,
   nextRange,
@@ -19,15 +20,19 @@ import {
   weekdayNames,
   type DateRange,
   type DateRangePresetId,
+  type MonthView,
   type PlainDate,
 } from "../saudi/calendar";
 import { formatDate, type CalendarKind } from "../saudi/date";
 import { formatDateTime } from "../saudi/date-time";
 import { SegmentedControl } from "./actions";
-import { useFieldControl, useFieldLabelId } from "./field";
+import { fieldContext, useFieldControl, useFieldLabelId } from "./field";
+import { Select } from "./inputs";
 import { TEXT_BOX } from "./input-classes";
 
-const NAV_BTN = "grid size-9 place-items-center rounded-pill text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg [&_svg]:size-4";
+const NAV_BTN = "grid size-9 shrink-0 place-items-center rounded-pill text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg [&_svg]:size-4";
+const LIST = "h-(--p-control-h-sm) px-2.5 text-sm";
+const monthIndex = (v: MonthView) => v.year * 12 + v.month - 1;
 
 type CalendarBase = {
   /** Controlled calendar; leave out to let the person switch with the built-in control. */
@@ -47,7 +52,8 @@ type RangeCalendarProps = CalendarBase & { mode: "range"; value: DateRange; onVa
 
 /**
  * Month grid in the Gregorian or Hijri (Umm al-Qura) calendar. Each day also shows its number in
- * the other calendar. Keyboard: arrows, Home/End, PageUp/PageDown (Shift: a year).
+ * the other calendar. Keyboard: arrows, Home/End, PageUp/PageDown (Shift: a year). The month and year lists jump to any month:
+ * the years of min…max, else 100 years back to 10 years forward; months outside min…max are disabled.
  * `mode="range"`: `value` is a DateRange; the first chosen day sets `from`, the second `to` (see nextRange).
  */
 export function Calendar(props: (CalendarProps & { mode?: "single" }) | RangeCalendarProps) {
@@ -101,6 +107,22 @@ export function Calendar(props: (CalendarProps & { mode?: "single" }) | RangeCal
     table.current?.querySelector<HTMLElement>(`[data-day="${focus}"]`)?.focus();
   }, [focus, grid]);
 
+  const names = useMemo(() => monthNames(view.calendar, view.year, lang), [view.calendar, view.year, lang]);
+  const lowest = min === undefined ? undefined : monthOf(min, view.calendar);
+  const highest = max === undefined ? undefined : monthOf(max, view.calendar);
+  const now = partsOf(today, view.calendar).year;
+  // The shown year is always in the list, also after the month buttons went past min or max.
+  const firstYear = Math.min(lowest?.year ?? now - 100, view.year);
+  const years = Array.from({ length: Math.max(highest?.year ?? now + 10, view.year) - firstYear + 1 }, (_, i) => String(firstYear + i));
+  const outside = (v: MonthView) => (!!lowest && monthIndex(v) < monthIndex(lowest)) || (!!highest && monthIndex(v) > monthIndex(highest));
+  // A month from the lists; outside min…max it becomes the nearest month inside.
+  const showMonth = (year: number, month: number) => {
+    let i = year * 12 + month - 1;
+    if (lowest) i = Math.max(i, monthIndex(lowest));
+    if (highest) i = Math.min(i, monthIndex(highest));
+    setView(shiftView(view, i - monthIndex(view)));
+  };
+
   const inView = (d: PlainDate) => grid.days.includes(d);
   // The focusable day: the focused day when it is in this month, else the first day that can be chosen.
   const tabDay = inView(focus) && !outOfRange(focus) ? focus : (grid.days.find((d) => !outOfRange(d)) ?? grid.days[0]);
@@ -116,91 +138,110 @@ export function Calendar(props: (CalendarProps & { mode?: "single" }) | RangeCal
   };
 
   return (
-    <div className={cn("grid w-fit gap-3 rounded-card border border-line bg-surface p-4 text-fg", className)}>
-      <div className="flex items-center justify-between gap-2">
-        <button type="button" className={NAV_BTN} aria-label={s.previousMonth} onClick={() => setView(shiftView(view, -1))}>
-          <ChevronLeft aria-hidden className="rtl:-scale-x-100" />
-        </button>
-        <p aria-live="polite" className="text-sm font-medium">
-          {viewLabel(view, lang)}
-        </p>
-        <button type="button" className={NAV_BTN} aria-label={s.nextMonth} onClick={() => setView(shiftView(view, 1))}>
-          <ChevronRight aria-hidden className="rtl:-scale-x-100" />
-        </button>
-      </div>
-      <table
-        ref={table}
-        role="grid"
-        aria-label={viewLabel(view, lang)}
-        aria-multiselectable={range ? true : undefined}
-        className="border-collapse"
-        onKeyDown={(e) => {
-          const next = moveFocus(focus, e.key, { calendar, rtl, weekStart, shift: e.shiftKey });
-          if (next === focus) return;
-          e.preventDefault();
-          go(next);
-        }}
-      >
-        <thead>
-          <tr>
-            {weekdayNames(lang, weekStart).map((w) => (
-              <th key={w.long} scope="col" abbr={w.long} className="pb-2 text-xs font-normal text-fg-3">
-                {w.short}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {grid.weeks.map((week) => (
-            <tr key={week[0]}>
-              {week.map((d) =>
-                inView(d) ? (
-                  <td key={d} role="gridcell" aria-selected={selected(d)} className={cn("p-0.5 text-center", band(d))}>
-                    <button
-                      type="button"
-                      data-day={d}
-                      tabIndex={d === tabDay ? 0 : -1}
-                      disabled={outOfRange(d)}
-                      aria-current={d === today ? "date" : undefined}
-                      aria-label={formatDate(fromPlain(d), { lang, calendar })}
-                      // Keys move from the day that has focus, also after the month buttons changed the view.
-                      onFocus={() => setFocus(d)}
-                      onClick={() => {
-                        setFocus(d);
-                        choose(d);
-                      }}
-                      className={cn(
-                        "grid size-10 place-content-center rounded-pill leading-none transition-colors hover:bg-surface-2 disabled:pointer-events-none disabled:opacity-30",
-                        d === today && "ring-1 ring-line-strong",
-                        isEnd(d) && "bg-primary text-primary-fg hover:bg-primary",
-                      )}
-                    >
-                      <span className="text-sm tabular-nums">{partsOf(d, calendar).day}</span>
-                      <span aria-hidden="true" className={cn("mt-0.5 text-[9px] tabular-nums", isEnd(d) ? "text-primary-fg/70" : "text-fg-3")}>
-                        {partsOf(d, other).day}
-                      </span>
-                    </button>
-                  </td>
-                ) : (
-                  <td key={d} role="gridcell" />
-                ),
-              )}
+    // The lists inside are not the control of a surrounding Field (a DatePicker in a Field): no field id or description.
+    <fieldContext.Provider value={null}>
+      <div className={cn("grid w-fit gap-3 rounded-card border border-line bg-surface p-4 text-fg", className)}>
+        <div className="flex items-center gap-1">
+          <button type="button" className={NAV_BTN} aria-label={s.previousMonth} onClick={() => setView(shiftView(view, -1))}>
+            <ChevronLeft aria-hidden className="rtl:-scale-x-100" />
+          </button>
+          <Select
+            aria-label={s.month}
+            value={String(view.month)}
+            valueText={names[view.month - 1]}
+            onValueChange={(m) => showMonth(view.year, Number(m))}
+            options={names.map((name, i) => ({ value: String(i + 1), label: name, disabled: outside({ ...view, month: i + 1 }) }))}
+            className={cn(LIST, "flex-1")}
+          />
+          <Select
+            aria-label={s.year}
+            value={String(view.year)}
+            valueText={view.year}
+            onValueChange={(y) => showMonth(Number(y), view.month)}
+            options={years.map((y) => ({ value: y, label: y }))}
+            className={cn(LIST, "w-auto shrink-0")}
+          />
+          <button type="button" className={NAV_BTN} aria-label={s.nextMonth} onClick={() => setView(shiftView(view, 1))}>
+            <ChevronRight aria-hidden className="rtl:-scale-x-100" />
+          </button>
+          <p aria-live="polite" className="sr-only">
+            {viewLabel(view, lang)}
+          </p>
+        </div>
+        <table
+          ref={table}
+          role="grid"
+          aria-label={viewLabel(view, lang)}
+          aria-multiselectable={range ? true : undefined}
+          className="border-collapse"
+          onKeyDown={(e) => {
+            const next = moveFocus(focus, e.key, { calendar, rtl, weekStart, shift: e.shiftKey });
+            if (next === focus) return;
+            e.preventDefault();
+            go(next);
+          }}
+        >
+          <thead>
+            <tr>
+              {weekdayNames(lang, weekStart).map((w) => (
+                <th key={w.long} scope="col" abbr={w.long} className="pb-2 text-xs font-normal text-fg-3">
+                  {w.short}
+                </th>
+              ))}
             </tr>
-          ))}
-        </tbody>
-      </table>
-      {!fixedCalendar && (
-        <SegmentedControl
-          className="w-full [&>button]:flex-1"
-          value={calendar}
-          onValueChange={(v) => switchCalendar(v as CalendarKind)}
-          options={[
-            { value: "gregorian", label: s.gregorian },
-            { value: "hijri", label: s.hijri },
-          ]}
-        />
-      )}
-    </div>
+          </thead>
+          <tbody>
+            {grid.weeks.map((week) => (
+              <tr key={week[0]}>
+                {week.map((d) =>
+                  inView(d) ? (
+                    <td key={d} role="gridcell" aria-selected={selected(d)} className={cn("p-0.5 text-center", band(d))}>
+                      <button
+                        type="button"
+                        data-day={d}
+                        tabIndex={d === tabDay ? 0 : -1}
+                        disabled={outOfRange(d)}
+                        aria-current={d === today ? "date" : undefined}
+                        aria-label={formatDate(fromPlain(d), { lang, calendar })}
+                        // Keys move from the day that has focus, also after the month buttons changed the view.
+                        onFocus={() => setFocus(d)}
+                        onClick={() => {
+                          setFocus(d);
+                          choose(d);
+                        }}
+                        className={cn(
+                          "grid size-10 place-content-center rounded-pill leading-none transition-colors hover:bg-surface-2 disabled:pointer-events-none disabled:opacity-30",
+                          d === today && "ring-1 ring-line-strong",
+                          isEnd(d) && "bg-primary text-primary-fg hover:bg-primary",
+                        )}
+                      >
+                        <span className="text-sm tabular-nums">{partsOf(d, calendar).day}</span>
+                        <span aria-hidden="true" className={cn("mt-0.5 text-[9px] tabular-nums", isEnd(d) ? "text-primary-fg/70" : "text-fg-3")}>
+                          {partsOf(d, other).day}
+                        </span>
+                      </button>
+                    </td>
+                  ) : (
+                    <td key={d} role="gridcell" />
+                  ),
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        {!fixedCalendar && (
+          <SegmentedControl
+            className="w-full [&>button]:flex-1"
+            value={calendar}
+            onValueChange={(v) => switchCalendar(v as CalendarKind)}
+            options={[
+              { value: "gregorian", label: s.gregorian },
+              { value: "hijri", label: s.hijri },
+            ]}
+          />
+        )}
+      </div>
+    </fieldContext.Provider>
   );
 }
 

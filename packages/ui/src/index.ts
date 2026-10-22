@@ -72,6 +72,7 @@ export {
   fromPlain,
   monthDays,
   monthGrid,
+  monthNames,
   monthOf,
   moveFocus,
   nextRange,
