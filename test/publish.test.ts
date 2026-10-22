@@ -1,12 +1,42 @@
 import { beforeAll, describe, expect, test } from "bun:test";
-import { existsSync, readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { dirname, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 
 const ROOT = resolve(import.meta.dir, "..");
 const PACKAGES = ["tokens", "ui", "motion"] as const;
 const run = (cmd: string[], cwd = ROOT) => Bun.spawnSync(cmd, { cwd, stdout: "pipe", stderr: "pipe" });
 const distFiles = (pkg: string) => [...new Bun.Glob("**/*.js").scanSync(resolve(ROOT, `packages/${pkg}/dist`))];
+const UI = resolve(ROOT, "packages/ui");
+
+// The package names a module imports, from every module it reaches through relative imports.
+function bareImports(entry: string) {
+  const seen = new Set<string>();
+  const bare = new Set<string>();
+  const visit = (file: string) => {
+    if (seen.has(file)) return;
+    seen.add(file);
+    for (const [, spec] of readFileSync(file, "utf8").matchAll(/(?:\bfrom|\bimport)\s*\(?\s*"([^"]+)"/g)) {
+      if (!spec!.startsWith(".")) {
+        bare.add(spec!);
+        continue;
+      }
+      const base = resolve(dirname(file), spec!);
+      const next = [base, `${base}.ts`, `${base}.tsx`, resolve(base, "index.ts")].find((f) => existsSync(f) && statSync(f).isFile());
+      if (!next) throw new Error(`${file}: cannot resolve ${spec}`);
+      if (/\.[cm]?[jt]sx?$/.test(next)) visit(next);
+    }
+  };
+  visit(entry);
+  return [...bare];
+}
+const formLib = (specs: string[]) => specs.filter((s) => s.startsWith("react-hook-form"));
+
+// react-hook-form is an optional peer: only the entry @percentsa/ui/react-hook-form may import it.
+test("@percentsa/ui core: no module reachable from src/index.ts imports react-hook-form", () => {
+  expect(formLib(bareImports(resolve(UI, "src/index.ts")))).toEqual([]);
+  expect(formLib(bareImports(resolve(UI, "src/react-hook-form.tsx")))).toEqual(["react-hook-form"]);
+});
 
 describe("published packages", () => {
   beforeAll(() => {
@@ -48,6 +78,25 @@ describe("published packages", () => {
     const r = run(["node", "--input-type=module", "-e", `await import(${JSON.stringify(pathToFileURL(resolve(ROOT, `packages/${pkg}/dist/index.js`)).href)})`]);
     expect(r.stderr.toString().split("\n")[0]).toBe("");
     expect(r.exitCode).toBe(0);
+  });
+
+  test("@percentsa/ui dist/index.js does not import react-hook-form", () => {
+    expect(formLib(bareImports(resolve(UI, "dist/index.js")))).toEqual([]);
+  });
+  test("@percentsa/ui/react-hook-form loads in Node", () => {
+    const r = run(["node", "--input-type=module", "-e", `await import(${JSON.stringify(pathToFileURL(resolve(UI, "dist/react-hook-form.js")).href)})`]);
+    expect(r.stderr.toString().split("\n")[0]).toBe("");
+    expect(r.exitCode).toBe(0);
+  });
+  test("package.json: react-hook-form is an optional peer, not a dependency; the export points to files that exist", () => {
+    const pkg = JSON.parse(readFileSync(resolve(UI, "package.json"), "utf8"));
+    expect([pkg.dependencies["react-hook-form"], pkg.peerDependencies["react-hook-form"], pkg.peerDependenciesMeta?.["react-hook-form"]]).toEqual([
+      undefined,
+      "^7.55.0",
+      { optional: true },
+    ]);
+    const entry = pkg.exports["./react-hook-form"];
+    expect([entry.types, entry.default].map((f: string) => existsSync(resolve(UI, f)))).toEqual([true, true]);
   });
 });
 

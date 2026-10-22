@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { AtSign } from "lucide-react";
+import { useForm } from "react-hook-form";
 import {
+  Button,
   Checkbox,
   ChipGroup,
   ChoiceCardGroup,
@@ -19,6 +21,7 @@ import {
   Switch,
   Textarea,
 } from "@percentsa/ui";
+import { FormField } from "@percentsa/ui/react-hook-form";
 import { useT } from "~/lib/t";
 
 export function FieldExample() {
@@ -35,6 +38,34 @@ export function FieldExample() {
         <Input />
       </Field>
     </Stack>
+  );
+}
+
+export function FormFieldExample() {
+  const t = useT();
+  const { control, handleSubmit } = useForm({ defaultValues: { name: "", bank: "", note: "" } });
+  return (
+    <form noValidate onSubmit={handleSubmit(() => {})} className="grid w-full max-w-md gap-8">
+      <FormField
+        control={control}
+        name="name"
+        label={t("Name", "الاسم")}
+        required
+        rules={{ required: t("Enter your name.", "أدخل اسمك.") }}
+        render={({ field }) => <Input {...field} autoComplete="name" />}
+      />
+      <FormField
+        control={control}
+        name="bank"
+        label={t("Bank", "البنك")}
+        rules={{ required: t("Choose a bank.", "اختر بنكًا.") }}
+        render={({ field }) => (
+          <Combobox value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} name={field.name} options={BANKS.map(([value, en, ar]) => ({ value, label: t(en, ar) }))} />
+        )}
+      />
+      <FormField control={control} name="note" label={t("Note", "ملاحظة")} optional max={200} render={({ field }) => <Textarea {...field} maxLength={200} />} />
+      <Button type="submit" className="justify-self-start">{t("Save", "حفظ")}</Button>
+    </form>
   );
 }
 

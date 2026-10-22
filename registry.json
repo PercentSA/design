@@ -1995,6 +1995,30 @@
       }
     },
     {
+      "name": "react-hook-form",
+      "type": "registry:ui",
+      "title": "FormField",
+      "description": "@percentsa/ui: FormField",
+      "dependencies": [
+        "react-hook-form"
+      ],
+      "registryDependencies": [
+        "@percentsa/field"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/react-hook-form.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/react-hook-form.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FormField"
+        ]
+      }
+    },
+    {
       "name": "saudi-calendar",
       "type": "registry:lib",
       "title": "fromPlain, addDays, todayPlain, partsOf",
@@ -3863,6 +3887,16 @@
       "description": "PercentProvider: adds @percentsa/provider.",
       "registryDependencies": [
         "@percentsa/provider"
+      ],
+      "files": []
+    },
+    {
+      "name": "form-field",
+      "type": "registry:ui",
+      "title": "FormField",
+      "description": "FormField: adds @percentsa/react-hook-form.",
+      "registryDependencies": [
+        "@percentsa/react-hook-form"
       ],
       "files": []
     },
