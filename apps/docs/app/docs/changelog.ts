@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.8.0",
-    date: null,
+    date: "2026-10-23",
     summary: "Parts for documents, records, forms and reports. Nothing changes for existing projects.",
     changes: [
       c("new", "The parts in the [Sidebar](sidebar) header and footer can ask useSidebarRail() whether the sidebar is an icon rail. In the phone sheet it is always expanded, so a user menu there shows the name and role."),
