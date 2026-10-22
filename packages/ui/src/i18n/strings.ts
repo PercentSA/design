@@ -124,6 +124,9 @@ const en = {
   replaceImage: "Replace image",
   removeImage: "Remove image",
   uploadFailed: "Could not upload the image. Try again.",
+  searching: "Searching",
+  addNew: (q: string) => `Add "${q}"`,
+  typeToNarrow: (n: number) => `${n} more. Type to narrow the list.`,
   invoice: {
     taxInvoice: "Tax invoice",
     simplifiedTaxInvoice: "Simplified tax invoice",
@@ -315,6 +318,9 @@ const ar: Strings = {
   replaceImage: "استبدال الصورة",
   removeImage: "إزالة الصورة",
   uploadFailed: "تعذّر رفع الصورة. حاول مرة أخرى.",
+  searching: "جارٍ البحث",
+  addNew: (q) => `إضافة «${q}»`,
+  typeToNarrow: (n) => `عدد إضافي: ${n}. اكتب لتضييق القائمة.`,
   invoice: {
     taxInvoice: "فاتورة ضريبية",
     simplifiedTaxInvoice: "فاتورة ضريبية مبسطة",

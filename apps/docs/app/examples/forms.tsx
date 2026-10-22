@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { AtSign } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {
@@ -8,6 +8,7 @@ import {
   ChoiceCardGroup,
   Combobox,
   Field,
+  searchKey,
   Fieldset,
   Honeypot,
   Input,
@@ -20,6 +21,7 @@ import {
   Stack,
   Switch,
   Textarea,
+  type ComboboxOption,
 } from "@percentsa/ui";
 import { FormField } from "@percentsa/ui/react-hook-form";
 import { useT } from "~/lib/t";
@@ -121,6 +123,62 @@ export function ComboboxExample() {
   return (
     <Field label={t("Bank", "البنك")} hint={t("Type to filter", "اكتب للتصفية")} className="w-full max-w-xs">
       <Combobox value={bank} onValueChange={setBank} name="bank" options={BANKS.map(([value, en, ar]) => ({ value, label: t(en, ar) }))} />
+    </Field>
+  );
+}
+
+const CITIES = [
+  ["Riyadh", "الرياض"],
+  ["Jeddah", "جدة"],
+  ["Makkah", "مكة المكرمة"],
+  ["Madinah", "المدينة المنورة"],
+  ["Dammam", "الدمام"],
+  ["Khobar", "الخبر"],
+  ["Dhahran", "الظهران"],
+  ["Taif", "الطائف"],
+  ["Tabuk", "تبوك"],
+  ["Abha", "أبها"],
+  ["Khamis Mushait", "خميس مشيط"],
+  ["Buraidah", "بريدة"],
+  ["Hail", "حائل"],
+  ["Jazan", "جازان"],
+  ["Najran", "نجران"],
+  ["Al Ahsa", "الأحساء"],
+] as const;
+
+export function ComboboxAsyncExample() {
+  const t = useT();
+  const [added, setAdded] = useState<string[]>([]);
+  const all: ComboboxOption[] = [...CITIES.map(([en, ar]) => t(en, ar)), ...added].map((label) => ({ value: label, label }));
+  const [results, setResults] = useState<ComboboxOption[] | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [city, setCity] = useState<string | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  // Stands in for a server search. A real app debounces the query in its data hook.
+  const search = (query: string) => {
+    clearTimeout(timer.current);
+    setLoading(true);
+    timer.current = setTimeout(() => {
+      setResults(all.filter((o) => searchKey(o.label).includes(searchKey(query))));
+      setLoading(false);
+    }, 400);
+  };
+  return (
+    <Field label={t("City", "المدينة")} hint={t("8 results at a time; type a new city to add it", "8 نتائج في كل مرة؛ اكتب مدينة جديدة لإضافتها")} className="w-full max-w-xs">
+      <Combobox
+        value={city}
+        onValueChange={setCity}
+        options={results ?? all}
+        onQueryChange={search}
+        loading={loading}
+        valueLabel={city ?? undefined}
+        limit={8}
+        onCreate={(name) => {
+          setAdded((list) => [...list, name]);
+          setCity(name);
+        }}
+        name="city"
+      />
     </Field>
   );
 }
