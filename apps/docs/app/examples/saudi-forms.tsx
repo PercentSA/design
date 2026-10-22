@@ -15,14 +15,18 @@ import {
   normalizePhone,
   OtpInput,
   parseAmount,
+  periodOf,
+  PeriodPicker,
   PhoneInput,
   saudiError,
   Stack,
   Text,
+  todayPlain,
   useLang,
   VatInput,
   type DateRange,
   type NationalAddressValue,
+  type Period,
   type PhoneCountryCode,
   type PlainDate,
 } from "@percentsa/ui";
@@ -178,6 +182,16 @@ export function CalendarRangeExample() {
 }
 
 /** A list filter: a preset closes the popover; a single day is a valid filter too ("From 12/09/2026"). */
+export function PeriodPickerExample() {
+  const [period, setPeriod] = useState<Period>(() => periodOf("month", todayPlain()));
+  return (
+    <Stack gap={3}>
+      <PeriodPicker value={period} onValueChange={setPeriod} />
+      <Text size="sm" tone="muted" dir="ltr" className="font-mono">{`${period.from} – ${period.to}`}</Text>
+    </Stack>
+  );
+}
+
 export function DateRangePickerExample() {
   const t = useT();
   const [range, setRange] = useState<DateRange>({ from: null, to: null });

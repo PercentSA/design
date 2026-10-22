@@ -27,6 +27,7 @@ export const RELEASES: Release[] = [
       c("new", "ImageField uploads an image, for example a logo or a product photo. It shows a preview with Replace and Remove, refuses a wrong file type or a file that is too large before the upload, and keeps the old image if the upload fails."),
       c("new", "FileDrop can be disabled."),
       c("new", "Combobox can search on the server: it passes each typed query to the app and shows the results with a \"Searching\" row while they load. A long list shows its first matches and how many more there are. An \"Add\" option at the end lets people add a value that is not in the list."),
+      c("new", "PeriodPicker chooses the period of a report: a month, a quarter, a year or a custom date range. Switching from a month to a quarter or a year keeps the same end, so September becomes the third quarter and then the whole year."),
     ],
   },
   {

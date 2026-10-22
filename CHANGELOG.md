@@ -15,6 +15,7 @@ ERP parts for documents, records, forms and reports. No breaking change.
 - ImageField: an image upload with preview, replace, remove and an upload callback.
 - FileDrop disabled.
 - Combobox: server search (onQueryChange, loading), long lists (limit), an "add new" option (onCreate), and valueLabel for a chosen value that is not in the results.
+- PeriodPicker: a month, quarter, year or custom period for reports.
 
 ## 0.7.0
 

@@ -1265,6 +1265,33 @@
       }
     },
     {
+      "name": "period-picker",
+      "type": "registry:ui",
+      "title": "PeriodPicker",
+      "description": "@percentsa/ui: PeriodPicker",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/calendar",
+        "@percentsa/cn",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-period"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/period-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/period-picker.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PeriodPicker"
+        ]
+      }
+    },
+    {
       "name": "phone-text",
       "type": "registry:ui",
       "title": "PhoneText",
@@ -2303,6 +2330,28 @@
           "parseAmount",
           "normalizeIban",
           "searchKey"
+        ]
+      }
+    },
+    {
+      "name": "saudi-period",
+      "type": "registry:lib",
+      "title": "periodOf, periodOptions",
+      "description": "@percentsa/ui: periodOf, periodOptions",
+      "registryDependencies": [
+        "@percentsa/saudi-calendar"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/period.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/period.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "periodOf",
+          "periodOptions"
         ]
       }
     },
