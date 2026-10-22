@@ -6,19 +6,22 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 
 ERP parts for documents, records, forms and reports. New entry `@percentsa/ui/react-hook-form` (optional peer `react-hook-form`). No breaking change.
 
-- DetailLayout: a main column and a side column (2:1) that never let a wide table push the page; one column on phones. TotalsList: document totals aligned under each other.
-- LineItemsTable: document lines with product and SKU, quantity, unit price, discount, VAT and total, a returned-quantity chip, and card rows on phones.
+- [DetailLayout](https://design.percent.sa/en/components/detail-layout): a main column and a side column (2:1) that never let a wide table push the page; one column on phones. [TotalsList](https://design.percent.sa/en/components/totals-list): document totals aligned under each other.
+- [LineItemsTable](https://design.percent.sa/en/components/line-items-table): document lines with product and SKU, quantity, unit price, discount, VAT and total, a returned-quantity chip, and card rows on phones.
 - DataTable totals (a total row) and groupBy, groupHeader, groupTotals (row groups with subtotals) for reports.
-- FormField on the new entry @percentsa/ui/react-hook-form: binds a react-hook-form field to Field (label, hint, error, ids). react-hook-form is an optional peer; @percentsa/ui alone does not need it.
-- FormSheet: an edit form in a sheet with a sticky footer, a pending state and a guard for unsaved changes. RecordSection: a record's facts as text, with its edit action.
+- [FormField](https://design.percent.sa/en/components/form-field) on the new entry @percentsa/ui/react-hook-form: binds a react-hook-form field to Field (label, hint, error, ids). react-hook-form is an optional peer; @percentsa/ui alone does not need it.
+- [FormSheet](https://design.percent.sa/en/components/form-sheet): an edit form in a sheet with a sticky footer, a pending state and a guard for unsaved changes. [RecordSection](https://design.percent.sa/en/components/record-section): a record's facts as text, with its edit action.
 - AlertDialog without a trigger gives focus back to the element that had it before it opened (was: the page).
-- ImageField: an image upload with preview, replace, remove and an upload callback.
+- [ImageField](https://design.percent.sa/en/components/image-field): an image upload with preview, replace, remove and an upload callback.
 - FileDrop disabled.
 - Combobox: server search (onQueryChange, loading), long lists (limit), an "add new" option (onCreate), and valueLabel for a chosen value that is not in the results.
-- PeriodPicker: a month, quarter, year or custom period for reports. periodOf and periodOptions give the same periods on the server.
-- TimeInput (12-hour time with AM/PM, ص/م in Arabic) and DateTimePicker. splitTime and joinTime convert between "HH:mm" and the 12-hour clock.
-- NumberInput format: how a set value shows (TimeInput shows minutes as "05").
-- SaudiPlate (a Saudi private plate drawing), PlateInput (one field with a live plate) and parsePlate.
+- [PeriodPicker](https://design.percent.sa/en/components/period-picker): a month, quarter, year or custom period for reports. periodOf and periodOptions give the same periods on the server. `calendar="hijri"` gives Umm al-Qura months, quarters (3 Hijri months) and years; the value stays Gregorian ISO days, and a Hijri year or quarter label ends with the era (`hijriEra`: "AH", «هـ»).
+- [TimeInput](https://design.percent.sa/en/components/time-input) (12-hour time with AM/PM, ص/م in Arabic) and [DateTimePicker](https://design.percent.sa/en/components/date-time-picker). splitTime and joinTime convert between "HH:mm" and the 12-hour clock.
+- NumberInput format: how a set value shows ([TimeInput](https://design.percent.sa/en/components/time-input) shows minutes as "05").
+- [SaudiPlate](https://design.percent.sa/en/components/saudi-plate) (a Saudi private plate drawing; the middle strip shows the emblem, «السعودية», K S A and the private-car circle), [PlateInput](https://design.percent.sa/en/components/plate-input) (one field with a live plate) and parsePlate.
+- Calendar, DatePicker and DateRangePicker: a month list and a year list between the previous and next buttons, in the Gregorian and the Hijri calendar. The years go from min to max, else from 100 years back to 10 years forward; months outside min and max are disabled. monthNames gives the 12 month names of a year.
+- DateRangePicker defaultCalendar: the calendar shown first (was always Gregorian).
+- The app's own words: IbanInput uses the app's placeholder (was: the built-in one won). PhoneInput takes the country names from the strings (new key `countries`). Invoice otherLanguageStrings replaces the built-in labels of the second language. The Language page of the docs shows how to give all built-in strings.
 
 ## 0.7.0
 
