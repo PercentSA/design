@@ -24,9 +24,9 @@ export const pages: DocPage[] = [
     "DataTable",
     "data",
     "DataTable",
-    ["DataTableExample", "DataTableServerExample", "DataTableEmptyExample"],
-    "A table with sorting, row selection, pages, loading and empty states. For server data, control sort and page and give pageCount; the table then shows the rows as given.",
-    "جدول بفرز وتحديد صفوف وصفحات وحالتَي التحميل والفراغ. لبيانات الخادم، تحكّم في الفرز والصفحة ومرّر pageCount؛ فيعرض الجدول الصفوف كما وصلت.",
+    ["DataTableExample", "DataTableListExample", "DataTableServerExample", "DataTableEmptyExample"],
+    "A table with sorting, row selection, pages, loading and empty states. For server data, control sort and page and give pageCount; the table then shows the rows as given. rowHref makes the whole row a link to the record (the first cell is the link; Ctrl-click opens a new tab), and the checkbox and buttons in the row still work. rowActions adds a “⋯” menu to each row. With cards, each row is a card below 768 px: the first cell is the title, the other cells show their header, and hideOnCard columns are left out.",
+    "جدول بفرز وتحديد صفوف وصفحات وحالتَي التحميل والفراغ. لبيانات الخادم، تحكّم في الفرز والصفحة ومرّر pageCount؛ فيعرض الجدول الصفوف كما وصلت. الخاصية rowHref تجعل الصف كله رابطًا إلى السجل (الخلية الأولى هي الرابط، وCtrl مع النقر يفتح تبويبًا جديدًا)، ويبقى مربع الاختيار والأزرار في الصف تعمل. الخاصية rowActions تضيف قائمة «⋯» لكل صف. مع cards يصبح كل صف بطاقة تحت 768 بكسل: الخلية الأولى عنوانها، وتعرض الخلايا الأخرى عنوان عمودها، وتُحذف أعمدة hideOnCard.",
   ),
   p(
     "list",

@@ -664,9 +664,12 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "@percentsa/button-class",
+        "@percentsa/card",
         "@percentsa/choices",
         "@percentsa/cn",
         "@percentsa/feedback",
+        "@percentsa/menus",
         "@percentsa/navigation",
         "@percentsa/provider",
         "@percentsa/table",

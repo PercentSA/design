@@ -12,6 +12,7 @@ Parts for app shells and lists. No breaking change.
 - StatusBadge: a badge with a coloured dot in five tones; the colour is on the dot only. EmptyState tone="error" with a retry button. NotFound and Forbidden page states.
 - PageHeader: page title, status badges, a meta line, a back link, one primary action, secondary actions and a "⋯" menu; optional sticky. Menu items take a description (for example why an item is disabled).
 - Calendar mode="range" and DateRangePicker: a date range with the presets today, yesterday, this week, this month and last month.
+- DataTable: rowHref (the whole row opens the record), rowActions (a "⋯" menu per row) and cards (each row is a card below 768 px).
 
 ## 0.6.0
 
