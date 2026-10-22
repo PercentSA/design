@@ -53,6 +53,18 @@ describe("PageHeader", () => {
     expect(toggle.getAttribute("aria-controls")).toBe(panel.id);
   });
 
+  test("action order from 768 px is the page order: primary, secondary, ⋯", async () => {
+    const el = await mount(<PageHeader title="Orders" primary={<Button data-primary="">New order</Button>} secondary={<Button data-secondary="">Export</Button>} menu={menu} />);
+    const primary = el.querySelector("[data-primary]")!;
+    const secondary = el.querySelector("[data-secondary]")!;
+    const more = el.querySelector('button[aria-label="More actions"]')!;
+    expect(primary.compareDocumentPosition(secondary) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(secondary.compareDocumentPosition(more) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    // CSS must not move them: the visual order is the focus order (WCAG 2.4.3).
+    const actions = primary.parentElement!.parentElement!;
+    expect(actions.outerHTML).not.toMatch(/\border-/);
+  });
+
   test("More actions toggles aria-expanded and lists menu items with descriptions", async () => {
     const el = await mount(<PageHeader title="INV-1042" primary={<Button>Record payment</Button>} menu={menu} />);
     const toggle = el.querySelector("button[aria-expanded]")!;

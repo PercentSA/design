@@ -147,7 +147,7 @@ export function PageHeader({
         {meta && <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-fg-3">{meta}</div>}
       </div>
       {(primary || more) && (
-        // DOM order follows the phone layout (primary, More actions, its panel); from 768 px the panel moves first.
+        // One order at every width (primary, secondary, "⋯"), so the visual order is the focus order (WCAG 2.4.3).
         <div className="flex shrink-0 flex-col gap-2 md:flex-row md:items-center">
           {primary && <div className="grid md:flex">{primary}</div>}
           {more && (
@@ -163,7 +163,7 @@ export function PageHeader({
             </button>
           )}
           {more && (
-            <div id={panelId} className={cn(open ? "flex" : "hidden", "flex-col gap-2 md:order-first md:flex md:flex-row md:items-center max-md:[&>*]:w-full")}>
+            <div id={panelId} className={cn(open ? "flex" : "hidden", "flex-col gap-2 md:flex md:flex-row md:items-center max-md:[&>*]:w-full")}>
               {secondary}
               {items.length > 0 && <PanelItems items={items} onDone={() => setOpen(false)} />}
             </div>
