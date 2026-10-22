@@ -98,8 +98,11 @@ describe("SaudiPlate", () => {
     // Both rows: Arabic-Indic digits and letters on top, Western digits and Latin letters below.
     for (const part of ["١٢٣٤", ">1234<", "ا ب ح", "A B J", "السعودية"]) expect(ar).toContain(part);
     expect(ar).not.toMatch(/#[0-9a-f]{3,6}|neutral-|\bbg-white\b|\bbg-black\b/);
-    // No emblem until the owner decides: no drawing in the plate.
-    expect(ar).not.toContain("<svg");
+    // One emblem in the middle strip, inside the hidden drawing, in the text colour.
+    expect(ar.match(/<svg/g)).toHaveLength(1);
+    const drawing = ar.slice(ar.indexOf('aria-hidden="true"'));
+    expect(drawing).toContain("<svg");
+    expect(drawing).toMatch(/<svg[^>]*fill="currentColor"/);
     const en = html("en", "ه", "55", "sm");
     expect(en).toContain('aria-label="Plate H 55"');
     expect(en).toContain("٥٥");
