@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { cn } from "../lib/cn";
 import { useLang, useStrings, useText } from "../provider";
 import { todayPlain, viewLabel, type PlainDate } from "../saudi/calendar";
@@ -10,6 +10,7 @@ import { DateRangePicker } from "./calendar";
 import { Select } from "./inputs";
 
 const KINDS: PeriodKind[] = ["month", "quarter", "year", "custom"];
+const noSubscribe = () => () => {};
 
 /**
  * A report period: a month, quarter or year from a list (newest first), or a custom date range. Gregorian.
@@ -19,7 +20,7 @@ export function PeriodPicker({
   value,
   onValueChange,
   kinds = KINDS,
-  today = todayPlain(),
+  today: todayProp,
   className,
 }: {
   value: Period;
@@ -32,6 +33,9 @@ export function PeriodPicker({
   const s = useStrings();
   const t = useText();
   const lang = useLang();
+  // The clock is read only in the browser: a server render (Next.js Cache Components) must not read it. The closed
+  // list is not shown, so on the server it ends at the chosen period.
+  const today = useSyncExternalStore(noSubscribe, () => todayProp ?? todayPlain(), () => todayProp ?? value.to);
   // The first day of a custom range whose end is not chosen yet: the calendar stays open for the end.
   const [start, setStart] = useState<PlainDate | null>(null);
   const label = (p: Period) => {

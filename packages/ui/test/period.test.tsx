@@ -128,4 +128,20 @@ describe("PeriodPicker", () => {
     expect(out).not.toContain(">Quarter<");
     expect(out).not.toContain(">Custom<");
   });
+
+  test("a server render does not read the clock (Next.js Cache Components)", () => {
+    const RealDate = globalThis.Date;
+    globalThis.Date = class extends RealDate {
+      constructor(...args: []) {
+        if (args.length === 0) throw new Error("the clock was read");
+        super(...args);
+      }
+    } as DateConstructor;
+    try {
+      const out = renderToStaticMarkup(<PeriodPicker value={periodOf("month", TODAY)} onValueChange={noop} />);
+      expect(out).toContain("September 2026");
+    } finally {
+      globalThis.Date = RealDate;
+    }
+  });
 });
