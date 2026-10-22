@@ -204,7 +204,7 @@ export function FilterBarToolbarExample() {
       ]}
       actions={
         <>
-          <DateRangePicker className="w-60" value={range} onValueChange={setRange} />
+          <DateRangePicker size="sm" className="w-60" value={range} onValueChange={setRange} />
           <ColumnsMenu
             columns={[
               { key: "number", header: t("Number", "الرقم"), hideable: false },

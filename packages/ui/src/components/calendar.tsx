@@ -280,6 +280,7 @@ const PRESETS: DateRangePresetId[] = ["today", "yesterday", "thisWeek", "thisMon
  * A field that opens range presets beside a range Calendar. A preset commits and closes. A day commits at once
  * (a range open at one end is a valid filter); the popover closes when both ends are set. The range reads
  * "12/09/2026 – 15/09/2026" left to right in both languages. A clear button shows when a date is set.
+ * `size="sm"` gives the trigger the height of a Button and the search field in a toolbar row.
  */
 export function DateRangePicker({
   value,
@@ -290,6 +291,7 @@ export function DateRangePicker({
   weekStart,
   fixedCalendar,
   placeholder,
+  size = "md",
   className,
   ...props
 }: {
@@ -301,6 +303,8 @@ export function DateRangePicker({
   weekStart?: number;
   fixedCalendar?: boolean;
   placeholder?: string;
+  /** "sm": the toolbar height (`--p-control-h-sm`, as Button size md). Default "md": the field height. */
+  size?: "sm" | "md";
   className?: string;
 } & Pick<ComponentProps<"button">, "id" | "aria-describedby" | "disabled">) {
   const s = useStrings();
@@ -327,7 +331,7 @@ export function DateRangePicker({
           {...trigger}
           aria-describedby={[labelled ? valueId : undefined, trigger["aria-describedby"]].filter(Boolean).join(" ") || undefined}
           aria-required={required || undefined}
-          className={cn(TEXT_BOX, "flex items-center justify-between gap-2 text-start", set && "pe-11")}
+          className={cn(TEXT_BOX, "flex items-center justify-between gap-2 text-start", size === "sm" && "h-(--p-control-h-sm)", set && "pe-11")}
         >
           <span id={valueId} className={cn("truncate", !set && "text-fg-3")}>
             {text}
@@ -383,7 +387,10 @@ export function DateRangePicker({
             onValueChange({ from: null, to: null });
             triggerRef.current?.focus();
           }}
-          className="absolute end-1.5 top-1/2 grid size-8 -translate-y-1/2 place-items-center rounded-pill text-fg-3 transition-colors hover:bg-surface-2 hover:text-fg disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4"
+          className={cn(
+            "absolute end-1.5 top-1/2 grid -translate-y-1/2 place-items-center rounded-pill text-fg-3 transition-colors hover:bg-surface-2 hover:text-fg disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-4",
+            size === "sm" ? "size-7" : "size-8",
+          )}
         >
           <X aria-hidden />
         </button>

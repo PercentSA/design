@@ -95,6 +95,14 @@ describe("DateRangePicker", () => {
     expect(renderToStaticMarkup(<DateRangePicker value={r(null, null)} onValueChange={() => {}} placeholder="Any date" />)).toContain("Any date");
   });
 
+  test("DateRangePicker size sm uses the small control height", () => {
+    const trigger = (html: string) => html.match(/<button[^>]*aria-haspopup[^>]*>/)![0];
+    const sm = trigger(renderToStaticMarkup(<DateRangePicker size="sm" value={r(null, null)} onValueChange={() => {}} />));
+    expect(sm).toContain("h-(--p-control-h-sm)");
+    expect(sm).not.toContain("h-(--p-control-h) ");
+    expect(trigger(label(r(null, null)))).toContain("h-(--p-control-h) ");
+  });
+
   test("a preset click commits and closes; the clear button empties the range and is named مسح التاريخ", async () => {
     let last = r(null, null);
     function Picker() {
