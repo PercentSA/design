@@ -21,6 +21,7 @@ export const RELEASES: Release[] = [
     date: null,
     summary: "Parts for documents, records, forms and reports. Nothing changes for existing projects.",
     changes: [
+      c("new", "The parts in the [Sidebar](sidebar) header and footer can ask useSidebarRail() whether the sidebar is an icon rail. In the phone sheet it is always expanded, so a user menu there shows the name and role."),
       c("new", "[DetailLayout](detail-layout) puts a record page in two columns: the main part and a side column with details and totals. A wide table scrolls inside its column, so the page never gets wider. On phones the columns stack, main part first. [TotalsList](totals-list) shows a document's totals with the amounts under each other."),
       c("new", "[LineItemsTable](line-items-table) shows the lines of an order or invoice: product and SKU, quantity, unit price, discount, VAT and total. The headers say whether prices include VAT, a chip shows a returned quantity, and on phones each line is a card."),
       c("new", "DataTable can show a total row at the foot, and can put the rows of a report in groups, each with a header and a subtotal. A sort works inside each group, and a printed total row stays in one piece after the last row."),

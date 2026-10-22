@@ -22,6 +22,7 @@ ERP parts for documents, records, forms and reports. New entry `@percentsa/ui/re
 - Calendar, DatePicker and DateRangePicker: a month list and a year list between the previous and next buttons, in the Gregorian and the Hijri calendar. The years go from min to max, else from 100 years back to 10 years forward; months outside min and max are disabled. monthNames gives the 12 month names of a year.
 - DateRangePicker defaultCalendar: the calendar shown first (was always Gregorian).
 - The app's own words: IbanInput uses the app's placeholder (was: the built-in one won). PhoneInput takes the country names from the strings (new key `countries`). Invoice otherLanguageStrings replaces the built-in labels of the second language. The Language page of the docs shows how to give all built-in strings.
+- useSidebarRail: the parts in the Sidebar `header` and `footer` know whether the sidebar is an icon rail. In the phone sheet the sidebar is always expanded, so it is false there.
 
 ## 0.7.0
 

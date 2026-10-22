@@ -134,7 +134,7 @@ export { type ChartProps, type ChartSeries } from "./components/charts/chart-fra
 export { bandScale, linearScale, linePath, niceTicks, stack } from "./components/charts/scale";
 export { AppShell } from "./components/app-shell";
 export { PageHeader } from "./components/page-header";
-export { Sidebar, type SidebarItem, type SidebarSection } from "./components/sidebar";
+export { Sidebar, useSidebarRail, type SidebarItem, type SidebarSection } from "./components/sidebar";
 export { CommandPalette, useCommandShortcut, type Command } from "./components/command-palette";
 export { invoiceTotals, zatcaTlv, type InvoiceLineAmounts, type ZatcaFields } from "./saudi/invoice";
 export { QrCode, ZatcaQr } from "./components/qr-code";

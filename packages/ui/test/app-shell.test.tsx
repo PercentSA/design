@@ -4,7 +4,7 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { PercentProvider } from "../src";
 import { AppShell } from "../src/components/app-shell";
 import { CommandPalette, useCommandShortcut, type Command } from "../src/components/command-palette";
-import { Sidebar, type SidebarSection } from "../src/components/sidebar";
+import { Sidebar, useSidebarRail, type SidebarSection } from "../src/components/sidebar";
 import { click, mount, press, useDom } from "./dom";
 
 useDom();
@@ -222,5 +222,21 @@ describe("AppShell", () => {
     expect(sheet.querySelector("button[aria-expanded]")).toBeNull();
     await click(sheet.querySelector('a[href="/app"]')!);
     expect(document.querySelector('[role="dialog"]')).toBeNull();
+  });
+
+  test("useSidebarRail: true in the collapsed rail, false in the phone sheet", async () => {
+    function Part() {
+      return <span data-rail={String(useSidebarRail())} />;
+    }
+    const el = await mount(
+      <AppShell sidebar={<Sidebar sections={sections} collapsed onCollapsedChange={() => {}} header={<Part />} footer={<Part />} />}>
+        <p>x</p>
+      </AppShell>,
+    );
+    const rail = [...el.querySelectorAll("[data-rail]")].filter((x) => !x.closest('[role="dialog"]'));
+    expect(rail.map((x) => x.getAttribute("data-rail"))).toEqual(["true", "true"]);
+    await click(el.querySelector('[aria-label="Open navigation"]')!);
+    const sheet = document.querySelector('[role="dialog"]')!;
+    expect([...sheet.querySelectorAll("[data-rail]")].map((x) => x.getAttribute("data-rail"))).toEqual(["false", "false"]);
   });
 });
