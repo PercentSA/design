@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileText, Globe, LayoutDashboard, Plus, Receipt, Smartphone } from "lucide-react";
-import { Badge, Button, Card, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, useLang } from "@percentsa/ui";
+import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, toast, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function CardExample() {
@@ -93,7 +93,7 @@ export function DataTableExample() {
   const t = useT();
   const [selected, setSelected] = useState<string[]>([]);
   return (
-    <div className="grid w-full gap-3">
+    <div className="grid w-full grid-cols-1 gap-3">
       <DataTable
         columns={useInvoiceColumns()}
         rows={INVOICES}
@@ -111,6 +111,62 @@ export function DataTableExample() {
           {t("Clear selection", "إلغاء التحديد")}
         </Button>
       )}
+    </div>
+  );
+}
+
+/** A list: each row opens its invoice, "⋯" holds the row actions, and below 768 px the rows are cards. */
+export function DataTableListExample() {
+  const t = useT();
+  const done = (title: string) => () => toast({ title });
+  return (
+    <DataTable
+      className="w-full"
+      columns={useInvoiceColumns()}
+      rows={INVOICES}
+      getRowId={(r) => r.id}
+      caption={t("Invoices", "الفواتير")}
+      hideCaption
+      selectable
+      pageSize={5}
+      cards
+      rowHref={(r) => `#${r.id}`}
+      rowActions={(r) => [
+        { label: t("Duplicate", "تكرار"), onSelect: done(t("Invoice duplicated", "كُرّرت الفاتورة")) },
+        {
+          label: t("Send a reminder", "إرسال تذكير"),
+          disabled: r.status === "paid",
+          description: r.status === "paid" ? t("This invoice is paid.", "هذه الفاتورة مدفوعة.") : undefined,
+          onSelect: done(t("Reminder sent", "أُرسل التذكير")),
+        },
+        "separator",
+        { label: t("Delete", "حذف"), danger: true, onSelect: done(t("Invoice deleted", "حُذفت الفاتورة")) },
+      ]}
+    />
+  );
+}
+
+/** ColumnsMenu hides columns (Invoice stays), with a rows-per-page choice and a header that stays in view. */
+export function ColumnsMenuExample() {
+  const t = useT();
+  const columns = useInvoiceColumns().map((c) => (c.key === "id" ? { ...c, hideable: false } : c));
+  const [hidden, setHidden] = useState<string[]>([]);
+  const [size, setSize] = useState(10);
+  return (
+    <div className="grid w-full grid-cols-1 gap-3">
+      <ColumnsMenu className="justify-self-end" columns={columns} hidden={hidden} onHiddenChange={setHidden} />
+      <DataTable
+        columns={columns}
+        rows={INVOICES}
+        getRowId={(r) => r.id}
+        caption={t("Invoices", "الفواتير")}
+        hideCaption
+        hiddenColumns={hidden}
+        pageSize={size}
+        pageSizeOptions={[5, 10, 25]}
+        onPageSizeChange={setSize}
+        stickyHeader
+      />
     </div>
   );
 }

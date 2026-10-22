@@ -13,7 +13,7 @@ import { VisuallyHidden } from "./utility";
 /**
  * App layout: the `sidebar` on the start side from 1024 px (by CSS, so it shows without JavaScript),
  * in a sheet below; a sticky header row; `children` in <main id={mainId}> (default "main", the skip link's target).
- * Compact controls unless `density="comfortable"`. `embedded`: inside a page that has its own <main> and skip
+ * Compact controls unless `density="comfortable"`. Sets `--p-sticky-top` (the header row's height) for a sticky PageHeader. `embedded`: inside a page that has its own <main> and skip
  * link (an app layout, a preview), the shell adds no landmarks (<div> for <header> and <main>) and no skip link.
  */
 export function AppShell({
@@ -47,7 +47,13 @@ export function AppShell({
   return (
     <div
       data-density={density === "compact" ? "compact" : undefined}
-      className={cn("min-h-dvh bg-bg text-fg lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:grid-rows-[auto_1fr]", className)}
+      className={cn(
+        "min-h-dvh bg-bg text-fg lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:grid-rows-[auto_1fr]",
+        // Where a sticky PageHeader stops: under the header row (h-14), or at the top where that row is hidden.
+        "[--p-sticky-top:3.5rem]",
+        !header && "lg:[--p-sticky-top:0px]",
+        className,
+      )}
     >
       {!embedded && <SkipLink href={`#${mainId}`} />}
       <div className="hidden lg:row-span-2 lg:block">

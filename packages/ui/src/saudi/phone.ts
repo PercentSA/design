@@ -66,3 +66,27 @@ export function normalizePhone(input: string, preferred: PhoneCountryCode = "SA"
   const p = parse(input, country)!;
   return p.country.dialCode + p.national;
 }
+
+/**
+ * A phone number for display: "+966 55 000 0999" (international) or "055 000 0999" (national); "+974 3000 0999", "3000 0999".
+ * A value that is not a valid GCC number is returned trimmed and unchanged: display never hides stored data.
+ */
+export function formatPhone(
+  raw: string | null | undefined,
+  { style = "international", country = "SA" }: { style?: "international" | "national"; country?: PhoneCountryCode } = {},
+) {
+  const digits = normalizePhone(raw ?? "", country);
+  if (!digits) return (raw ?? "").trim();
+  const c = GCC_PHONE_COUNTRIES.find((x) => digits.startsWith(x.dialCode))!;
+  const n = digits.slice(c.dialCode.length);
+  const grouped = n.length === 9 ? `${n.slice(0, 2)} ${n.slice(2, 5)} ${n.slice(5)}` : `${n.slice(0, 4)} ${n.slice(4)}`;
+  if (style === "international") return `+${c.dialCode} ${grouped}`;
+  // 9-digit numbers are dialled with a leading 0 inside the country (SA, AE); 8-digit numbers are not.
+  return n.length === 9 ? `0${grouped}` : grouped;
+}
+
+/** Call and WhatsApp links, or null when the value is not a valid GCC number. */
+export function phoneLinks(raw: string | null | undefined, country: PhoneCountryCode = "SA") {
+  const digits = normalizePhone(raw ?? "", country);
+  return digits ? { tel: `tel:+${digits}`, whatsapp: `https://wa.me/${digits}` } : null;
+}

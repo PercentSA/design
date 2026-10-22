@@ -88,7 +88,7 @@ export default function DocsLayout() {
   const other = lang === "ar" ? "en" : "ar";
   const [menu, setMenu] = useState(false);
   return (
-    <PercentProvider lang={lang} link={RouterLink}>
+    <PercentProvider lang={lang} link={RouterLink} location={pathname + search}>
       <SkipLink />
       <header className="sticky top-0 z-(--p-z-header) flex h-16 items-center justify-between gap-3 border-b border-line bg-bg/90 px-4 backdrop-blur-md md:px-8">
         <Link to={`/${lang}`} viewTransition className="flex items-center gap-3" aria-label={COPY.title[lang]}>

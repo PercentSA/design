@@ -4,8 +4,11 @@ import type { HTMLAttributes, ReactNode } from "react";
 import { CircleAlert, CircleCheck, Info, TriangleAlert, X } from "lucide-react";
 import { Progress as RadixProgress } from "radix-ui";
 import { cn } from "../lib/cn";
-import { useBrand, useStrings } from "../provider";
+import { useBrand, useLinkComponent, useStrings, useText } from "../provider";
+import { Button } from "./actions";
 import { Mark } from "./brand";
+import { buttonClass } from "./button-class";
+import type { Crumb } from "./navigation";
 
 const ALERT = {
   info: { icon: Info, color: "text-fg-2", border: "border-line" },
@@ -66,6 +69,27 @@ export function Tag({ children, onRemove, className }: { children: string; onRem
         </button>
       )}
     </span>
+  );
+}
+
+export type StatusTone = "neutral" | "info" | "success" | "warning" | "danger";
+
+// neutral is a ring and info a grey fill: the two differ by shape, not only by shade.
+const STATUS_DOT: Record<StatusTone, string> = {
+  neutral: "border border-fg-3",
+  info: "bg-fg-2",
+  success: "bg-live",
+  warning: "bg-warning",
+  danger: "bg-danger",
+};
+
+/** A status in a badge (Paid, Draft). The colour is on the dot only; the text says the status. */
+export function StatusBadge({ tone = "neutral", children, className }: { tone?: StatusTone; children: ReactNode; className?: string }) {
+  return (
+    <Badge variant="subtle" className={className}>
+      <span aria-hidden="true" className={cn("size-2 shrink-0 rounded-pill", STATUS_DOT[tone])} />
+      {children}
+    </Badge>
   );
 }
 
@@ -137,14 +161,82 @@ export const Skeleton = ({ className }: { className?: string }) => (
   <div aria-hidden="true" className={cn("animate-pulse rounded-field bg-surface-2 motion-reduce:animate-none", className)} />
 );
 
-export function EmptyState({ title, description, action, icon, className }: { title: ReactNode; description?: ReactNode; action?: ReactNode; icon?: ReactNode; className?: string }) {
+/** Nothing to show yet, with the next action. `tone="error"`: a load error, announced at once; `onRetry` adds a "Try again" button. */
+export function EmptyState({
+  title,
+  description,
+  action,
+  icon,
+  tone = "neutral",
+  onRetry,
+  className,
+}: {
+  title: ReactNode;
+  description?: ReactNode;
+  action?: ReactNode;
+  icon?: ReactNode;
+  tone?: "neutral" | "error";
+  onRetry?: () => void;
+  className?: string;
+}) {
   const logo = useBrand()?.mark;
+  const s = useStrings();
+  const t = useText();
+  const error = tone === "error";
   return (
-    <div className={cn("flex flex-col items-center gap-3 rounded-card border border-dashed border-line px-6 py-14 text-center", className)}>
-      <div className="mb-2 text-fg-3 [&_svg]:size-6">{icon ?? logo ?? <Mark className="h-6" />}</div>
+    <div role={error ? "alert" : undefined} className={cn("flex flex-col items-center gap-3 rounded-card border border-dashed border-line px-6 py-14 text-center", className)}>
+      <div className={cn("mb-2 text-fg-3 [&_svg]:size-6", error && "text-danger")}>{icon ?? (error ? <CircleAlert aria-hidden /> : (logo ?? <Mark className="h-6" />))}</div>
       <p className="heading text-lg">{title}</p>
       {description && <p className="max-w-sm text-sm text-fg-2">{description}</p>}
-      {action && <div className="mt-3">{action}</div>}
+      {(action || onRetry) && (
+        <div className="mt-3 flex flex-wrap justify-center gap-2">
+          {onRetry && (
+            <Button variant="secondary" onClick={onRetry}>
+              {t(s.retry)}
+            </Button>
+          )}
+          {action}
+        </div>
+      )}
     </div>
+  );
+}
+
+/** A page or record that does not exist. `back` links to its list (each record page links to its list). */
+export function NotFound({ title, description, back, className }: { title?: ReactNode; description?: ReactNode; back?: Crumb; className?: string }) {
+  const s = useStrings();
+  const t = useText();
+  const L = useLinkComponent();
+  return (
+    <EmptyState
+      title={title ?? t(s.notFoundTitle)}
+      description={description ?? t(s.notFoundBody)}
+      action={
+        back?.href ? (
+          <L href={back.href} className={buttonClass("secondary")}>
+            {back.label}
+          </L>
+        ) : undefined
+      }
+      className={className}
+    />
+  );
+}
+
+/** A page the user may not open. `permission` names the permission to ask for. */
+export function Forbidden({ permission, title, description, className }: { permission?: string; title?: ReactNode; description?: ReactNode; className?: string }) {
+  const s = useStrings();
+  const t = useText();
+  return (
+    <EmptyState
+      title={title ?? t(s.forbiddenTitle)}
+      description={
+        <>
+          {description ?? t(s.forbiddenBody)}
+          {permission && <span className="mt-1 block">{t(s.neededPermission(permission))}</span>}
+        </>
+      }
+      className={className}
+    />
   );
 }

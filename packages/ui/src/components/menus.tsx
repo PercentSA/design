@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { ContextMenu as RadixContextMenu, DropdownMenu as RadixDropdown } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useLinkComponent, useStrings } from "../provider";
@@ -11,6 +11,8 @@ export type MenuItem =
   | { heading: ReactNode }
   | {
       label: ReactNode;
+      /** A second line under the label, for example why the item is disabled. */
+      description?: ReactNode;
       onSelect?: () => void;
       /** A link item, rendered with the provider's link component (router links, open in a new tab). */
       href?: string;
@@ -29,6 +31,7 @@ type Parts = typeof RadixDropdown | typeof RadixContextMenu;
 function Items({ parts: P, items }: { parts: Parts; items: MenuItem[] }) {
   const L = useLinkComponent();
   const s = useStrings();
+  const id = useId();
   return items.map((item, i) => {
     if (item === "separator") return <P.Separator key={i} className="-mx-1.5 my-1.5 h-px bg-line" />;
     if ("heading" in item)
@@ -40,7 +43,15 @@ function Items({ parts: P, items }: { parts: Parts; items: MenuItem[] }) {
     const content = (
       <>
         {item.icon}
-        <span className="flex-1">{item.label}</span>
+        <span className="flex-1">
+          {item.label}
+          {/* Kept out of the item's name; aria-describedby reads it as the description. */}
+          {item.description && (
+            <span id={`${id}${i}`} aria-hidden="true" className="block text-xs text-fg-3">
+              {item.description}
+            </span>
+          )}
+        </span>
         {item.shortcut && (
           <kbd dir="ltr" className="font-mono text-xs text-fg-3">
             {item.shortcut}
@@ -56,6 +67,7 @@ function Items({ parts: P, items }: { parts: Parts; items: MenuItem[] }) {
         asChild={link}
         onSelect={item.onSelect}
         disabled={item.disabled}
+        aria-describedby={item.description ? `${id}${i}` : undefined}
         className={cn(MENU_ITEM, "pe-3 [&_svg]:size-4", item.danger && "text-danger data-highlighted:text-danger")}
       >
         {link ? (

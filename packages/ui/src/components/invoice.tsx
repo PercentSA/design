@@ -9,6 +9,7 @@ import { fromPlain, type PlainDate } from "../saudi/calendar";
 import { formatDate } from "../saudi/date";
 import { invoiceTotals, zatcaTlv } from "../saudi/invoice";
 import { Money } from "../saudi/money";
+import { PRINT_PAPER } from "./print-paper";
 import { QrCode } from "./qr-code";
 import { formatNumber } from "../lib/format-number";
 
@@ -21,10 +22,6 @@ type Key = keyof Strings["invoice"];
 type InvoiceQr =
   | { qr: true; timestamp: string; seller: InvoiceParty & { vatNumber: string } }
   | { qr?: false; timestamp?: undefined; seller: InvoiceParty };
-
-// White paper in every theme: inside the invoice the theme tokens become black on white.
-const PRINT =
-  "print:rounded-none print:border-0 print:p-0 print:bg-white print:text-black print:shadow-none print:[--p-bg:#fff] print:[--p-surface:#fff] print:[--p-surface-2:#fff] print:[--p-line:#bbb] print:[--p-line-strong:#666] print:[--p-fg:#000] print:[--p-fg-2:#000] print:[--p-fg-3:#444]";
 
 /** A label in both languages: the page language first, the other one beside it (or under it when `stacked`). */
 function Bi({ k, stacked }: { k: Key; stacked?: boolean }) {
@@ -127,7 +124,7 @@ export function Invoice({
     }
   }
   return (
-    <article aria-labelledby={id} className={cn("@container rounded-card border border-line bg-bg p-6 text-fg sm:p-8", PRINT, className)}>
+    <article aria-labelledby={id} className={cn("@container rounded-card border border-line bg-bg p-6 text-fg sm:p-8", PRINT_PAPER, className)}>
       <header className="flex flex-wrap items-start justify-between gap-6 border-b border-line pb-6">
         <div className="grid gap-5">
           <H id={id} className="heading text-2xl">

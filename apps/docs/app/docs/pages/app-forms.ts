@@ -6,9 +6,9 @@ export const pages: DocPage[] = [
     "FilterBar",
     "app",
     "FilterBar, type FilterDef, type FilterValue",
-    ["FilterBarExample"],
-    "Search and filter menus above a list or table. Chosen options show as removable tags, and “Clear filters” removes them all.",
-    "بحث وقوائم تصفية فوق قائمة أو جدول. تظهر الخيارات المحددة وسومًا يمكن إزالتها، ويزيلها زر «مسح عوامل التصفية» كلها.",
+    ["FilterBarExample", "FilterBarToolbarExample"],
+    "Search and filter menus above a list or table. Chosen options show as removable tags, and “Clear filters” removes them all. actions puts the list's other controls (date range, columns, refresh, “⋯”) at the end of the first row, so one bar is the list toolbar.",
+    "بحث وقوائم تصفية فوق قائمة أو جدول. تظهر الخيارات المحددة وسومًا يمكن إزالتها، ويزيلها زر «مسح عوامل التصفية» كلها. الخاصية actions تضع عناصر التحكم الأخرى للقائمة (الفترة، والأعمدة، والتحديث، و«⋯») في آخر الصف الأول، فيصبح الشريط الواحد شريط أدوات القائمة.",
   ),
   p(
     "settings",

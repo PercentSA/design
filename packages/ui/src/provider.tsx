@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useMemo, type ComponentProps, type ComponentType, type ReactNode } from "react";
+import { createContext, useContext, useMemo, useState, type ComponentProps, type ComponentType, type MouseEvent, type ReactNode } from "react";
 import { Direction } from "radix-ui";
 import { dirOf, type Dir, type Lang } from "./i18n/localized";
 import { STRINGS, type Strings } from "./i18n/strings";
@@ -31,6 +31,40 @@ const mergeStrings = (base: Strings, over: StringOverrides) => {
 
 const PercentContext = createContext<Ctx>({ lang: "en", dir: "ltr", strings: STRINGS.en, link: "a", text: plain });
 
+// Its own context, so a click does not render every component that reads the main one.
+type Pending = { href: string | null; location?: string; start: (href: string) => void };
+const PendingContext = createContext<Pending>({ href: null, start: () => {} });
+
+// A plain left click on a link to another page: no new tab, window or download, not a part of this page.
+const leaves = (e: MouseEvent<HTMLAnchorElement>, p: ComponentProps<"a">, location?: string) =>
+  !e.defaultPrevented &&
+  e.button === 0 &&
+  !(e.ctrlKey || e.metaKey || e.shiftKey || e.altKey) &&
+  (!p.target || p.target === "_self") &&
+  p.download == null &&
+  !!p.href &&
+  !p.href.startsWith("#") &&
+  p.href.split("#")[0] !== location;
+
+/** Wraps the app's link: a clicked link gets data-pending and aria-busy until the location changes. */
+function pendingLink(Link: LinkComponent | "a"): LinkComponent {
+  return function PendingLink(props) {
+    const pending = useContext(PendingContext);
+    const on = !!props.href && props.href === pending.href;
+    return (
+      <Link
+        {...props}
+        data-pending={on ? "" : undefined}
+        aria-busy={on || undefined}
+        onClick={(e) => {
+          props.onClick?.(e);
+          if (leaves(e, props, pending.location)) pending.start(props.href!);
+        }}
+      />
+    );
+  };
+}
+
 /**
  * Language, direction, built-in strings, the link component and the text renderer for every component below it.
  * Set `lang`/`dir` on <html> yourself; the provider does not render an element.
@@ -41,6 +75,7 @@ export function PercentProvider({
   link = "a",
   text = plain,
   brand,
+  location,
   children,
 }: {
   lang: Lang;
@@ -55,24 +90,39 @@ export function PercentProvider({
    * A nested provider without `brand` keeps the outer one. Define the object outside render (a new object renders every component again).
    */
   brand?: BrandSlots;
+  /**
+   * The router's current path and search, for example `usePathname() + "?" + searchParams`. With it, a clicked link
+   * (Sidebar, menus, Breadcrumbs, cards, list and table rows) shows a pending state from the click until the location changes.
+   */
+  location?: string;
   children: ReactNode;
 }) {
   const outerBrand = useContext(PercentContext).brand;
+  const tracked = location !== undefined;
+  // Made once per link component, so links keep their DOM node.
+  const shownLink = useMemo(() => (tracked ? pendingLink(link) : link), [link, tracked]);
   const value = useMemo<Ctx>(
     () => ({
       lang,
       dir: dirOf(lang),
       strings: strings ? mergeStrings(STRINGS[lang], strings) : STRINGS[lang],
-      link,
+      link: shownLink,
       text,
       // A brand with one logo uses it in both places, so Percent's never shows by accident.
       brand: brand ? { ...brand, mark: brand.mark ?? brand.wordmark, wordmark: brand.wordmark ?? brand.mark } : outerBrand,
     }),
-    [lang, strings, link, text, brand, outerBrand],
+    [lang, strings, shownLink, text, brand, outerBrand],
   );
+  const [click, setClick] = useState<{ href: string; at: string } | null>(null);
+  // A new location ends the pending state during render (no effect, so no frame with the old state).
+  if (click && click.at !== location) setClick(null);
+  const href = click && click.at === location ? click.href : null;
+  const pending = useMemo<Pending>(() => ({ href, location, start: (h) => setClick({ href: h, at: location! }) }), [href, location]);
   return (
     <PercentContext.Provider value={value}>
-      <Direction.DirectionProvider dir={value.dir}>{children}</Direction.DirectionProvider>
+      <PendingContext.Provider value={pending}>
+        <Direction.DirectionProvider dir={value.dir}>{children}</Direction.DirectionProvider>
+      </PendingContext.Provider>
     </PercentContext.Provider>
   );
 }
@@ -83,3 +133,5 @@ export const useStrings = () => useContext(PercentContext).strings;
 export const useLinkComponent = () => useContext(PercentContext).link;
 export const useText = () => useContext(PercentContext).text;
 export const useBrand = () => useContext(PercentContext).brand;
+/** The href of the link that was clicked and waits for its page (PercentProvider `location`), else null. */
+export const usePendingHref = () => useContext(PendingContext).href;

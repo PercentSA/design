@@ -146,6 +146,8 @@ Categories (owner-approved list): 0 foundations, 1 brand, 2 text, 3 layout, 4 ac
 
 - Light palette values (4.1), `warning` color, density switch, layer numbers.
 - Hijri calendar built on `Intl` (`islamic-umalqura`), no date library.
+- A date-time string without a zone (`"2026-09-27 12:45:12"`) is read as UTC, so the server and the browser show the same time.
+- The link pending state comes from `PercentProvider location` (the router's path and search): a clicked link is pending from the click until the location changes. Without `location`, links are the app's own component, unchanged.
 - Variants written as plain class maps (no `class-variance-authority`).
 - Built-in strings live in the system (EN/AR) because Radix needs accessible labels.
 - `@percentsa/motion` depends on React only (no motion library).

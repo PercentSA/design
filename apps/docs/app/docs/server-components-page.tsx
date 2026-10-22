@@ -177,6 +177,15 @@ export function ServerComponentsPage() {
       <Text size="sm" tone="subtle">
         <Desc
           text={l({
+            en: "With Cache Components on (`cacheComponents` in `next.config`), a part that reads the current time or the URL must be inside `<Suspense>`: `TimeText`, and a provider file that reads `useSearchParams()` for `location`. These parts then show after the page loads.",
+            ar: "عند تفعيل Cache Components (`cacheComponents` في `next.config`) يجب أن يكون كل جزء يقرأ الوقت الحالي أو الرابط داخل `<Suspense>`: `TimeText`، وملف الموفّر الذي يقرأ `useSearchParams()` من أجل `location`. تظهر هذه الأجزاء بعد تحميل الصفحة.",
+          })}
+        />
+      </Text>
+
+      <Text size="sm" tone="subtle">
+        <Desc
+          text={l({
             en: "Apps without server components (React Router, Vite) need no change: the `\"use client\"` lines have no effect there.",
             ar: "التطبيقات التي لا تستخدم مكونات الخادم (React Router وVite) لا تحتاج إلى أي تغيير: لا أثر لأسطر `\"use client\"` فيها.",
           })}

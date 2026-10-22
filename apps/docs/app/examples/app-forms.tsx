@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { ArrowLeft } from "lucide-react";
-import { AuthLayout, Blockquote, Button, Checkbox, Field, FilterBar, type FilterValue, Input, Link, Mark, OtpInput, PasswordInput, Select, SettingsRow, SettingsSection, Stack, Switch } from "@percentsa/ui";
+import { ArrowLeft, Download, Ellipsis, Printer, RefreshCw } from "lucide-react";
+import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, Field, FilterBar, type FilterValue, Input, Link, Mark, OtpInput, PasswordInput, Select, SettingsRow, SettingsSection, Stack, Switch, toast } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 // The recipes show the layout only: the forms send nothing.
@@ -173,6 +173,65 @@ export function FilterBarExample() {
           ],
         },
       ]}
+    />
+  );
+}
+
+/** The list toolbar: search and filters at the start; the date range, columns, refresh and "⋯" at the end. */
+export function FilterBarToolbarExample() {
+  const t = useT();
+  const [query, setQuery] = useState("");
+  const [value, setValue] = useState<FilterValue>({});
+  const [range, setRange] = useState<DateRange>({ from: null, to: null });
+  const [hidden, setHidden] = useState<string[]>([]);
+  const done = (title: string) => () => toast({ title });
+  return (
+    <FilterBar
+      className="w-full"
+      search={{ value: query, onValueChange: setQuery, placeholder: t("Search orders", "ابحث في الطلبات") }}
+      value={value}
+      onValueChange={setValue}
+      filters={[
+        {
+          key: "status",
+          label: t("Status", "الحالة"),
+          multiple: true,
+          options: [
+            { value: "open", label: t("Open", "مفتوح") },
+            { value: "paid", label: t("Paid", "مدفوع") },
+          ],
+        },
+      ]}
+      actions={
+        <>
+          <DateRangePicker size="sm" className="w-60" value={range} onValueChange={setRange} />
+          <ColumnsMenu
+            columns={[
+              { key: "number", header: t("Number", "الرقم"), hideable: false },
+              { key: "customer", header: t("Customer", "العميل") },
+              { key: "date", header: t("Date", "التاريخ") },
+              { key: "total", header: t("Total", "الإجمالي") },
+            ]}
+            hidden={hidden}
+            onHiddenChange={setHidden}
+          />
+          <Button variant="secondary" iconOnly aria-label={t("Refresh", "تحديث")} onClick={done(t("Refreshed", "تم التحديث"))}>
+            <RefreshCw aria-hidden />
+          </Button>
+          <DropdownMenu
+            align="end"
+            items={[
+              { label: t("Export", "تصدير"), icon: <Download />, onSelect: done(t("Export started", "بدأ التصدير")) },
+              { label: t("Print", "طباعة"), icon: <Printer />, onSelect: done(t("Print", "طباعة")) },
+            ]}
+            trigger={
+              <Button variant="secondary" iconOnly aria-label={t("More actions", "إجراءات أخرى")}>
+                <Ellipsis aria-hidden />
+              </Button>
+            }
+          />
+        </>
+      }
     />
   );
 }
