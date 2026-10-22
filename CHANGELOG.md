@@ -4,14 +4,14 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 
 ## 0.7.0
 
-Parts for app shells and lists. No breaking change.
+ERP parts for app shells and lists. No breaking change: without the new props, components render as in 0.6.0.
 
 - TimeText, formatDateTime, formatRelative, formatTimeOfDay: dates and times in Riyadh time, 12-hour clock, relative words, the exact value on hover or tap.
 - formatMoney and Money: decimals up to 6 for unit prices (maxDecimals) and brackets for negative amounts (accounting). formatPhone, phoneLinks and PhoneText: phone numbers for display, with call and WhatsApp links.
 - formatMoney and Money: a result of zero has no minus sign (was "-0.00"), and a non-finite amount shows "—" (was "NaN").
 - StatusBadge: a badge with a coloured dot in five tones; the colour is on the dot only. EmptyState tone="error" with a retry button. NotFound and Forbidden page states.
 - PageHeader: page title, status badges, a meta line, a back link, one primary action, secondary actions and a "⋯" menu; optional sticky. Menu items take a description (for example why an item is disabled).
-- Calendar mode="range" and DateRangePicker: a date range with the presets today, yesterday, this week, this month and last month.
+- Calendar mode="range" and DateRangePicker (size="sm" for toolbars): a date range with the presets today, yesterday, this week, this month and last month.
 - DataTable: rowHref (the whole row opens the record), rowActions (a "⋯" menu per row) and cards (each row is a card below 768 px).
 - ColumnsMenu (show and hide columns), DataTable hiddenColumns, a rows-per-page choice and a sticky header. FilterBar actions: the list toolbar's controls at the end of the bar.
 - PrintArea and usePrint: print one part of a page on A4 (portrait or landscape) with a header on every page.
