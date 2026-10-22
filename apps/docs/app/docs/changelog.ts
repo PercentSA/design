@@ -30,6 +30,7 @@ export const RELEASES: Release[] = [
       c("new", "PeriodPicker chooses the period of a report: a month, a quarter, a year or a custom date range. Switching from a month to a quarter or a year keeps the same end, so September becomes the third quarter and then the whole year."),
       c("new", "TimeInput chooses a time of day on the 12-hour clock: hour, minute and AM/PM (ص/م in Arabic). Going from 11 to 12 crosses noon or midnight, as on a clock. DateTimePicker puts a date and a time together, and sends a value only when both are set."),
       c("new", "NumberInput can format the number it shows, for example a minute as \"05\"."),
+      c("new", "SaudiPlate draws a Saudi car plate with its Arabic and Latin rows. PlateInput takes a plate as one text, in any order and in Arabic or English, and shows the plate under the field as you type, or what to fix. parsePlate reads the text on the server too."),
     ],
   },
   {

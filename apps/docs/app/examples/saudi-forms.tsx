@@ -16,9 +16,11 @@ import {
   normalizePhone,
   OtpInput,
   parseAmount,
+  parsePlate,
   periodOf,
   PeriodPicker,
   PhoneInput,
+  PlateInput,
   saudiError,
   Stack,
   Text,
@@ -46,6 +48,23 @@ export function PhoneInputExample() {
       <Text size="sm" tone="subtle">
         {t("Stored as: ", "يُحفظ كالتالي: ")}
         <span dir="ltr">{normalizePhone(draft, country) ?? "—"}</span>
+      </Text>
+    </Stack>
+  );
+}
+
+export function PlateInputExample() {
+  const t = useT();
+  const [text, setText] = useState("");
+  const plate = parsePlate(text);
+  return (
+    <Stack gap={3} className="w-full max-w-sm">
+      <Field label={t("Car plate", "لوحة السيارة")}>
+        <PlateInput value={text} onValueChange={setText} name="plate" />
+      </Field>
+      <Text size="sm" tone="subtle">
+        {t("Stored as: ", "يُحفظ كالتالي: ")}
+        <span dir="ltr">{plate.ok && !plate.empty ? `${plate.letters} ${plate.digits}` : "—"}</span>
       </Text>
     </Stack>
   );

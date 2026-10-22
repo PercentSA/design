@@ -18,6 +18,7 @@ ERP parts for documents, records, forms and reports. No breaking change.
 - PeriodPicker: a month, quarter, year or custom period for reports.
 - TimeInput (12-hour time with AM/PM, ص/م in Arabic) and DateTimePicker.
 - NumberInput format: how a set value shows (TimeInput shows minutes as "05").
+- SaudiPlate (a Saudi private plate drawing), PlateInput (one field with a live plate) and parsePlate.
 
 ## 0.7.0
 

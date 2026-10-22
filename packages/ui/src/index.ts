@@ -32,6 +32,18 @@ export {
   type PhoneCountryCode,
   type PhoneIssue,
 } from "./saudi/phone";
+export {
+  parsePlate,
+  plateDigitsAr,
+  plateIssueMessage,
+  plateLabel,
+  plateLatin,
+  PLATE_LETTERS,
+  plateSearchText,
+  type ParsedPlate,
+  type PlateIssue,
+} from "./saudi/plate-rules";
+export { PlateInput, SaudiPlate } from "./components/saudi-plate";
 export { Logo, MadeInKsa, Mark } from "./components/brand";
 export { MARK_H, MARK_PATH, MARK_STROKE, MARK_W } from "./components/brand-mark";
 export { Blockquote, Code, Display, FormattedNumber, Heading, Highlight, Kbd, Label, Link, Prose, Text } from "./components/text";

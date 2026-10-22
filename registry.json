@@ -1408,6 +1408,31 @@
       }
     },
     {
+      "name": "saudi-plate",
+      "type": "registry:ui",
+      "title": "SaudiPlate, PlateInput",
+      "description": "@percentsa/ui: SaudiPlate, PlateInput",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-plate-rules"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/saudi-plate.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/saudi-plate.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "SaudiPlate",
+          "PlateInput"
+        ]
+      }
+    },
+    {
       "name": "settings",
       "type": "registry:ui",
       "title": "SettingsSection, SettingsRow",
@@ -2410,6 +2435,35 @@
           "normalizePhone",
           "formatPhone",
           "phoneLinks"
+        ]
+      }
+    },
+    {
+      "name": "saudi-plate-rules",
+      "type": "registry:lib",
+      "title": "PLATE_LETTERS",
+      "description": "@percentsa/ui: PLATE_LETTERS, parsePlate, plateIssueMessage, plateLatin, plateDigitsAr, plateLabel, plateSearchText",
+      "registryDependencies": [
+        "@percentsa/localized",
+        "@percentsa/saudi-digits",
+        "@percentsa/strings"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/plate-rules.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/plate-rules.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PLATE_LETTERS",
+          "parsePlate",
+          "plateIssueMessage",
+          "plateLatin",
+          "plateDigitsAr",
+          "plateLabel",
+          "plateSearchText"
         ]
       }
     },
@@ -3622,6 +3676,16 @@
       "files": []
     },
     {
+      "name": "plate-input",
+      "type": "registry:ui",
+      "title": "PlateInput",
+      "description": "PlateInput: adds @percentsa/saudi-plate.",
+      "registryDependencies": [
+        "@percentsa/saudi-plate"
+      ],
+      "files": []
+    },
+    {
       "name": "settings-section",
       "type": "registry:ui",
       "title": "SettingsSection",
@@ -4128,6 +4192,16 @@
       "description": "GCC_PHONE_COUNTRIES: adds @percentsa/saudi-phone.",
       "registryDependencies": [
         "@percentsa/saudi-phone"
+      ],
+      "files": []
+    },
+    {
+      "name": "plate_letters",
+      "type": "registry:ui",
+      "title": "PLATE_LETTERS",
+      "description": "PLATE_LETTERS: adds @percentsa/saudi-plate-rules.",
+      "registryDependencies": [
+        "@percentsa/saudi-plate-rules"
       ],
       "files": []
     },
