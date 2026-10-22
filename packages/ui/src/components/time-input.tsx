@@ -58,7 +58,7 @@ export function TimeInput({
         min={1}
         max={12}
         disabled={disabled}
-        className="w-28"
+        className="w-30"
         onValueChange={(h) => {
           if (h == null || !Number.isInteger(h) || h < 1 || h > 12) return;
           // As on a clock: between 11 and 12 the time crosses noon or midnight.
@@ -79,7 +79,7 @@ export function TimeInput({
         step={minuteStep}
         format={pad}
         disabled={disabled}
-        className="w-28"
+        className="w-30"
         onValueChange={(m) => {
           if (m != null && Number.isInteger(m) && m >= 0 && m <= 59) set(hour12, m, pm);
         }}
