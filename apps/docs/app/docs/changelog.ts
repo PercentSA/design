@@ -42,7 +42,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: "0.7.0",
-    date: "2026-10-22",
+    date: "2026-10-23",
     summary: "Parts for app screens and lists. Nothing changes for existing projects.",
     changes: [
       c("new", "[TimeText](time-text) shows a date or time the short way, in Riyadh time: \"3:45 PM\" today, \"Yesterday 3:45 PM\", \"12 September, 3:45 PM\" this year. Hover, focus or tap shows the exact value. formatDateTime, formatRelative and formatTimeOfDay give the same text for tables, exports and printouts."),
