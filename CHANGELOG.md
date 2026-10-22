@@ -6,15 +6,15 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 
 ERP parts for app shells and lists. No breaking change: without the new props, components render as in 0.6.0.
 
-- TimeText, formatDateTime, formatRelative, formatTimeOfDay: dates and times in Riyadh time, 12-hour clock, relative words, the exact value on hover or tap.
-- formatMoney and Money: decimals up to 6 for unit prices (maxDecimals) and brackets for negative amounts (accounting). formatPhone, phoneLinks and PhoneText: phone numbers for display, with call and WhatsApp links.
+- [TimeText](https://design.percent.sa/en/components/time-text), formatDateTime, formatRelative, formatTimeOfDay: dates and times in Riyadh time, 12-hour clock, relative words, the exact value on hover or tap.
+- formatMoney and Money: decimals up to 6 for unit prices (maxDecimals) and brackets for negative amounts (accounting). formatPhone, phoneLinks and [PhoneText](https://design.percent.sa/en/components/phone-text): phone numbers for display, with call and WhatsApp links.
 - formatMoney and Money: a result of zero has no minus sign (was "-0.00"), and a non-finite amount shows "—" (was "NaN").
-- StatusBadge: a badge with a coloured dot in five tones; the colour is on the dot only. EmptyState tone="error" with a retry button. NotFound and Forbidden page states.
-- PageHeader: page title, status badges, a meta line, a back link, one primary action, secondary actions and a "⋯" menu; optional sticky. Menu items take a description (for example why an item is disabled).
-- Calendar mode="range" and DateRangePicker (size="sm" for toolbars): a date range with the presets today, yesterday, last 7 days, last 30 days, this week, this month and last month.
+- [StatusBadge](https://design.percent.sa/en/components/status-badge): a badge with a coloured dot in five tones; the colour is on the dot only. EmptyState tone="error" with a retry button. [NotFound](https://design.percent.sa/en/components/page-states) and [Forbidden](https://design.percent.sa/en/components/page-states) page states.
+- [PageHeader](https://design.percent.sa/en/components/page-header): page title, status badges, a meta line, a back link, one primary action, secondary actions and a "⋯" menu; optional sticky. Menu items take a description (for example why an item is disabled).
+- Calendar mode="range" and [DateRangePicker](https://design.percent.sa/en/components/date-range-picker) (size="sm" for toolbars): a date range with the presets today, yesterday, last 7 days, last 30 days, this week, this month and last month.
 - DataTable: rowHref (the whole row opens the record), rowActions (a "⋯" menu per row) and cards (each row is a card below 768 px).
-- ColumnsMenu (show and hide columns), DataTable hiddenColumns, a rows-per-page choice and a sticky header. FilterBar actions: the list toolbar's controls at the end of the bar.
-- PrintArea and usePrint: print one part of a page on A4 (portrait or landscape) with a header on every page.
+- [ColumnsMenu](https://design.percent.sa/en/components/columns-menu) (show and hide columns), DataTable hiddenColumns, a rows-per-page choice and a sticky header. FilterBar actions: the list toolbar's controls at the end of the bar.
+- [PrintArea](https://design.percent.sa/en/components/print-area) and usePrint: print one part of a page on A4 (portrait or landscape) with a header on every page.
 - PercentProvider location: a clicked link shows a pending state at once, until the new page is there. Sidebar, menus, breadcrumbs, cards, list rows and table row links get it.
 
 ## 0.6.0

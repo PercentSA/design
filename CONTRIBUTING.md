@@ -14,7 +14,7 @@ Thank you for helping. Read `AGENTS.md` first: it has the structure, the command
 3. Built-in strings go in both languages (`packages/ui/src/i18n/strings.ts`).
 4. Add or change tests. Run `bun test` and `bun run typecheck`.
 5. A new or changed component: update its docs example and page, then run `bun run registry`.
-6. Add a line to `CHANGELOG.md` under the next version.
+6. Add a line to `CHANGELOG.md` under the next version. Link the name of a new component to its docs page: `[Name](https://design.percent.sa/en/components/<slug>)`.
 
 By contributing, you agree that your contribution is licensed under the MIT license of this project.
 

@@ -1,7 +1,7 @@
-import { useParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { Badge, Display, formatDate, Heading, Label, Stack, Text, type Lang } from "@percentsa/ui";
 import type { Route } from "./+types/changelog";
-import { RELEASES, type ChangeKind } from "~/docs/changelog";
+import { LINK, RELEASES, type ChangeKind } from "~/docs/changelog";
 import { COPY } from "~/docs/copy";
 
 export const meta: Route.MetaFunction = ({ params }) => {
@@ -15,6 +15,21 @@ const KIND: Record<ChangeKind, { label: string; variant: "solid" | "subtle" | "o
   fixed: { label: "Fixed", variant: "outline" },
   action: { label: "Action needed", variant: "solid" },
 };
+
+/** Entry text; `[Name](slug)` becomes a link to the component page. */
+function ChangeText({ text, lang }: { text: string; lang: Lang }) {
+  // split with the two capture groups gives: text, name, slug, text, name, slug, …, text
+  const parts = text.split(LINK);
+  return parts.map((s, i) =>
+    i % 3 === 1 ? (
+      <Link key={i} to={`/${lang}/components/${parts[i + 1]}`} viewTransition className="font-medium text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg">
+        {s}
+      </Link>
+    ) : i % 3 === 2 ? null : (
+      s
+    ),
+  );
+}
 
 /** Every version, newest first, in plain words. The entries are English on both language pages. */
 export default function Changelog() {
@@ -54,7 +69,9 @@ export default function Changelog() {
                   <span>
                     <Badge variant={KIND[ch.kind].variant}>{KIND[ch.kind].label}</Badge>
                   </span>
-                  <span className="text-fg-2">{ch.text}</span>
+                  <span className="text-fg-2">
+                    <ChangeText text={ch.text} lang={lang} />
+                  </span>
                 </li>
               ))}
             </ul>
