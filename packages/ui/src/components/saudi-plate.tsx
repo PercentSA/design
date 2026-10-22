@@ -7,7 +7,7 @@ import { parsePlate, plateDigitsAr, plateIssueMessage, plateLabel, plateLatin } 
 import { Input } from "./inputs";
 
 const SIZE = { sm: "w-40", md: "w-52", lg: "w-80" };
-const ROW = "flex min-h-0 items-center justify-center overflow-hidden whitespace-nowrap leading-none font-bold";
+const ROW = "flex min-h-0 items-center justify-center overflow-hidden whitespace-nowrap font-bold";
 
 /**
  * A Saudi private plate (520 × 110 mm): the digits on the left, the middle strip, the letters on the right; Arabic on
@@ -42,7 +42,8 @@ export function SaudiPlate({ letters, digits, size = "md", className }: { letter
 
 function Panel({ top, bottom, arabic = false }: { top: string; bottom: string; arabic?: boolean }) {
   return (
-    <span className="grid grid-rows-2">
+    // leading-none sits here: cn() drops it from a row that also sets a text size, and the rows then overflow the plate.
+    <span className="grid grid-rows-2 leading-none">
       <span dir={arabic ? "rtl" : "ltr"} className={cn(ROW, "border-b-[0.5cqw] border-fg", arabic ? "text-[6.2cqw] tracking-[1.2cqw]" : "text-[6.6cqw] tracking-[0.5cqw]")}>
         {top}
       </span>
