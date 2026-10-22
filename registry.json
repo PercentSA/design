@@ -985,7 +985,7 @@
       "name": "layout",
       "type": "registry:ui",
       "title": "Container, Section, Stack, Inline",
-      "description": "@percentsa/ui: Container, Section, Stack, Inline, Grid, Split, AspectRatio, Separator, ScrollArea, Surface, Bleed",
+      "description": "@percentsa/ui: Container, Section, Stack, Inline, Grid, Split, DetailLayout, AspectRatio, Separator, ScrollArea, Surface, Bleed",
       "dependencies": [
         "radix-ui"
       ],
@@ -1007,6 +1007,7 @@
           "Inline",
           "Grid",
           "Split",
+          "DetailLayout",
           "AspectRatio",
           "Separator",
           "ScrollArea",
@@ -1663,6 +1664,28 @@
           "toast",
           "dismissToast",
           "Toaster"
+        ]
+      }
+    },
+    {
+      "name": "totals-list",
+      "type": "registry:ui",
+      "title": "TotalsList",
+      "description": "@percentsa/ui: TotalsList",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/saudi-money"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/totals-list.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/totals-list.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TotalsList"
         ]
       }
     },
@@ -3162,6 +3185,16 @@
       "type": "registry:ui",
       "title": "Split",
       "description": "Split: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "detail-layout",
+      "type": "registry:ui",
+      "title": "DetailLayout",
+      "description": "DetailLayout: adds @percentsa/layout.",
       "registryDependencies": [
         "@percentsa/layout"
       ],

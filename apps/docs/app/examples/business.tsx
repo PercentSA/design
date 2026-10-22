@@ -1,4 +1,4 @@
-import { Badge, Button, Field, Inline, Invoice, QrCode, Stack, Text, Textarea, TicketView, ZatcaQr, zatcaTlv } from "@percentsa/ui";
+import { Badge, Button, Field, Inline, Invoice, QrCode, Stack, Text, Textarea, TicketView, TotalsList, ZatcaQr, zatcaTlv } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 const SELLER_VAT = "310123456700003";
@@ -39,6 +39,23 @@ export function SimplifiedInvoiceExample() {
         { description: t("Flat white", "فلات وايت"), quantity: 2, unitPrice: 18.26 },
         { description: t("Date cake", "كيكة التمر"), quantity: 1, unitPrice: 21.74 },
         { description: t("Bottled water", "مياه معبأة"), quantity: 1, unitPrice: 2, vatRate: 0 },
+      ]}
+    />
+  );
+}
+
+export function TotalsListExample() {
+  const t = useT();
+  return (
+    <TotalsList
+      className="w-full max-w-sm"
+      items={[
+        { label: t("Subtotal", "المجموع"), amount: 21_190 },
+        { label: t("Discount", "الخصم"), amount: -1_190, hint: t("Spring offer, 5%", "عرض الربيع، 5%") },
+        { label: t("VAT", "الضريبة"), amount: 3_000, hint: "15%" },
+        { label: t("Total", "الإجمالي"), amount: 23_000, total: true },
+        { label: t("Paid", "المدفوع"), amount: 25_000 },
+        { label: t("Balance", "الرصيد"), amount: -2_000, accounting: true },
       ]}
     />
   );

@@ -14,6 +14,14 @@ const c = (kind: ChangeKind, text: string) => ({ kind, text });
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.8.0",
+    date: null,
+    summary: "Parts for documents, records, forms and reports. Nothing changes for existing projects.",
+    changes: [
+      c("new", "DetailLayout puts a record page in two columns: the main part and a side column with details and totals. A wide table scrolls inside its column, so the page never gets wider. On phones the columns stack, main part first. TotalsList shows a document's totals with the amounts under each other."),
+    ],
+  },
+  {
     version: "0.7.0",
     date: "2026-10-22",
     summary: "Parts for app screens and lists. Nothing changes for existing projects.",

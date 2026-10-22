@@ -1,4 +1,4 @@
-import type { ComponentProps, CSSProperties, ElementType, HTMLAttributes } from "react";
+import type { ComponentProps, CSSProperties, ElementType, HTMLAttributes, ReactNode } from "react";
 import { AspectRatio as RadixAspectRatio, ScrollArea as RadixScrollArea, Separator as RadixSeparator } from "radix-ui";
 import { cn } from "../lib/cn";
 
@@ -55,6 +55,34 @@ const RATIO = { "1:1": "md:grid-cols-2", "1:2": "md:grid-cols-[1fr_2fr]", "2:1":
 export const Split = ({ ratio = "1:1", gap = 12, className, ...rest }: Div & { ratio?: keyof typeof RATIO; gap?: Gap }) => (
   <div className={cn("grid", GAP[gap], RATIO[ratio], className)} {...rest} />
 );
+
+/**
+ * A record page: the main column and a side column (2:1) from 768 px; one column on phones, main first.
+ * minmax(0, …) and min-w-0: a wide table scrolls inside its column and never pushes the page wider.
+ */
+export function DetailLayout({
+  main,
+  side,
+  sideLabel,
+  className,
+}: {
+  main: ReactNode;
+  side?: ReactNode;
+  /** The side column's name for screen readers. */
+  sideLabel?: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("grid grid-cols-1 items-start gap-6", side != null && "md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]", className)}>
+      <div className="min-w-0">{main}</div>
+      {side != null && (
+        <aside aria-label={sideLabel} className="min-w-0">
+          {side}
+        </aside>
+      )}
+    </div>
+  );
+}
 
 export const AspectRatio = RadixAspectRatio.Root;
 

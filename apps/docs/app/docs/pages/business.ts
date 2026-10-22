@@ -11,6 +11,15 @@ export const pages: DocPage[] = [
     "فاتورة ضريبية سعودية بعناوين عربية وإنجليزية في صفحة واحدة. تُحسب المبالغ بالهللات وتُقرَّب الضريبة في كل بند، وتُطبع بالأسود على الأبيض في كل سمة.",
   ),
   p(
+    "totals-list",
+    "TotalsList",
+    "business",
+    "TotalsList",
+    ["TotalsListExample"],
+    "Document totals with the amounts aligned under each other: 2 decimals, the Riyal sign, a minus for a discount. The total row is bold with a line above, a hint adds a small line under a label, and accounting puts a negative amount in brackets. It computes nothing: give it the amounts from your backend. It works in a server component.",
+    "إجماليات المستند والمبالغ مصطفّة تحت بعضها: خانتان عشريتان، ورمز الريال، وعلامة الطرح للخصم. سطر الإجمالي عريض وفوقه خط، ويضيف hint سطرًا صغيرًا تحت العنوان، ويضع accounting المبلغ السالب بين قوسين. لا يحسب شيئًا: مرّر له المبالغ من الخادم. ويعمل في مكوّن خادم.",
+  ),
+  p(
     "qr-code",
     "QrCode",
     "business",

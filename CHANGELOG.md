@@ -2,6 +2,12 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.8.0
+
+ERP parts for documents, records, forms and reports. No breaking change.
+
+- DetailLayout: a main column and a side column (2:1) that never let a wide table push the page; one column on phones. TotalsList: document totals aligned under each other.
+
 ## 0.7.0
 
 ERP parts for app shells and lists. No breaking change: without the new props, components render as in 0.6.0.
