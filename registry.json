@@ -1017,6 +1017,32 @@
       }
     },
     {
+      "name": "line-items-table",
+      "type": "registry:ui",
+      "title": "LineItemsTable",
+      "description": "@percentsa/ui: LineItemsTable",
+      "registryDependencies": [
+        "@percentsa/data-table",
+        "@percentsa/feedback",
+        "@percentsa/format-number",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/saudi-money"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/line-items-table.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/line-items-table.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LineItemsTable"
+        ]
+      }
+    },
+    {
       "name": "list",
       "type": "registry:ui",
       "title": "List, ListItem, DescriptionList",

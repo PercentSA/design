@@ -11,6 +11,15 @@ export const pages: DocPage[] = [
     "فاتورة ضريبية سعودية بعناوين عربية وإنجليزية في صفحة واحدة. تُحسب المبالغ بالهللات وتُقرَّب الضريبة في كل بند، وتُطبع بالأسود على الأبيض في كل سمة.",
   ),
   p(
+    "line-items-table",
+    "LineItemsTable",
+    "business",
+    "LineItemsTable, type LineItem",
+    ["LineItemsTableExample"],
+    "The lines of an order, invoice or return: product and SKU, quantity, unit price, discount, VAT and total. It only shows the lines: the amounts come from your backend. `prices=\"incl\"` or `\"excl\"` says whether the unit price and the total include VAT, and their headers say it too. The unit price keeps up to 6 decimals; the other amounts have 2. The discount and VAT columns show only when a line has a value. A returned quantity shows as a chip. href opens the line's record, rowActions adds a “⋯” menu, and on phones each line is a card.",
+    "بنود الطلب أو الفاتورة أو المرتجع: المنتج ورمزه، والكمية، وسعر الوحدة، والخصم، والضريبة، والإجمالي. يعرض البنود فقط: المبالغ تأتي من الخادم. يحدد `prices=\"incl\"` أو `\"excl\"` هل يشمل سعر الوحدة والإجمالي الضريبة، وتذكر عناوينهما ذلك. يحتفظ سعر الوحدة بست خانات عشرية كحد أقصى، والمبالغ الأخرى بخانتين. يظهر عمودا الخصم والضريبة فقط عندما يكون لبند قيمة فيهما. تظهر الكمية المرتجعة شارةً. يفتح href سجل البند، ويضيف rowActions قائمة «⋯»، وعلى الجوال يصبح كل بند بطاقة.",
+  ),
+  p(
     "totals-list",
     "TotalsList",
     "business",

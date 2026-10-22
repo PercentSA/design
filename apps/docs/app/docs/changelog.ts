@@ -19,6 +19,7 @@ export const RELEASES: Release[] = [
     summary: "Parts for documents, records, forms and reports. Nothing changes for existing projects.",
     changes: [
       c("new", "DetailLayout puts a record page in two columns: the main part and a side column with details and totals. A wide table scrolls inside its column, so the page never gets wider. On phones the columns stack, main part first. TotalsList shows a document's totals with the amounts under each other."),
+      c("new", "LineItemsTable shows the lines of an order or invoice: product and SKU, quantity, unit price, discount, VAT and total. The headers say whether prices include VAT, a chip shows a returned quantity, and on phones each line is a card."),
     ],
   },
   {

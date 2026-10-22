@@ -7,6 +7,7 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 ERP parts for documents, records, forms and reports. No breaking change.
 
 - DetailLayout: a main column and a side column (2:1) that never let a wide table push the page; one column on phones. TotalsList: document totals aligned under each other.
+- LineItemsTable: document lines with product and SKU, quantity, unit price, discount, VAT and total, a returned-quantity chip, and card rows on phones.
 
 ## 0.7.0
 
