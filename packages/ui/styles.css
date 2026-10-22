@@ -385,4 +385,26 @@
   html:has(dialog[open]) {
     overflow: hidden;
   }
+
+  /* <PrintArea> + usePrint: while usePrint prints, only the chosen area (a child of body) is on paper.
+     Without data-printing (Ctrl+P) the page prints as it is and the areas stay hidden. */
+  @media print {
+    /* White paper in every theme, also in the page margins with the page numbers. */
+    html[data-printing] {
+      color-scheme: light !important;
+      background: none !important;
+      color: #000 !important;
+    }
+    /* An open sheet or menu locks the scroll; the area must still run over several pages. */
+    html[data-printing],
+    html[data-printing] body {
+      overflow: visible !important;
+    }
+    html[data-printing] body > :not([data-print-active]) {
+      display: none !important;
+    }
+    [data-print-area][data-print-active] {
+      display: block !important;
+    }
+  }
 }

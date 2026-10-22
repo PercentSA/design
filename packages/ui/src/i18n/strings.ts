@@ -110,6 +110,7 @@ const en = {
   rowActions: "Row actions",
   columns: "Columns",
   rowsPerPage: "Rows per page",
+  tooManyRowsToPrint: (max: number) => `More than ${max} rows. Export the list, or filter it.`,
   invoice: {
     taxInvoice: "Tax invoice",
     simplifiedTaxInvoice: "Simplified tax invoice",
@@ -276,6 +277,7 @@ const ar: Strings = {
   rowActions: "إجراءات الصف",
   columns: "الأعمدة",
   rowsPerPage: "عدد الصفوف",
+  tooManyRowsToPrint: (max) => `أكثر من ${max} صف. صدّر القائمة أو ضيّق التصفية.`,
   invoice: {
     taxInvoice: "فاتورة ضريبية",
     simplifiedTaxInvoice: "فاتورة ضريبية مبسطة",

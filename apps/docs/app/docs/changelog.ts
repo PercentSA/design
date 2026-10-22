@@ -29,6 +29,7 @@ export const RELEASES: Release[] = [
       c("new", "DateRangePicker chooses a date range for a list filter, with the presets today, yesterday, this week, this month and last month. Calendar can choose a range too."),
       c("new", "DataTable rows can open their record: the whole row is one link, and the checkbox and the \"⋯\" row menu still work. On phones, the rows can show as cards."),
       c("new", "ColumnsMenu lets people show and hide table columns. DataTable can offer a rows-per-page choice and keep its header row in view while the rows scroll. FilterBar takes the list's other controls (date range, columns, refresh) at its end, so one bar is the whole list toolbar."),
+      c("new", "PrintArea and usePrint print one part of a page, such as a list, on A4 paper, black on white in any theme. The title repeats on every page, page numbers are at the bottom, and nothing else on the page prints."),
     ],
   },
   {

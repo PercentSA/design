@@ -14,6 +14,7 @@ Parts for app shells and lists. No breaking change.
 - Calendar mode="range" and DateRangePicker: a date range with the presets today, yesterday, this week, this month and last month.
 - DataTable: rowHref (the whole row opens the record), rowActions (a "⋯" menu per row) and cards (each row is a card below 768 px).
 - ColumnsMenu (show and hide columns), DataTable hiddenColumns, a rows-per-page choice and a sticky header. FilterBar actions: the list toolbar's controls at the end of the bar.
+- PrintArea and usePrint: print one part of a page on A4 (portrait or landscape) with a header on every page.
 
 ## 0.6.0
 

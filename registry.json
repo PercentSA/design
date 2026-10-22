@@ -905,6 +905,7 @@
         "@percentsa/cn",
         "@percentsa/format-number",
         "@percentsa/localized",
+        "@percentsa/print-paper",
         "@percentsa/provider",
         "@percentsa/qr-code",
         "@percentsa/saudi-calendar",
@@ -1211,6 +1212,47 @@
       "meta": {
         "exports": [
           "PhoneText"
+        ]
+      }
+    },
+    {
+      "name": "print-area",
+      "type": "registry:ui",
+      "title": "PrintArea",
+      "description": "@percentsa/ui: PrintArea, usePrint",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/print-paper"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/print-area.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/print-area.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PrintArea",
+          "usePrint"
+        ]
+      }
+    },
+    {
+      "name": "print-paper",
+      "type": "registry:lib",
+      "title": "PRINT_PAPER",
+      "description": "@percentsa/ui: PRINT_PAPER",
+      "files": [
+        {
+          "path": "packages/ui/src/components/print-paper.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/print-paper.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PRINT_PAPER"
         ]
       }
     },
@@ -3321,6 +3363,16 @@
       "description": "Tooltip: adds @percentsa/overlays.",
       "registryDependencies": [
         "@percentsa/overlays"
+      ],
+      "files": []
+    },
+    {
+      "name": "print_paper",
+      "type": "registry:ui",
+      "title": "PRINT_PAPER",
+      "description": "PRINT_PAPER: adds @percentsa/print-paper.",
+      "registryDependencies": [
+        "@percentsa/print-paper"
       ],
       "files": []
     },

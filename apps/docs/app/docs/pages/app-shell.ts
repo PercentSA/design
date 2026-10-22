@@ -20,6 +20,15 @@ export const pages: DocPage[] = [
     "أعلى صفحة قائمة أو سجل: العنوان مع شارات الحالة، وسطر معلومات، ورابط رجوع إلى القائمة، وإجراء رئيسي واحد، وإجراءات ثانوية، وقائمة «⋯». تحت 768 بكسل يملأ الإجراء الرئيسي العرض ويفتح زر «إجراءات أخرى» الباقي؛ وتبقى الأزرار الثانوية محمّلة فتستمر نوافذها في العمل. عناصر الخطر في الآخر. الخاصية sticky تُبقيه تحت رأس AppShell من 768 بكسل. تقبل عناصر القوائم description، مثل سبب تعطيل العنصر.",
   ),
   p(
+    "print-area",
+    "PrintArea",
+    "app",
+    "PrintArea, usePrint",
+    ["PrintAreaExample"],
+    "Prints one part of a page on A4, portrait or landscape, black on white in every theme. The header repeats at the top of every page, and the page numbers are at the bottom. Nothing else on the page prints, also not an open sheet. The area is hidden on screen. Render the rows before print() (with flushSync when they change in the same click). Over 500 rows, turn the print button off and show tooManyRowsToPrint: export the list, or filter it.",
+    "تطبع جزءًا واحدًا من الصفحة على ورق A4، طوليًا أو عرضيًا، بالأسود على الأبيض في كل مظهر. يتكرر الرأس أعلى كل صفحة، وأرقام الصفحات في أسفلها. لا يُطبع شيء آخر من الصفحة، ولا لوحة مفتوحة. المنطقة مخفية على الشاشة. اعرض الصفوف قبل print()‎ (مع flushSync إن تغيّرت في النقرة نفسها). فوق 500 صف، عطّل زر الطباعة واعرض tooManyRowsToPrint: صدّر القائمة أو ضيّق التصفية.",
+  ),
+  p(
     "sidebar",
     "Sidebar",
     "app",

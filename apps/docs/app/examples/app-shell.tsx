@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ChartColumn, Copy, Download, FileText, Inbox, LayoutDashboard, Languages, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
 import {
   AppShell,
@@ -13,13 +13,21 @@ import {
   Mark,
   Money,
   PageHeader,
+  PrintArea,
   Sidebar,
   type SidebarSection,
   StatusBadge,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
   Text,
   toast,
   useCommandShortcut,
   useLang,
+  usePrint,
+  useStrings,
 } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
@@ -260,5 +268,67 @@ export function PageHeaderDocumentExample() {
         },
       ]}
     />
+  );
+}
+
+/**
+ * "Print the list" prints 30 orders on A4 landscape. The title and the column names repeat on every page, and nothing
+ * else on the page prints. Over 500 rows an app turns the button off and says why.
+ */
+export function PrintAreaExample() {
+  const t = useT();
+  const s = useStrings();
+  const area = useRef<HTMLDivElement>(null);
+  const { print, printing } = usePrint();
+  const customers = [t("Nakheel Co.", "شركة نخيل"), t("Masar Trading", "مسار التجارية"), t("Sadeem Est.", "مؤسسة سديم")];
+  const rows = Array.from({ length: 30 }, (_, i) => ({ number: `ORD-${1001 + i}`, customer: customers[i % 3], total: 450 + i * 125 }));
+  const tooMany = rows.length > 500;
+  return (
+    <div className="grid justify-items-start gap-2">
+      <Button variant="secondary" disabled={tooMany || printing} onClick={() => print(area.current)}>
+        <Printer aria-hidden />
+        {t("Print the list", "طباعة القائمة")}
+      </Button>
+      {tooMany && (
+        <Text size="sm" tone="muted">
+          {s.tooManyRowsToPrint(500)}
+        </Text>
+      )}
+      <PrintArea
+        ref={area}
+        orientation="landscape"
+        header={
+          <div className="flex items-baseline justify-between gap-4 border-b border-line pb-2">
+            <Heading level={2} size={5}>
+              {t("Orders", "الطلبات")}
+            </Heading>
+            <Text size="sm" tone="muted">
+              {t("30 orders", "30 طلبًا")}
+            </Text>
+          </div>
+        }
+      >
+        <table className="w-full border-collapse text-sm">
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t("Number", "الرقم")}</TableHead>
+              <TableHead>{t("Customer", "العميل")}</TableHead>
+              <TableHead align="end">{t("Total", "الإجمالي")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((r) => (
+              <TableRow key={r.number}>
+                <TableCell>{r.number}</TableCell>
+                <TableCell>{r.customer}</TableCell>
+                <TableCell align="end">
+                  <Money amount={r.total} decimals={2} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </table>
+      </PrintArea>
+    </div>
   );
 }

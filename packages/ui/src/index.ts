@@ -118,4 +118,5 @@ export { CommandPalette, useCommandShortcut, type Command } from "./components/c
 export { invoiceTotals, zatcaTlv, type InvoiceLineAmounts, type ZatcaFields } from "./saudi/invoice";
 export { QrCode, ZatcaQr } from "./components/qr-code";
 export { Invoice, type InvoiceLine, type InvoiceParty } from "./components/invoice";
+export { PrintArea, usePrint } from "./components/print-area";
 export { TicketView, type TicketMessage } from "./components/ticket-view";
