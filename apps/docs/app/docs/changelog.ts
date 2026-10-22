@@ -26,6 +26,7 @@ export const RELEASES: Release[] = [
       c("new", "EmptyState can show a load error with a \"Try again\" button. NotFound and Forbidden are ready pages for a missing record and for a page the user may not open."),
       c("new", "PageHeader is the top of a list or record page: the title with status badges, a back link to the list, one primary action, and the other actions in a \"⋯\" menu. On phones the primary action is full width and \"More actions\" opens the rest."),
       c("new", "Menu items can show a second line under the label, for example why an item is disabled."),
+      c("new", "DateRangePicker chooses a date range for a list filter, with the presets today, yesterday, this week, this month and last month. Calendar can choose a range too."),
     ],
   },
   {

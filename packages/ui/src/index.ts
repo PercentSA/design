@@ -60,15 +60,19 @@ export {
   monthGrid,
   monthOf,
   moveFocus,
+  nextRange,
   partsOf,
+  rangePreset,
   shiftView,
   todayPlain,
   viewLabel,
   weekdayNames,
+  type DateRange,
+  type DateRangePresetId,
   type MonthView,
   type PlainDate,
 } from "./saudi/calendar";
-export { Calendar, DatePicker } from "./components/calendar";
+export { Calendar, DatePicker, DateRangePicker } from "./components/calendar";
 export { TimeText } from "./components/time-text";
 export { PhoneText } from "./components/phone-text";
 export { AlertDialog, Dialog, DialogClose, HoverCard, Popover, Sheet, Tooltip } from "./components/overlays";

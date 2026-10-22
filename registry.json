@@ -264,8 +264,8 @@
     {
       "name": "calendar",
       "type": "registry:ui",
-      "title": "Calendar, DatePicker",
-      "description": "@percentsa/ui: Calendar, DatePicker",
+      "title": "Calendar, DatePicker, DateRangePicker",
+      "description": "@percentsa/ui: Calendar, DatePicker, DateRangePicker",
       "dependencies": [
         "lucide-react",
         "radix-ui"
@@ -277,7 +277,8 @@
         "@percentsa/input-classes",
         "@percentsa/provider",
         "@percentsa/saudi-calendar",
-        "@percentsa/saudi-date"
+        "@percentsa/saudi-date",
+        "@percentsa/saudi-date-time"
       ],
       "files": [
         {
@@ -289,7 +290,8 @@
       "meta": {
         "exports": [
           "Calendar",
-          "DatePicker"
+          "DatePicker",
+          "DateRangePicker"
         ]
       }
     },
@@ -1872,7 +1874,7 @@
       "name": "saudi-calendar",
       "type": "registry:lib",
       "title": "fromPlain, addDays, todayPlain, partsOf",
-      "description": "@percentsa/ui: fromPlain, addDays, todayPlain, partsOf, monthOf, shiftView, monthDays, monthGrid, addMonths, moveFocus, viewLabel, weekdayNames",
+      "description": "@percentsa/ui: fromPlain, addDays, todayPlain, partsOf, monthOf, shiftView, monthDays, monthGrid, addMonths, nextRange, rangePreset, moveFocus, viewLabel, weekdayNames",
       "registryDependencies": [
         "@percentsa/localized",
         "@percentsa/saudi-date"
@@ -1895,6 +1897,8 @@
           "monthDays",
           "monthGrid",
           "addMonths",
+          "nextRange",
+          "rangePreset",
           "moveFocus",
           "viewLabel",
           "weekdayNames"
@@ -2683,6 +2687,16 @@
       "type": "registry:ui",
       "title": "DatePicker",
       "description": "DatePicker: adds @percentsa/calendar.",
+      "registryDependencies": [
+        "@percentsa/calendar"
+      ],
+      "files": []
+    },
+    {
+      "name": "date-range-picker",
+      "type": "registry:ui",
+      "title": "DateRangePicker",
+      "description": "DateRangePicker: adds @percentsa/calendar.",
       "registryDependencies": [
         "@percentsa/calendar"
       ],

@@ -3,6 +3,7 @@ import {
   Calendar,
   CrInput,
   DatePicker,
+  DateRangePicker,
   Field,
   FileDrop,
   IbanInput,
@@ -19,6 +20,7 @@ import {
   Text,
   useLang,
   VatInput,
+  type DateRange,
   type NationalAddressValue,
   type PhoneCountryCode,
   type PlainDate,
@@ -139,6 +141,30 @@ export function DatePickerExample() {
   return (
     <Field label={t("Start date", "تاريخ البدء")} className="w-full max-w-xs">
       <DatePicker value={day} onValueChange={setDay} name="start" />
+    </Field>
+  );
+}
+
+/** mode="range": the first click sets the start, the second the end (they swap when the end is earlier); a third starts again. */
+export function CalendarRangeExample() {
+  const [range, setRange] = useState<DateRange>({ from: "2026-02-10", to: "2026-02-18" });
+  return (
+    <Stack gap={3}>
+      <Calendar mode="range" value={range} onValueChange={setRange} fixedCalendar />
+      <Text size="sm" tone="subtle" dir="ltr">
+        value: {JSON.stringify(range)}
+      </Text>
+    </Stack>
+  );
+}
+
+/** A list filter: a preset closes the popover; a single day is a valid filter too ("From 12/09/2026"). */
+export function DateRangePickerExample() {
+  const t = useT();
+  const [range, setRange] = useState<DateRange>({ from: null, to: null });
+  return (
+    <Field label={t("Order date", "تاريخ الطلب")} className="w-full max-w-xs">
+      <DateRangePicker value={range} onValueChange={setRange} />
     </Field>
   );
 }
