@@ -11,6 +11,9 @@ export type Release = {
 
 const c = (kind: ChangeKind, text: string) => ({ kind, text });
 
+/** The name of a new component links to its page: write `[Name](slug)` in the text. */
+export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
+
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
@@ -42,18 +45,18 @@ export const RELEASES: Release[] = [
     date: "2026-10-22",
     summary: "Parts for app screens and lists. Nothing changes for existing projects.",
     changes: [
-      c("new", "TimeText shows a date or time the short way, in Riyadh time: \"3:45 PM\" today, \"Yesterday 3:45 PM\", \"12 September, 3:45 PM\" this year. Hover, focus or tap shows the exact value. formatDateTime, formatRelative and formatTimeOfDay give the same text for tables, exports and printouts."),
+      c("new", "[TimeText](time-text) shows a date or time the short way, in Riyadh time: \"3:45 PM\" today, \"Yesterday 3:45 PM\", \"12 September, 3:45 PM\" this year. Hover, focus or tap shows the exact value. formatDateTime, formatRelative and formatTimeOfDay give the same text for tables, exports and printouts."),
       c("new", "Money and formatMoney can keep up to 6 decimals for unit prices, and can put negative amounts in brackets: (1,234.50)."),
       c("fixed", "formatMoney never shows -0.00, and shows \"—\" for an amount that is not a number, so a broken value does not look like zero."),
-      c("new", "PhoneText shows a phone number as a call link (\"+966 55 000 0999\"), with an optional WhatsApp link. formatPhone and phoneLinks give the text and the links."),
-      c("new", "StatusBadge shows a status (Paid, Overdue) with a coloured dot in five tones. The colour is on the dot only, so the text stays readable."),
-      c("new", "EmptyState can show a load error with a \"Try again\" button. NotFound and Forbidden are ready pages for a missing record and for a page the user may not open."),
-      c("new", "PageHeader is the top of a list or record page: the title with status badges, a back link to the list, one primary action, and the other actions in a \"⋯\" menu. On phones the primary action is full width and \"More actions\" opens the rest."),
+      c("new", "[PhoneText](phone-text) shows a phone number as a call link (\"+966 55 000 0999\"), with an optional WhatsApp link. formatPhone and phoneLinks give the text and the links."),
+      c("new", "[StatusBadge](status-badge) shows a status (Paid, Overdue) with a coloured dot in five tones. The colour is on the dot only, so the text stays readable."),
+      c("new", "EmptyState can show a load error with a \"Try again\" button. [NotFound](page-states) and [Forbidden](page-states) are ready pages for a missing record and for a page the user may not open."),
+      c("new", "[PageHeader](page-header) is the top of a list or record page: the title with status badges, a back link to the list, one primary action, and the other actions in a \"⋯\" menu. On phones the primary action is full width and \"More actions\" opens the rest."),
       c("new", "Menu items can show a second line under the label, for example why an item is disabled."),
-      c("new", "DateRangePicker chooses a date range for a list filter, with the presets today, yesterday, last 7 days, last 30 days, this week, this month and last month. Calendar can choose a range too. The small size fits a list toolbar."),
+      c("new", "[DateRangePicker](date-range-picker) chooses a date range for a list filter, with the presets today, yesterday, last 7 days, last 30 days, this week, this month and last month. Calendar can choose a range too. The small size fits a list toolbar."),
       c("new", "DataTable rows can open their record: the whole row is one link, and the checkbox and the \"⋯\" row menu still work. On phones, the rows can show as cards."),
-      c("new", "ColumnsMenu lets people show and hide table columns. DataTable can offer a rows-per-page choice and keep its header row in view while the rows scroll. FilterBar takes the list's other controls (date range, columns, refresh) at its end, so one bar is the whole list toolbar."),
-      c("new", "PrintArea and usePrint print one part of a page, such as a list, on A4 paper, black on white in any theme. The title repeats on every page, page numbers are at the bottom, and nothing else on the page prints."),
+      c("new", "[ColumnsMenu](columns-menu) lets people show and hide table columns. DataTable can offer a rows-per-page choice and keep its header row in view while the rows scroll. FilterBar takes the list's other controls (date range, columns, refresh) at its end, so one bar is the whole list toolbar."),
+      c("new", "[PrintArea](print-area) and usePrint print one part of a page, such as a list, on A4 paper, black on white in any theme. The title repeats on every page, page numbers are at the bottom, and nothing else on the page prints."),
       c("new", "Links react at once: give PercentProvider the router's location, and a clicked link in the sidebar, a menu, the breadcrumbs, a card or a table row shows a thin bar until the new page is there."),
     ],
   },

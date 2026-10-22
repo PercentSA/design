@@ -60,7 +60,7 @@ Run `bun test` and `bun run typecheck` before every commit.
 
 `ui` and `motion` build with `tsc`: one ESM file and one declaration file per source file, so each client module keeps its `"use client"` line. `scripts/dist-imports.ts` then adds `.js` to the relative imports in `dist`, so the packages load in Node for server rendering and work with TypeScript `nodenext` (`test/publish.test.ts`). `tokens` is one `bun build` file plus `tsc` declarations. `.github/workflows/release.yml` publishes all three to npm when a `v*` tag is pushed; the tag sets the version (`git tag v0.5.1 && git push origin v0.5.1`). Login is npm trusted publishing (no token; npm adds provenance); a version that is already on npm is skipped. Projects install with `bun add @percentsa/tokens @percentsa/ui @percentsa/motion` (no token).
 
-Each `## X.Y.Z` in CHANGELOG.md also gets a plain-words entry in `apps/docs/app/docs/changelog.ts` (the docs Changelog page; `apps/docs/test/changelog.test.ts` fails without it). Set its `date` when the tag is pushed.
+Each `## X.Y.Z` in CHANGELOG.md also gets a plain-words entry in `apps/docs/app/docs/changelog.ts` (the docs Changelog page; `apps/docs/test/changelog.test.ts` fails without it). Set its `date` when the tag is pushed. The name of a new component is a link to its docs page: `[Name](https://design.percent.sa/en/components/<slug>)` in CHANGELOG.md, `[Name](<slug>)` in `changelog.ts` (the test checks that each page exists).
 
 ## Copy-in registry (shadcn)
 
