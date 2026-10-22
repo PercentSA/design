@@ -135,6 +135,8 @@ const en = {
   year: "Year",
   customPeriod: "Custom",
   quarterLabel: (q: number, y: number) => `Q${q} ${y}`,
+  /** After a Hijri year in a period label: "1448 AH". */
+  hijriEra: "AH",
   hour: "Hour",
   minute: "Minute",
   am: "AM",
@@ -346,6 +348,7 @@ const ar: Strings = {
   year: "سنة",
   customPeriod: "فترة مخصصة",
   quarterLabel: (q, y) => `الربع ${["الأول", "الثاني", "الثالث", "الرابع"][q - 1]} ${y}`,
+  hijriEra: "هـ",
   hour: "الساعة",
   minute: "الدقيقة",
   am: "ص",

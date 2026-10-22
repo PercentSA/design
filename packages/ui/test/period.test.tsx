@@ -2,7 +2,7 @@
 import { describe, expect, test } from "bun:test";
 import { useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { PercentProvider, PeriodPicker, periodOf, periodOptions, type Period } from "../src";
+import { PercentProvider, PeriodPicker, periodOf, periodOptions, STRINGS, viewLabel, type CalendarKind, type Period } from "../src";
 import { click, mount, press, useDom } from "./dom";
 
 useDom();
@@ -33,11 +33,82 @@ describe("period helpers", () => {
   });
 });
 
-function Picker({ start, log, lang = "en" }: { start: Period; log: Period[]; lang?: "en" | "ar" }) {
+// Umm al-Qura parts straight from Intl, and the first and last day that share them: the expected Hijri periods.
+const umalqura = new Intl.DateTimeFormat("en-u-ca-islamic-umalqura-nu-latn", { year: "numeric", month: "numeric", day: "numeric", timeZone: "UTC" });
+const hijri = (d: string) => {
+  const n = (type: string) => Number(umalqura.formatToParts(new Date(`${d}T12:00:00Z`)).find((p) => p.type === type)!.value);
+  return { year: n("year"), month: n("month") };
+};
+const shift = (d: string, n: number) => new Date(Date.parse(`${d}T12:00:00Z`) + n * 86_400_000).toISOString().slice(0, 10);
+const span = (day: string, key: (h: { year: number; month: number }) => string) => {
+  const k = key(hijri(day));
+  let from = day;
+  let to = day;
+  while (key(hijri(shift(from, -1))) === k) from = shift(from, -1);
+  while (key(hijri(shift(to, 1))) === k) to = shift(to, 1);
+  return { from, to };
+};
+const HIJRI_KEY = {
+  month: (h: { year: number; month: number }) => `${h.year}-${h.month}`,
+  quarter: (h: { year: number; month: number }) => `${h.year}-q${Math.ceil(h.month / 3)}`,
+  year: (h: { year: number; month: number }) => `${h.year}`,
+};
+
+describe("Hijri periods", () => {
+  test("periodOf: the Umm al-Qura month, quarter (3 months) and year that contain the day", () => {
+    for (const day of [TODAY, "2026-02-18", "2026-03-19", "2025-06-26"])
+      for (const kind of ["month", "quarter", "year"] as const) expect(periodOf(kind, day, "hijri")).toEqual({ kind, ...span(day, HIJRI_KEY[kind]) });
+  });
+
+  test("periodOptions: Hijri periods back from today, newest first", () => {
+    const months = periodOptions("month", TODAY, 3, "hijri");
+    expect(months[0]).toEqual(periodOf("month", TODAY, "hijri"));
+    expect(months[1]).toEqual({ kind: "month", ...span(shift(months[0]!.from, -1), HIJRI_KEY.month) });
+    expect(months[2]!.to).toBe(shift(months[1]!.from, -1));
+    expect(periodOptions("year", TODAY, undefined, "hijri")).toHaveLength(5);
+    // The calendar left out is Gregorian.
+    expect(periodOptions("quarter", TODAY)).toEqual(periodOptions("quarter", TODAY, undefined, "gregorian"));
+  });
+
+  test("labels in the Hijri calendar, with the era from the strings", () => {
+    const html = (lang: "en" | "ar", value: Period, strings?: { hijriEra: string }) =>
+      renderToStaticMarkup(
+        <PercentProvider lang={lang} strings={strings}>
+          <PeriodPicker value={value} onValueChange={noop} today={TODAY} calendar="hijri" />
+        </PercentProvider>,
+      );
+    const trigger = (out: string) => out.match(/<button[^>]*role="combobox"[^>]*>(.*?)<\/button>/)![1]!.replace(/<[^>]+>/g, "");
+    const h = hijri(TODAY);
+    const q = Math.ceil(h.month / 3);
+    expect(trigger(html("ar", periodOf("month", TODAY, "hijri")))).toBe(viewLabel({ calendar: "hijri", ...h }, "ar"));
+    expect(trigger(html("en", periodOf("month", TODAY, "hijri")))).toBe(viewLabel({ calendar: "hijri", ...h }, "en"));
+    expect(trigger(html("ar", periodOf("year", TODAY, "hijri")))).toBe(`${h.year} هـ`);
+    expect(trigger(html("en", periodOf("year", TODAY, "hijri")))).toBe(`${h.year} AH`);
+    expect(trigger(html("ar", periodOf("quarter", TODAY, "hijri")))).toBe(`${STRINGS.ar.quarterLabel(q, h.year)} هـ`);
+    expect(trigger(html("en", periodOf("quarter", TODAY, "hijri")))).toBe(`Q${q} ${h.year} AH`);
+    expect(trigger(html("en", periodOf("year", TODAY, "hijri"), { hijriEra: "H" }))).toBe(`${h.year} H`);
+  });
+
+  test("PeriodPicker calendar=hijri: kind switches give Hijri periods; custom opens the Hijri calendar", async () => {
+    const log: Period[] = [];
+    const el = await mount(<Picker start={periodOf("month", TODAY, "hijri")} log={log} calendar="hijri" />);
+    await click(kind("Quarter"));
+    expect(log.at(-1)).toEqual(periodOf("quarter", TODAY, "hijri"));
+    await click(kind("Year"));
+    expect(log.at(-1)).toEqual(periodOf("year", TODAY, "hijri"));
+    await click(kind("Custom"));
+    expect(log.at(-1)).toEqual({ ...periodOf("year", TODAY, "hijri"), kind: "custom" });
+    await click(el.querySelector("button[aria-haspopup]")!);
+    expect(document.querySelector('[role="dialog"] [role="grid"]')!.getAttribute("aria-label")).toBe(viewLabel({ calendar: "hijri", ...hijri(log.at(-1)!.from) }, "en"));
+  });
+});
+
+function Picker({ start, log, lang = "en", calendar }: { start: Period; log: Period[]; lang?: "en" | "ar"; calendar?: CalendarKind }) {
   const [value, setValue] = useState(start);
   return (
     <PercentProvider lang={lang}>
       <PeriodPicker
+        calendar={calendar}
         value={value}
         onValueChange={(p) => {
           log.push(p);

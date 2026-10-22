@@ -1277,6 +1277,7 @@
         "@percentsa/inputs",
         "@percentsa/provider",
         "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date",
         "@percentsa/saudi-period"
       ],
       "files": [
@@ -2397,7 +2398,8 @@
       "title": "periodOf, periodOptions",
       "description": "@percentsa/ui: periodOf, periodOptions",
       "registryDependencies": [
-        "@percentsa/saudi-calendar"
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date"
       ],
       "files": [
         {

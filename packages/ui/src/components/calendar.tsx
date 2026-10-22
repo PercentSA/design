@@ -327,6 +327,7 @@ export function DateRangePicker({
   value,
   onValueChange,
   presets = PRESETS,
+  defaultCalendar = "gregorian",
   min,
   max,
   weekStart,
@@ -339,6 +340,8 @@ export function DateRangePicker({
   value: DateRange;
   onValueChange: (range: DateRange) => void;
   presets?: DateRangePresetId[];
+  /** The calendar shown first; the person can switch unless `fixedCalendar`. */
+  defaultCalendar?: CalendarKind;
   min?: PlainDate;
   max?: PlainDate;
   weekStart?: number;
@@ -353,7 +356,7 @@ export function DateRangePicker({
   const valueId = useId();
   const triggerRef = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
-  const [calendar, setCalendar] = useState<CalendarKind>("gregorian");
+  const [calendar, setCalendar] = useState(defaultCalendar);
   const { required, ...trigger } = useFieldControl<typeof props & { required?: boolean }>(props);
   // As in DatePicker: the field label names the trigger, so the range is read as its description.
   const labelled = !!useFieldLabelId();

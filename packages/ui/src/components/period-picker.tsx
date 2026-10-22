@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
+import { useMemo, useState, useSyncExternalStore } from "react";
 import { cn } from "../lib/cn";
 import { useLang, useStrings, useText } from "../provider";
-import { todayPlain, viewLabel, type PlainDate } from "../saudi/calendar";
+import { partsOf, todayPlain, viewLabel, type PlainDate } from "../saudi/calendar";
+import type { CalendarKind } from "../saudi/date";
 import { periodOf, periodOptions, type Period, type PeriodKind } from "../saudi/period";
 import { SegmentedControl } from "./actions";
 import { DateRangePicker } from "./calendar";
@@ -13,7 +14,8 @@ const KINDS: PeriodKind[] = ["month", "quarter", "year", "custom"];
 const noSubscribe = () => () => {};
 
 /**
- * A report period: a month, quarter or year from a list (newest first), or a custom date range. Gregorian.
+ * A report period: a month, quarter or year from a list (newest first), or a custom date range. `calendar="hijri"` gives
+ * Umm al-Qura months, quarters (3 months) and years; the value stays Gregorian ISO days.
  * A kind switch keeps the end of the current period. A cleared custom range goes back to this month.
  */
 export function PeriodPicker({
@@ -21,6 +23,7 @@ export function PeriodPicker({
   onValueChange,
   kinds = KINDS,
   today: todayProp,
+  calendar = "gregorian",
   className,
 }: {
   value: Period;
@@ -28,6 +31,8 @@ export function PeriodPicker({
   kinds?: PeriodKind[];
   /** The day the lists end on (default: today in Riyadh). */
   today?: PlainDate;
+  /** The calendar of the periods and the first calendar of a custom range. Default "gregorian". */
+  calendar?: CalendarKind;
   className?: string;
 }) {
   const s = useStrings();
@@ -39,14 +44,16 @@ export function PeriodPicker({
   // The first day of a custom range whose end is not chosen yet: the calendar stays open for the end.
   const [start, setStart] = useState<PlainDate | null>(null);
   const label = (p: Period) => {
-    const year = Number(p.from.slice(0, 4));
-    const month = Number(p.from.slice(5, 7));
-    if (p.kind === "year") return String(year);
-    if (p.kind === "quarter") return s.quarterLabel((month + 2) / 3, year);
-    return viewLabel({ calendar: "gregorian", year, month }, lang);
+    const { year, month } = partsOf(p.from, calendar);
+    const era = calendar === "hijri" ? ` ${s.hijriEra}` : "";
+    if (p.kind === "year") return `${year}${era}`;
+    if (p.kind === "quarter") return `${s.quarterLabel((month + 2) / 3, year)}${era}`;
+    return viewLabel({ calendar, year, month }, lang);
   };
   const { kind } = value;
-  let options = kind === "custom" ? [] : periodOptions(kind, today);
+  // Hijri months come from Intl day by day: build the list once per kind, day and calendar.
+  const list = useMemo(() => (kind === "custom" ? [] : periodOptions(kind, today, undefined, calendar)), [kind, today, calendar]);
+  let options = list;
   // A value older (or newer) than the list still shows as its own option.
   if (kind !== "custom" && !options.some((p) => p.from === value.from)) options = [...options, value].sort((a, b) => (a.from < b.from ? 1 : -1));
 
@@ -57,7 +64,7 @@ export function PeriodPicker({
         value={kind}
         onValueChange={(k) => {
           setStart(null);
-          onValueChange(k === "custom" ? { kind: "custom", from: value.from, to: value.to } : periodOf(k as Exclude<PeriodKind, "custom">, value.to));
+          onValueChange(k === "custom" ? { kind: "custom", from: value.from, to: value.to } : periodOf(k as Exclude<PeriodKind, "custom">, value.to, calendar));
         }}
         options={kinds.map((k) => ({ value: k, label: t(k === "custom" ? s.customPeriod : s[k]) }))}
       />
@@ -66,9 +73,10 @@ export function PeriodPicker({
           value={start && value.from === start && value.to === start ? { from: start, to: null } : value}
           onValueChange={(range) => {
             setStart(range.to ? null : range.from);
-            if (!range.from && !range.to) return onValueChange(periodOf("month", today));
+            if (!range.from && !range.to) return onValueChange(periodOf("month", today, calendar));
             onValueChange({ kind: "custom", from: range.from ?? range.to!, to: range.to ?? range.from! });
           }}
+          defaultCalendar={calendar}
           className="w-64 max-w-full"
         />
       ) : (
