@@ -18,6 +18,12 @@ describe("range helpers", () => {
     expect(nextRange(r(null, "2026-09-15"), "2026-09-12")).toEqual(r("2026-09-12", "2026-09-15"));
   });
 
+  test("rangePreset last 7 and last 30 days include today", () => {
+    expect(rangePreset("last7Days", "2026-09-30")).toEqual({ from: "2026-09-24", to: "2026-09-30" });
+    expect(rangePreset("last30Days", "2026-09-30")).toEqual({ from: "2026-09-01", to: "2026-09-30" });
+    expect(rangePreset("last7Days", "2026-03-03")).toEqual({ from: "2026-02-25", to: "2026-03-03" });
+  });
+
   test("rangePreset", () => {
     expect(rangePreset("thisWeek", "2026-09-30")).toEqual({ from: "2026-09-27", to: "2026-09-30" });
     expect(rangePreset("thisMonth", "2026-09-30")).toEqual({ from: "2026-09-01", to: "2026-09-30" });
