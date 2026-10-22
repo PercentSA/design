@@ -22,10 +22,12 @@ export {
   type SaudiIdType,
 } from "./saudi/validators";
 export {
+  formatPhone,
   GCC_PHONE_COUNTRIES,
   getPhoneCountry,
   getPhoneIssue,
   normalizePhone,
+  phoneLinks,
   type PhoneCountry,
   type PhoneCountryCode,
   type PhoneIssue,
@@ -68,6 +70,7 @@ export {
 } from "./saudi/calendar";
 export { Calendar, DatePicker } from "./components/calendar";
 export { TimeText } from "./components/time-text";
+export { PhoneText } from "./components/phone-text";
 export { AlertDialog, Dialog, DialogClose, HoverCard, Popover, Sheet, Tooltip } from "./components/overlays";
 export { ContextMenu, DropdownMenu, type MenuItem } from "./components/menus";
 export { dismissToast, toast, Toaster } from "./components/toast";

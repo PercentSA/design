@@ -92,6 +92,7 @@ const en = {
   clearFilters: "Clear filters",
   internalNote: "Internal note",
   attachments: "Attachments",
+  whatsapp: (phone: string) => `WhatsApp ${phone}`,
   invoice: {
     taxInvoice: "Tax invoice",
     simplifiedTaxInvoice: "Simplified tax invoice",
@@ -240,6 +241,7 @@ const ar: Strings = {
   clearFilters: "مسح عوامل التصفية",
   internalNote: "ملاحظة داخلية",
   attachments: "المرفقات",
+  whatsapp: (phone) => `واتساب ${phone}`,
   invoice: {
     taxInvoice: "فاتورة ضريبية",
     simplifiedTaxInvoice: "فاتورة ضريبية مبسطة",

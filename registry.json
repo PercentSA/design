@@ -1121,6 +1121,32 @@
       }
     },
     {
+      "name": "phone-text",
+      "type": "registry:ui",
+      "title": "PhoneText",
+      "description": "@percentsa/ui: PhoneText",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider",
+        "@percentsa/saudi-phone"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/phone-text.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/phone-text.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PhoneText"
+        ]
+      }
+    },
+    {
       "name": "qr-code",
       "type": "registry:ui",
       "title": "QrCode, ZatcaQr",
@@ -2027,7 +2053,7 @@
       "name": "saudi-phone",
       "type": "registry:lib",
       "title": "GCC_PHONE_COUNTRIES",
-      "description": "@percentsa/ui: GCC_PHONE_COUNTRIES, getPhoneCountry, getPhoneIssue, normalizePhone",
+      "description": "@percentsa/ui: GCC_PHONE_COUNTRIES, getPhoneCountry, getPhoneIssue, normalizePhone, formatPhone, phoneLinks",
       "registryDependencies": [
         "@percentsa/localized",
         "@percentsa/saudi-digits"
@@ -2044,7 +2070,9 @@
           "GCC_PHONE_COUNTRIES",
           "getPhoneCountry",
           "getPhoneIssue",
-          "normalizePhone"
+          "normalizePhone",
+          "formatPhone",
+          "phoneLinks"
         ]
       }
     },

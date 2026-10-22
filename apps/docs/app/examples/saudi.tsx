@@ -13,6 +13,7 @@ import {
   isSaudiIban,
   isVatNumber,
   Money,
+  PhoneText,
   Stack,
   Text,
   TimeText,
@@ -26,6 +27,26 @@ export function MoneyExample() {
       <Money amount={1250} className="text-3xl font-semibold" />
       <Money amount={99.5} />
       <Text size="sm" tone="subtle" dir="ltr">formatMoney(1250, {"{ decimals: 2 }"}) = {formatMoney(1250, { decimals: 2 })}</Text>
+    </Stack>
+  );
+}
+
+export function MoneyOptionsExample() {
+  return (
+    <Stack gap={2}>
+      <Money amount={314.7826} maxDecimals={6} />
+      <Money amount={-1234.5} decimals={2} accounting />
+      <Text size="sm" tone="subtle" dir="ltr">formatMoney(-0.004, {"{ decimals: 2 }"}) = {formatMoney(-0.004, { decimals: 2 })}</Text>
+    </Stack>
+  );
+}
+
+export function PhoneTextExample() {
+  return (
+    <Stack gap={2}>
+      <PhoneText value="0550000999" whatsapp />
+      <PhoneText value="+97430000999" style="national" />
+      <PhoneText value="12" />
     </Stack>
   );
 }
