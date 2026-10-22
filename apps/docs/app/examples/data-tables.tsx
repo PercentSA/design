@@ -93,7 +93,7 @@ export function DataTableExample() {
   const t = useT();
   const [selected, setSelected] = useState<string[]>([]);
   return (
-    <div className="grid w-full gap-3">
+    <div className="grid w-full grid-cols-1 gap-3">
       <DataTable
         columns={useInvoiceColumns()}
         rows={INVOICES}
@@ -153,7 +153,7 @@ export function ColumnsMenuExample() {
   const [hidden, setHidden] = useState<string[]>([]);
   const [size, setSize] = useState(10);
   return (
-    <div className="grid w-full gap-3">
+    <div className="grid w-full grid-cols-1 gap-3">
       <ColumnsMenu className="justify-self-end" columns={columns} hidden={hidden} onHiddenChange={setHidden} />
       <DataTable
         columns={columns}
