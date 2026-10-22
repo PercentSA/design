@@ -72,7 +72,7 @@ export function addMonths(p: PlainDate, n: number, calendar: CalendarKind): Plai
 
 /** A date range; either end may be open ("from 12/09", "until 15/09"). */
 export type DateRange = { from: PlainDate | null; to: PlainDate | null };
-export type DateRangePresetId = "today" | "yesterday" | "thisWeek" | "thisMonth" | "lastMonth";
+export type DateRangePresetId = "today" | "yesterday" | "last7Days" | "last30Days" | "thisWeek" | "thisMonth" | "lastMonth";
 
 /** The range after a day is chosen: the day joins an open range (the ends swap when needed); else a new range starts. */
 export function nextRange(range: DateRange, day: PlainDate): DateRange {
@@ -81,7 +81,10 @@ export function nextRange(range: DateRange, day: PlainDate): DateRange {
   return day < end ? { from: day, to: end } : { from: end, to: day };
 }
 
-/** A preset range up to `today` (Gregorian). `thisWeek` starts on `weekStart` (0 = Sunday); `lastMonth` is the whole previous month. */
+/**
+ * A preset range up to `today` (Gregorian). `last7Days` and `last30Days` count today as day 1. `thisWeek` starts on
+ * `weekStart` (0 = Sunday); `lastMonth` is the whole previous month.
+ */
 export function rangePreset(id: DateRangePresetId, today: PlainDate, weekStart = 0): DateRange {
   const first = `${today.slice(0, 8)}01`;
   switch (id) {
@@ -91,6 +94,10 @@ export function rangePreset(id: DateRangePresetId, today: PlainDate, weekStart =
       const d = addDays(today, -1);
       return { from: d, to: d };
     }
+    case "last7Days":
+      return { from: addDays(today, -6), to: today };
+    case "last30Days":
+      return { from: addDays(today, -29), to: today };
     case "thisWeek":
       return { from: addDays(today, -((weekday(today) - weekStart + 7) % 7)), to: today };
     case "thisMonth":
