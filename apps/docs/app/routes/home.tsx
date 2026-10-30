@@ -25,7 +25,7 @@ const CSS = `@import "tailwindcss";
 }`;
 
 const LINKS = [
-  { href: "https://github.com/PercentSA/design", label: { en: "Source on GitHub", ar: "الشيفرة على GitHub" } },
+  { href: "https://github.com/PercentSA/design", label: { en: "Source on GitHub", ar: "الكود على GitHub" } },
   { href: "https://www.npmjs.com/package/@percentsa/ui", label: { en: "npm", ar: "npm" } },
   { href: "https://github.com/PercentSA/design/blob/main/LICENSE", label: { en: "MIT license", ar: "رخصة MIT" } },
 ] as const;

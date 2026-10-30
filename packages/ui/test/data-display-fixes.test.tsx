@@ -148,7 +148,7 @@ describe("JsonViewer, CodeBlock", () => {
 
   test("CodeBlock without a file name or language: the scroll box is a group named Code (not one more landmark)", () => {
     expect(en(<CodeBlock code="x" />)).toMatch(/role="group" tabindex="0" aria-label="Code"/);
-    expect(ar(<CodeBlock code="x" />)).toContain('aria-label="الشيفرة البرمجية"');
+    expect(ar(<CodeBlock code="x" />)).toContain('aria-label="الكود"');
   });
 });
 

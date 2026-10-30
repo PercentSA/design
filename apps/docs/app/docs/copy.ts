@@ -14,7 +14,7 @@ export const COPY = {
   all: { en: "All components", ar: "كل المكونات" },
   allLead: {
     en: "Every component on one page, with its first example. Open a name for all its examples and the code.",
-    ar: "كل المكونات في صفحة واحدة مع أول مثال لكل مكون. افتح اسم المكون لترى كل أمثلته والشيفرة.",
+    ar: "كل المكونات في صفحة واحدة مع أول مثال لكل مكون. افتح اسم المكون لترى كل أمثلته والكود.",
   },
   changelog: { en: "Changelog", ar: "سجل التغييرات" },
   changelogLead: {
@@ -22,7 +22,7 @@ export const COPY = {
     ar: "ما يغيّره كل إصدار بكلمات بسيطة، باللغة الإنجليزية. القائمة التقنية في ملف CHANGELOG.md في المستودع.",
   },
   examples: { en: "Examples", ar: "أمثلة" },
-  code: { en: "Code", ar: "الشيفرة" },
+  code: { en: "Code", ar: "الكود" },
   usage: { en: "Usage", ar: "الاستخدام" },
   theme: { en: "Theme", ar: "المظهر" },
   notFound: { en: "Page not found", ar: "الصفحة غير موجودة" },

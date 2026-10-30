@@ -424,7 +424,7 @@ const ar: Strings = {
     fileTooLarge: (maxMb) => `حجم هذا الملف أكبر من ${maxMb} ميغابايت.`,
     fileType: "نوع هذا الملف غير مقبول.",
   },
-  code: "الشيفرة البرمجية",
+  code: "الكود",
   category: "الفئة",
 };
 

@@ -8,7 +8,7 @@ export const pages: DocPage[] = [
     "CodeBlock",
     ["CodeBlockExample", "CodeBlockHighlightedExample"],
     "Code with line numbers, a file name and a copy button, always left to right. For syntax colours, pass highlighted children (for example from Shiki); copy still copies the plain code.",
-    "شيفرة مع أرقام الأسطر واسم الملف وزر نسخ، ودائمًا من اليسار إلى اليمين. لتلوين الشيفرة مرّر محتوى ملوّنًا (من Shiki مثلًا)، ويبقى النسخ للشيفرة الأصلية.",
+    "كود مع أرقام الأسطر واسم الملف وزر نسخ، ودائمًا من اليسار إلى اليمين. لتلوين الكود مرّر محتوى ملوّنًا (من Shiki مثلًا)، ويبقى النسخ للكود الأصلي.",
   ),
   p(
     "json-viewer",

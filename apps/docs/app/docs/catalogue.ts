@@ -45,9 +45,9 @@ export const PAGES: DocPage[] = [
   p("text", "Text", "text", "Text", ["TextExample"], "Body text in four sizes and three tones (fg, fg-2, fg-3). All tones pass WCAG AA.", "نص المحتوى بأربعة أحجام وثلاث درجات. كل الدرجات تجتاز معيار WCAG AA."),
   p("label", "Label", "text", "Label", ["LabelExample"], "Small section label: mono and upper case in English, plain in Arabic.", "عنوان صغير للأقسام: بخط أحادي وأحرف كبيرة بالإنجليزية، وعادي بالعربية."),
   p("link", "Link", "text", "Link", ["LinkExample"], "Text link. `external` opens a new tab safely and tells screen readers. Uses the router link from PercentProvider.", "رابط نصي. يفتح external تبويبًا جديدًا بأمان ويُعلم قارئ الشاشة. يستخدم رابط الموجّه من PercentProvider."),
-  p("code-kbd", "Code, Kbd", "text", "Code, Kbd", ["CodeKbdExample"], "Inline code and keys. Always left to right, also inside Arabic text.", "شيفرة ومفاتيح داخل النص. دائمًا من اليسار إلى اليمين حتى داخل النص العربي."),
+  p("code-kbd", "Code, Kbd", "text", "Code, Kbd", ["CodeKbdExample"], "Inline code and keys. Always left to right, also inside Arabic text.", "كود ومفاتيح داخل النص. دائمًا من اليسار إلى اليمين حتى داخل النص العربي."),
   p("blockquote", "Blockquote", "text", "Blockquote", ["BlockquoteExample"], "A quote with an optional source.", "اقتباس مع مصدر اختياري."),
-  p("prose", "Prose", "text", "Prose", ["ProseExample"], "Styles rich text (privacy pages, case studies): headings, lists, links, code.", "ينسّق النص الطويل (صفحات الخصوصية ودراسات الحالة): العناوين والقوائم والروابط والشيفرة."),
+  p("prose", "Prose", "text", "Prose", ["ProseExample"], "Styles rich text (privacy pages, case studies): headings, lists, links, code.", "ينسّق النص الطويل (صفحات الخصوصية ودراسات الحالة): العناوين والقوائم والروابط والكود."),
   p("highlight", "Highlight", "text", "Highlight", ["HighlightExample"], "Inverted text for search matches.", "نص معكوس الألوان لنتائج البحث."),
   p("formatted-number", "FormattedNumber", "text", "FormattedNumber, formatNumber", ["FormattedNumberExample"], "Numbers with Western digits in both languages; compact units in words in Arabic.", "أرقام بالأرقام الغربية في اللغتين؛ والوحدات المختصرة بالكلمات في العربية."),
 
