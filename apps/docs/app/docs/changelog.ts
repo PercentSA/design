@@ -17,6 +17,16 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.9.0",
+    date: null,
+    summary: "NationalAddress can fill itself from a short address. Nothing changes for existing projects.",
+    changes: [
+      c("new", "NationalAddress can look up a short address: with autoFetch on, typing a full short address such as RQSA6943 fills the building number, street, district, city and postal code. If no address is found, the short address says so. It is off unless the app turns it on, and lang chooses Arabic or English for the result."),
+      c("fixed", "An additional number of 1, 2 or 3 digits is valid. Before, only 4 digits were accepted."),
+      c("better", "The Arabic text calls code «الكود», the word people use, and the code block's name for screen readers says the same."),
+    ],
+  },
+  {
     version: "0.8.0",
     date: "2026-10-23",
     summary: "Parts for documents, records, forms and reports. Nothing changes for existing projects.",

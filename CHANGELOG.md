@@ -2,6 +2,14 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.9.0
+
+NationalAddress looks up a short address. No breaking change: without `autoFetch`, NationalAddress renders and works as in 0.8.0.
+
+- NationalAddress autoFetch (off by default): a full short address (4 letters and 4 digits) is looked up at `https://api.percent.sa/v1/address/short` and fills the building number, street, district, city, postal code and additional number. A part the API leaves empty keeps what was typed. A 404 shows "No address was found for this short address." on the short address. lang (`"ar"` or `"en"`) sets the language of the result; without it the API reads its `lang` cookie (the request sends credentials). New strings: `addressLookup.loading`, `addressLookup.notFound`.
+- isAdditionalNumber and `saudiError("additional", …)` accept 1 to 4 digits (was exactly 4). The message is "Enter an additional number of 1 to 4 digits."
+- Arabic text says «الكود» for code (was «الشيفرة»). The CodeBlock accessible name in Arabic is «الكود» (was «الشيفرة البرمجية»).
+
 ## 0.8.0
 
 ERP parts for documents, records, forms and reports. New entry `@percentsa/ui/react-hook-form` (optional peer `react-hook-form`). No breaking change.
