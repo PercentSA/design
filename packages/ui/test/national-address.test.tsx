@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, test } from "bun:test";
 import { act, useState } from "react";
-import { NationalAddress, PercentProvider, type NationalAddressValue } from "../src";
+import { isAdditionalNumber, NationalAddress, PercentProvider, saudiError, type NationalAddressValue } from "../src";
 import { mount, useDom } from "./dom";
 
 useDom();
@@ -46,6 +46,14 @@ function Form(props: { autoFetch?: boolean; lang?: "ar" | "en"; initial?: Nation
   return <NationalAddress value={value} onValueChange={setValue} autoFetch={props.autoFetch} lang={props.lang} />;
 }
 const input = (el: HTMLElement, part: string) => el.querySelector<HTMLInputElement>(`input[name="address.${part}"]`)!;
+
+describe("additional number", () => {
+  test("has 1 to 4 digits", () => {
+    for (const ok of ["1", "12", "123", "1234", "١٢"]) expect(isAdditionalNumber(ok)).toBe(true);
+    for (const bad of ["", "12345", "12a"]) expect(isAdditionalNumber(bad)).toBe(false);
+    expect(saudiError("additional", "12345")).toBe("Enter an additional number of 1 to 4 digits.");
+  });
+});
 
 describe("NationalAddress autoFetch", () => {
   test("a full short address fills the other parts; null parts keep what was typed", async () => {

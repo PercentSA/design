@@ -46,5 +46,5 @@ export const isVatNumber = (input: string) => /^3\d{13}3$/.test(clean(input));
 /** National address short address: 4 letters + 4 digits, for example RRRD2929. */
 export const isShortAddress = (input: string) => /^[A-Z]{4}\d{4}$/.test(clean(input));
 export const isBuildingNumber = (input: string) => /^\d{4}$/.test(clean(input));
-export const isAdditionalNumber = (input: string) => /^\d{4}$/.test(clean(input));
+export const isAdditionalNumber = (input: string) => /^\d{1,4}$/.test(clean(input));
 export const isPostalCode = (input: string) => /^\d{5}$/.test(clean(input));
