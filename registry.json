@@ -1461,7 +1461,7 @@
       "name": "sidebar",
       "type": "registry:ui",
       "title": "SidebarInSheet, Sidebar",
-      "description": "@percentsa/ui: SidebarInSheet, Sidebar",
+      "description": "@percentsa/ui: SidebarInSheet, useSidebarRail, Sidebar",
       "dependencies": [
         "lucide-react"
       ],
@@ -1482,6 +1482,7 @@
       "meta": {
         "exports": [
           "SidebarInSheet",
+          "useSidebarRail",
           "Sidebar"
         ]
       }
