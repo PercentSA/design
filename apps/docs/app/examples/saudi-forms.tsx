@@ -139,7 +139,7 @@ export function NationalAddressExample() {
     additional: saudiError("additional", address.additional ?? "", lang),
     shortAddress: saudiError("shortAddress", address.shortAddress ?? "", lang),
   };
-  return <NationalAddress value={address} onValueChange={setAddress} errors={errors} required className="w-full max-w-2xl" />;
+  return <NationalAddress value={address} onValueChange={setAddress} errors={errors} required autoFetch lang={lang} className="w-full max-w-2xl" />;
 }
 
 export function FileDropExample() {

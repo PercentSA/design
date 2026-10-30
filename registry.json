@@ -1153,9 +1153,11 @@
         "@percentsa/cn",
         "@percentsa/field",
         "@percentsa/inputs",
+        "@percentsa/localized",
         "@percentsa/provider",
         "@percentsa/saudi-digits",
         "@percentsa/saudi-normalize",
+        "@percentsa/saudi-validators",
         "@percentsa/special-inputs"
       ],
       "files": [

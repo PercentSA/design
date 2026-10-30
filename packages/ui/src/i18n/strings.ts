@@ -187,6 +187,11 @@ const en = {
     additional: "Additional number",
     shortAddress: "Short address",
   },
+  // NationalAddress autoFetch (short address lookup).
+  addressLookup: {
+    loading: "Looking up the address…",
+    notFound: "No address was found for this short address.",
+  },
   errors: {
     required: "This field is required.",
     invalid: "Check this field.",
@@ -399,6 +404,10 @@ const ar: Strings = {
     postalCode: "الرمز البريدي",
     additional: "الرقم الإضافي",
     shortAddress: "العنوان المختصر",
+  },
+  addressLookup: {
+    loading: "جارٍ البحث عن العنوان…",
+    notFound: "لم نجد عنوانًا بهذا العنوان المختصر.",
   },
   errors: {
     required: "هذا الحقل مطلوب.",
