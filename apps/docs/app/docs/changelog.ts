@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.8.1",
-    date: null,
+    date: "2026-11-02",
     summary: "A layout fix for phones. Nothing else changes.",
     changes: [c("fixed", "Input with start or end content, and the parts built on it, no longer push an Arabic page past the edge of a phone.")],
   },
