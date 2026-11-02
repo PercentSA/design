@@ -17,6 +17,12 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.8.1",
+    date: null,
+    summary: "A layout fix for phones. Nothing else changes.",
+    changes: [c("fixed", "Input with start or end content, and the parts built on it, no longer push an Arabic page past the edge of a phone.")],
+  },
+  {
     version: "0.8.0",
     date: "2026-10-23",
     summary: "Parts for documents, records, forms and reports. Nothing changes for existing projects.",

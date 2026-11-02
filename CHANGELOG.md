@@ -2,6 +2,12 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.8.1
+
+A layout fix. No breaking change.
+
+- Input with `start` or `end` content, and the parts built on it (Combobox, list search): the input no longer sets the width of its parents. In Arabic, its intrinsic width of 317 px pushed pages past the edge of a 360 px phone.
+
 ## 0.8.0
 
 ERP parts for documents, records, forms and reports. New entry `@percentsa/ui/react-hook-form` (optional peer `react-hook-form`). No breaking change.
