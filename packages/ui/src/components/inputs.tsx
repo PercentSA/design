@@ -33,7 +33,8 @@ export function Input({
       )}
     >
       {start && <span className="flex shrink-0 items-center text-fg-3 [&_svg]:size-4">{start}</span>}
-      <input className="h-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-fg-3" {...p} />
+      {/* w-full: without a width, the input's intrinsic width (large with Arabic fonts) sets the width of every parent. */}
+      <input className="h-full w-full min-w-0 flex-1 bg-transparent outline-none placeholder:text-fg-3" {...p} />
       {end && <span className="flex shrink-0 items-center text-fg-3 [&_svg]:size-4">{end}</span>}
     </div>
   );
