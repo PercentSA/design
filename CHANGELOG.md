@@ -2,6 +2,12 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.8.2
+
+A layout fix. No breaking change.
+
+- Pagination, and DataTable with pages: below the `sm` breakpoint the current page shows without its neighbours (first, gap, current, gap, last). With 9 items the bar needed 356 px and pushed pages past the edge of a 360 px phone.
+
 ## 0.8.1
 
 A layout fix. No breaking change.
