@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.8.2",
-    date: null,
+    date: "2026-11-03",
     summary: "A layout fix for phones. Nothing else changes.",
     changes: [c("fixed", "On phones, Pagination and a DataTable with pages show the current page without its neighbours, so a long list no longer pushes the page past the edge of the screen.")],
   },
