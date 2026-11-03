@@ -42,6 +42,25 @@ describe("pagination", () => {
     expect(out).toContain('aria-disabled="true"');
     expect(out.match(/rtl:-scale-x-100/g)).toHaveLength(2);
   });
+  test.each([
+    [1, 63, [1, 2, 3, "gap", 63]],
+    [30, 63, [1, "gap", 30, "gap", 63]],
+    [62, 63, [1, "gap", 61, 62, 63]],
+  ] as const)("no neighbours: page %i of %i", (page, total, range) => {
+    expect(paginationRange(page, total, 0)).toEqual([...range]);
+  });
+  test("below sm the current page shows without neighbours, so the bar fits a 360 px phone", () => {
+    const out = html(<Pagination page={30} total={63} onPageChange={() => {}} />);
+    const items = (only: string) => out.match(new RegExp(`<li class="${only}">`, "g"))?.length;
+    expect(items("max-sm:hidden")).toBe(7);
+    expect(items("sm:hidden")).toBe(5);
+    expect(out.match(/aria-current="page"/g)).toHaveLength(2);
+  });
+  test("a short range renders once", () => {
+    const out = html(<Pagination page={2} total={5} onPageChange={() => {}} />);
+    expect(out).not.toContain("sm:hidden");
+    expect(out.match(/aria-current="page"/g)).toHaveLength(1);
+  });
 });
 
 describe("trails", () => {
