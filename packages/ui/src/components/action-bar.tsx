@@ -21,7 +21,10 @@ export type ActionBarItem = {
 };
 
 const TILE =
-  "flex h-14 in-data-[density=touch]:h-16 min-w-0 flex-1 basis-0 flex-col items-center justify-center gap-0.5 rounded-field border px-1 text-xs transition-colors disabled:opacity-50 [&_svg]:size-5 [&_svg]:shrink-0";
+  "flex min-w-0 flex-1 basis-0 flex-col items-center justify-center gap-0.5 rounded-field border px-1 text-xs transition-colors disabled:opacity-50 [&_svg]:size-5 [&_svg]:shrink-0";
+// 56 px (64 px in touch density). When any tile shows a key hint (a fine pointer) every tile is 4.5rem (72 px) and the icon, label and key are spaced evenly, so the key never touches the edge or the label.
+const HEIGHT = "h-14 in-data-[density=touch]:h-16";
+const HEIGHT_KEYS = "h-14 in-data-[density=touch]:h-16 pointer-fine:h-18 pointer-fine:in-data-[density=touch]:h-18 pointer-fine:justify-evenly pointer-fine:gap-1 pointer-fine:py-1";
 const TONE = {
   default: "border-line text-fg-2 hover:border-fg-3 hover:text-fg",
   danger: "border-danger text-danger hover:bg-danger/10",
@@ -43,6 +46,8 @@ export function ActionBar({ items, label, className }: { items: ActionBarItem[];
   const main = items.filter((i) => i.group !== "end");
   const end = items.filter((i) => i.group === "end");
   const has = items.length > 0;
+  const tall = items.some((i) => i.keyHint);
+  const height = tall ? HEIGHT_KEYS : HEIGHT;
   // Tiles that fit in the width; measured, so the server render shows everything and the bar adjusts after hydration.
   useLayoutEffect(() => {
     const el = nav.current;
@@ -69,7 +74,7 @@ export function ActionBar({ items, label, className }: { items: ActionBarItem[];
   const hidden = main.slice(shown);
 
   const tile = (i: ActionBarItem) => (
-    <button key={i.id} type="button" disabled={i.disabled} onClick={i.onSelect} title={i.label} className={cn(TILE, TONE[i.tone ?? "default"])}>
+    <button key={i.id} type="button" disabled={i.disabled} onClick={i.onSelect} title={i.label} className={cn(TILE, height, TONE[i.tone ?? "default"])}>
       {i.icon}
       <span className="block w-full truncate text-center">{i.label}</span>
       {i.keyHint && <Kbd className="h-4 min-w-4 border-line px-1 text-[10px] pointer-coarse:hidden">{i.keyHint}</Kbd>}
@@ -82,7 +87,7 @@ export function ActionBar({ items, label, className }: { items: ActionBarItem[];
         <DropdownMenu
           align="end"
           trigger={
-            <button type="button" aria-label={s.moreActions} className={cn(TILE, TONE.default)}>
+            <button type="button" aria-label={s.moreActions} className={cn(TILE, height, TONE.default)}>
               <Ellipsis aria-hidden />
               <span className="block w-full truncate text-center">{s.more}</span>
             </button>

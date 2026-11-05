@@ -734,6 +734,19 @@ describe("review fixes", () => {
   });
 });
 
+describe("ActionBar height", () => {
+  const h = (doc: ParentNode) => [...doc.querySelectorAll("nav button")].map((b) => b.className);
+  test("with a key hint on any item every tile is 4.5rem on a fine pointer; without, 56 px; the touch 64 px rule stays", () => {
+    const withKeys = h(dom(<ActionBar label="A" items={[{ id: "a", label: "A", icon: null, keyHint: "F1", onSelect: () => {} }, { id: "b", label: "B", icon: null, onSelect: () => {} }]} />));
+    expect(withKeys.every((c) => hasClass({ className: c } as Element, "pointer-fine:h-18", "pointer-fine:justify-evenly", "h-14", "in-data-[density=touch]:h-16"))).toBe(true);
+    expect(withKeys.every((c) => c.includes("pointer-fine:in-data-[density=touch]:h-18"))).toBe(true);
+    const without = h(dom(<ActionBar label="A" items={[{ id: "a", label: "A", icon: null, onSelect: () => {} }]} />));
+    expect(without[0]).toContain("h-14");
+    expect(without[0]).toContain("in-data-[density=touch]:h-16");
+    expect(without[0]).not.toContain("h-18");
+  });
+});
+
 describe("PinPad shares the key grid with Keypad", () => {
   afterEach(() => {});
   test("same grid markup: 3 columns, left to right, 56 px keys; its API is unchanged", async () => {
