@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.14.3",
-    date: null,
+    date: "2026-11-06",
     summary: "A chosen link button shows, and phone cards stay inside their box.",
     changes: [
       c("better", "[Button](button): a link button that is pressed (aria-pressed) is bold with a full underline, so the chosen item of a list of link buttons shows."),
