@@ -5,8 +5,11 @@ import {
   Button,
   type Command,
   CommandPalette,
+  Card,
+  Container,
   Dialog,
   DialogClose,
+  DropdownMenu,
   Heading,
   Kbd,
   Logo,
@@ -329,6 +332,55 @@ export function PrintAreaExample() {
           </TableBody>
         </table>
       </PrintArea>
+    </div>
+  );
+}
+
+/** A driver app frame: no navigation, so no sidebar. The header row shows at every width; the page centres its content with Container. */
+export function AppShellNoSidebarExample() {
+  const t = useT();
+  const lang = useLang();
+  return (
+    <div className="h-[28rem] w-full overflow-auto rounded-card border border-line [clip-path:inset(0_round_var(--p-radius-card))]">
+      <AppShell
+        embedded
+        density="comfortable"
+        mainId="app-shell-driver-main"
+        className="min-h-full"
+        header={
+          <>
+            {/* The app draws its own logo; AppShell only takes the node. */}
+            <Logo version={lang === "ar" ? "icon-ar" : "icon-en"} />
+            <span className="flex-1" />
+            <DropdownMenu
+              align="end"
+              trigger={
+                <Button variant="ghost" iconOnly aria-label={t("Account", "الحساب")}>
+                  <Users aria-hidden />
+                </Button>
+              }
+              items={[
+                { heading: t("Ahmed, driver", "أحمد السائق") },
+                { label: t("Switch theme", "المظهر"), icon: <Moon /> },
+                "separator",
+                { label: t("Sign out", "تسجيل الخروج"), icon: <LogOut />, danger: true },
+              ]}
+            />
+          </>
+        }
+      >
+        <Container size="sm" className="grid gap-3 py-4">
+          <Heading level={2} size={5}>
+            {t("Today", "اليوم")}
+          </Heading>
+          {[
+            [t("Toyota Camry 2021", "تويوتا كامري 2021"), t("Brake pads, 9:30", "تيل فرامل، 9:30")],
+            [t("Hyundai Sonata 2019", "هيونداي سوناتا 2019"), t("Oil change, 11:00", "تغيير زيت، 11:00")],
+          ].map(([title, line]) => (
+            <Card key={title} title={title} description={line} density="compact" />
+          ))}
+        </Container>
+      </AppShell>
     </div>
   );
 }

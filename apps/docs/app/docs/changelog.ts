@@ -17,6 +17,20 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.12.0",
+    date: null,
+    summary: "Parts for form pages and small phone tools: a line editor, a form action bar, a PIN pad, an app frame without a sidebar, and a wider sheet. One visible change for existing projects: a form sheet from the bottom now shows its two buttons in two equal columns, large.",
+    changes: [
+      c("new", "[LineItemsEditor](line-items-editor) is for the lines of a quote, order, invoice or stocktake in a form. Your inputs sit in the cells, with add, remove, a menu and details for each line, and totals below. Enter moves to the next cell and the next line, and from the last cell it adds a line; it never sends the form. After an add or a remove the focus goes to the right place and a screen reader hears what changed. On a narrow width the rows become cards."),
+      c("new", "[FormBar](form-bar) is the bar at the end of a form page: a short live summary (a total, a count) at the start and the buttons at the end. It stays at the bottom of the scroll area. On a phone the summary has its own line and the buttons share the row."),
+      c("new", "[PinPad](pin-pad) is for a short code on large keys, such as a device lock or a cashier switch. The dots hide the digits, a screen reader hears only how many were typed, and a hardware keyboard works. The keys stop while the code is checked."),
+      c("new", "[AppShell](app-shell) works without a sidebar: no menu button, and the header row shows at every width. Use it for a driver app, a partner portal or a kiosk."),
+      c("new", "[Sheet](sheet) can be wide (size=\"lg\", 56rem) for a document made from another document."),
+      c("new", "[FormSheet](form-sheet) can say why the submit is refused (blocked): the reason shows above the buttons, announced, and the button stays visible but off. It also takes size, danger (a red submit button) and cancelLabel."),
+      c("better", "A [FormSheet](form-sheet) from the bottom now shows its two buttons in two equal columns, large. Before, they were small and at the end."),
+    ],
+  },
+  {
     version: "0.11.0",
     date: "2026-11-05",
     summary: "Parts for reports and dashboards. Two visible changes for existing projects: a Stat tile now sizes its value by its own width, and a row header in a table now looks like a normal cell.",

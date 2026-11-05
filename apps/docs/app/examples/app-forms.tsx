@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, Download, Ellipsis, Printer, RefreshCw } from "lucide-react";
 import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SettingsRow, SettingsSection, Stack, Switch, Textarea, toast } from "@percentsa/ui";
+import { Card, FormBar, Money, PinPad, Text } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 // The recipes show the layout only: the forms send nothing.
@@ -384,5 +385,169 @@ export function FilterBarCollapseExample() {
         </Button>
       }
     />
+  );
+}
+
+/** A form page: the fields in a card and the bar at the end. The box scrolls, so the bar sticks to its bottom as it would to the window. */
+export function FormBarExample() {
+  const t = useT();
+  const [count, setCount] = useState(3);
+  return (
+    <form noValidate onSubmit={noSubmit} className="h-80 w-full max-w-3xl overflow-auto rounded-card border border-line bg-bg">
+      <div className="grid gap-4 p-4">
+        <Card title={t("Stocktake", "الجرد")}>
+          <Stack gap={4}>
+            <Field label={t("Warehouse", "المستودع")}>
+              <Input defaultValue={t("Main warehouse", "المستودع الرئيسي")} />
+            </Field>
+            <Field label={t("Products that changed", "المنتجات التي تغيّرت")}>
+              <Input inputMode="numeric" dir="ltr" value={count} onChange={(e) => setCount(Number(e.target.value.replace(/\D/g, "")) || 0)} />
+            </Field>
+            <Field label={t("Note", "ملاحظة")} optional>
+              <Textarea rows={5} />
+            </Field>
+          </Stack>
+        </Card>
+      </div>
+      <FormBar
+        summary={
+          <>
+            {t("Products that change: ", "منتجات ستتغير: ")}
+            <b>{count}</b>
+          </>
+        }
+      >
+        <Button variant="secondary">{t("Cancel", "إلغاء")}</Button>
+        <Button type="submit">{t("Save stocktake", "حفظ الجرد")}</Button>
+      </FormBar>
+    </form>
+  );
+}
+
+/** A bar with a money summary and no stickiness, as at the end of a short sheet form. */
+export function FormBarTotalExample() {
+  const t = useT();
+  return (
+    <FormBar
+      sticky={false}
+      className="w-full max-w-3xl rounded-card border"
+      summary={
+        <>
+          {t("Total: ", "الإجمالي: ")}
+          <b>
+            <Money amount={1150} decimals={2} />
+          </b>
+        </>
+      }
+    >
+      <Button variant="secondary">{t("Cancel", "إلغاء")}</Button>
+      <Button type="submit">{t("Create quote", "إنشاء العرض")}</Button>
+    </FormBar>
+  );
+}
+
+/** A device lock: 1234 is the code in this example; other codes show the error. */
+export function PinPadExample() {
+  const t = useT();
+  const [tries, setTries] = useState(3);
+  const [open, setOpen] = useState(false);
+  return (
+    <Stack gap={4} className="w-full max-w-xs items-center">
+      <Text tone="muted">{open ? t("Unlocked", "تم الفتح") : t("Enter the lock code", "أدخل رمز القفل")}</Text>
+      <PinPad
+        label={t("Enter the lock code", "أدخل رمز القفل")}
+        disabled={open}
+        error={tries < 3 && !open ? (tries > 0 ? t(`Wrong code. ${tries} tries left`, `رمز غير صحيح، بقيت ${tries} محاولات`) : t("Locked. Ask the office.", "مقفل. تواصل مع المكتب.")) : undefined}
+        onStart={() => undefined}
+        onComplete={(pin) => {
+          if (pin === "1234") setOpen(true);
+          else setTries((n) => Math.max(0, n - 1));
+        }}
+      />
+      {open && (
+        <Button variant="secondary" size="sm" onClick={() => (setOpen(false), setTries(3))}>
+          {t("Lock again", "قفل مرة أخرى")}
+        </Button>
+      )}
+    </Stack>
+  );
+}
+
+/** Six digits, a slow check (the keys are off while it runs), and a note that drops at the first digit. */
+export function PinPadCashierExample() {
+  const t = useT();
+  const [note, setNote] = useState<string | null>(null);
+  return (
+    <div className="w-full max-w-xs">
+      <PinPad
+        length={6}
+        label={t("Cashier code", "رمز الكاشير")}
+        error={note}
+        onStart={() => setNote(null)}
+        onComplete={async () => {
+          await new Promise((r) => setTimeout(r, 900));
+          setNote(t("This code is not a cashier code", "هذا الرمز ليس رمز كاشير"));
+        }}
+      />
+    </div>
+  );
+}
+
+/** Blocked: the button stays, disabled, with the reason above it. Danger and cancelLabel for a destructive sheet from the bottom. */
+export function FormSheetBlockedExample() {
+  const t = useT();
+  const [paid, setPaid] = useState(false);
+  const [done, setDone] = useState<string | null>(null);
+  return (
+    <div className="flex flex-wrap gap-3">
+      <FormSheet
+        side="bottom"
+        trigger={<Button variant="secondary">{t("Complete the job", "إنهاء المهمة")}</Button>}
+        title={t("Complete the job", "إنهاء المهمة")}
+        description={t("The customer is told that the car is ready.", "يُبلَّغ العميل أن السيارة جاهزة.")}
+        submitLabel={t("Complete", "إنهاء")}
+        blocked={paid ? null : t("A machining charge is not paid. Pay it or delete it before you complete.", "رسوم التشغيل غير مدفوعة. ادفعها أو احذفها قبل الإنهاء.")}
+        onSubmit={(e) => (e.preventDefault(), setDone(t("Job completed", "اكتملت المهمة")))}
+      >
+        <Checkbox checked={paid} onCheckedChange={(v) => setPaid(v === true)} label={t("The machining charge is paid", "رسوم التشغيل مدفوعة")} />
+      </FormSheet>
+      <FormSheet
+        side="bottom"
+        trigger={<Button variant="secondary">{t("Cancel the appointment", "إلغاء الموعد")}</Button>}
+        title={t("Cancel the appointment", "إلغاء الموعد")}
+        description={t("The office is told. You cannot undo this.", "يُبلَّغ المكتب. لا يمكنك التراجع.")}
+        cancelLabel={t("Go back", "تراجع")}
+        submitLabel={t("Cancel the appointment", "إلغاء الموعد")}
+        danger
+        onSubmit={(e) => (e.preventDefault(), setDone(t("Appointment cancelled", "أُلغي الموعد")))}
+      >
+        <Field label={t("Reason", "السبب")}>
+          <Input />
+        </Field>
+      </FormSheet>
+      {done && <Text tone="muted" className="self-center">{done}</Text>}
+    </div>
+  );
+}
+
+/** A document made from another document opens in a large sheet. */
+export function FormSheetLargeExample() {
+  const t = useT();
+  return (
+    <FormSheet
+      size="lg"
+      trigger={<Button variant="secondary">{t("Convert to order", "تحويل إلى طلب")}</Button>}
+      title={t("Convert to order", "تحويل إلى طلب")}
+      description={t("The quote lines become the lines of the order.", "تصبح بنود العرض بنود الطلب.")}
+      submitLabel={t("Create the order", "إنشاء الطلب")}
+      onSubmit={noSubmit}
+    >
+      <Field label={t("Delivery date", "تاريخ التسليم")}>
+        <Input type="date" dir="ltr" />
+      </Field>
+      <Field label={t("Note", "ملاحظة")} optional>
+        <Textarea />
+      </Field>
+    </FormSheet>
   );
 }
