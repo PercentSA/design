@@ -49,9 +49,28 @@ export const TableRow = ({ className, ...rest }: HTMLAttributes<HTMLTableRowElem
 
 type Align = { align?: TableAlign };
 
-/** A column header (`scope="col"` unless set). */
-export const TableHead = ({ align = "start", className, ...rest }: Omit<ThHTMLAttributes<HTMLTableCellElement>, "align"> & Align) => (
-  <th scope="col" className={cn("h-10 px-3 text-xs font-medium whitespace-nowrap text-fg-3", ALIGN[align], className)} {...rest} />
+/**
+ * A column header (`scope="col"` unless set). `scope="row"` is a row header and looks like a body cell (py-3, text-sm,
+ * text-fg, normal weight, wraps). `wrap`: the header text may wrap and the height follows it.
+ */
+export const TableHead = ({
+  align = "start",
+  scope = "col",
+  wrap,
+  className,
+  ...rest
+}: Omit<ThHTMLAttributes<HTMLTableCellElement>, "align"> & Align & { wrap?: boolean }) => (
+  <th
+    scope={scope}
+    className={cn(
+      scope === "row"
+        ? "px-3 py-3 text-sm font-normal text-fg"
+        : cn(wrap ? "py-2" : "h-10", "px-3 text-xs font-medium", !wrap && "whitespace-nowrap", "text-fg-3"),
+      ALIGN[align],
+      className,
+    )}
+    {...rest}
+  />
 );
 
 /** Numbers: `align="end"` (adds tabular digits, so they line up). */

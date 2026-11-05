@@ -73,8 +73,10 @@ export type DataTableProps<Row> = {
   rowActions?: (row: Row) => MenuItem[];
   /** Below 768 px each row is a card: the first cell is its title, and the other cells show their header. Default false. */
   cards?: boolean;
-  /** `compact` for dense lists: cell py-2, header row h-9, card rows p-3 with gap-y-1. Default `default`. */
-  density?: "default" | "compact";
+  /** `compact` for dense lists: cell py-2, header row h-9, card rows p-3 with gap-y-1. `print` for a printed report: cells
+   *  text-xs px-1 py-1, header row h-8 px-1 with wrapping text, no scroll box (overflow visible), no cards, no sticky header;
+   *  totals and group rows follow. The caller leaves out pages and row links. Default `default`. */
+  density?: "default" | "compact" | "print";
   /** Keys of columns not shown (from ColumnsMenu). */
   hiddenColumns?: string[];
   /** Shows a "Rows per page" choice. Controlled: set `pageSize` in `onPageSizeChange`. A change goes to page 1. */
@@ -131,7 +133,7 @@ export function DataTable<Row>({
   empty,
   rowHref,
   rowActions,
-  cards,
+  cards: cardsProp,
   density = "default",
   hiddenColumns,
   pageSizeOptions,
@@ -207,9 +209,12 @@ export function DataTable<Row>({
   const colSpan = columns.length + (selectable ? 1 : 0) + (rowActions ? 1 : 0);
   // The actions cell joins the column cells (no new child slot), so tables without rowActions render as before.
   const withActions = (cells: ReactNode[], cell: () => ReactNode) => (rowActions ? [...cells, cell()] : cells);
+  const print = density === "print";
   const compact = density === "compact";
-  const cellY = compact ? "py-2" : undefined;
-  const headH = compact ? "h-9" : undefined;
+  // A printed table is one block of rows: no cards.
+  const cards = cardsProp && !print;
+  const cellY = compact ? "py-2" : print ? "px-1 py-1 text-xs" : undefined;
+  const headH = compact ? "h-9" : print ? "h-8 px-1" : undefined;
   const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k > 0 ? c.cardSlot : undefined);
   const hasSlots = columns.some((c, k) => slotted(k, c));
   const hasMeta = columns.some((c, k) => slotted(k, c) === "meta");
@@ -341,7 +346,7 @@ export function DataTable<Row>({
             {values[c.key] ?? (k === 0 ? t(label) : null)}
           </TableCell>
         )),
-        () => <TableCell key={ACTIONS_KEY} />,
+        () => <TableCell key={ACTIONS_KEY} className={cellY} />,
       )}
     </TableRow>
   );
@@ -352,13 +357,13 @@ export function DataTable<Row>({
         caption={caption}
         hideCaption={hideCaption}
         aria-busy={loading || undefined}
-        className={cn(cards && "max-md:[&>table]:block", stickyHeader && "max-h-[70dvh] overflow-auto")}
+        className={cn(cards && "max-md:[&>table]:block", print ? "overflow-visible" : stickyHeader && "max-h-[70dvh] overflow-auto")}
       >
         {/* z-sticky: above the row controls that sit over a row link (z-1). */}
-        <TableHeader className={cn(stickyHeader && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "max-md:sr-only") || undefined}>
+        <TableHeader className={cn(stickyHeader && !print && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "max-md:sr-only") || undefined}>
           <TableRow>
             {selectable && (
-              <TableHead className={cn("w-10", headH)}>
+              <TableHead wrap={print} className={cn("w-10", headH)}>
                 <Checkbox
                   className="gap-0 align-middle"
                   label={<span className="sr-only">{s.selectAll}</span>}
@@ -376,6 +381,7 @@ export function DataTable<Row>({
                   <TableHead
                     key={c.key}
                     align={c.align}
+                    wrap={print}
                     className={headH}
                     style={c.width ? { width: c.width } : undefined}
                     aria-sort={active === "asc" ? "ascending" : active === "desc" ? "descending" : undefined}
@@ -392,7 +398,7 @@ export function DataTable<Row>({
                 );
               }),
               () => (
-                <TableHead key={ACTIONS_KEY} className={cn("w-10", headH)}>
+                <TableHead key={ACTIONS_KEY} wrap={print} className={cn("w-10", headH)}>
                   <span className="sr-only">{s.rowActions}</span>
                 </TableHead>
               ),
@@ -403,7 +409,7 @@ export function DataTable<Row>({
           [...groups].map(([key, members], g) => (
             <TableBody key={key} className={bodyClass}>
               <TableRow>
-                <TableHead scope="rowgroup" colSpan={colSpan} className={cn("bg-surface text-sm text-fg", headH)}>
+                <TableHead scope="rowgroup" wrap={print} colSpan={colSpan} className={cn("bg-surface text-sm text-fg", print && "text-xs", headH)}>
                   {groupHeader ? groupHeader(key, members) : key}
                 </TableHead>
               </TableRow>
