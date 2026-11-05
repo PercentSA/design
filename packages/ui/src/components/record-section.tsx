@@ -24,11 +24,12 @@ export function RecordSection({
   items: { term: ReactNode; details: ReactNode }[];
   action?: ReactNode;
   headingLevel?: 2 | 3;
-  /** `columns` (default): side by side from 768 px of the screen. `auto`: when the section itself is 28rem wide or more. */
-  layout?: "columns" | "auto";
+  /** `columns` (default): side by side from 768 px of the screen. `auto`: when the section itself is 28rem wide or more.
+   *  `stack`: term above details (with `cols`, for short facts such as money rows). */
+  layout?: "stack" | "columns" | "auto";
   /** `compact` for dense records. */
   density?: "default" | "compact";
-  /** 2 or 3: the facts flow in columns (each at least 9rem of the section), term above details; replaces `layout`. */
+  /** 2 or 3: the facts flow in columns; `layout` still sets each pair (see DescriptionList). */
   cols?: 1 | 2 | 3;
   className?: string;
 }) {

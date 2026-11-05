@@ -467,6 +467,9 @@ export function DescriptionListColsExample() {
       <Card title={t("The same list in a narrow card", "القائمة نفسها في بطاقة ضيقة")} headingLevel={4} density="compact">
         <DescriptionList cols={2} density="compact" items={items.slice(0, 4)} />
       </Card>
+      <Card title={t("2 columns, term beside details", "عمودان، المصطلح بجانب تفاصيله")} headingLevel={4} density="compact" className="sm:col-span-2">
+        <DescriptionList cols={2} layout="columns" density="compact" items={items} />
+      </Card>
     </div>
   );
 }
