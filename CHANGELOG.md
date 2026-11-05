@@ -2,6 +2,11 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.14.3
+
+- [Button](https://design.percent.sa/en/components/button): a `link` button with `aria-pressed="true"` is bold with a full underline, so the chosen item of a list of link buttons shows.
+- [DataTable](https://design.percent.sa/en/components/data-table): with `cards`, a wide group or total row no longer makes the phone cards wider than the table box.
+
 ## 0.14.2
 
 - [PhoneInput](https://design.percent.sa/en/components/phone-input): in Arabic the country code now sits on the left of the number, as in English (a phone number reads left to right). Labels and messages keep the page direction. A visible change for Arabic pages.

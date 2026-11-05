@@ -5,7 +5,8 @@ const VARIANT = {
   secondary: "border border-line-strong text-fg-2 hover:border-fg-3 hover:text-fg",
   ghost: "text-fg-2 hover:bg-surface-2 hover:text-fg",
   danger: "bg-danger text-danger-fg font-semibold hover:bg-danger/85",
-  link: "text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg",
+  // aria-pressed: the chosen item of a list of link buttons (an offer or a driver whose rows show) is marked.
+  link: "text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg aria-pressed:font-semibold aria-pressed:decoration-fg",
 } as const;
 
 // sm, md and lg follow the density tokens (smaller in data-density="compact").
