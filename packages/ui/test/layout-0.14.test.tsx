@@ -165,26 +165,26 @@ describe("DescriptionList cols", () => {
     expect(one.querySelector("dl")!.className).toBe("divide-y divide-line @container");
   });
 
-  test("cols={2}: the list is the container; pairs are 100% wide, half from 18rem; stacked term above details", async () => {
+  test("cols={2}: the list is the container; pairs are 100% wide, half from 16rem; stacked term above details", async () => {
     const el = await mount(<DescriptionList items={ROWS} cols={2} />);
     const dl = el.querySelector("dl")!;
     expect(dl.className).toContain("@container");
     expect(dl.className).toContain("flex-wrap");
     expect(dl.className).not.toContain("divide-y");
     const c = rows(el)[0]!.className;
-    for (const k of ["basis-full", "@min-[18rem]:basis-1/2", "grid", "py-3", "grow", "min-w-0"]) expect(c.split(" ")).toContain(k);
-    expect(c).not.toContain("27rem");
+    for (const k of ["basis-full", "@min-[16rem]:basis-1/2", "grid", "py-3", "grow", "min-w-0"]) expect(c.split(" ")).toContain(k);
+    expect(c).not.toContain("24rem");
     expect(c).not.toMatch(/(^| )(md|@md):/);
     // term above details: both in one grid cell column
     expect(rows(el)[0]!.className).not.toContain("grid-cols");
     expect([...rows(el)[0]!.children].map((n) => n.tagName)).toEqual(["DT", "DD"]);
   });
 
-  test("cols={3}: a third from 27rem", async () => {
+  test("cols={3}: a third from 24rem", async () => {
     const el = await mount(<DescriptionList items={ROWS} cols={3} />);
     const c = rows(el)[0]!.className.split(" ");
-    expect(c).toContain("@min-[27rem]:basis-1/3");
-    expect(c).toContain("@min-[18rem]:basis-1/2");
+    expect(c).toContain("@min-[24rem]:basis-1/3");
+    expect(c).toContain("@min-[16rem]:basis-1/2");
   });
 
   test("lines: the first row has no line at any width; every later row has one across all its pairs", async () => {
@@ -192,15 +192,15 @@ describe("DescriptionList cols", () => {
     expect(two[0]).not.toContain("border-t");
     // Pair 1 is in the first row once there are two columns.
     expect(two[1]).toContain("border-t");
-    expect(two[1]).toContain("@min-[18rem]:border-t-0");
+    expect(two[1]).toContain("@min-[16rem]:border-t-0");
     for (const i of [2, 3, 4]) {
       expect(two[i]).toContain("border-t");
       expect(two[i]!.some((k) => k.endsWith("border-t-0"))).toBe(false);
     }
     const three = rows(await mount(<DescriptionList items={ROWS} cols={3} />)).map((r) => r.className.split(" "));
-    expect(three[1]).toContain("@min-[18rem]:border-t-0");
-    expect(three[2]).toContain("@min-[27rem]:border-t-0");
-    expect(three[2]).not.toContain("@min-[18rem]:border-t-0");
+    expect(three[1]).toContain("@min-[16rem]:border-t-0");
+    expect(three[2]).toContain("@min-[24rem]:border-t-0");
+    expect(three[2]).not.toContain("@min-[16rem]:border-t-0");
     for (const i of [3, 4]) expect(three[i]!.some((k) => k.endsWith("border-t-0"))).toBe(false);
   });
 
@@ -221,13 +221,13 @@ describe("DescriptionList cols", () => {
     const cols2 = rows(await mount(<DescriptionList items={ROWS} cols={2} layout="columns" />)).map((r) => r.className.split(" "));
     expect(cols2[0]).toContain("@min-[18rem]:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]");
     expect(cols2[0]).toContain("@min-[36rem]:basis-1/2");
-    expect(cols2[0]).not.toContain("@min-[18rem]:basis-1/2");
+    expect(cols2[0]).not.toContain("@min-[16rem]:basis-1/2");
     expect(cols2[1]).toContain("@min-[36rem]:border-t-0");
     const cols3 = rows(await mount(<DescriptionList items={ROWS} cols={3} layout="columns" />)).map((r) => r.className.split(" "));
     expect(cols3[0]).toContain("@min-[54rem]:basis-1/3");
     expect(cols3[2]).toContain("@min-[54rem]:border-t-0");
     const auto2 = rows(await mount(<DescriptionList items={ROWS} cols={2} layout="auto" />))[0]!.className.split(" ");
-    expect(auto2).toContain("@min-[18rem]:basis-1/2");
+    expect(auto2).toContain("@min-[16rem]:basis-1/2");
     expect(auto2).toContain("@min-[56rem]:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]");
     const auto3 = rows(await mount(<DescriptionList items={ROWS} cols={3} layout="auto" />))[0]!.className.split(" ");
     expect(auto3).toContain("@min-[84rem]:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]");
@@ -247,7 +247,7 @@ describe("DescriptionList cols", () => {
   test("RecordSection passes cols through (and Not set still shows)", async () => {
     const el = await mount(<RecordSection title="Cash" cols={2} layout="stack" items={[{ term: "A", details: "1" }, { term: "B", details: null }]} />);
     expect(el.querySelector("dl")!.className).toContain("flex-wrap");
-    expect(rows(el)[0]!.className).toContain("@min-[18rem]:basis-1/2");
+    expect(rows(el)[0]!.className).toContain("@min-[16rem]:basis-1/2");
     expect(rows(el)[0]!.className).not.toContain("grid-cols");
     // Its default layout (columns) stays: the term beside its details.
     const beside = await mount(<RecordSection title="Shift" cols={2} items={[{ term: "A", details: "1" }]} />);
