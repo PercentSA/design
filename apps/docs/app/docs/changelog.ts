@@ -17,6 +17,16 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.14.0",
+    date: "2026-11-05",
+    summary: "Two layout options for record pages: a grid where cards move up into the free space, and description lists in two or three columns. Nothing changes for existing projects.",
+    changes: [
+      c("new", "[Grid](grid) has a masonry option. On a record page with a long details card next to a short refunds card, each card moves up into the free space of its column, so there are no big gaps between rows. The reading and tab order stay the page order. The server sends a normal grid and the browser arranges the cards after the page loads. Use the grid gap for the space, not margins. Cards keep the height of their content, and a printed page shows a normal grid."),
+      c("new", "[DescriptionList](description-list) can flow in two or three columns (cols), with the term above its details: good for short money rows such as a cash summary. A column is at least 9rem of the list itself, so the same list in a narrow card or on a phone shows fewer columns, down to one. The lines run across each row, and it works with compact density. The layout option still sets each pair: term above its details, beside them (in wider columns), or beside them when there is room."),
+      c("new", "[RecordSection](record-section) passes cols to its list, and can show its facts stacked (layout stack)."),
+    ],
+  },
+  {
     version: "0.13.0",
     date: "2026-11-05",
     summary: "Parts for tills, work boards and counter tablets: an action bar, a digit keypad, a Kanban that works as a status board with server counts and pages, and a touch density. One visible change for existing projects: a Kanban column with no cards now says \"No items\".",

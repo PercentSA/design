@@ -72,3 +72,4 @@ Shared: `data: Record<string, number | string>[]`, `x: string` (key), `series: {
 ## Docs
 
 New groups: Data display, Boards and calendars, Charts, App patterns, Business. One page per component with examples in EN and AR; the overview page `/:lang/all` picks them up.
+- 0.14.0 layout options: `Grid` `masonry?: boolean` (default false; the server renders a normal grid; after mount `data-masonry`, 1 px rows, no row gap, `grid-row-end: span N` on each child from its height + the column gap, one ResizeObserver on the children, re-measured on font load and when a child is added or removed; `gap`, not margins). `DescriptionList` and `RecordSection` `cols?: 1 | 2 | 3` (default 1; pairs stay stacked and flow in N columns by a container query on the list: 2 from 18rem, 3 from 27rem; `cols` above 1 replaces `layout`).

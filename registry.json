@@ -1126,7 +1126,8 @@
         "radix-ui"
       ],
       "registryDependencies": [
-        "@percentsa/cn"
+        "@percentsa/cn",
+        "@percentsa/masonry-grid"
       ],
       "files": [
         {
@@ -1239,6 +1240,27 @@
           "List",
           "ListItem",
           "DescriptionList"
+        ]
+      }
+    },
+    {
+      "name": "masonry-grid",
+      "type": "registry:ui",
+      "title": "MasonryGrid",
+      "description": "@percentsa/ui: MasonryGrid",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/masonry-grid.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/masonry-grid.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "MasonryGrid"
         ]
       }
     },
