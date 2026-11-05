@@ -127,6 +127,17 @@ describe("special inputs render", () => {
     expect(out).toContain('aria-label="Country calling code"');
     expect(out).toContain("SA +966");
   });
+  test("PhoneInput: the country code is on the left in Arabic too (the row is ltr); the message keeps the page direction", () => {
+    const out = ar(<PhoneInput value="12" onValueChange={noop} country="SA" onCountryChange={noop} />);
+    const row = out.match(/<div class="flex gap-2" dir="ltr">([\s\S]*)<\/div>/);
+    expect(row).not.toBeNull();
+    expect(row![1]!.indexOf('aria-label="رمز الدولة"')).toBeGreaterThanOrEqual(0);
+    expect(row![1]!.indexOf('aria-label="رمز الدولة"')).toBeLessThan(row![1]!.indexOf('type="tel"'));
+    // The picker shows "SA +966 ⌄" as in English (its trigger is ltr).
+    expect(row![1]).toContain("[direction:ltr]");
+    // The outer box has no dir, so labels and messages follow the page.
+    expect(out.startsWith('<div class="grid gap-2.5">')).toBe(true);
+  });
   test("Combobox is an ARIA combobox", () => {
     const out = html(<Combobox options={[{ value: "ruh", label: "Riyadh" }]} value="ruh" onValueChange={noop} />);
     expect(out).toContain('role="combobox"');

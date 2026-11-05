@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.14.2
+
+- [PhoneInput](https://design.percent.sa/en/components/phone-input): in Arabic the country code now sits on the left of the number, as in English (a phone number reads left to right). Labels and messages keep the page direction. A visible change for Arabic pages.
+
 ## 0.14.1
 
 - [DescriptionList](https://design.percent.sa/en/components/description-list): with `cols` and `layout` `stack` or `auto`, a column is at least 8rem (was 9rem): 2 columns from 16rem of the list, 3 from 24rem. A card in a three-column record grid at 1280 px (about 18rem wide) now shows its short money rows in 2 columns. `layout="columns"` is unchanged.
