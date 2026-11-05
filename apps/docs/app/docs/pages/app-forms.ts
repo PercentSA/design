@@ -6,9 +6,9 @@ export const pages: DocPage[] = [
     "FilterBar",
     "app",
     "FilterBar, type FilterDef, type FilterValue",
-    ["FilterBarExample", "FilterBarToolbarExample"],
-    "Search and filter menus above a list or table. Chosen options show as removable tags, and “Clear filters” removes them all. actions puts the list's other controls (date range, columns, refresh, “⋯”) at the end of the first row, so one bar is the list toolbar.",
-    "بحث وقوائم تصفية فوق قائمة أو جدول. تظهر الخيارات المحددة وسومًا يمكن إزالتها، ويزيلها زر «مسح عوامل التصفية» كلها. الخاصية actions تضع عناصر التحكم الأخرى للقائمة (الفترة، والأعمدة، والتحديث، و«⋯») في آخر الصف الأول، فيصبح الشريط الواحد شريط أدوات القائمة.",
+    ["FilterBarExample", "FilterBarToolbarExample", "FilterBarCollapseExample"],
+    "Search and filter menus above a list or table. Chosen options show as removable tags, and “Clear filters” removes them all. actions puts the list's other controls (date range, columns, refresh, “⋯”) at the end of the first row, so one bar is the list toolbar. collapseOnPhone folds the filter menus below 768 px into one “Filters” button with the count of chosen values; it opens a bottom sheet with one group per filter (checkboxes, or radios when not multiple) and “Clear filters”. A change applies at once. Search, actions and the tags stay on the bar; with no filters there is no button.",
+    "بحث وقوائم تصفية فوق قائمة أو جدول. تظهر الخيارات المحددة وسومًا يمكن إزالتها، ويزيلها زر «مسح عوامل التصفية» كلها. الخاصية actions تضع عناصر التحكم الأخرى للقائمة (الفترة، والأعمدة، والتحديث، و«⋯») في آخر الصف الأول، فيصبح الشريط الواحد شريط أدوات القائمة. تطوي الخاصية collapseOnPhone قوائم التصفية تحت 768 بكسل في زر واحد «عوامل التصفية» مع عدد القيم المختارة؛ ويفتح ورقة سفلية فيها مجموعة لكل عامل (مربعات اختيار، أو أزرار اختيار واحد إن لم يكن multiple) وزر «مسح عوامل التصفية». ويُطبَّق التغيير فورًا. ويبقى البحث وactions والوسوم في الشريط؛ وإن لم توجد عوامل فلا يظهر الزر.",
   ),
   p(
     "settings",

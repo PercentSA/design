@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FolderOpen } from "lucide-react";
-import { Alert, Badge, Button, EmptyState, Forbidden, Inline, NotFound, Progress, ProgressRing, Skeleton, Spinner, Stack, StatusBadge, StatusDot, Tag } from "@percentsa/ui";
+import { Alert, Badge, Button, Card, EmptyState, Forbidden, Inline, NotFound, Progress, ProgressRing, Skeleton, Spinner, Stack, StatusBadge, StatusDot, Tag } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function AlertExample() {
@@ -100,6 +100,16 @@ export function EmptyStateExample() {
         action={<Button>{t("Start a project", "ابدأ مشروعًا")}</Button>}
       />
     </div>
+  );
+}
+
+/** `variant="plain"`: no frame, for an empty state inside a card (DataTable uses it for its own). */
+export function EmptyStatePlainExample() {
+  const t = useT();
+  return (
+    <Card className="w-full max-w-lg" title={t("Orders", "الطلبات")}>
+      <EmptyState variant="plain" title={t("No orders yet", "لا توجد طلبات بعد")} />
+    </Card>
   );
 }
 
