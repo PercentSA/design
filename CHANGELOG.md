@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.14.1
+
+- [DescriptionList](https://design.percent.sa/en/components/description-list): with `cols` and `layout` `stack` or `auto`, a column is at least 8rem (was 9rem): 2 columns from 16rem of the list, 3 from 24rem. A card in a three-column record grid at 1280 px (about 18rem wide) now shows its short money rows in 2 columns. `layout="columns"` is unchanged.
+
 ## 0.14.0
 
 Two layout options for record pages. Both are optional and off by default. Nothing changes for existing projects.

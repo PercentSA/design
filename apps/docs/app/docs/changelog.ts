@@ -17,6 +17,14 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.14.1",
+    date: null,
+    summary: "Description lists in columns fit narrower cards.",
+    changes: [
+      c("better", "[DescriptionList](description-list) with cols: a column of stacked pairs is now at least 8rem (was 9rem), so a card in a three-column record grid shows its short money rows in 2 columns. Lists with the term beside its details are unchanged."),
+    ],
+  },
+  {
     version: "0.14.0",
     date: "2026-11-05",
     summary: "Two layout options for record pages: a grid where cards move up into the free space, and description lists in two or three columns. Nothing changes for existing projects.",
