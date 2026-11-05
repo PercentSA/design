@@ -245,7 +245,7 @@ function useSheetDrag(side: keyof typeof SIDE) {
   return { close, content: { ref, onPointerDown, onPointerMove, onPointerUp: end, onPointerCancel: end, onLostPointerCapture } };
 }
 
-/** A panel that slides in from a side (filters, details, phone menus). `end` is right in English, left in Arabic.
+/** A panel that slides in from a side (filters, details, phone menus). `end` is right in English, left in Arabic. `size="lg"` is wider (56rem).
     On touch it closes with a drag toward its side (bottom sheets: from the handle and header, or the content when scrolled to the top).
     Put `data-sheet-no-drag` on a part with its own drag (a map, a signature pad). */
 export function Sheet({
@@ -253,10 +253,20 @@ export function Sheet({
   title,
   description,
   side = "end",
+  size = "md",
   children,
   className,
   ...state
-}: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; side?: keyof typeof SIDE; children?: ReactNode; className?: string }) {
+}: OpenState & {
+  trigger?: ReactNode;
+  title: ReactNode;
+  description?: ReactNode;
+  side?: keyof typeof SIDE;
+  /** `lg`: min(100%, 56rem) instead of min(100%, 28rem), for a document made from another document. Side start/end only. */
+  size?: "md" | "lg";
+  children?: ReactNode;
+  className?: string;
+}) {
   const s = useStrings();
   const drag = useSheetDrag(side);
   const head = <DialogHead title={title} description={description} Title={RadixDialog.Title} Description={RadixDialog.Description} />;
@@ -269,7 +279,7 @@ export function Sheet({
           data-side={side}
           {...drag.content}
           {...(description ? {} : { "aria-describedby": undefined })}
-          className={cn("p-sheet fixed z-(--p-z-overlay) flex flex-col gap-6 overflow-auto border-line bg-surface-2 p-6 text-fg shadow-overlay", SIDE[side], className)}
+          className={cn("p-sheet fixed z-(--p-z-overlay) flex flex-col gap-6 overflow-auto border-line bg-surface-2 p-6 text-fg shadow-overlay", SIDE[side], size === "lg" && side !== "bottom" && "w-[min(100%,56rem)]", className)}
         >
           {side === "bottom" ? (
             // The browser never pans here, so a drag on the handle or header always reaches the sheet.

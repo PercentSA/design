@@ -41,6 +41,8 @@ const en = {
   /** PhoneInput country names. */
   countries: { SA: "Saudi Arabia", AE: "UAE", QA: "Qatar", KW: "Kuwait", BH: "Bahrain", OM: "Oman" },
   otpDigit: (n: number, total: number) => `Digit ${n} of ${total}`,
+  /** PinPad: the clear key removes the last digit; the progress is a count, never the digits. */
+  pinPad: { clear: "Clear", progress: (n: number, total: number) => `${n} of ${total}` },
   previousMonth: "Previous month",
   nextMonth: "Next month",
   today: "Today",
@@ -180,6 +182,15 @@ const en = {
     exclVat: "excl. VAT",
     returned: (n: number) => `Returned ${n}`,
     kitParts: "Kit parts",
+    /** LineItemsEditor. */
+    add: "Add line",
+    line: (n: number) => `Line ${n}`,
+    remove: (n: number) => `Remove line ${n}`,
+    details: "Line details",
+    number: "#",
+    added: (n: number) => `Line ${n} added`,
+    removed: (n: number) => `Line ${n} removed`,
+    more: "Line actions",
   },
   address: {
     building: "Building number",
@@ -259,6 +270,7 @@ const ar: Strings = {
   country: "رمز الدولة",
   countries: { SA: "السعودية", AE: "الإمارات", QA: "قطر", KW: "الكويت", BH: "البحرين", OM: "عمان" },
   otpDigit: (n, total) => `الرقم ${n} من ${total}`,
+  pinPad: { clear: "مسح", progress: (n, total) => `${n} من ${total}` },
   previousMonth: "الشهر السابق",
   nextMonth: "الشهر التالي",
   today: "اليوم",
@@ -396,6 +408,14 @@ const ar: Strings = {
     exclVat: "قبل الضريبة",
     returned: (n) => `مُرتجع ${n}`,
     kitParts: "مكونات الطقم",
+    add: "إضافة بند",
+    line: (n) => `البند ${n}`,
+    remove: (n) => `حذف البند ${n}`,
+    details: "تفاصيل البند",
+    number: "#",
+    added: (n) => `أُضيف البند ${n}`,
+    removed: (n) => `حُذف البند ${n}`,
+    more: "إجراءات البند",
   },
   address: {
     building: "رقم المبنى",
