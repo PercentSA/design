@@ -24,7 +24,7 @@ describe("Stat tile container", () => {
 
   test("the tile is the container, and the size classes are on its children", () => {
     const tile = stat().firstElementChild!;
-    expect(hasClass(tile, "@container", "extra", "border")).toBe(true);
+    expect(hasClass(tile, "@container", "min-w-36", "extra", "border")).toBe(true);
     // No size class on the container itself: a container variant does not apply to the element that is the container.
     expect(tile.className).not.toMatch(/text-|@\[/);
     const value = [...tile.querySelectorAll("div")].find((d) => d.className.includes("tabular-nums") && d.className.includes("font-semibold"))!;

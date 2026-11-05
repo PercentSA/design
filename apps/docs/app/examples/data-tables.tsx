@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileText, Globe, LayoutDashboard, Plus, Receipt, Smartphone } from "lucide-react";
-import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, PhoneText, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, toast, useLang } from "@percentsa/ui";
+import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, PhoneText, RiyalSign, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, toast, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function CardExample() {
@@ -38,8 +38,8 @@ export function TableRowHeadersExample() {
       <TableHeader>
         <TableRow>
           <TableHead>{t("Line", "البند")}</TableHead>
-          <TableHead wrap align="end">{t("Amount (⃁)", "المبلغ (⃁)")}</TableHead>
-          <TableHead wrap align="end">{t("VAT amount (⃁)", "مبلغ الضريبة (⃁)")}</TableHead>
+          <TableHead wrap align="end">{t("Amount (", "المبلغ (")}<RiyalSign />)</TableHead>
+          <TableHead wrap align="end">{t("VAT amount (", "مبلغ الضريبة (")}<RiyalSign />)</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -212,7 +212,7 @@ export function DataTablePrintExample() {
     <DataTable
       className="w-full"
       density="print"
-      columns={useInvoiceColumns().map((c) => (c.key === "amount" ? { ...c, header: t("Amount including VAT (⃁)", "المبلغ شاملًا الضريبة (⃁)") } : c))}
+      columns={useInvoiceColumns().map((c) => (c.key === "amount" ? { ...c, header: <>{t("Amount including VAT (", "المبلغ شاملًا الضريبة (")}<RiyalSign />)</> } : c))}
       rows={rows}
       getRowId={(r) => r.id}
       caption={t("Tax documents", "المستندات الضريبية")}

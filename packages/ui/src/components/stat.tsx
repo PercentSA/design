@@ -14,7 +14,8 @@ const ICON = { up: ArrowUp, down: ArrowDown, flat: Minus } as const;
  * A key number (KPI). The change arrow is neutral: `tone="danger"` only when the owner of the data
  * says the change is bad. `chart` is a slot, for example a Sparkline. The tile is a container: the value size and the
  * padding follow the tile width (from 15rem `text-3xl`, from 12rem `text-2xl`, from 10rem `text-xl`, below `text-lg`),
- * so an amount fits a narrow tile in a row of tiles.
+ * so an amount fits a narrow tile in a row of tiles. The tile takes its width from its parent (a grid cell, `flex-1` or a
+ * width); in a parent that sizes to its content it is 9rem wide (`min-w-36`).
  */
 export function Stat({
   label,
@@ -36,7 +37,7 @@ export function Stat({
   const spoken = change && { up: s.increase, down: s.decrease, flat: s.noChange }[change.direction];
   return (
     // The container is the tile; the sizes are on its children (a container variant does not apply to the container itself).
-    <Surface className={cn("@container", className)}>
+    <Surface className={cn("@container min-w-36", className)}>
       <div className="grid content-start gap-3 p-4 @[15rem]:p-5">
       <div className="text-sm text-fg-3">{label}</div>
       <div className="flex items-end justify-between gap-4">

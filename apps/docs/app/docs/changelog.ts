@@ -24,7 +24,7 @@ export const RELEASES: Release[] = [
       c("new", "[PeriodPicker](period-picker) can show preset buttons in its custom range (today, yesterday, last 7 days…), start the week on Saturday, and go back to a period you choose when the custom range is cleared."),
       c("new", "[DataTable](data-table) has density=\"print\" for a printed report: small cells, headers that wrap, no scroll box and no cards, so a wide table fits the page. Total and group rows follow."),
       c("new", "[Table](table) column headers can wrap onto more lines (wrap)."),
-      c("better", "A [Stat](stat) tile now sizes its value and padding by its own width, not the screen. A wide tile looks as before; narrower tiles use smaller text, so an amount with decimals fits four tiles in a row or two on a phone. Padding set with className on the tile no longer changes the inner padding."),
+      c("better", "A [Stat](stat) tile now sizes its value and padding by its own width, not the screen. A wide tile looks as before; narrower tiles use smaller text, so an amount with decimals fits four tiles in a row or two on a phone. The tile takes its width from its parent (a grid cell, flex-1 or a width); in a parent that sizes to its content it is 9rem wide. Padding set with className on the tile no longer changes the inner padding."),
       c("better", "A row header in a [Table](table) (TableHead with scope=\"row\") now looks like a normal cell: normal weight, regular text size and colour, and it wraps. Before, it looked like a column header."),
       c("new", "The [RecordSummary](record-summary) page has a report example: the totals of a period."),
     ],
