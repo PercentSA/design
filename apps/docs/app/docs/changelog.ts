@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.11.0",
-    date: null,
+    date: "2026-11-05",
     summary: "Parts for reports and dashboards. Two visible changes for existing projects: a Stat tile now sizes its value by its own width, and a row header in a table now looks like a normal cell.",
     changes: [
       c("new", "[PeriodPicker](period-picker) can show preset buttons in its custom range (today, yesterday, last 7 days…), start the week on Saturday, and go back to a period you choose when the custom range is cleared."),
