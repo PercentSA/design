@@ -43,6 +43,8 @@ const en = {
   otpDigit: (n: number, total: number) => `Digit ${n} of ${total}`,
   /** PinPad: the clear key removes the last digit; the progress is a count, never the digits. */
   pinPad: { clear: "Clear", progress: (n: number, total: number) => `${n} of ${total}` },
+  /** Keypad: names of the back, decimal point and double zero keys. */
+  keypad: { backspace: "Delete last digit", point: "Decimal point", doubleZero: "Double zero" },
   previousMonth: "Previous month",
   nextMonth: "Next month",
   today: "Today",
@@ -276,6 +278,7 @@ const ar: Strings = {
   countries: { SA: "السعودية", AE: "الإمارات", QA: "قطر", KW: "الكويت", BH: "البحرين", OM: "عمان" },
   otpDigit: (n, total) => `الرقم ${n} من ${total}`,
   pinPad: { clear: "مسح", progress: (n, total) => `${n} من ${total}` },
+  keypad: { backspace: "حذف آخر رقم", point: "الفاصلة العشرية", doubleZero: "صفران" },
   previousMonth: "الشهر السابق",
   nextMonth: "الشهر التالي",
   today: "اليوم",

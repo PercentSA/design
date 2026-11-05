@@ -48,6 +48,8 @@ export function ActionBar({ items, label, className }: { items: ActionBarItem[];
     const el = nav.current;
     if (!el) return;
     const measure = () => {
+      // Not laid out (a server render, a hidden parent): show everything.
+      if (!el.clientWidth) return;
       const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
       const tile = (MIN_TILE_REM + GAP_REM) * rem;
       setFit(Math.max(1, Math.floor((el.clientWidth + GAP_REM * rem) / tile)));

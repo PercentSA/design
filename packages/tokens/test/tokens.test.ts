@@ -69,4 +69,12 @@ describe("tokens", () => {
     expect(json.color.dark.bg.$value).toBe("#000000");
     expect(json.radius.card.$value).toBe("24px");
   });
+  test("touch density: xs control height is 32px everywhere else; touch is 44/48px on a coarse pointer, compact on a fine one", () => {
+    const css = tokensCss();
+    expect(css).toMatch(/:root \{[^}]*--p-control-h-xs: 32px;/);
+    expect(css).toMatch(/\[data-density="compact"\] \{[^}]*--p-control-h-xs: 32px;/);
+    expect(css).toMatch(/\[data-density="touch"\] \{[^}]*--p-control-h: 40px;[^}]*--p-control-h-sm: 32px;[^}]*--p-control-h-xs: 32px;/);
+    expect(css).toMatch(/@media \(pointer: coarse\) \{\s*\[data-density="touch"\] \{[^}]*--p-control-h: 48px;[^}]*--p-control-h-sm: 44px;[^}]*--p-control-h-xs: 44px;/);
+    expect(tokensJson().density.touch["control-h-xs"].$value).toBe("44px");
+  });
 });

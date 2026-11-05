@@ -30,6 +30,36 @@ export function ButtonSizes() {
   );
 }
 
+/** `data-density="touch"` on a counter tablet: on a touch screen the small controls grow to 44 px (a mouse keeps the compact sizes). */
+export function ButtonTouchExample() {
+  const t = useT();
+  return (
+    <Stack gap={3} data-density="touch" className="w-full">
+      <Inline gap={3}>
+        <Button size="sm">{t("Hold", "تعليق")}</Button>
+        <Button size="sm" variant="secondary">
+          {t("Discount", "خصم")}
+        </Button>
+        <Button size="sm" variant="ghost" iconOnly aria-label={t("Add", "إضافة")}>
+          <Plus aria-hidden />
+        </Button>
+        <Toggle aria-label={t("Bold", "عريض")}>
+          <Bold aria-hidden />
+        </Toggle>
+        <SegmentedControl
+          aria-label={t("Price list", "قائمة الأسعار")}
+          value="retail"
+          onValueChange={() => {}}
+          options={[
+            { value: "retail", label: t("Retail", "مفرد") },
+            { value: "wholesale", label: t("Wholesale", "جملة") },
+          ]}
+        />
+      </Inline>
+    </Stack>
+  );
+}
+
 export function ButtonStates() {
   const t = useT();
   const [loading, setLoading] = useState(false);

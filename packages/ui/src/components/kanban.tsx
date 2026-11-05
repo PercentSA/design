@@ -302,7 +302,7 @@ export function Kanban<Card>({
                     </li>
                   );
                 })}
-                {state === "ready" && column.cards.length === 0 && (
+                {state === "ready" && column.cards.length === 0 && slot !== 0 && (
                   <li className="grid flex-1 place-items-center px-2 py-6 text-center text-sm text-fg-3">{column.empty ?? s.noItems}</li>
                 )}
                 {state === "error" && column.cards.length === 0 && (

@@ -7,6 +7,7 @@ import { pages as code } from "./pages/code";
 import { pages as charts } from "./pages/charts";
 import { pages as appShell } from "./pages/app-shell";
 import { pages as appForms } from "./pages/app-forms";
+import { pages as tills } from "./pages/tills";
 import { pages as business } from "./pages/business";
 import { pages as motionText } from "./pages/motion-text";
 import { pages as flip } from "./pages/flip";
@@ -42,7 +43,7 @@ export const PAGES: DocPage[] = [
 
   p("display", "Display", "text", "Display", ["DisplayExample"], "Large page and section titles. Arabic gets weight 700, no negative tracking and a taller line by itself; do not add leading-* or tracking-*.", "عناوين الصفحات والأقسام الكبيرة. تحصل العربية تلقائيًا على وزن 700 وتباعد صفري وسطر أطول؛ لا تضف leading-* أو tracking-*."),
   p("heading", "Heading", "text", "Heading", ["HeadingExample"], "Headings h1–h6. `level` sets the element, `size` can change the look without changing the outline.", "العناوين من h1 إلى h6. يحدد level العنصر، ويغيّر size الشكل دون تغيير بنية الصفحة."),
-  p("text", "Text", "text", "Text", ["TextExample"], "Body text in four sizes and three tones (fg, fg-2, fg-3). All tones pass WCAG AA.", "نص المحتوى بأربعة أحجام وثلاث درجات. كل الدرجات تجتاز معيار WCAG AA."),
+  p("text", "Text", "text", "Text", ["TextExample"], "Body text in four sizes and three tones (fg, fg-2, fg-3). All tones pass WCAG AA. `tone=\"danger\"` is the state colour for a shortfall or a refused state shown as a coloured value or line, not a box.", "نص المحتوى بأربعة أحجام وثلاث درجات. كل الدرجات تجتاز معيار WCAG AA. اللون `tone=\"danger\"` هو لون الحالة لنقص أو حالة مرفوضة تظهر قيمة أو سطرًا ملوّنًا، لا صندوقًا."),
   p("label", "Label", "text", "Label", ["LabelExample"], "Small section label: mono and upper case in English, plain in Arabic.", "عنوان صغير للأقسام: بخط أحادي وأحرف كبيرة بالإنجليزية، وعادي بالعربية."),
   p("link", "Link", "text", "Link", ["LinkExample"], "Text link. `external` opens a new tab safely and tells screen readers. Uses the router link from PercentProvider.", "رابط نصي. يفتح external تبويبًا جديدًا بأمان ويُعلم قارئ الشاشة. يستخدم رابط الموجّه من PercentProvider."),
   p("code-kbd", "Code, Kbd", "text", "Code, Kbd", ["CodeKbdExample"], "Inline code and keys. Always left to right, also inside Arabic text.", "شيفرة ومفاتيح داخل النص. دائمًا من اليسار إلى اليمين حتى داخل النص العربي."),
@@ -63,7 +64,7 @@ export const PAGES: DocPage[] = [
   p("surface", "Surface", "layout", "Surface", ["SurfaceExample"], "Card background: surface, raised or outline, with the radius tokens.", "خلفية البطاقات: عادية أو مرتفعة أو بإطار، مع رموز الانحناء."),
   p("bleed", "Bleed", "layout", "Bleed", ["BleedExample"], "Full width inside a Container: cancels the page gutter.", "عرض كامل داخل Container: يلغي الهامش الجانبي."),
 
-  p("button", "Button", "actions", "Button", ["ButtonVariants", "ButtonSizes", "ButtonStates"], "Primary (one per view), secondary, ghost, danger and link. Loading keeps the width. Icon-only buttons need aria-label (a type error without it).", "أساسي (واحد في كل شاشة) وثانوي وشفاف وخطر ورابط. حالة التحميل تحافظ على العرض. أزرار الأيقونات تحتاج aria-label."),
+  p("button", "Button", "actions", "Button", ["ButtonVariants", "ButtonSizes", "ButtonTouchExample", "ButtonStates"], "Primary (one per view), secondary, ghost, danger and link. Loading keeps the width. Icon-only buttons need aria-label (a type error without it). `size=\"sm\"` (and the small icon button, Toggle, SegmentedControl items, the NumberInput step buttons and menu rows) follows `--p-control-h-xs`: 32 px as before, and 44 px inside `data-density=\"touch\"` on a touch screen.", "أساسي (واحد في كل شاشة) وثانوي وشفاف وخطر ورابط. حالة التحميل تحافظ على العرض. أزرار الأيقونات تحتاج aria-label. يتبع `size=\"sm\"` (وزر الأيقونة الصغير وToggle وعناصر SegmentedControl وأزرار خطوة NumberInput وصفوف القوائم) المتغير `--p-control-h-xs`: 32 بكسل كما كان، و44 بكسل داخل `data-density=\"touch\"` على شاشة اللمس."),
   p("button-group", "ButtonGroup", "actions", "ButtonGroup", ["ButtonGroupExample"], "Related buttons in a labelled group.", "أزرار مترابطة في مجموعة لها اسم."),
   p("toggle", "Toggle", "actions", "Toggle", ["ToggleExample"], "An on/off button (aria-pressed).", "زر تشغيل وإيقاف (aria-pressed)."),
   p("segmented-control", "SegmentedControl, ToggleGroup", "actions", "SegmentedControl, ToggleGroup", ["SegmentedControlExample", "ToggleGroupExample"], "One choice that is always set (SegmentedControl), or several on/off choices (ToggleGroup). In SegmentedControl the fill slides to the chosen option (no slide with reduced motion).", "اختيار واحد محدد دائمًا (SegmentedControl)، أو عدة اختيارات تشغيل وإيقاف (ToggleGroup). في SegmentedControl تنزلق الخلفية إلى الخيار المختار (دون انزلاق مع تقليل الحركة)."),
@@ -168,6 +169,7 @@ export const PAGES: DocPage[] = [
   ...charts,
   ...appShell,
   ...appForms,
+  ...tills,
   ...business,
   ...motionText,
   ...flip,
