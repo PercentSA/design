@@ -21,24 +21,50 @@ type CardProps = {
   /** Level of the title heading. Default 3. */
   headingLevel?: 2 | 3 | 4 | 5 | 6;
   children?: ReactNode;
+  /** `compact` for dense records: less padding, a smaller title. Default: `default`. */
+  density?: "default" | "compact";
+  /** Above the header, the full width of the card content: a `Thumbnail size="fill"` for a product or template tile. */
+  media?: ReactNode;
+  /** Dim, and `onSelect` does not fire. */
+  disabled?: boolean;
   className?: string;
-} & ({ href: string; title: ReactNode } | { href?: undefined; title?: ReactNode });
+} & (
+  | { href: string; title: ReactNode; onSelect?: undefined }
+  | { href?: undefined; title: ReactNode; onSelect: () => void }
+  | { href?: undefined; title?: ReactNode; onSelect?: undefined }
+);
 
-/** A block of content on a Surface. With `href` the whole card is one link (the title is its text); buttons and links inside still work. */
-export function Card({ title, description, action, footer, href, headingLevel = 3, children, className }: CardProps) {
+/**
+ * A block of content on a Surface. With `href` the whole card is one link (the title is its text); buttons and links inside still work.
+ * With `onSelect` the whole card is one button instead (a pickable tile: product, template, choice); a long title shows 2 lines, the full text in `title`.
+ */
+export function Card({ title, description, action, footer, href, onSelect, disabled, media, headingLevel = 3, children, density = "default", className }: CardProps) {
   const L = useLinkComponent();
   const H = `h${headingLevel}` as const;
+  const compact = density === "compact";
   return (
-    <Surface className={cn("relative flex flex-col gap-4 p-6 [--p-avatar-ring:var(--p-surface)]", href && cn("transition-colors hover:border-fg-3", ABOVE_STRETCHED_LINK), className)}>
+    <Surface className={cn("relative flex flex-col gap-4 [--p-avatar-ring:var(--p-surface)]", compact ? "p-4" : "p-6", (href || onSelect) && cn("transition-colors", !disabled && "hover:border-fg-3", ABOVE_STRETCHED_LINK), disabled && "opacity-50", className)}>
+      {media}
       {(title || description || action) && (
-        <div className="flex items-start gap-4">
+        <div className={cn("flex items-start", compact ? "gap-3" : "gap-4")}>
           <div className="grid flex-1 gap-1">
             {title && (
-              <H className="heading text-lg text-fg">
+              <H className={cn("heading text-fg", compact ? "text-base" : "text-lg")}>
                 {href ? (
                   <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "after:rounded-card")}>
                     {title}
                   </L>
+                ) : onSelect ? (
+                  <button
+                    type="button"
+                    data-stretched=""
+                    disabled={disabled}
+                    title={typeof title === "string" ? title : undefined}
+                    onClick={onSelect}
+                    className={cn(STRETCHED_LINK, "line-clamp-2 text-start after:rounded-card", disabled ? "cursor-not-allowed" : "cursor-pointer")}
+                  >
+                    {title}
+                  </button>
                 ) : (
                   title
                 )}

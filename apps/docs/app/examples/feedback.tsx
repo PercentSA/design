@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FolderOpen } from "lucide-react";
-import { Alert, Badge, Button, EmptyState, Inline, Progress, ProgressRing, Skeleton, Spinner, Stack, StatusDot, Tag } from "@percentsa/ui";
+import { Alert, Badge, Button, Card, EmptyState, Forbidden, Inline, NotFound, Progress, ProgressRing, Skeleton, Spinner, Stack, StatusBadge, StatusDot, Tag } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function AlertExample() {
@@ -100,5 +100,47 @@ export function EmptyStateExample() {
         action={<Button>{t("Start a project", "ابدأ مشروعًا")}</Button>}
       />
     </div>
+  );
+}
+
+/** `variant="plain"`: no frame, for an empty state inside a card (DataTable uses it for its own). */
+export function EmptyStatePlainExample() {
+  const t = useT();
+  return (
+    <Card className="w-full max-w-lg" title={t("Orders", "الطلبات")}>
+      <EmptyState variant="plain" title={t("No orders yet", "لا توجد طلبات بعد")} />
+    </Card>
+  );
+}
+
+export function StatusBadgeExample() {
+  const t = useT();
+  return (
+    <Inline gap={2}>
+      <StatusBadge>{t("Draft", "مسودة")}</StatusBadge>
+      <StatusBadge tone="info">{t("Sent", "مُرسلة")}</StatusBadge>
+      <StatusBadge tone="success">{t("Paid", "مدفوعة")}</StatusBadge>
+      <StatusBadge tone="warning">{t("Due soon", "تستحق قريبًا")}</StatusBadge>
+      <StatusBadge tone="danger">{t("Overdue", "متأخرة")}</StatusBadge>
+    </Inline>
+  );
+}
+
+export function EmptyStateErrorExample() {
+  const t = useT();
+  return (
+    <div className="w-full max-w-lg">
+      <EmptyState tone="error" title={t("The orders did not load", "تعذر تحميل الطلبات")} description={t("Check the connection and try again.", "تحقق من الاتصال وحاول مرة أخرى.")} onRetry={() => {}} />
+    </div>
+  );
+}
+
+export function PageStatesExample() {
+  const t = useT();
+  return (
+    <Stack gap={4} className="w-full max-w-lg">
+      <NotFound back={{ href: "#", label: t("Back to orders", "العودة إلى الطلبات") }} />
+      <Forbidden permission={t("Export orders", "تصدير الطلبات")} />
+    </Stack>
   );
 }

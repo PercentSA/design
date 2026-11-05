@@ -3,9 +3,12 @@ import {
   Calendar,
   CrInput,
   DatePicker,
+  DateRangePicker,
+  DateTimePicker,
   Field,
   FileDrop,
   IbanInput,
+  ImageField,
   isNationalId,
   MoneyInput,
   NationalAddress,
@@ -13,13 +16,22 @@ import {
   normalizePhone,
   OtpInput,
   parseAmount,
+  parsePlate,
+  periodOf,
+  rangePreset,
+  PeriodPicker,
   PhoneInput,
+  PlateInput,
   saudiError,
   Stack,
   Text,
+  TimeInput,
+  todayPlain,
   useLang,
   VatInput,
+  type DateRange,
   type NationalAddressValue,
+  type Period,
   type PhoneCountryCode,
   type PlainDate,
 } from "@percentsa/ui";
@@ -37,6 +49,23 @@ export function PhoneInputExample() {
       <Text size="sm" tone="subtle">
         {t("Stored as: ", "يُحفظ كالتالي: ")}
         <span dir="ltr">{normalizePhone(draft, country) ?? "—"}</span>
+      </Text>
+    </Stack>
+  );
+}
+
+export function PlateInputExample() {
+  const t = useT();
+  const [text, setText] = useState("");
+  const plate = parsePlate(text);
+  return (
+    <Stack gap={3} className="w-full max-w-sm">
+      <Field label={t("Car plate", "لوحة السيارة")}>
+        <PlateInput value={text} onValueChange={setText} name="plate" />
+      </Field>
+      <Text size="sm" tone="subtle">
+        {t("Stored as: ", "يُحفظ كالتالي: ")}
+        <span dir="ltr">{plate.ok && !plate.empty ? `${plate.letters} ${plate.digits}` : "—"}</span>
       </Text>
     </Stack>
   );
@@ -123,6 +152,24 @@ export function FileDropExample() {
   );
 }
 
+export function ImageFieldExample() {
+  const t = useT();
+  const [logo, setLogo] = useState<string | null>(null);
+  return (
+    <Field label={t("Store logo", "شعار المتجر")} hint={t("Square, PNG or JPG", "مربع، بصيغة PNG أو JPG")} className="w-full max-w-md">
+      <ImageField
+        value={logo}
+        onValueChange={setLogo}
+        // A real app sends the file to its storage and returns the file's URL.
+        upload={(file) => new Promise((done) => setTimeout(() => done(URL.createObjectURL(file)), 800))}
+        alt={t("Store logo", "شعار المتجر")}
+        aspect="1 / 1"
+        name="logo"
+      />
+    </Field>
+  );
+}
+
 export function CalendarExample() {
   const [day, setDay] = useState<PlainDate | null>("2026-02-18");
   return (
@@ -139,6 +186,78 @@ export function DatePickerExample() {
   return (
     <Field label={t("Start date", "تاريخ البدء")} className="w-full max-w-xs">
       <DatePicker value={day} onValueChange={setDay} name="start" />
+    </Field>
+  );
+}
+
+export function TimeInputExample() {
+  const t = useT();
+  const [time, setTime] = useState<string | null>("09:00");
+  return (
+    <Stack gap={3}>
+      <Field label={t("Opens at", "يفتح الساعة")}>
+        <TimeInput value={time} onValueChange={setTime} name="opens" />
+      </Field>
+      <Text size="sm" tone="subtle" dir="ltr">value: {time}</Text>
+    </Stack>
+  );
+}
+
+/** It sends a value only when the date and the time are both set. */
+export function DateTimePickerExample() {
+  const t = useT();
+  const [value, setValue] = useState<{ date: PlainDate; time: string } | null>(null);
+  return (
+    <Stack gap={3}>
+      <Field label={t("Appointment", "الموعد")}>
+        <DateTimePicker value={value} onValueChange={setValue} name="at" />
+      </Field>
+      <Text size="sm" tone="subtle" dir="ltr">value: {value ? `${value.date}T${value.time}` : "—"}</Text>
+    </Stack>
+  );
+}
+
+/** mode="range": the first click sets the start, the second the end (they swap when the end is earlier); a third starts again. */
+export function CalendarRangeExample() {
+  const [range, setRange] = useState<DateRange>({ from: "2026-02-10", to: "2026-02-18" });
+  return (
+    <Stack gap={3}>
+      <Calendar mode="range" value={range} onValueChange={setRange} fixedCalendar />
+      <Text size="sm" tone="subtle" dir="ltr">
+        value: {JSON.stringify(range)}
+      </Text>
+    </Stack>
+  );
+}
+
+export function PeriodPickerExample() {
+  const [period, setPeriod] = useState<Period>(() => periodOf("month", todayPlain()));
+  return (
+    <Stack gap={3}>
+      <PeriodPicker value={period} onValueChange={setPeriod} />
+      <Text size="sm" tone="muted" dir="ltr" className="font-mono">{`${period.from} – ${period.to}`}</Text>
+    </Stack>
+  );
+}
+
+/** A report period: presets in the custom range, a week that starts on Saturday, and a cleared range that goes back to the report's default. */
+export function PeriodPickerReportExample() {
+  const [period, setPeriod] = useState<Period>(() => ({ kind: "custom", ...rangePreset("last7Days", todayPlain()) }) as Period);
+  return (
+    <Stack gap={3}>
+      <PeriodPicker value={period} onValueChange={setPeriod} presets={["today", "yesterday", "last7Days", "last30Days"]} weekStart={6} clearTo={periodOf("year", todayPlain())} />
+      <Text size="sm" tone="muted" dir="ltr" className="font-mono">{`${period.from} – ${period.to}`}</Text>
+    </Stack>
+  );
+}
+
+/** A list filter: a preset closes the popover; a single day is a valid filter too ("From 12/09/2026"). */
+export function DateRangePickerExample() {
+  const t = useT();
+  const [range, setRange] = useState<DateRange>({ from: null, to: null });
+  return (
+    <Field label={t("Order date", "تاريخ الطلب")} className="w-full max-w-xs">
+      <DateRangePicker value={range} onValueChange={setRange} />
     </Field>
   );
 }

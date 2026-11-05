@@ -2,11 +2,12 @@ export { cn } from "./lib/cn";
 export { useFlip } from "./lib/flip";
 export { LANGS, dirOf, isolate, localize, type Dir, type Lang, type Localized } from "./i18n/localized";
 export { STRINGS, type Strings } from "./i18n/strings";
-export { PercentProvider, useBrand, useDir, useLang, useLinkComponent, useStrings, useText, type BrandSlots, type LinkComponent, type TextRenderer } from "./provider";
+export { PercentProvider, useBrand, useDir, useLang, useLinkComponent, usePendingHref, useStrings, useText, type BrandSlots, type LinkComponent, type TextRenderer } from "./provider";
 export { toWesternDigits } from "./saudi/digits";
 export { Money, RiyalSign } from "./saudi/money";
 export { formatMoney, RIYAL_H, RIYAL_PATHS, RIYAL_VIEWBOX, RIYAL_W } from "./saudi/money-format";
 export { formatDate, hijriParts, type CalendarKind } from "./saudi/date";
+export { formatDateTime, formatRelative, formatTimeOfDay, joinTime, splitTime, type DateInput, type DateTimeStyle } from "./saudi/date-time";
 export {
   formatIban,
   getSaudiIdType,
@@ -21,19 +22,34 @@ export {
   type SaudiIdType,
 } from "./saudi/validators";
 export {
+  formatPhone,
   GCC_PHONE_COUNTRIES,
   getPhoneCountry,
   getPhoneIssue,
   normalizePhone,
+  phoneLinks,
   type PhoneCountry,
   type PhoneCountryCode,
   type PhoneIssue,
 } from "./saudi/phone";
+export {
+  parsePlate,
+  plateDigitsAr,
+  plateIssueMessage,
+  plateLabel,
+  plateLatin,
+  PLATE_LETTERS,
+  plateSearchText,
+  type ParsedPlate,
+  type PlateIssue,
+} from "./saudi/plate-rules";
+export { PlateInput, SaudiPlate } from "./components/saudi-plate";
 export { Logo, MadeInKsa, Mark } from "./components/brand";
 export { MARK_H, MARK_PATH, MARK_STROKE, MARK_W } from "./components/brand-mark";
 export { Blockquote, Code, Display, FormattedNumber, Heading, Highlight, Kbd, Label, Link, Prose, Text } from "./components/text";
 export { formatNumber } from "./lib/format-number";
-export { AspectRatio, Bleed, Container, Grid, Inline, ScrollArea, Section, Separator, Split, Stack, Surface } from "./components/layout";
+export { AspectRatio, Bleed, Container, DetailLayout, Grid, Inline, ScrollArea, Section, Separator, Split, Stack, Surface } from "./components/layout";
+export { TotalsList, type TotalsItem } from "./components/totals-list";
 export { LiveRegion, useMediaQuery, useReducedMotion, VisuallyHidden } from "./components/utility";
 export { BackToTop, Button, ButtonGroup, CopyButton, SegmentedControl, Toggle, ToggleGroup } from "./components/actions";
 export { buttonClass, type ButtonSize, type ButtonVariant } from "./components/button-class";
@@ -47,6 +63,7 @@ export { phoneIssueMessage, saudiError, type SaudiField } from "./saudi/errors";
 export { CrInput, DigitsInput, IbanInput, MoneyInput, NationalIdInput, NumberInput, OtpInput, PasswordInput, PhoneInput, SearchInput, VatInput } from "./components/special-inputs";
 export { Combobox, type ComboboxOption } from "./components/combobox";
 export { FileDrop } from "./components/file-drop";
+export { ImageField } from "./components/image-field";
 export { acceptsFile, formatFileSize } from "./lib/files";
 export { NationalAddress, type NationalAddressValue } from "./components/national-address";
 export {
@@ -55,23 +72,38 @@ export {
   fromPlain,
   monthDays,
   monthGrid,
+  monthNames,
   monthOf,
   moveFocus,
+  nextRange,
   partsOf,
+  rangePreset,
   shiftView,
   todayPlain,
   viewLabel,
   weekdayNames,
+  type DateRange,
+  type DateRangePresetId,
   type MonthView,
   type PlainDate,
 } from "./saudi/calendar";
-export { Calendar, DatePicker } from "./components/calendar";
+export { Calendar, DatePicker, DateRangePicker } from "./components/calendar";
+export { periodOf, periodOptions, type Period, type PeriodKind } from "./saudi/period";
+export { PeriodPicker } from "./components/period-picker";
+export { DateTimePicker, TimeInput } from "./components/time-input";
+export { TimeText } from "./components/time-text";
+export { PhoneText } from "./components/phone-text";
 export { AlertDialog, Dialog, DialogClose, HoverCard, Popover, Sheet, Tooltip } from "./components/overlays";
+export { FormSheet } from "./components/form-sheet";
+export { FormBar } from "./components/form-bar";
+export { PinPad } from "./components/pin-pad";
+export { Keypad } from "./components/keypad";
+export { ActionBar, type ActionBarItem } from "./components/action-bar";
 export { ContextMenu, DropdownMenu, type MenuItem } from "./components/menus";
 export { dismissToast, toast, Toaster } from "./components/toast";
 export { ConsentBanner } from "./components/consent";
 export { readConsent, type Consent } from "./lib/consent-cookie";
-export { Alert, Badge, EmptyState, Progress, ProgressRing, Skeleton, StatusDot, Tag } from "./components/feedback";
+export { Alert, Badge, EmptyState, Forbidden, NotFound, Progress, ProgressRing, Skeleton, StatusBadge, StatusDot, Tag, type StatusTone } from "./components/feedback";
 export { Breadcrumbs, Pagination, SkipLink, Steps, Tabs, type Crumb, type StepItem, type TabItem } from "./components/navigation";
 export { paginationRange } from "./lib/pagination";
 export { LangSwitch, MobileMenu, SiteFooter, SiteHeader, type FooterGroup, type NavItem, type SiteWidth, type SocialLink } from "./components/site";
@@ -91,7 +123,13 @@ export { AuthLayout } from "./components/auth-layout";
 export { Card } from "./components/card";
 export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type TableAlign } from "./components/table";
 export { DataTable, type DataTableColumn, type DataTableProps, type DataTableSort } from "./components/data-table";
+export { ColumnsMenu } from "./components/columns-menu";
+export { LineItemsTable, type LineItem } from "./components/line-items-table";
+export { LineItemsEditor, type LineCellContext, type LineEditorColumn } from "./components/line-items-editor";
 export { DescriptionList, List, ListItem } from "./components/list";
+export { RecordSection } from "./components/record-section";
+export { RecordSummary, type RecordSummaryItem } from "./components/record-summary";
+export { Thumbnail } from "./components/thumbnail";
 export { Kanban, type KanbanColumn } from "./components/kanban";
 export { CalendarView, type CalendarEvent } from "./components/calendar-view";
 export { AreaChart, LineChart } from "./components/charts/line-chart";
@@ -102,9 +140,11 @@ export { ChartLegend } from "./components/charts/legend";
 export { type ChartProps, type ChartSeries } from "./components/charts/chart-frame";
 export { bandScale, linearScale, linePath, niceTicks, stack } from "./components/charts/scale";
 export { AppShell } from "./components/app-shell";
-export { Sidebar, type SidebarItem, type SidebarSection } from "./components/sidebar";
+export { PageHeader } from "./components/page-header";
+export { Sidebar, useSidebarRail, type SidebarItem, type SidebarSection } from "./components/sidebar";
 export { CommandPalette, useCommandShortcut, type Command } from "./components/command-palette";
 export { invoiceTotals, zatcaTlv, type InvoiceLineAmounts, type ZatcaFields } from "./saudi/invoice";
 export { QrCode, ZatcaQr } from "./components/qr-code";
 export { Invoice, type InvoiceLine, type InvoiceParty } from "./components/invoice";
+export { PrintArea, usePrint } from "./components/print-area";
 export { TicketView, type TicketMessage } from "./components/ticket-view";

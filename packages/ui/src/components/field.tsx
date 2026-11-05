@@ -7,6 +7,12 @@ import { useStrings, useText } from "../provider";
 type FieldCtx = { id: string; labelId: string; describedBy?: string; invalid: boolean; required?: boolean };
 export const fieldContext = createContext<FieldCtx | null>(null);
 
+/**
+ * Set by LineItemsEditor around a cell. `hideLabel`: the label is visually hidden (a table row; the column header shows it);
+ * `suffix` is added to the accessible name, for example the line ("Quantity, Line 3").
+ */
+export const lineCellScope = createContext<{ hideLabel: boolean; suffix?: string } | null>(null);
+
 const join = (...ids: (string | undefined)[]) => ids.filter(Boolean).join(" ") || undefined;
 
 /** Props a control inside <Field> needs: id, description, invalid and required state. Its own props win. */
@@ -60,15 +66,17 @@ export function Field({
 }) {
   const s = useStrings();
   const t = useText();
+  const scope = useContext(lineCellScope);
   const auto = useId();
   const cid = id ?? auto;
   const ids = { hint: hint ? `${cid}-hint` : undefined, count: max != null ? `${cid}-count` : undefined, error: error ? `${cid}-error` : undefined };
   const ctx: FieldCtx = { id: cid, labelId: `${cid}-label`, describedBy: join(ids.hint, ids.count, ids.error), invalid: !!error, required };
   return (
     <div className={cn("grid gap-2.5", className)}>
-      <div className="flex items-baseline justify-between gap-4">
-        <label id={ctx.labelId} htmlFor={cid} className={LABEL}>
+      <div className={cn("flex items-baseline justify-between gap-4", scope?.hideLabel && "sr-only")}>
+        <label id={ctx.labelId} htmlFor={cid} className={cn(LABEL, scope?.hideLabel && "sr-only")}>
           {label}
+          {scope?.suffix && <span className="sr-only">, {scope.suffix}</span>}
           {required && <span aria-hidden="true" className="text-fg-3"> *</span>}
         </label>
         {optional && <span className="text-xs text-fg-3">{t(s.optional)}</span>}

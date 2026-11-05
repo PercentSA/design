@@ -6,9 +6,10 @@ export const pages: DocPage[] = [
     "Stat",
     "data",
     "Stat",
-    ["StatExample"],
-    'A key number with its change and an optional chart. The arrow is neutral; use tone="danger" only when the change is bad.',
-    'رقم رئيسي مع مقدار تغيّره ورسم بياني اختياري. السهم محايد؛ استخدم tone="danger" فقط عندما يكون التغيّر سيئًا.',
+    ["StatExample", "StatMoneyRowExample"],
+    'A key number with its change and an optional chart. The arrow is neutral; use tone="danger" only when the change is bad. The tile is a container: the value size and the padding follow the width of the tile, not the screen. From 15rem the value is text-3xl with p-5; from 12rem text-2xl; from 10rem text-xl; below that text-lg, with p-4 under 15rem. So four money tiles in a row, or two on a phone (about 158 px each), hold an amount with decimals. The label, change and hint keep their sizes. The tile takes its width from its parent (a grid cell, flex-1 or a width); in a parent that sizes to its content it is 9rem wide.',
+    'رقم رئيسي مع مقدار تغيّره ورسم بياني اختياري. السهم محايد؛ استخدم tone="danger" فقط عندما يكون التغيّر سيئًا. البطاقة حاوية: يتبع حجم القيمة والحشوة عرض البطاقة نفسها لا الشاشة. من 15rem تكون القيمة text-3xl مع p-5؛ ومن 12rem text-2xl؛ ومن 10rem text-xl؛ وما دون ذلك text-lg، مع p-4 تحت 15rem. فتتسع أربع بطاقات مبالغ في صف، أو بطاقتان على الهاتف (نحو 158 بكسل لكل منهما)، لمبلغ بكسور عشرية. يبقى حجم العنوان والتغيّر والتلميح كما هو. تأخذ البطاقة عرضها من أصلها (خلية شبكة أو flex-1 أو عرض محدد)؛ وفي أصل يتحدد حجمه بمحتواه يكون عرضها 9rem.',
+
   ),
   p(
     "timeline",
@@ -36,6 +37,24 @@ export const pages: DocPage[] = [
     ["TreeExample"],
     "Nested items such as files or categories. Full keyboard use; the left and right arrows swap in Arabic.",
     "عناصر متداخلة مثل الملفات أو التصنيفات. يعمل بالكامل من لوحة المفاتيح، ويتبادل السهمان الأيمن والأيسر في العربية.",
+  ),
+  p(
+    "record-summary",
+    "RecordSummary",
+    "data",
+    "RecordSummary, type RecordSummaryItem",
+    ["RecordSummaryExample", "RecordSummaryMediaExample", "RecordSummaryReportExample"],
+    "The 1 to 6 key facts of a record in one dense strip, for example under its header: a label, a value and an optional hint per cell. Cells follow the width of the strip itself (a container query, not the screen): one row from 56rem, 3 per row from 36rem (all when there are 4 or fewer), 2 per row below. `media` sits at the start (a Thumbnail), above the cells on narrow strips. An empty value shows “Not set”, long text is cut at 2 lines with the full text in the title, `href` makes the value a link, and `loading` shows a skeleton in each cell. `label` names the strip (default “Summary”). More than 6 items is a warning in development. In a report, the strip shows the totals of a period (sales, returns, VAT, net) above the table.",
+    "الحقائق الرئيسية للسجل، من واحدة إلى ست، في شريط واحد كثيف، مثلًا تحت رأس الصفحة: عنوان وقيمة وتلميح اختياري لكل خلية. تتبع الخلايا عرض الشريط نفسه (استعلام الحاوية لا الشاشة): صف واحد من 56rem، وثلاث خلايا في الصف من 36rem (كلها إن كانت أربعًا أو أقل)، وخليتان في الصف دونها. يوضع `media` في البداية (صورة مصغّرة)، وفوق الخلايا في الشرائط الضيقة. تعرض القيمة الفارغة «غير محدد»، ويُقطع النص الطويل عند سطرين مع النص الكامل في title، ويجعل `href` القيمة رابطًا، ويعرض `loading` هيكلًا مؤقتًا في كل خلية. يسمّي `label` الشريط (الافتراضي «ملخص»). أكثر من 6 عناصر تحذير في وضع التطوير. وفي التقرير يعرض الشريط إجماليات الفترة (المبيعات والمرتجعات والضريبة والصافي) فوق الجدول.",
+  ),
+  p(
+    "thumbnail",
+    "Thumbnail",
+    "data",
+    "Thumbnail",
+    ["ThumbnailExample"],
+    "A small square image with a fallback icon: product photos, line images, uploaded files. The sizes are `sm` (40 px, lines and rows), `md` (64 px, files and lists) and `lg` (96 px, galleries and summaries). The icon shows when there is no `src` or the image does not load; `fallback` changes it. `alt` is required: it names the image, the icon and the link. `caption` is one line under the image, cut with the full text in the title. With `href` the whole thumbnail is a link. For an upload field use ImageField; for a person use Avatar. `size=\"fill\"` takes the full width of its box at 4:3, for a tile image (see the `media` of Card).",
+    "صورة مربعة صغيرة مع أيقونة بديلة: صور المنتجات وصور البنود والملفات المرفوعة. الأحجام `sm` (40 بكسل، للبنود والصفوف) و`md` (64 بكسل، للملفات والقوائم) و`lg` (96 بكسل، للمعارض والملخصات). تظهر الأيقونة عند غياب `src` أو تعذّر تحميل الصورة، ويغيّرها `fallback`. `alt` مطلوب: يسمّي الصورة والأيقونة والرابط. `caption` سطر واحد تحت الصورة، يُقطع مع النص الكامل في title. مع `href` تصبح الصورة المصغّرة كلها رابطًا. لحقل الرفع استخدم ImageField، وللأشخاص استخدم Avatar. يأخذ `size=\"fill\"` عرض صندوقه كاملًا بنسبة 4:3، لصورة بلاطة (انظر `media` في Card).",
   ),
   p(
     "avatar",

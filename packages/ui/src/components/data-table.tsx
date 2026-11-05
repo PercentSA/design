@@ -1,13 +1,18 @@
 "use client";
 
 import { useId, useMemo, useState, type ReactNode } from "react";
-import { ArrowDown, ArrowUp, ChevronsUpDown } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
 import { cn } from "../lib/cn";
-import { useLang, useStrings, useText } from "../provider";
+import { useLang, useLinkComponent, useStrings, useText } from "../provider";
+import { buttonClass } from "./button-class";
+import { ABOVE_STRETCHED_LINK, STRETCHED_LINK } from "./card";
 import { Checkbox } from "./choices";
 import { EmptyState, Skeleton } from "./feedback";
+import { Select } from "./inputs";
+import { DropdownMenu, type MenuItem } from "./menus";
 import { Pagination } from "./navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type TableAlign } from "./table";
+import { Text } from "./text";
 import { LiveRegion } from "./utility";
 
 export type DataTableColumn<Row> = {
@@ -15,12 +20,25 @@ export type DataTableColumn<Row> = {
   header: ReactNode;
   /** Default: the row's field named `key`. */
   cell?: (row: Row) => ReactNode;
+  /** First column of a row with `rowHref`: content after the row link, outside it (links and buttons here stay clickable). */
+  afterLink?: (row: Row) => ReactNode;
   /** Default: the row's field named `key`. */
   sortValue?: (row: Row) => string | number;
   sortable?: boolean;
   align?: TableAlign;
   /** CSS width of the column, for example "8rem". */
   width?: string;
+  /** With `cards`: not shown on the cards (below 768 px). */
+  hideOnCard?: boolean;
+  /** ColumnsMenu can hide the column. Default true. */
+  hideable?: boolean;
+  /** A muted second line under the cell (the phone under a name, the type under a number). null, undefined and "" show nothing.
+   *  In the first column of a row with `rowHref` it comes after the link, outside it (links in it stay clickable). */
+  description?: (row: Row) => ReactNode;
+  /** With `cards`, below 768 px (the table rows do not change). "end": at the end of the title line, without the header.
+   *  "meta": in one wrapped line under the title, without the header. "block": full width under the meta, without the header
+   *  (long text). A cell with no value shows nothing. Default: a "header … value" line. Not for the first column. */
+  cardSlot?: "end" | "meta" | "block";
 };
 
 export type DataTableSort = { key: string; direction: "asc" | "desc" };
@@ -49,14 +67,53 @@ export type DataTableProps<Row> = {
   loading?: boolean;
   /** Shown when there are no rows. Default: EmptyState with "No results". */
   empty?: ReactNode;
+  /** The whole row opens the record: the first cell becomes a link to this URL. `undefined`: a plain row. */
+  rowHref?: (row: Row) => string | undefined;
+  /** A "⋯" menu per row, in a last column. An empty array gives no button. */
+  rowActions?: (row: Row) => MenuItem[];
+  /** Below 768 px each row is a card: the first cell is its title, and the other cells show their header. Default false. */
+  cards?: boolean;
+  /** `compact` for dense lists: cell py-2, header row h-9, card rows p-3 with gap-y-1. `print` for a printed report: cells
+   *  text-xs px-1 py-1, header row h-8 px-1 with wrapping text, no scroll box (overflow visible), no cards, no sticky header;
+   *  totals and group rows follow. The caller leaves out pages and row links. Default `default`. */
+  density?: "default" | "compact" | "print";
+  /** Keys of columns not shown (from ColumnsMenu). */
+  hiddenColumns?: string[];
+  /** Shows a "Rows per page" choice. Controlled: set `pageSize` in `onPageSizeChange`. A change goes to page 1. */
+  pageSizeOptions?: number[];
+  onPageSizeChange?: (size: number) => void;
+  /** The table scrolls in its own box (up to 70% of the screen height), and the header row stays in view. */
+  stickyHeader?: boolean;
+  /** A total row at the foot: values by column key. The first column shows "Total" unless it has a value. */
+  totals?: Partial<Record<string, ReactNode>>;
+  /** Reports: the rows in groups by this key, in the order the groups first appear in `rows`. A sort works inside each group. Client pages are off. */
+  groupBy?: (row: Row) => string;
+  /** The group's header row. Default: the key. */
+  groupHeader?: (key: string, rows: Row[]) => ReactNode;
+  /** A subtotal row after each group: values by column key, as `totals`. */
+  groupTotals?: (key: string, rows: Row[]) => Partial<Record<string, ReactNode>>;
   className?: string;
 };
 
 const field = (row: unknown, key: string) => (row as Record<string, unknown>)[key];
 
+// Cards: below 768 px the rows are cards, by CSS only, so there is one copy of the rows.
+const CARD_ROW = "max-md:flex max-md:flex-wrap max-md:items-start max-md:gap-x-3 max-md:gap-y-1.5 max-md:rounded-card max-md:border max-md:border-line max-md:p-4";
+// The cells after the title: one line each, the header at the start and the value at the end. order-1 puts them
+// under the first line, so the checkbox, the title and "⋯" share it.
+const CARD_FIELD = "max-md:order-1 max-md:flex max-md:basis-full max-md:items-center max-md:justify-between max-md:gap-3 max-md:p-0";
+// Card slots (a column's `cardSlot`). With a slot the cards use margins in place of the row gap, so the empty line that
+// breaks the title line (::before, only with "meta") adds no space. Order: title line 0, meta 1, block 2, fields 3.
+const SLOT_BREAK = "max-md:before:order-1 max-md:before:h-0 max-md:before:basis-full max-md:before:content-['']";
+const SLOT_END = "max-md:shrink-0 max-md:p-0";
+const SLOT_META = "max-md:order-1 max-md:p-0 max-md:text-start max-md:text-sm max-md:text-fg-2";
+const SLOT_BLOCK = "max-md:order-2 max-md:basis-full max-md:p-0 max-md:text-start";
+const hasValue = (v: ReactNode) => v !== null && v !== undefined && v !== false && v !== "";
+const ACTIONS_KEY = "p-row-actions";
+
 /** A table with sorting, row selection, pages, loading and empty states. Client-side by default; server-side with `pageCount`. */
 export function DataTable<Row>({
-  columns,
+  columns: allColumns,
   rows,
   getRowId,
   caption,
@@ -74,11 +131,25 @@ export function DataTable<Row>({
   onPageChange,
   loading,
   empty,
+  rowHref,
+  rowActions,
+  cards: cardsProp,
+  density = "default",
+  hiddenColumns,
+  pageSizeOptions,
+  onPageSizeChange,
+  stickyHeader,
+  totals,
+  groupBy,
+  groupHeader,
+  groupTotals,
   className,
 }: DataTableProps<Row>) {
+  const columns = hiddenColumns ? allColumns.filter((c) => !hiddenColumns.includes(c.key)) : allColumns;
   const s = useStrings();
   const t = useText();
   const lang = useLang();
+  const L = useLinkComponent();
   const uid = useId();
   const [innerSort, setInnerSort] = useState(defaultSort ?? null);
   const [innerSelected, setInnerSelected] = useState(defaultSelected ?? []);
@@ -90,7 +161,8 @@ export function DataTable<Row>({
   const chosen = (selected ?? innerSelected).filter((id) => server || rowIds.has(id));
   const chosenSet = new Set(chosen);
 
-  const sortColumn = columns.find((c) => c.key === order?.key);
+  // A hidden column keeps its sort.
+  const sortColumn = allColumns.find((c) => c.key === order?.key);
   const direction = order?.direction;
   const collator = useMemo(() => new Intl.Collator(lang, { numeric: true }), [lang]);
   // Sorted again only when the rows, the sort or the column change, not on every selection click.
@@ -105,9 +177,14 @@ export function DataTable<Row>({
     });
   }, [rows, sortColumn, direction, server, collator]);
 
-  const pages = server ? pageCount : pageSize ? Math.ceil(sorted.length / pageSize) : 1;
+  // Reports (groupBy) show all rows: no client pages.
+  const clientPages = !server && !groupBy && pageSize;
+  const pages = server ? pageCount : clientPages ? Math.ceil(sorted.length / clientPages) : 1;
   const current = Math.max(1, Math.min(page ?? innerPage, pages));
-  const visible = !server && pageSize ? sorted.slice((current - 1) * pageSize, current * pageSize) : sorted;
+  const visible = clientPages ? sorted.slice((current - 1) * clientPages, current * clientPages) : sorted;
+  // Groups keep the order in which they first appear in `rows`; the rows inside keep the sort.
+  const groups = groupBy ? new Map(rows.map((row) => [groupBy(row), [] as Row[]])) : undefined;
+  if (groups) for (const row of visible) groups.get(groupBy!(row))!.push(row);
   const goTo = (n: number) => {
     setInnerPage(n);
     onPageChange?.(n);
@@ -129,14 +206,164 @@ export function DataTable<Row>({
   const count = ids.filter((id) => chosenSet.has(id)).length;
   const all = count > 0 && count === ids.length ? true : count > 0 ? "indeterminate" : false;
 
-  const colSpan = columns.length + (selectable ? 1 : 0);
+  const colSpan = columns.length + (selectable ? 1 : 0) + (rowActions ? 1 : 0);
+  // The actions cell joins the column cells (no new child slot), so tables without rowActions render as before.
+  const withActions = (cells: ReactNode[], cell: () => ReactNode) => (rowActions ? [...cells, cell()] : cells);
+  const print = density === "print";
+  const compact = density === "compact";
+  // A printed table is one block of rows: no cards.
+  const cards = cardsProp && !print;
+  const cellY = compact ? "py-2" : print ? "px-1 py-1 text-xs" : undefined;
+  const headH = compact ? "h-9" : print ? "h-8 px-1" : undefined;
+  const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k > 0 ? c.cardSlot : undefined);
+  const hasSlots = columns.some((c, k) => slotted(k, c));
+  const hasMeta = columns.some((c, k) => slotted(k, c) === "meta");
+  const slotGap = compact ? "max-md:mt-1" : "max-md:mt-1.5";
+  const rowClass = cn(
+    cards && CARD_ROW,
+    cards && compact && "max-md:gap-y-1 max-md:p-3",
+    hasSlots && "max-md:gap-y-0",
+    hasMeta && SLOT_BREAK,
+  );
+  const bodyClass = cn(cards && "max-md:grid max-md:gap-3 max-md:[&_tr:last-child]:border");
+
+  // `i` makes the row's ids (for the checkbox and "⋯" names) unique in the table.
+  const renderRow = (row: Row, i: number | string) => {
+    const id = getRowId(row);
+    const isSelected = chosenSet.has(id);
+    const href = rowHref?.(row);
+    const actions = rowActions?.(row) ?? [];
+    return (
+      <TableRow
+        key={id}
+        data-state={isSelected ? "selected" : undefined}
+        // The first cell's link covers the row; the checkbox and "⋯" sit above it.
+        className={cn(href && cn("relative hover:bg-surface-2", ABOVE_STRETCHED_LINK), rowClass)}
+      >
+        {selectable && (
+          <TableCell className={cn(cellY, cards && "max-md:p-0")}>
+            <Checkbox
+              className="gap-0 align-middle"
+              // Named "Select row" + the first cell, so each checkbox says which row it selects.
+              aria-labelledby={`${uid}s${i} ${uid}c${i}`}
+              label={
+                <span id={`${uid}s${i}`} className="sr-only">
+                  {s.selectRow}
+                </span>
+              }
+              checked={isSelected}
+              onCheckedChange={(v) => select(v === true ? [...chosen, id] : chosen.filter((x) => x !== id))}
+            />
+          </TableCell>
+        )}
+        {withActions(
+          columns.map((c, k) => {
+            const value = c.cell ? c.cell(row) : (field(row, c.key) as ReactNode);
+            const text = c.description?.(row);
+            const note = hasValue(text) ? (
+              <Text as="span" size="sm" tone="muted" className="block font-normal">
+                {text}
+              </Text>
+            ) : null;
+            const slot = slotted(k, c);
+            const fieldClass = slot === "end" ? SLOT_END : slot === "meta" ? cn(SLOT_META, slotGap) : slot === "block" ? cn(SLOT_BLOCK, slotGap) : cn(CARD_FIELD, hasSlots && "max-md:order-3", hasSlots && slotGap);
+            return (
+              <TableCell
+                key={c.key}
+                id={k === 0 ? `${uid}c${i}` : undefined}
+                align={c.align}
+                className={cn(
+                  cellY,
+                  k === 0 && href && "font-medium",
+                  cards && (k === 0 ? "max-md:min-w-0 max-md:flex-1 max-md:p-0 max-md:font-medium" : fieldClass),
+                  cards && (c.hideOnCard || (slot && !hasValue(value) && !note)) && "max-md:hidden",
+                )}
+              >
+                {k === 0 && href ? (
+                  // -outline-offset keeps the row's focus ring inside the table's scroll box.
+                  <>
+                    <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "max-md:after:rounded-card")}>
+                      {value}
+                    </L>
+                    {note}
+                    {c.afterLink?.(row)}
+                  </>
+                ) : slot ? (
+                  <>
+                    {value}
+                    {note}
+                  </>
+                ) : cards && k > 0 ? (
+                  <>
+                    <span className="text-xs text-fg-3 md:hidden">{c.header}</span>
+                    <span>
+                      {value}
+                      {note}
+                    </span>
+                  </>
+                ) : note ? (
+                  <>
+                    {value}
+                    {note}
+                  </>
+                ) : (
+                  value
+                )}
+              </TableCell>
+            );
+          }),
+          () => (
+            <TableCell key={ACTIONS_KEY} className={cn("w-10 py-1.5", cards && "max-md:p-0")}>
+              {actions.length > 0 && (
+                <DropdownMenu
+                  align="end"
+                  items={actions}
+                  trigger={
+                    // Named "Row actions" + the first cell, like the select checkbox.
+                    <button type="button" aria-labelledby={`${uid}a${i} ${uid}c${i}`} className={buttonClass("ghost", "sm", true)}>
+                      <span id={`${uid}a${i}`} className="sr-only">
+                        {s.rowActions}
+                      </span>
+                      <Ellipsis aria-hidden />
+                    </button>
+                  }
+                />
+              )}
+            </TableCell>
+          ),
+        )}
+      </TableRow>
+    );
+  };
+
+  // The total and subtotal rows: values under their columns (hidden columns hide theirs); the first column shows the label unless it has a value.
+  const totalRow = (values: Partial<Record<string, ReactNode>>, label: string) => (
+    <TableRow className="font-semibold">
+      {selectable && <TableCell className={cellY} />}
+      {withActions(
+        columns.map((c, k) => (
+          <TableCell key={c.key} align={c.align} className={cellY}>
+            {values[c.key] ?? (k === 0 ? t(label) : null)}
+          </TableCell>
+        )),
+        () => <TableCell key={ACTIONS_KEY} className={cellY} />,
+      )}
+    </TableRow>
+  );
+
   return (
     <div className={className}>
-      <Table caption={caption} hideCaption={hideCaption} aria-busy={loading || undefined}>
-        <TableHeader>
+      <Table
+        caption={caption}
+        hideCaption={hideCaption}
+        aria-busy={loading || undefined}
+        className={cn(cards && "max-md:[&>table]:block", print ? "overflow-visible" : stickyHeader && "max-h-[70dvh] overflow-auto")}
+      >
+        {/* z-sticky: above the row controls that sit over a row link (z-1). */}
+        <TableHeader className={cn(stickyHeader && !print && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "max-md:sr-only") || undefined}>
           <TableRow>
             {selectable && (
-              <TableHead className="w-10">
+              <TableHead wrap={print} className={cn("w-10", headH)}>
                 <Checkbox
                   className="gap-0 align-middle"
                   label={<span className="sr-only">{s.selectAll}</span>}
@@ -146,80 +373,81 @@ export function DataTable<Row>({
                 />
               </TableHead>
             )}
-            {columns.map((c) => {
-              const active = order?.key === c.key ? order.direction : undefined;
-              const Icon = active === "asc" ? ArrowUp : active === "desc" ? ArrowDown : ChevronsUpDown;
-              return (
-                <TableHead
-                  key={c.key}
-                  align={c.align}
-                  style={c.width ? { width: c.width } : undefined}
-                  aria-sort={active === "asc" ? "ascending" : active === "desc" ? "descending" : undefined}
-                >
-                  {c.sortable ? (
-                    <button type="button" onClick={() => toggleSort(c.key)} className="-mx-1 inline-flex items-center gap-1 rounded-md px-1 transition-colors hover:text-fg">
-                      {c.header}
-                      <Icon aria-hidden className={cn("size-3.5 shrink-0", !active && "opacity-50")} />
-                    </button>
-                  ) : (
-                    c.header
-                  )}
+            {withActions(
+              columns.map((c) => {
+                const active = order?.key === c.key ? order.direction : undefined;
+                const Icon = active === "asc" ? ArrowUp : active === "desc" ? ArrowDown : ChevronsUpDown;
+                return (
+                  <TableHead
+                    key={c.key}
+                    align={c.align}
+                    wrap={print}
+                    className={headH}
+                    style={c.width ? { width: c.width } : undefined}
+                    aria-sort={active === "asc" ? "ascending" : active === "desc" ? "descending" : undefined}
+                  >
+                    {c.sortable ? (
+                      <button type="button" onClick={() => toggleSort(c.key)} className="-mx-1 inline-flex items-center gap-1 rounded-md px-1 transition-colors hover:text-fg">
+                        {c.header}
+                        <Icon aria-hidden className={cn("size-3.5 shrink-0", !active && "opacity-50")} />
+                      </button>
+                    ) : (
+                      c.header
+                    )}
+                  </TableHead>
+                );
+              }),
+              () => (
+                <TableHead key={ACTIONS_KEY} wrap={print} className={cn("w-10", headH)}>
+                  <span className="sr-only">{s.rowActions}</span>
                 </TableHead>
-              );
-            })}
+              ),
+            )}
           </TableRow>
         </TableHeader>
-        <TableBody>
-          {loading ? (
-            Array.from({ length: pageSize ?? (rows.length || 5) }, (_, i) => (
-              <TableRow key={i}>
-                {selectable && <TableCell />}
-                {columns.map((c) => (
-                  <TableCell key={c.key}>
-                    <Skeleton className="h-4" />
-                  </TableCell>
-                ))}
+        {groups && !loading && visible.length > 0 ? (
+          [...groups].map(([key, members], g) => (
+            <TableBody key={key} className={bodyClass}>
+              <TableRow>
+                <TableHead scope="rowgroup" wrap={print} colSpan={colSpan} className={cn("bg-surface text-sm text-fg", print && "text-xs", headH)}>
+                  {groupHeader ? groupHeader(key, members) : key}
+                </TableHead>
               </TableRow>
-            ))
-          ) : visible.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={colSpan}>{empty ?? <EmptyState title={t(s.noResults)} className="border-0" />}</TableCell>
-            </TableRow>
-          ) : (
-            visible.map((row, i) => {
-              const id = getRowId(row);
-              const isSelected = chosenSet.has(id);
-              return (
-                <TableRow key={id} data-state={isSelected ? "selected" : undefined}>
-                  {selectable && (
-                    <TableCell>
-                      <Checkbox
-                        className="gap-0 align-middle"
-                        // Named "Select row" + the first cell, so each checkbox says which row it selects.
-                        aria-labelledby={`${uid}s${i} ${uid}c${i}`}
-                        label={
-                          <span id={`${uid}s${i}`} className="sr-only">
-                            {s.selectRow}
-                          </span>
-                        }
-                        checked={isSelected}
-                        onCheckedChange={(v) => select(v === true ? [...chosen, id] : chosen.filter((x) => x !== id))}
-                      />
-                    </TableCell>
+              {members.map((row, i) => renderRow(row, `${g}-${i}`))}
+              {groupTotals && totalRow(groupTotals(key, members), s.subtotal)}
+            </TableBody>
+          ))
+        ) : (
+          <TableBody className={bodyClass}>
+            {loading ? (
+              Array.from({ length: pageSize ?? (rows.length || 5) }, (_, i) => (
+                <TableRow key={i} className={cn(cards && CARD_ROW, cards && compact && "max-md:gap-y-1 max-md:p-3")}>
+                  {selectable && <TableCell className={cn(cellY, cards && "max-md:hidden")} />}
+                  {withActions(
+                    columns.map((c) => (
+                      <TableCell key={c.key} className={cn(cellY, cards && "max-md:basis-full max-md:p-0")}>
+                        <Skeleton className="h-4" />
+                      </TableCell>
+                    )),
+                    () => <TableCell key={ACTIONS_KEY} className={cn(cellY, cards && "max-md:hidden")} />,
                   )}
-                  {columns.map((c, k) => (
-                    <TableCell key={c.key} id={k === 0 ? `${uid}c${i}` : undefined} align={c.align}>
-                      {c.cell ? c.cell(row) : (field(row, c.key) as ReactNode)}
-                    </TableCell>
-                  ))}
                 </TableRow>
-              );
-            })
-          )}
-        </TableBody>
+              ))
+            ) : visible.length === 0 ? (
+              <TableRow className={cn(cards && "max-md:block")}>
+                <TableCell colSpan={colSpan} className={cn(cards && "max-md:block")}>
+                  {empty ?? <EmptyState variant="plain" title={t(s.noResults)} />}
+                </TableCell>
+              </TableRow>
+            ) : (
+              visible.map((row, i) => renderRow(row, i))
+            )}
+          </TableBody>
+        )}
+        {totals && <tfoot className="border-t border-line-strong [&_tr]:border-0">{totalRow(totals, s.total)}</tfoot>}
       </Table>
       <LiveRegion>{loading && s.loading}</LiveRegion>
-      {(selectable || pages > 1) && (
+      {(selectable || pages > 1 || pageSizeOptions) && (
         <div className="flex flex-wrap items-center gap-3 pt-4">
           {selectable && (
             <p role="status" className="text-sm text-fg-2">
@@ -227,6 +455,23 @@ export function DataTable<Row>({
             </p>
           )}
           {pages > 1 && <Pagination page={current} total={pages} onPageChange={goTo} className="ms-auto" />}
+          {pageSizeOptions && (
+            <div className={cn("flex items-center gap-2", pages <= 1 && "ms-auto")}>
+              <label htmlFor={`${uid}p`} className="text-sm text-fg-2">
+                {t(s.rowsPerPage)}
+              </label>
+              <Select
+                id={`${uid}p`}
+                className="h-(--p-control-h-sm) w-20"
+                options={pageSizeOptions.map((n) => ({ value: String(n), label: String(n) }))}
+                value={pageSize === undefined ? undefined : String(pageSize)}
+                onValueChange={(v) => {
+                  onPageSizeChange?.(Number(v));
+                  goTo(1);
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
     </div>

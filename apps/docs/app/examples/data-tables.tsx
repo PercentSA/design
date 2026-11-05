@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileText, Globe, LayoutDashboard, Plus, Receipt, Smartphone } from "lucide-react";
-import { Badge, Button, Card, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, useLang } from "@percentsa/ui";
+import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, PhoneText, RiyalSign, StatusBadge, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, Thumbnail, toast, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function CardExample() {
@@ -23,6 +23,39 @@ export function CardExample() {
         footer={t("Updated 2 days ago", "حُدّثت قبل يومين")}
       />
     </Grid>
+  );
+}
+
+/** A form table: `scope="row"` for the line labels (the look of a body cell), `wrap` for long column titles. */
+export function TableRowHeadersExample() {
+  const t = useT();
+  const lines = [
+    { label: t("Standard rated sales", "المبيعات الخاضعة للنسبة الأساسية"), base: 120000, vat: 18000 },
+    { label: t("Zero rated sales", "المبيعات الخاضعة لنسبة الصفر"), base: 30000, vat: 0 },
+  ];
+  return (
+    <Table caption={t("VAT return", "الإقرار الضريبي")} className="max-w-lg">
+      <TableHeader>
+        <TableRow>
+          <TableHead>{t("Line", "البند")}</TableHead>
+          <TableHead wrap align="end">{t("Amount (", "المبلغ (")}<RiyalSign />)</TableHead>
+          <TableHead wrap align="end">{t("VAT amount (", "مبلغ الضريبة (")}<RiyalSign />)</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {lines.map((l) => (
+          <TableRow key={l.label}>
+            <TableHead scope="row">{l.label}</TableHead>
+            <TableCell align="end">
+              <Money amount={l.base} />
+            </TableCell>
+            <TableCell align="end">
+              <Money amount={l.vat} />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
   );
 }
 
@@ -93,7 +126,7 @@ export function DataTableExample() {
   const t = useT();
   const [selected, setSelected] = useState<string[]>([]);
   return (
-    <div className="grid w-full gap-3">
+    <div className="grid w-full grid-cols-1 gap-3">
       <DataTable
         columns={useInvoiceColumns()}
         rows={INVOICES}
@@ -111,6 +144,107 @@ export function DataTableExample() {
           {t("Clear selection", "إلغاء التحديد")}
         </Button>
       )}
+    </div>
+  );
+}
+
+/** A list: each row opens its invoice, "⋯" holds the row actions, and below 768 px the rows are cards. */
+export function DataTableListExample() {
+  const t = useT();
+  const done = (title: string) => () => toast({ title });
+  return (
+    <DataTable
+      className="w-full"
+      columns={useInvoiceColumns()}
+      rows={INVOICES}
+      getRowId={(r) => r.id}
+      caption={t("Invoices", "الفواتير")}
+      hideCaption
+      selectable
+      pageSize={5}
+      cards
+      rowHref={(r) => `#${r.id}`}
+      rowActions={(r) => [
+        { label: t("Duplicate", "تكرار"), onSelect: done(t("Invoice duplicated", "كُرّرت الفاتورة")) },
+        {
+          label: t("Send a reminder", "إرسال تذكير"),
+          disabled: r.status === "paid",
+          description: r.status === "paid" ? t("This invoice is paid.", "هذه الفاتورة مدفوعة.") : undefined,
+          onSelect: done(t("Reminder sent", "أُرسل التذكير")),
+        },
+        "separator",
+        { label: t("Delete", "حذف"), danger: true, onSelect: done(t("Invoice deleted", "حُذفت الفاتورة")) },
+      ]}
+    />
+  );
+}
+
+/** A report: the invoices grouped by status (sorted inside each group), a subtotal per group and a total row. */
+export function DataTableReportExample() {
+  const t = useT();
+  const status = { paid: t("Paid", "مدفوعة"), due: t("Due", "مستحقة"), overdue: t("Overdue", "متأخرة") };
+  const sum = (rows: Invoice[]) => <Money amount={rows.reduce((n, r) => n + r.amount, 0)} />;
+  const rows = INVOICES.slice(0, 10);
+  return (
+    <DataTable
+      className="w-full"
+      columns={useInvoiceColumns().filter((c) => c.key !== "status")}
+      rows={rows}
+      getRowId={(r) => r.id}
+      caption={t("Invoices by status", "الفواتير حسب الحالة")}
+      hideCaption
+      defaultSort={{ key: "amount", direction: "desc" }}
+      groupBy={(r) => r.status}
+      groupHeader={(key, group) => `${status[key as Invoice["status"]]} (${group.length})`}
+      groupTotals={(_, group) => ({ amount: sum(group) })}
+      totals={{ amount: sum(rows) }}
+    />
+  );
+}
+
+/** A print copy: small cells, wrapping headers, no scroll box, no cards. The caller leaves out pages and row links. */
+export function DataTablePrintExample() {
+  const t = useT();
+  const status = { paid: t("Paid", "مدفوعة"), due: t("Due", "مستحقة"), overdue: t("Overdue", "متأخرة") };
+  const sum = (rows: Invoice[]) => <Money amount={rows.reduce((n, r) => n + r.amount, 0)} />;
+  const rows = INVOICES.slice(0, 8);
+  return (
+    <DataTable
+      className="w-full"
+      density="print"
+      columns={useInvoiceColumns().map((c) => (c.key === "amount" ? { ...c, header: <>{t("Amount including VAT (", "المبلغ شاملًا الضريبة (")}<RiyalSign />)</> } : c))}
+      rows={rows}
+      getRowId={(r) => r.id}
+      caption={t("Tax documents", "المستندات الضريبية")}
+      groupBy={(r) => r.status}
+      groupHeader={(key, group) => `${status[key as Invoice["status"]]} (${group.length})`}
+      groupTotals={(_, group) => ({ amount: sum(group) })}
+      totals={{ amount: sum(rows) }}
+    />
+  );
+}
+
+/** ColumnsMenu hides columns (Invoice stays), with a rows-per-page choice and a header that stays in view. */
+export function ColumnsMenuExample() {
+  const t = useT();
+  const columns = useInvoiceColumns().map((c) => (c.key === "id" ? { ...c, hideable: false } : c));
+  const [hidden, setHidden] = useState<string[]>([]);
+  const [size, setSize] = useState(10);
+  return (
+    <div className="grid w-full grid-cols-1 gap-3">
+      <ColumnsMenu className="justify-self-end" columns={columns} hidden={hidden} onHiddenChange={setHidden} />
+      <DataTable
+        columns={columns}
+        rows={INVOICES}
+        getRowId={(r) => r.id}
+        caption={t("Invoices", "الفواتير")}
+        hideCaption
+        hiddenColumns={hidden}
+        pageSize={size}
+        pageSizeOptions={[5, 10, 25]}
+        onPageSizeChange={setSize}
+        stickyHeader
+      />
     </div>
   );
 }
@@ -210,6 +344,75 @@ export function ListExample() {
   );
 }
 
+const PADS = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 6"><rect width="8" height="6" fill="#888"/><circle cx="4" cy="3" r="1.8" fill="#ccc"/></svg>');
+const PRODUCTS = [
+  { id: "bp-01", en: "Front brake pads", ar: "فحمات أمامية", stock: 12, price: 230 },
+  { id: "of-22", en: "Oil filter", ar: "فلتر زيت", stock: 40, price: 35 },
+  { id: "sp-08", en: "Spark plug set", ar: "طقم شمعات", stock: 0, price: 120 },
+  { id: "wb-03", en: "Wiper blades", ar: "مساحات زجاج", stock: 7, price: 60 },
+];
+
+/** A product list for a counter tablet: `data-density="touch"` gives finger-sized controls on a touch screen, and each row is one button. */
+export function ListPickExample() {
+  const t = useT();
+  const [cart, setCart] = useState<string[]>([]);
+  return (
+    <div data-density="touch" className="grid w-full max-w-md gap-3">
+      <List className="rounded-card border border-line">
+        {PRODUCTS.map((p) => (
+          <ListItem
+            key={p.id}
+            title={t(p.en, p.ar)}
+            description={<span dir="ltr">{p.id.toUpperCase()}</span>}
+            trailing={<Money amount={p.price} />}
+            disabled={p.stock <= 0}
+            onSelect={() => setCart((c) => [...c, p.id])}
+          />
+        ))}
+      </List>
+      <div className="flex items-center justify-between gap-3">
+        <Text size="sm" tone="muted" aria-live="polite">
+          {t(`${cart.length} in the cart`, `${cart.length} في السلة`)}
+        </Text>
+        <Button size="sm" variant="secondary" onClick={() => setCart([])} disabled={cart.length === 0}>
+          {t("Clear", "مسح")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/** A pickable tile: the image fills the width, the whole card is one button, a sold-out product is dim and does nothing. */
+export function CardPickExample() {
+  const t = useT();
+  const [picked, setPicked] = useState<string>();
+  return (
+    <div className="grid w-full gap-3">
+      <Grid min="11rem" gap={3}>
+        {PRODUCTS.map((p) => (
+          <Card
+            key={p.id}
+            density="compact"
+            media={<Thumbnail src={PADS} alt="" size="fill" />}
+            title={t(p.en, p.ar)}
+            description={<span dir="ltr">{p.id.toUpperCase()}</span>}
+            disabled={p.stock <= 0}
+            onSelect={() => setPicked(t(p.en, p.ar))}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Money amount={p.price} />
+              <StatusBadge tone={p.stock > 0 ? "success" : "neutral"}>{p.stock > 0 ? t(`In stock: ${p.stock}`, `متوفر: ${p.stock}`) : t("Out of stock", "نفد")}</StatusBadge>
+            </div>
+          </Card>
+        ))}
+      </Grid>
+      <Text size="sm" tone="muted" aria-live="polite">
+        {picked ? t(`Added: ${picked}`, `أُضيف: ${picked}`) : t("Pick a product.", "اختر منتجًا.")}
+      </Text>
+    </div>
+  );
+}
+
 export function DescriptionListExample() {
   const t = useT();
   const lang = useLang();
@@ -226,4 +429,80 @@ export function DescriptionListExample() {
       ]}
     />
   );
+}
+
+export function DescriptionListAutoExample() {
+  const t = useT();
+  const items = [
+    { term: t("Client", "العميل"), details: t("Masar", "مسار") },
+    { term: t("Services", "الخدمات"), details: t("Product design, mobile app, hosting", "تصميم المنتج، تطبيق جوال، استضافة") },
+    { term: t("Budget", "الميزانية"), details: <Money amount={240000} /> },
+  ];
+  return (
+    <div className="grid w-full gap-6 sm:grid-cols-[16rem_1fr]">
+      <DescriptionList layout="auto" density="compact" items={items} />
+      <DescriptionList layout="auto" density="compact" items={items} />
+    </div>
+  );
+}
+
+export function DescriptionListColsExample() {
+  const t = useT();
+  const row = (term: string, termAr: string, amount: number) => ({ term: t(term, termAr), details: <Money amount={amount} /> });
+  const items = [
+    row("Opening", "الافتتاحي", 500),
+    row("Cash sales", "مبيعات نقدية", 9120),
+    row("Cash in", "إيداع", 300),
+    row("Cash out", "سحب", 150),
+    row("Refunds", "المرتجعات", 180),
+    row("Expected", "المتوقع", 9590),
+    row("Counted", "المعدود", 9570),
+    row("Difference", "الفرق", 20),
+  ];
+  return (
+    <div className="grid w-full gap-6 sm:grid-cols-[1fr_16rem]">
+      <Card title={t("Cash, 2 columns", "النقد، عمودان")} headingLevel={4} density="compact">
+        <DescriptionList cols={2} density="compact" items={items} />
+      </Card>
+      <Card title={t("The same list in a narrow card", "القائمة نفسها في بطاقة ضيقة")} headingLevel={4} density="compact">
+        <DescriptionList cols={2} density="compact" items={items.slice(0, 4)} />
+      </Card>
+      <Card title={t("2 columns, term beside details", "عمودان، المصطلح بجانب تفاصيله")} headingLevel={4} density="compact" className="sm:col-span-2">
+        <DescriptionList cols={2} layout="columns" density="compact" items={items} />
+      </Card>
+    </div>
+  );
+}
+
+export function CardCompactExample() {
+  const t = useT();
+  return (
+    <Grid min="14rem" gap={4} className="w-full">
+      <Card title={t("Default", "افتراضي")} description={t("p-6, title text-lg.", "حشوة p-6، والعنوان text-lg.")}>
+        <Text size="sm" tone="muted">{t("The usual card.", "البطاقة المعتادة.")}</Text>
+      </Card>
+      <Card density="compact" title={t("Compact", "مضغوط")} description={t("p-4, title text-base.", "حشوة p-4، والعنوان text-base.")}>
+        <Text size="sm" tone="muted">{t("For dense records.", "للسجلات الكثيفة.")}</Text>
+      </Card>
+    </Grid>
+  );
+}
+
+/** A dense list: `density="compact"`, a muted line under the customer (a phone, with a link in it), and the card slots below 768 px. */
+export function DataTableDenseExample() {
+  const t = useT();
+  type Order = { id: string; number: string; name: string; phone: string; total: number; comment: string };
+  const rows: Order[] = [
+    { id: "1", number: "INV-1042", name: t("Sara Al-Qahtani", "سارة القحطاني"), phone: "0551234567", total: 1850, comment: t("Deliver after 5 pm. Call before arriving.", "التسليم بعد الخامسة مساءً. الاتصال قبل الوصول.") },
+    { id: "2", number: "INV-1043", name: t("Omar Al-Harbi", "عمر الحربي"), phone: "0507654321", total: 320, comment: "" },
+    { id: "3", number: "INV-1044", name: t("Lina Al-Otaibi", "لينا العتيبي"), phone: "0561112233", total: 12400, comment: t("Gift wrap.", "تغليف هدية.") },
+  ];
+  const columns: DataTableColumn<Order>[] = [
+    // The first cell is the row link; the description comes after it, and the phone stays a working link.
+    { key: "name", header: t("Customer", "العميل"), description: (r) => <PhoneText value={r.phone} /> },
+    { key: "number", header: t("Invoice", "الفاتورة"), description: () => t("Simplified tax invoice", "فاتورة ضريبية مبسطة"), cardSlot: "meta" },
+    { key: "total", header: t("Total", "المجموع"), cell: (r) => <Money amount={r.total} />, align: "end", cardSlot: "end" },
+    { key: "comment", header: t("Comment", "ملاحظة"), cardSlot: "block", hideable: false },
+  ];
+  return <DataTable className="w-full" density="compact" cards columns={columns} rows={rows} getRowId={(r) => r.id} caption={t("Orders", "الطلبات")} hideCaption rowHref={(r) => `#${r.id}`} />;
 }

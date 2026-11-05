@@ -38,6 +38,10 @@
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
     },
+    "./react-hook-form": {
+      "types": "./dist/react-hook-form.d.ts",
+      "default": "./dist/react-hook-form.js"
+    },
     "./styles.css": "./styles.css"
   },
   "scripts": {
@@ -54,6 +58,15 @@
   "peerDependencies": {
     "@percentsa/tokens": "workspace:^",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.55.0"
+  },
+  "peerDependenciesMeta": {
+    "react-hook-form": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "react-hook-form": "^7.55.0"
   }
 }

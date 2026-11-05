@@ -1,6 +1,37 @@
-import { useState } from "react";
-import { ChartColumn, FileText, Inbox, LayoutDashboard, Languages, LogOut, Moon, Plus, Search, Settings, Users } from "lucide-react";
-import { AppShell, Button, type Command, CommandPalette, Heading, Kbd, Logo, Mark, Sidebar, type SidebarSection, Text, toast, useCommandShortcut, useLang } from "@percentsa/ui";
+import { useRef, useState } from "react";
+import { ChartColumn, Copy, Download, FileText, Inbox, LayoutDashboard, Languages, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
+import {
+  AppShell,
+  Button,
+  type Command,
+  CommandPalette,
+  Card,
+  Container,
+  Dialog,
+  DialogClose,
+  DropdownMenu,
+  Heading,
+  Kbd,
+  Logo,
+  Mark,
+  Money,
+  PageHeader,
+  PrintArea,
+  Sidebar,
+  type SidebarSection,
+  StatusBadge,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  Text,
+  toast,
+  useCommandShortcut,
+  useLang,
+  usePrint,
+  useStrings,
+} from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 function useSections(current = "#inbox"): SidebarSection[] {
@@ -153,5 +184,203 @@ export function CommandPaletteExample() {
       </Button>
       <CommandPalette open={open} onOpenChange={setOpen} commands={useCommands()} />
     </>
+  );
+}
+
+// The docs page has its own h1, so the examples use headingLevel={2}.
+
+/** A list page: the title, a count, one primary action, Export and the "⋯" menu. Below 768 px "More actions" opens the rest. */
+export function PageHeaderListExample() {
+  const t = useT();
+  const done = (title: string) => () => toast({ title });
+  return (
+    <PageHeader
+      className="w-full"
+      headingLevel={2}
+      title={t("Orders", "الطلبات")}
+      meta={t("128 orders", "128 طلبًا")}
+      primary={
+        <Button onClick={done(t("New order", "طلب جديد"))}>
+          <Plus aria-hidden />
+          {t("New order", "طلب جديد")}
+        </Button>
+      }
+      secondary={
+        <Button variant="secondary" onClick={done(t("Export started", "بدأ التصدير"))}>
+          <Download aria-hidden />
+          {t("Export", "تصدير")}
+        </Button>
+      }
+      menu={[
+        { label: t("Import from a file", "استيراد من ملف"), icon: <Upload />, onSelect: done(t("Import", "استيراد")) },
+        { label: t("Print the list", "طباعة القائمة"), icon: <Printer />, onSelect: done(t("Print", "طباعة")) },
+      ]}
+    />
+  );
+}
+
+/** A record page: back to the list, status badges and a meta line. "Send" opens a dialog; Delete goes last; a disabled item says why. */
+export function PageHeaderDocumentExample() {
+  const t = useT();
+  const done = (title: string) => () => toast({ title });
+  return (
+    <PageHeader
+      className="w-full"
+      headingLevel={2}
+      back={{ href: "#invoices", label: t("Invoices", "الفواتير") }}
+      title="INV-1042"
+      badges={
+        <>
+          <StatusBadge tone="warning">{t("Overdue", "متأخرة")}</StatusBadge>
+          <StatusBadge tone="info">{t("Sent", "مرسلة")}</StatusBadge>
+        </>
+      }
+      meta={
+        <>
+          <span>{t("Nakheel Co.", "شركة نخيل")}</span>
+          <span>{t("Due 30 September 2026", "تستحق في 30 سبتمبر 2026")}</span>
+          <Money amount={12500} decimals={2} />
+        </>
+      }
+      primary={<Button onClick={done(t("Payment recorded", "سُجّلت الدفعة"))}>{t("Record payment", "تسجيل دفعة")}</Button>}
+      secondary={
+        <Dialog
+          trigger={
+            <Button variant="secondary">
+              <Send aria-hidden />
+              {t("Send", "إرسال")}
+            </Button>
+          }
+          title={t("Send invoice", "إرسال الفاتورة")}
+          description={t("Nakheel Co. gets a link to the invoice by email.", "تصل إلى شركة نخيل رسالة بريد فيها رابط الفاتورة.")}
+          footer={
+            <DialogClose asChild>
+              <Button onClick={done(t("Invoice sent", "أُرسلت الفاتورة"))}>{t("Send", "إرسال")}</Button>
+            </DialogClose>
+          }
+        />
+      }
+      menu={[
+        { label: t("Delete", "حذف"), icon: <Trash2 />, danger: true, onSelect: done(t("Deleted", "حُذفت")) },
+        { label: t("Duplicate", "تكرار"), icon: <Copy />, onSelect: done(t("Duplicated", "تم التكرار")) },
+        {
+          label: t("Send by WhatsApp", "إرسال عبر واتساب"),
+          icon: <MessageCircle />,
+          disabled: true,
+          description: t("The customer has no mobile number.", "لا يوجد رقم جوال للعميل."),
+        },
+      ]}
+    />
+  );
+}
+
+/**
+ * "Print the list" prints 30 orders on A4 landscape. The title and the column names repeat on every page, and nothing
+ * else on the page prints. Over 500 rows an app turns the button off and says why.
+ */
+export function PrintAreaExample() {
+  const t = useT();
+  const s = useStrings();
+  const area = useRef<HTMLDivElement>(null);
+  const { print, printing } = usePrint();
+  const customers = [t("Nakheel Co.", "شركة نخيل"), t("Masar Trading", "مسار التجارية"), t("Sadeem Est.", "مؤسسة سديم")];
+  const rows = Array.from({ length: 30 }, (_, i) => ({ number: `ORD-${1001 + i}`, customer: customers[i % 3], total: 450 + i * 125 }));
+  const tooMany = rows.length > 500;
+  return (
+    <div className="grid justify-items-start gap-2">
+      <Button variant="secondary" disabled={tooMany || printing} onClick={() => print(area.current)}>
+        <Printer aria-hidden />
+        {t("Print the list", "طباعة القائمة")}
+      </Button>
+      {tooMany && (
+        <Text size="sm" tone="muted">
+          {s.tooManyRowsToPrint(500)}
+        </Text>
+      )}
+      <PrintArea
+        ref={area}
+        orientation="landscape"
+        header={
+          <div className="flex items-baseline justify-between gap-4 border-b border-line pb-2">
+            <Heading level={2} size={5}>
+              {t("Orders", "الطلبات")}
+            </Heading>
+            <Text size="sm" tone="muted">
+              {t("30 orders", "30 طلبًا")}
+            </Text>
+          </div>
+        }
+      >
+        <table className="w-full border-collapse text-sm">
+          <TableHeader>
+            <TableRow>
+              <TableHead>{t("Number", "الرقم")}</TableHead>
+              <TableHead>{t("Customer", "العميل")}</TableHead>
+              <TableHead align="end">{t("Total", "الإجمالي")}</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {rows.map((r) => (
+              <TableRow key={r.number}>
+                <TableCell>{r.number}</TableCell>
+                <TableCell>{r.customer}</TableCell>
+                <TableCell align="end">
+                  <Money amount={r.total} decimals={2} />
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </table>
+      </PrintArea>
+    </div>
+  );
+}
+
+/** A driver app frame: no navigation, so no sidebar. The header row shows at every width; the page centres its content with Container. */
+export function AppShellNoSidebarExample() {
+  const t = useT();
+  const lang = useLang();
+  return (
+    <div className="h-[28rem] w-full overflow-auto rounded-card border border-line [clip-path:inset(0_round_var(--p-radius-card))]">
+      <AppShell
+        embedded
+        density="comfortable"
+        mainId="app-shell-driver-main"
+        className="min-h-full"
+        header={
+          <>
+            {/* The app draws its own logo; AppShell only takes the node. */}
+            <Logo version={lang === "ar" ? "icon-ar" : "icon-en"} />
+            <span className="flex-1" />
+            <DropdownMenu
+              align="end"
+              trigger={
+                <Button variant="ghost" iconOnly aria-label={t("Account", "الحساب")}>
+                  <Users aria-hidden />
+                </Button>
+              }
+              items={[
+                { heading: t("Ahmed, driver", "أحمد السائق") },
+                { label: t("Switch theme", "المظهر"), icon: <Moon /> },
+                "separator",
+                { label: t("Sign out", "تسجيل الخروج"), icon: <LogOut />, danger: true },
+              ]}
+            />
+          </>
+        }
+      >
+        <Container size="sm" className="grid gap-3 py-4">
+          <Heading level={2} size={5}>
+            {t("Today", "اليوم")}
+          </Heading>
+          {[
+            [t("Toyota Camry 2021", "تويوتا كامري 2021"), t("Brake pads, 9:30", "تيل فرامل، 9:30")],
+            [t("Hyundai Sonata 2019", "هيونداي سوناتا 2019"), t("Oil change, 11:00", "تغيير زيت، 11:00")],
+          ].map(([title, line]) => (
+            <Card key={title} title={title} description={line} density="compact" />
+          ))}
+        </Container>
+      </AppShell>
+    </div>
   );
 }

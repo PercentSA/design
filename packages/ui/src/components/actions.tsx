@@ -53,7 +53,7 @@ export const ButtonGroup = ({ className, ...rest }: HTMLAttributes<HTMLDivElemen
 );
 
 const TOGGLE_ITEM =
-  "inline-flex h-8 min-w-8 items-center justify-center gap-2 rounded-pill px-3 text-[13px] font-medium text-fg-2 transition-colors hover:text-fg data-[state=on]:bg-surface-2 data-[state=on]:text-fg disabled:opacity-50 [&_svg]:size-4";
+  "inline-flex h-(--p-control-h-xs) min-w-(--p-control-h-xs) items-center justify-center gap-2 rounded-pill px-3 text-[13px] font-medium text-fg-2 transition-colors hover:text-fg data-[state=on]:bg-surface-2 data-[state=on]:text-fg disabled:opacity-50 [&_svg]:size-4";
 
 export const Toggle = ({ className, ...rest }: ComponentProps<typeof RadixToggle.Root>) => (
   <RadixToggle.Root className={cn(TOGGLE_ITEM, className)} {...rest} />

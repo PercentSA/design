@@ -20,6 +20,8 @@ import { Button, PercentProvider } from "@percentsa/ui";
 </PercentProvider>
 ```
 
+Forms with react-hook-form: `FormField` binds a field to `Field` (label, hint, error message, ids). It has its own entry, `import { FormField } from "@percentsa/ui/react-hook-form"`, and needs `react-hook-form` 7.55 or later (`bun add react-hook-form`). `@percentsa/ui` itself does not import it.
+
 The Percent logo is the default. Set your own with `PercentProvider brand={{ mark, wordmark }}`: the Percent name and logos are not covered by the MIT license (see TRADEMARKS.md in the repository).
 
 Docs and examples: https://design.percent.sa · Source: https://github.com/PercentSA/design · License: MIT

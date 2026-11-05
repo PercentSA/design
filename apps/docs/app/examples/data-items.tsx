@@ -1,5 +1,5 @@
 import { FileText, Folder } from "lucide-react";
-import { Accordion, Avatar, AvatarGroup, FormattedNumber, Inline, Money, Stack, Stat, Timeline, Tree } from "@percentsa/ui";
+import { Accordion, Avatar, AvatarGroup, FormattedNumber, Inline, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function StatExample() {
@@ -9,6 +9,19 @@ export function StatExample() {
       <Stat label={t("Revenue", "الإيرادات")} value={<Money amount={184250} />} change={{ value: "+12.4%", direction: "up" }} hint={t("vs last month", "مقارنة بالشهر الماضي")} />
       <Stat label={t("Active users", "المستخدمون النشطون")} value={<FormattedNumber value={12480} />} change={{ value: "0%", direction: "flat" }} />
       <Stat label={t("Churn", "معدل الإلغاء")} value="2.4%" change={{ value: "+0.6%", direction: "up", tone: "danger" }} hint={t("Higher is worse", "الارتفاع سيئ")} />
+    </div>
+  );
+}
+
+/** Four money tiles in a row: the value size follows the tile width (a container query on the tile), so an amount with decimals fits at 158 px. */
+export function StatMoneyRowExample() {
+  const t = useT();
+  return (
+    <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <Stat label={t("Collected", "المبالغ المحصلة")} value={<Money amount={123456.78} decimals={2} />} change={{ value: "12.5%", direction: "up" }} hint={t("Yesterday: 98,000.00", "أمس: 98,000.00")} />
+      <Stat label={t("Sales", "المبيعات")} value={<Money amount={248910.5} decimals={2} />} change={{ value: "3.0%", direction: "down" }} />
+      <Stat label={t("Refunds", "المرتجعات")} value={<Money amount={4120} decimals={2} />} change={{ value: "0.4%", direction: "up", tone: "danger" }} />
+      <Stat label={t("Orders", "الطلبات")} value="1,284" change={{ value: "3.0%", direction: "down" }} hint={t("Yesterday: 1,324", "أمس: 1,324")} />
     </div>
   );
 }
@@ -116,5 +129,72 @@ export function AvatarGroupExample() {
         ))}
       </AvatarGroup>
     </Stack>
+  );
+}
+
+export function RecordSummaryExample() {
+  const t = useT();
+  return (
+    <RecordSummary
+      className="w-full"
+      items={[
+        { id: "total", label: t("Total", "الإجمالي"), value: <Money amount={1150} /> },
+        { id: "paid", label: t("Paid", "المدفوع"), value: <Money amount={500} /> },
+        { id: "due", label: t("Balance", "المتبقي"), value: <Money amount={650} />, hint: t("Due 3 Mar", "الاستحقاق 3 مارس") },
+        { id: "customer", label: t("Customer", "العميل"), value: t("Al Rayan Trading Est.", "مؤسسة الريان للتجارة"), href: "#customer" },
+        { id: "branch", label: t("Branch", "الفرع"), value: null },
+        { id: "note", label: t("Note", "ملاحظة"), value: t("Deliver to the side entrance of the warehouse before noon", "التسليم عند المدخل الجانبي للمستودع قبل الظهر") },
+      ]}
+    />
+  );
+}
+
+/** A report: the totals of a period (a month), with a link on the largest figure. */
+export function RecordSummaryReportExample() {
+  const t = useT();
+  return (
+    <RecordSummary
+      className="w-full"
+      label={t("Totals of September 2026", "إجماليات سبتمبر 2026")}
+      items={[
+        { id: "sales", label: t("Sales", "المبيعات"), value: <Money amount={248910.5} decimals={2} />, hint: t("1,284 invoices", "1,284 فاتورة"), href: "#sales" },
+        { id: "returns", label: t("Returns", "المرتجعات"), value: <Money amount={4120} decimals={2} />, hint: t("23 credit notes", "23 إشعار دائن") },
+        { id: "vat", label: t("VAT collected", "الضريبة المحصلة"), value: <Money amount={32466.58} decimals={2} /> },
+        { id: "net", label: t("Net", "الصافي"), value: <Money amount={212323.92} decimals={2} />, hint: t("Cash and cards", "نقدًا وبطاقات") },
+      ]}
+    />
+  );
+}
+
+export function RecordSummaryMediaExample() {
+  const t = useT();
+  return (
+    <Stack gap={4} className="w-full">
+      <RecordSummary
+        className="w-full"
+        media={<Thumbnail alt={t("Brake pad set", "طقم فحمات")} size="lg" />}
+        items={[
+          { id: "stock", label: t("Available", "المتوفر"), value: "12" },
+          { id: "price", label: t("Price incl. VAT", "السعر شامل الضريبة"), value: <Money amount={230} />, hint: t("Before VAT: 200.00", "قبل الضريبة: 200.00") },
+          { id: "category", label: t("Category", "التصنيف"), value: t("Brake pads", "فحمات الفرامل") },
+        ]}
+      />
+      <RecordSummary className="w-full" loading items={[{ id: "a", label: t("Total", "الإجمالي"), value: null }, { id: "b", label: t("Paid", "المدفوع"), value: null }, { id: "c", label: t("Balance", "المتبقي"), value: null }]} />
+    </Stack>
+  );
+}
+
+export function ThumbnailExample() {
+  const t = useT();
+  // data: URL, so the example needs no file.
+  const photo = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><rect width="8" height="8" fill="#888"/><circle cx="4" cy="4" r="2.5" fill="#ccc"/></svg>');
+  return (
+    <Inline gap={6} align="start" className="w-full">
+      <Thumbnail src={photo} alt={t("Product photo", "صورة المنتج")} size="sm" />
+      <Thumbnail src={photo} alt={t("Product photo", "صورة المنتج")} size="md" />
+      <Thumbnail src={photo} alt={t("Product photo", "صورة المنتج")} size="lg" />
+      <Thumbnail src={null} alt={t("Brake pad set", "طقم فحمات")} size="md" />
+      <Thumbnail alt="supplier-invoice.pdf" fallback={<FileText />} caption="supplier-invoice.pdf" href="#file" size="md" />
+    </Inline>
   );
 }

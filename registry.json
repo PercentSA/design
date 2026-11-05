@@ -29,6 +29,33 @@
       }
     },
     {
+      "name": "action-bar",
+      "type": "registry:ui",
+      "title": "ActionBar",
+      "description": "@percentsa/ui: ActionBar",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/text"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/action-bar.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/action-bar.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ActionBar"
+        ]
+      }
+    },
+    {
       "name": "actions",
       "type": "registry:ui",
       "title": "Button, ButtonGroup, Toggle, SegmentedControl",
@@ -264,8 +291,8 @@
     {
       "name": "calendar",
       "type": "registry:ui",
-      "title": "Calendar, DatePicker",
-      "description": "@percentsa/ui: Calendar, DatePicker",
+      "title": "Calendar, DatePicker, DateRangePicker",
+      "description": "@percentsa/ui: Calendar, DatePicker, DateRangePicker",
       "dependencies": [
         "lucide-react",
         "radix-ui"
@@ -275,9 +302,11 @@
         "@percentsa/cn",
         "@percentsa/field",
         "@percentsa/input-classes",
+        "@percentsa/inputs",
         "@percentsa/provider",
         "@percentsa/saudi-calendar",
-        "@percentsa/saudi-date"
+        "@percentsa/saudi-date",
+        "@percentsa/saudi-date-time"
       ],
       "files": [
         {
@@ -289,7 +318,8 @@
       "meta": {
         "exports": [
           "Calendar",
-          "DatePicker"
+          "DatePicker",
+          "DateRangePicker"
         ]
       }
     },
@@ -570,6 +600,34 @@
       }
     },
     {
+      "name": "columns-menu",
+      "type": "registry:ui",
+      "title": "ColumnsMenu",
+      "description": "@percentsa/ui: ColumnsMenu",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/data-table",
+        "@percentsa/input-classes",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/columns-menu.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/columns-menu.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ColumnsMenu"
+        ]
+      }
+    },
+    {
       "name": "combobox",
       "type": "registry:ui",
       "title": "Combobox",
@@ -662,12 +720,17 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "@percentsa/button-class",
+        "@percentsa/card",
         "@percentsa/choices",
         "@percentsa/cn",
         "@percentsa/feedback",
+        "@percentsa/inputs",
+        "@percentsa/menus",
         "@percentsa/navigation",
         "@percentsa/provider",
         "@percentsa/table",
+        "@percentsa/text",
         "@percentsa/utility"
       ],
       "files": [
@@ -686,15 +749,18 @@
     {
       "name": "feedback",
       "type": "registry:ui",
-      "title": "Alert, Badge, Tag, StatusDot",
-      "description": "@percentsa/ui: Alert, Badge, Tag, StatusDot, Progress, ProgressRing, Skeleton, EmptyState",
+      "title": "Alert, Badge, Tag, StatusBadge",
+      "description": "@percentsa/ui: Alert, Badge, Tag, StatusBadge, StatusDot, Progress, ProgressRing, Skeleton, EmptyState, NotFound, Forbidden",
       "dependencies": [
         "lucide-react",
         "radix-ui"
       ],
       "registryDependencies": [
+        "@percentsa/actions",
         "@percentsa/brand",
+        "@percentsa/button-class",
         "@percentsa/cn",
+        "@percentsa/navigation",
         "@percentsa/provider"
       ],
       "files": [
@@ -709,11 +775,14 @@
           "Alert",
           "Badge",
           "Tag",
+          "StatusBadge",
           "StatusDot",
           "Progress",
           "ProgressRing",
           "Skeleton",
-          "EmptyState"
+          "EmptyState",
+          "NotFound",
+          "Forbidden"
         ]
       }
     },
@@ -721,7 +790,7 @@
       "name": "field",
       "type": "registry:ui",
       "title": "Field, Fieldset, Honeypot",
-      "description": "@percentsa/ui: fieldContext, useFieldControl, useFieldLabelId, Field, Fieldset, Honeypot",
+      "description": "@percentsa/ui: fieldContext, lineCellScope, useFieldControl, useFieldLabelId, Field, Fieldset, Honeypot",
       "registryDependencies": [
         "@percentsa/cn",
         "@percentsa/provider"
@@ -736,6 +805,7 @@
       "meta": {
         "exports": [
           "fieldContext",
+          "lineCellScope",
           "useFieldControl",
           "useFieldLabelId",
           "Field",
@@ -782,10 +852,13 @@
       ],
       "registryDependencies": [
         "@percentsa/actions",
+        "@percentsa/choices",
         "@percentsa/cn",
         "@percentsa/feedback",
+        "@percentsa/field",
         "@percentsa/flip",
         "@percentsa/input-classes",
+        "@percentsa/overlays",
         "@percentsa/provider",
         "@percentsa/special-inputs"
       ],
@@ -799,6 +872,79 @@
       "meta": {
         "exports": [
           "FilterBar"
+        ]
+      }
+    },
+    {
+      "name": "form-bar",
+      "type": "registry:ui",
+      "title": "FormBar",
+      "description": "@percentsa/ui: FormBar",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/form-bar.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/form-bar.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FormBar"
+        ]
+      }
+    },
+    {
+      "name": "form-sheet",
+      "type": "registry:ui",
+      "title": "FormSheet",
+      "description": "@percentsa/ui: FormSheet",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/overlays",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/form-sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/form-sheet.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FormSheet"
+        ]
+      }
+    },
+    {
+      "name": "image-field",
+      "type": "registry:ui",
+      "title": "ImageField",
+      "description": "@percentsa/ui: ImageField",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/file-drop",
+        "@percentsa/provider",
+        "@percentsa/spinner"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/image-field.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/image-field.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ImageField"
         ]
       }
     },
@@ -865,6 +1011,7 @@
         "@percentsa/cn",
         "@percentsa/format-number",
         "@percentsa/localized",
+        "@percentsa/print-paper",
         "@percentsa/provider",
         "@percentsa/qr-code",
         "@percentsa/saudi-calendar",
@@ -920,7 +1067,9 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "@percentsa/actions",
         "@percentsa/cn",
+        "@percentsa/feedback",
         "@percentsa/flip",
         "@percentsa/menus",
         "@percentsa/provider",
@@ -941,15 +1090,44 @@
       }
     },
     {
+      "name": "keypad",
+      "type": "registry:ui",
+      "title": "KeyGrid, Keypad",
+      "description": "@percentsa/ui: KeyGrid, Keypad",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/provider",
+        "@percentsa/saudi-digits"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/keypad.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/keypad.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "KeyGrid",
+          "Keypad"
+        ]
+      }
+    },
+    {
       "name": "layout",
       "type": "registry:ui",
       "title": "Container, Section, Stack, Inline",
-      "description": "@percentsa/ui: Container, Section, Stack, Inline, Grid, Split, AspectRatio, Separator, ScrollArea, Surface, Bleed",
+      "description": "@percentsa/ui: Container, Section, Stack, Inline, Grid, Split, DetailLayout, AspectRatio, Separator, ScrollArea, Surface, Bleed",
       "dependencies": [
         "radix-ui"
       ],
       "registryDependencies": [
-        "@percentsa/cn"
+        "@percentsa/cn",
+        "@percentsa/masonry-grid"
       ],
       "files": [
         {
@@ -966,11 +1144,76 @@
           "Inline",
           "Grid",
           "Split",
+          "DetailLayout",
           "AspectRatio",
           "Separator",
           "ScrollArea",
           "Surface",
           "Bleed"
+        ]
+      }
+    },
+    {
+      "name": "line-items-editor",
+      "type": "registry:ui",
+      "title": "LineItemsEditor",
+      "description": "@percentsa/ui: LineItemsEditor",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/button-class",
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/field",
+        "@percentsa/layout",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/table",
+        "@percentsa/text",
+        "@percentsa/totals-list",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/line-items-editor.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/line-items-editor.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LineItemsEditor"
+        ]
+      }
+    },
+    {
+      "name": "line-items-table",
+      "type": "registry:ui",
+      "title": "LineItemsTable",
+      "description": "@percentsa/ui: LineItemsTable",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/data-table",
+        "@percentsa/feedback",
+        "@percentsa/format-number",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/saudi-money",
+        "@percentsa/thumbnail",
+        "@percentsa/totals-list"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/line-items-table.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/line-items-table.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LineItemsTable"
         ]
       }
     },
@@ -997,6 +1240,27 @@
           "List",
           "ListItem",
           "DescriptionList"
+        ]
+      }
+    },
+    {
+      "name": "masonry-grid",
+      "type": "registry:ui",
+      "title": "MasonryGrid",
+      "description": "@percentsa/ui: MasonryGrid",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/masonry-grid.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/masonry-grid.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "MasonryGrid"
         ]
       }
     },
@@ -1121,6 +1385,153 @@
       }
     },
     {
+      "name": "page-header",
+      "type": "registry:ui",
+      "title": "PageHeader",
+      "description": "@percentsa/ui: PageHeader",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/button-class",
+        "@percentsa/cn",
+        "@percentsa/menus",
+        "@percentsa/navigation",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/page-header.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/page-header.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PageHeader"
+        ]
+      }
+    },
+    {
+      "name": "period-picker",
+      "type": "registry:ui",
+      "title": "PeriodPicker",
+      "description": "@percentsa/ui: PeriodPicker",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/calendar",
+        "@percentsa/cn",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date",
+        "@percentsa/saudi-period"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/period-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/period-picker.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PeriodPicker"
+        ]
+      }
+    },
+    {
+      "name": "phone-text",
+      "type": "registry:ui",
+      "title": "PhoneText",
+      "description": "@percentsa/ui: PhoneText",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider",
+        "@percentsa/saudi-phone"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/phone-text.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/phone-text.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PhoneText"
+        ]
+      }
+    },
+    {
+      "name": "pin-pad",
+      "type": "registry:ui",
+      "title": "PinPad",
+      "description": "@percentsa/ui: PinPad",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/keypad",
+        "@percentsa/provider",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/pin-pad.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/pin-pad.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PinPad"
+        ]
+      }
+    },
+    {
+      "name": "print-area",
+      "type": "registry:ui",
+      "title": "PrintArea",
+      "description": "@percentsa/ui: PrintArea, usePrint",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/print-paper"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/print-area.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/print-area.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PrintArea",
+          "usePrint"
+        ]
+      }
+    },
+    {
+      "name": "print-paper",
+      "type": "registry:lib",
+      "title": "PRINT_PAPER",
+      "description": "@percentsa/ui: PRINT_PAPER",
+      "files": [
+        {
+          "path": "packages/ui/src/components/print-paper.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/print-paper.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PRINT_PAPER"
+        ]
+      }
+    },
+    {
       "name": "qr-code",
       "type": "registry:ui",
       "title": "QrCode, ZatcaQr",
@@ -1143,6 +1554,78 @@
         "exports": [
           "QrCode",
           "ZatcaQr"
+        ]
+      }
+    },
+    {
+      "name": "record-section",
+      "type": "registry:ui",
+      "title": "RecordSection",
+      "description": "@percentsa/ui: RecordSection",
+      "registryDependencies": [
+        "@percentsa/card",
+        "@percentsa/list",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/record-section.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/record-section.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "RecordSection"
+        ]
+      }
+    },
+    {
+      "name": "record-summary",
+      "type": "registry:ui",
+      "title": "RecordSummary",
+      "description": "@percentsa/ui: RecordSummary",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/layout",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/record-summary.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/record-summary.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "RecordSummary"
+        ]
+      }
+    },
+    {
+      "name": "saudi-plate",
+      "type": "registry:ui",
+      "title": "SaudiPlate, PlateInput",
+      "description": "@percentsa/ui: SaudiPlate, PlateInput",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/inputs",
+        "@percentsa/provider",
+        "@percentsa/saudi-plate-rules"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/saudi-plate.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/saudi-plate.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "SaudiPlate",
+          "PlateInput"
         ]
       }
     },
@@ -1173,7 +1656,7 @@
       "name": "sidebar",
       "type": "registry:ui",
       "title": "SidebarInSheet, Sidebar",
-      "description": "@percentsa/ui: SidebarInSheet, Sidebar",
+      "description": "@percentsa/ui: SidebarInSheet, useSidebarRail, Sidebar",
       "dependencies": [
         "lucide-react"
       ],
@@ -1194,6 +1677,7 @@
       "meta": {
         "exports": [
           "SidebarInSheet",
+          "useSidebarRail",
           "Sidebar"
         ]
       }
@@ -1430,6 +1914,31 @@
       }
     },
     {
+      "name": "thumbnail",
+      "type": "registry:ui",
+      "title": "Thumbnail",
+      "description": "@percentsa/ui: Thumbnail",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/thumbnail.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/thumbnail.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Thumbnail"
+        ]
+      }
+    },
+    {
       "name": "ticket-view",
       "type": "registry:ui",
       "title": "TicketView",
@@ -1453,6 +1962,59 @@
       "meta": {
         "exports": [
           "TicketView"
+        ]
+      }
+    },
+    {
+      "name": "time-input",
+      "type": "registry:ui",
+      "title": "TimeInput, DateTimePicker",
+      "description": "@percentsa/ui: TimeInput, DateTimePicker",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/calendar",
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/provider",
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date-time",
+        "@percentsa/special-inputs"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/time-input.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/time-input.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TimeInput",
+          "DateTimePicker"
+        ]
+      }
+    },
+    {
+      "name": "time-text",
+      "type": "registry:ui",
+      "title": "TimeText",
+      "description": "@percentsa/ui: TimeText",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/overlays",
+        "@percentsa/provider",
+        "@percentsa/saudi-date-time"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/time-text.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/time-text.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TimeText"
         ]
       }
     },
@@ -1503,6 +2065,28 @@
           "toast",
           "dismissToast",
           "Toaster"
+        ]
+      }
+    },
+    {
+      "name": "totals-list",
+      "type": "registry:ui",
+      "title": "TotalsList",
+      "description": "@percentsa/ui: TotalsList",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/saudi-money"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/totals-list.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/totals-list.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TotalsList"
         ]
       }
     },
@@ -1757,7 +2341,7 @@
       "name": "provider",
       "type": "registry:ui",
       "title": "PercentProvider",
-      "description": "@percentsa/ui: PercentProvider, useLang, useDir, useStrings, useLinkComponent, useText, useBrand",
+      "description": "@percentsa/ui: PercentProvider, useLang, useDir, useStrings, useLinkComponent, useText, useBrand, usePendingHref",
       "dependencies": [
         "radix-ui"
       ],
@@ -1780,7 +2364,32 @@
           "useStrings",
           "useLinkComponent",
           "useText",
-          "useBrand"
+          "useBrand",
+          "usePendingHref"
+        ]
+      }
+    },
+    {
+      "name": "react-hook-form",
+      "type": "registry:ui",
+      "title": "FormField",
+      "description": "@percentsa/ui: FormField",
+      "dependencies": [
+        "react-hook-form"
+      ],
+      "registryDependencies": [
+        "@percentsa/field"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/react-hook-form.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/react-hook-form.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FormField"
         ]
       }
     },
@@ -1788,7 +2397,7 @@
       "name": "saudi-calendar",
       "type": "registry:lib",
       "title": "fromPlain, addDays, todayPlain, partsOf",
-      "description": "@percentsa/ui: fromPlain, addDays, todayPlain, partsOf, monthOf, shiftView, monthDays, monthGrid, addMonths, moveFocus, viewLabel, weekdayNames",
+      "description": "@percentsa/ui: fromPlain, addDays, todayPlain, partsOf, monthOf, shiftView, monthDays, monthGrid, addMonths, nextRange, rangePreset, moveFocus, viewLabel, monthNames, weekdayNames",
       "registryDependencies": [
         "@percentsa/localized",
         "@percentsa/saudi-date"
@@ -1811,9 +2420,39 @@
           "monthDays",
           "monthGrid",
           "addMonths",
+          "nextRange",
+          "rangePreset",
           "moveFocus",
           "viewLabel",
+          "monthNames",
           "weekdayNames"
+        ]
+      }
+    },
+    {
+      "name": "saudi-date-time",
+      "type": "registry:lib",
+      "title": "formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay",
+      "description": "@percentsa/ui: formatDateTime, dateTimeAttribute, formatRelative, formatTimeOfDay, splitTime, joinTime",
+      "registryDependencies": [
+        "@percentsa/localized",
+        "@percentsa/strings"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/date-time.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/date-time.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "formatDateTime",
+          "dateTimeAttribute",
+          "formatRelative",
+          "formatTimeOfDay",
+          "splitTime",
+          "joinTime"
         ]
       }
     },
@@ -1975,10 +2614,33 @@
       }
     },
     {
+      "name": "saudi-period",
+      "type": "registry:lib",
+      "title": "periodOf, periodOptions",
+      "description": "@percentsa/ui: periodOf, periodOptions",
+      "registryDependencies": [
+        "@percentsa/saudi-calendar",
+        "@percentsa/saudi-date"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/period.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/period.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "periodOf",
+          "periodOptions"
+        ]
+      }
+    },
+    {
       "name": "saudi-phone",
       "type": "registry:lib",
       "title": "GCC_PHONE_COUNTRIES",
-      "description": "@percentsa/ui: GCC_PHONE_COUNTRIES, getPhoneCountry, getPhoneIssue, normalizePhone",
+      "description": "@percentsa/ui: GCC_PHONE_COUNTRIES, getPhoneCountry, getPhoneIssue, normalizePhone, formatPhone, phoneLinks",
       "registryDependencies": [
         "@percentsa/localized",
         "@percentsa/saudi-digits"
@@ -1995,7 +2657,38 @@
           "GCC_PHONE_COUNTRIES",
           "getPhoneCountry",
           "getPhoneIssue",
-          "normalizePhone"
+          "normalizePhone",
+          "formatPhone",
+          "phoneLinks"
+        ]
+      }
+    },
+    {
+      "name": "saudi-plate-rules",
+      "type": "registry:lib",
+      "title": "PLATE_LETTERS",
+      "description": "@percentsa/ui: PLATE_LETTERS, parsePlate, plateIssueMessage, plateLatin, plateDigitsAr, plateLabel, plateSearchText",
+      "registryDependencies": [
+        "@percentsa/localized",
+        "@percentsa/saudi-digits",
+        "@percentsa/strings"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/saudi/plate-rules.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/saudi/plate-rules.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "PLATE_LETTERS",
+          "parsePlate",
+          "plateIssueMessage",
+          "plateLatin",
+          "plateDigitsAr",
+          "plateLabel",
+          "plateSearchText"
         ]
       }
     },
@@ -2578,6 +3271,16 @@
       "files": []
     },
     {
+      "name": "date-range-picker",
+      "type": "registry:ui",
+      "title": "DateRangePicker",
+      "description": "DateRangePicker: adds @percentsa/calendar.",
+      "registryDependencies": [
+        "@percentsa/calendar"
+      ],
+      "files": []
+    },
+    {
       "name": "stretched_link",
       "type": "registry:ui",
       "title": "STRETCHED_LINK",
@@ -2738,6 +3441,16 @@
       "files": []
     },
     {
+      "name": "status-badge",
+      "type": "registry:ui",
+      "title": "StatusBadge",
+      "description": "StatusBadge: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
       "name": "status-dot",
       "type": "registry:ui",
       "title": "StatusDot",
@@ -2782,6 +3495,26 @@
       "type": "registry:ui",
       "title": "EmptyState",
       "description": "EmptyState: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "not-found",
+      "type": "registry:ui",
+      "title": "NotFound",
+      "description": "NotFound: adds @percentsa/feedback.",
+      "registryDependencies": [
+        "@percentsa/feedback"
+      ],
+      "files": []
+    },
+    {
+      "name": "forbidden",
+      "type": "registry:ui",
+      "title": "Forbidden",
+      "description": "Forbidden: adds @percentsa/feedback.",
       "registryDependencies": [
         "@percentsa/feedback"
       ],
@@ -2878,6 +3611,16 @@
       "files": []
     },
     {
+      "name": "key-grid",
+      "type": "registry:ui",
+      "title": "KeyGrid",
+      "description": "KeyGrid: adds @percentsa/keypad.",
+      "registryDependencies": [
+        "@percentsa/keypad"
+      ],
+      "files": []
+    },
+    {
       "name": "container",
       "type": "registry:ui",
       "title": "Container",
@@ -2932,6 +3675,16 @@
       "type": "registry:ui",
       "title": "Split",
       "description": "Split: adds @percentsa/layout.",
+      "registryDependencies": [
+        "@percentsa/layout"
+      ],
+      "files": []
+    },
+    {
+      "name": "detail-layout",
+      "type": "registry:ui",
+      "title": "DetailLayout",
+      "description": "DetailLayout: adds @percentsa/layout.",
       "registryDependencies": [
         "@percentsa/layout"
       ],
@@ -3138,12 +3891,32 @@
       "files": []
     },
     {
+      "name": "print_paper",
+      "type": "registry:ui",
+      "title": "PRINT_PAPER",
+      "description": "PRINT_PAPER: adds @percentsa/print-paper.",
+      "registryDependencies": [
+        "@percentsa/print-paper"
+      ],
+      "files": []
+    },
+    {
       "name": "zatca-qr",
       "type": "registry:ui",
       "title": "ZatcaQr",
       "description": "ZatcaQr: adds @percentsa/qr-code.",
       "registryDependencies": [
         "@percentsa/qr-code"
+      ],
+      "files": []
+    },
+    {
+      "name": "plate-input",
+      "type": "registry:ui",
+      "title": "PlateInput",
+      "description": "PlateInput: adds @percentsa/saudi-plate.",
+      "registryDependencies": [
+        "@percentsa/saudi-plate"
       ],
       "files": []
     },
@@ -3508,6 +4281,16 @@
       "files": []
     },
     {
+      "name": "date-time-picker",
+      "type": "registry:ui",
+      "title": "DateTimePicker",
+      "description": "DateTimePicker: adds @percentsa/time-input.",
+      "registryDependencies": [
+        "@percentsa/time-input"
+      ],
+      "files": []
+    },
+    {
       "name": "toaster",
       "type": "registry:ui",
       "title": "Toaster",
@@ -3564,6 +4347,16 @@
       "description": "PercentProvider: adds @percentsa/provider.",
       "registryDependencies": [
         "@percentsa/provider"
+      ],
+      "files": []
+    },
+    {
+      "name": "form-field",
+      "type": "registry:ui",
+      "title": "FormField",
+      "description": "FormField: adds @percentsa/react-hook-form.",
+      "registryDependencies": [
+        "@percentsa/react-hook-form"
       ],
       "files": []
     },
@@ -3634,6 +4427,16 @@
       "description": "GCC_PHONE_COUNTRIES: adds @percentsa/saudi-phone.",
       "registryDependencies": [
         "@percentsa/saudi-phone"
+      ],
+      "files": []
+    },
+    {
+      "name": "plate_letters",
+      "type": "registry:ui",
+      "title": "PLATE_LETTERS",
+      "description": "PLATE_LETTERS: adds @percentsa/saudi-plate-rules.",
+      "registryDependencies": [
+        "@percentsa/saudi-plate-rules"
       ],
       "files": []
     },

@@ -11,8 +11,152 @@ export type Release = {
 
 const c = (kind: ChangeKind, text: string) => ({ kind, text });
 
+/** The name of a new component links to its page: write `[Name](slug)` in the text. */
+export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
+
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
+  {
+    version: "0.14.1",
+    date: "2026-11-06",
+    summary: "Description lists in columns fit narrower cards.",
+    changes: [
+      c("better", "[DescriptionList](description-list) with cols: a column of stacked pairs is now at least 8rem (was 9rem), so a card in a three-column record grid shows its short money rows in 2 columns. Lists with the term beside its details are unchanged."),
+    ],
+  },
+  {
+    version: "0.14.0",
+    date: "2026-11-05",
+    summary: "Two layout options for record pages: a grid where cards move up into the free space, and description lists in two or three columns. Nothing changes for existing projects.",
+    changes: [
+      c("new", "[Grid](grid) has a masonry option. On a record page with a long details card next to a short refunds card, each card moves up into the free space of its column, so there are no big gaps between rows. The reading and tab order stay the page order. The server sends a normal grid and the browser arranges the cards after the page loads. Use the grid gap for the space, not margins. Cards keep the height of their content, and a printed page shows a normal grid."),
+      c("new", "[DescriptionList](description-list) can flow in two or three columns (cols), with the term above its details: good for short money rows such as a cash summary. A column is at least 9rem of the list itself, so the same list in a narrow card or on a phone shows fewer columns, down to one. The lines run across each row, and it works with compact density. The layout option still sets each pair: term above its details, beside them (in wider columns), or beside them when there is room."),
+      c("new", "[RecordSection](record-section) passes cols to its list, and can show its facts stacked (layout stack)."),
+    ],
+  },
+  {
+    version: "0.13.0",
+    date: "2026-11-05",
+    summary: "Parts for tills, work boards and counter tablets: an action bar, a digit keypad, a Kanban that works as a status board with server counts and pages, and a touch density. One visible change for existing projects: a Kanban column with no cards now says \"No items\".",
+    changes: [
+      c("new", "[ActionBar](action-bar) is the bottom bar of a till, a kiosk or a picking tool: equal tiles with an icon, a label and a key hint such as F2 (hidden on a touch screen). When any tile has a key hint, all tiles are taller so the key never touches the edge. A danger item can sit after a separator. When the bar is narrow the last tiles go into a More menu. The app binds the keys; the bar only shows them."),
+      c("new", "[Keypad](keypad) puts digit keys on a touch screen for an amount or a PIN, so the system keyboard does not cover a dialog. An amount keypad has a point, 00 and backspace and refuses a third decimal; a PIN keypad has the digits and backspace. The keys read left to right in Arabic, like a phone, and a hardware keyboard works only while the focus is on the page or inside the keypad."),
+      c("better", "[PinPad](pin-pad) now shares its key grid with the keypad. It looks and works as before."),
+      c("better", "[Kanban](kanban) can be a work board. Leave out onMove and there is no drag and no Move menu; the card actions are yours. Each column can show a count from the server, a loading state, an error with Try again (the loaded cards stay), its own empty text, and pages: a Load more button that also loads the next page by itself when you reach the end. The board can fill the height of its parent with each column scrolling alone, share the width, show one column with a switch on a phone, and use compact cards."),
+      c("better", "A [Kanban](kanban) column with no cards now shows \"No items\" (before, nothing)."),
+      c("new", "Touch density: put data-density=\"touch\" on a counter tablet screen or on [AppShell](app-shell) (density=\"touch\"). On a touch screen the controls grow to 44 to 48 px; with a mouse they keep the compact sizes. The small [Button](button), [Toggle](toggle), segmented control items, number steps and menu rows follow the new --p-control-h-xs token, which is 32 px everywhere else, so nothing changes without it."),
+      c("new", "[AppShell](app-shell) can fill the screen (fill): the page box takes the height that is left and scrolls inside its own regions, so a till, a board or a calendar needs no calc() for the header."),
+      c("new", "[ListItem](list) and [Card](card) can be one button (onSelect, disabled) for a pickable row or tile, and a card can carry an image above its header (media) with a full-width [Thumbnail](thumbnail) (size=\"fill\")."),
+      c("new", "[Text](text) has a danger tone for a shortfall or a refused state."),
+    ],
+  },
+  {
+    version: "0.12.0",
+    date: "2026-11-05",
+    summary: "Parts for form pages and small phone tools: a line editor, a form action bar, a PIN pad, an app frame without a sidebar, and a wider sheet. One visible change for existing projects: a form sheet from the bottom now shows its two buttons in two equal columns, large.",
+    changes: [
+      c("new", "[LineItemsEditor](line-items-editor) is for the lines of a quote, order, invoice or stocktake in a form. Your inputs sit in the cells, with add, remove, a menu and details for each line, and totals below. Enter moves to the next cell and the next line, and from the last cell it adds a line; it never sends the form. After an add or a remove the focus goes to the right place and a screen reader hears what changed. On a narrow width the rows become cards."),
+      c("new", "[FormBar](form-bar) is the bar at the end of a form page: a short live summary (a total, a count) at the start and the buttons at the end. It stays at the bottom of the scroll area. On a phone the summary has its own line and the buttons share the row."),
+      c("new", "[PinPad](pin-pad) is for a short code on large keys, such as a device lock or a cashier switch. The dots hide the digits, a screen reader hears only how many were typed, and a hardware keyboard works. The keys stop while the code is checked."),
+      c("new", "[AppShell](app-shell) works without a sidebar: no menu button, and the header row shows at every width. Use it for a driver app, a partner portal or a kiosk."),
+      c("new", "[Sheet](sheet) can be wide (size=\"lg\", 56rem) for a document made from another document."),
+      c("new", "[FormSheet](form-sheet) can say why the submit is refused (blocked): the reason shows above the buttons, announced, and the button stays visible but off. It also takes size, danger (a red submit button) and cancelLabel."),
+      c("better", "A [FormSheet](form-sheet) from the bottom now shows its two buttons in two equal columns, large. Before, they were small and at the end."),
+    ],
+  },
+  {
+    version: "0.11.0",
+    date: "2026-11-05",
+    summary: "Parts for reports and dashboards. Two visible changes for existing projects: a Stat tile now sizes its value by its own width, and a row header in a table now looks like a normal cell.",
+    changes: [
+      c("new", "[PeriodPicker](period-picker) can show preset buttons in its custom range (today, yesterday, last 7 days…), start the week on Saturday, and go back to a period you choose when the custom range is cleared."),
+      c("new", "[DataTable](data-table) has density=\"print\" for a printed report: small cells, headers that wrap, no scroll box and no cards, so a wide table fits the page. Total and group rows follow."),
+      c("new", "[Table](table) column headers can wrap onto more lines (wrap)."),
+      c("better", "A [Stat](stat) tile now sizes its value and padding by its own width, not the screen. A wide tile looks as before; narrower tiles use smaller text, so an amount with decimals fits four tiles in a row or two on a phone. The tile takes its width from its parent (a grid cell, flex-1 or a width); in a parent that sizes to its content it is 9rem wide. Padding set with className on the tile no longer changes the inner padding."),
+      c("better", "A row header in a [Table](table) (TableHead with scope=\"row\") now looks like a normal cell: normal weight, regular text size and colour, and it wraps. Before, it looked like a column header."),
+      c("new", "The [RecordSummary](record-summary) page has a report example: the totals of a period."),
+    ],
+  },
+  {
+    version: "0.10.0",
+    date: "2026-11-05",
+    summary: "Parts for lists in an admin app. Nothing changes for existing projects, except that the first cell of a row that opens a record is now medium weight on wide screens too.",
+    changes: [
+      c("new", "[DataTable](data-table) columns can show a muted second line under the value (a phone under a name), and, on phones, place a cell on the card: at the end of the title line, in one line under the title, or full width for long text. A new compact density makes dense lists tighter."),
+      c("new", "[FilterBar](filter-bar) has collapseOnPhone: on a phone the filter menus fold into one “Filters” button with the number of chosen values. It opens a sheet from the bottom with one group per filter and a “Clear filters” button. On wide screens the bar is the same."),
+      c("new", "[EmptyState](empty-state) has variant=\"plain\": no dashed frame, for an empty state inside a table, a card or a sheet. DataTable now uses it for its own empty state."),
+      c("better", "The first cell of a DataTable row that opens a record (rowHref) is now medium weight at all widths. Before, only the phone cards had it."),
+    ],
+  },
+  {
+    version: "0.9.0",
+    date: "2026-11-05",
+    summary: "Parts for the pages of a record in an admin app. Nothing changes for existing projects.",
+    changes: [
+      c("new", "[RecordSummary](record-summary) shows the 1 to 6 key facts of a record in one dense strip under its header: a label, a value and a hint per cell, and an optional picture at the start. It fits the width it is given: one row when wide, three per row in the middle, two per row on a phone. An empty value shows “Not set”, long text is cut at two lines, and a value can be a link."),
+      c("new", "[Thumbnail](thumbnail) is a small square picture in three sizes, with an icon when there is no picture or it does not load, an optional caption, and an optional link around the whole picture."),
+      c("new", "[LineItemsTable](line-items-table) lines can show a small picture, muted description lines, the parts of a kit and more content (such as chips) under the name. The table can show the document totals under it and a text when there are no lines. On phones the same details show in each card."),
+      c("new", "[DescriptionList](description-list) and [RecordSection](record-section) have layout=\"auto\": the term and its details sit side by side only when the list itself is wide enough, so one in a narrow column stays stacked. The existing layouts do not change."),
+      c("new", "[Card](card), DescriptionList and RecordSection have density=\"compact\" for dense records: less padding and a smaller title."),
+    ],
+  },
+  {
+    version: "0.8.2",
+    date: "2026-11-03",
+    summary: "A layout fix for phones. Nothing else changes.",
+    changes: [c("fixed", "On phones, Pagination and a DataTable with pages show the current page without its neighbours, so a long list no longer pushes the page past the edge of the screen.")],
+  },
+  {
+    version: "0.8.1",
+    date: "2026-11-02",
+    summary: "A layout fix for phones. Nothing else changes.",
+    changes: [c("fixed", "Input with start or end content, and the parts built on it, no longer push an Arabic page past the edge of a phone.")],
+  },
+  {
+    version: "0.8.0",
+    date: "2026-10-23",
+    summary: "Parts for documents, records, forms and reports. Nothing changes for existing projects.",
+    changes: [
+      c("new", "The parts in the [Sidebar](sidebar) header and footer can ask useSidebarRail() whether the sidebar is an icon rail. In the phone sheet it is always expanded, so a user menu there shows the name and role."),
+      c("new", "[DetailLayout](detail-layout) puts a record page in two columns: the main part and a side column with details and totals. A wide table scrolls inside its column, so the page never gets wider. On phones the columns stack, main part first. [TotalsList](totals-list) shows a document's totals with the amounts under each other."),
+      c("new", "[LineItemsTable](line-items-table) shows the lines of an order or invoice: product and SKU, quantity, unit price, discount, VAT and total. The headers say whether prices include VAT, a chip shows a returned quantity, and on phones each line is a card."),
+      c("new", "DataTable can show a total row at the foot, and can put the rows of a report in groups, each with a header and a subtotal. A sort works inside each group, and a printed total row stays in one piece after the last row."),
+      c("new", "[FormField](form-field) connects a react-hook-form field to Field: the label, the hint and the field's error message, with the ids screen readers need. It comes from its own import, @percentsa/ui/react-hook-form. Projects that do not use react-hook-form do not need to install it."),
+      c("new", "[FormSheet](form-sheet) is an edit form in a sheet. Save and Cancel stay at the bottom, Save shows a spinner while the form saves, and closing the sheet with unsaved changes asks first. [RecordSection](record-section) shows a record's facts with an Edit button, and \"Not set\" where a value is empty."),
+      c("fixed", "An AlertDialog opened without a trigger (from a menu or a sheet) gives focus back to where it was when it closes."),
+      c("new", "[ImageField](image-field) uploads an image, for example a logo or a product photo. It shows a preview with Replace and Remove, refuses a wrong file type or a file that is too large before the upload, and keeps the old image if the upload fails."),
+      c("new", "FileDrop can be disabled."),
+      c("new", "Combobox can search on the server: it passes each typed query to the app and shows the results with a \"Searching\" row while they load. A long list shows its first matches and how many more there are. An \"Add\" option at the end lets people add a value that is not in the list."),
+      c("new", "[PeriodPicker](period-picker) chooses the period of a report: a month, a quarter, a year or a custom date range. Switching from a month to a quarter or a year keeps the same end, so September becomes the third quarter and then the whole year. With the Hijri calendar the periods are Hijri months, quarters and years (for example \"1448 AH\"), and the value is still the first and last Gregorian day."),
+      c("new", "[TimeInput](time-input) chooses a time of day on the 12-hour clock: hour, minute and AM/PM (ص/م in Arabic). Going from 11 to 12 crosses noon or midnight, as on a clock. [DateTimePicker](date-time-picker) puts a date and a time together, and sends a value only when both are set."),
+      c("new", "NumberInput can format the number it shows, for example a minute as \"05\"."),
+      c("new", "[SaudiPlate](saudi-plate) draws a Saudi car plate with its Arabic and Latin rows, and the emblem, «السعودية» and KSA in the middle. [PlateInput](plate-input) takes a plate as one text, in any order and in Arabic or English, and shows the plate under the field as you type, or what to fix. parsePlate reads the text on the server too."),
+      c("better", "Calendar, DatePicker and DateRangePicker have a month list and a year list, so a date years away takes two choices, not many clicks. Months outside the allowed dates cannot be chosen."),
+      c("better", "DateRangePicker can open on the Hijri calendar."),
+      c("new", "An app can give its own words for every built-in text. The phone country names now come from the strings, and an invoice takes the app's labels for its second language. The Language page shows how."),
+      c("fixed", "IbanInput shows the app's placeholder when the app gives one."),
+    ],
+  },
+  {
+    version: "0.7.0",
+    date: "2026-10-23",
+    summary: "Parts for app screens and lists. Nothing changes for existing projects.",
+    changes: [
+      c("new", "[TimeText](time-text) shows a date or time the short way, in Riyadh time: \"3:45 PM\" today, \"Yesterday 3:45 PM\", \"12 September, 3:45 PM\" this year. Hover, focus or tap shows the exact value. formatDateTime, formatRelative and formatTimeOfDay give the same text for tables, exports and printouts."),
+      c("new", "Money and formatMoney can keep up to 6 decimals for unit prices, and can put negative amounts in brackets: (1,234.50)."),
+      c("fixed", "formatMoney never shows -0.00, and shows \"—\" for an amount that is not a number, so a broken value does not look like zero."),
+      c("new", "[PhoneText](phone-text) shows a phone number as a call link (\"+966 55 000 0999\"), with an optional WhatsApp link. formatPhone and phoneLinks give the text and the links."),
+      c("new", "[StatusBadge](status-badge) shows a status (Paid, Overdue) with a coloured dot in five tones. The colour is on the dot only, so the text stays readable."),
+      c("new", "EmptyState can show a load error with a \"Try again\" button. [NotFound](page-states) and [Forbidden](page-states) are ready pages for a missing record and for a page the user may not open."),
+      c("new", "[PageHeader](page-header) is the top of a list or record page: the title with status badges, a back link to the list, one primary action, and the other actions in a \"⋯\" menu. On phones the primary action is full width and \"More actions\" opens the rest."),
+      c("new", "Menu items can show a second line under the label, for example why an item is disabled."),
+      c("new", "[DateRangePicker](date-range-picker) chooses a date range for a list filter, with the presets today, yesterday, last 7 days, last 30 days, this week, this month and last month. Calendar can choose a range too. The small size fits a list toolbar."),
+      c("new", "DataTable rows can open their record: the whole row is one link, and the checkbox and the \"⋯\" row menu still work. On phones, the rows can show as cards."),
+      c("new", "[ColumnsMenu](columns-menu) lets people show and hide table columns. DataTable can offer a rows-per-page choice and keep its header row in view while the rows scroll. FilterBar takes the list's other controls (date range, columns, refresh) at its end, so one bar is the whole list toolbar."),
+      c("new", "[PrintArea](print-area) and usePrint print one part of a page, such as a list, on A4 paper, black on white in any theme. The title repeats on every page, page numbers are at the bottom, and nothing else on the page prints."),
+      c("new", "Links react at once: give PercentProvider the router's location, and a clicked link in the sidebar, a menu, the breadcrumbs, a card or a table row shows a thin bar until the new page is there."),
+    ],
+  },
   {
     version: "0.6.0",
     date: "2026-10-22",

@@ -1,6 +1,7 @@
-import type { ComponentProps, CSSProperties, ElementType, HTMLAttributes } from "react";
+import type { ComponentProps, CSSProperties, ElementType, HTMLAttributes, ReactNode } from "react";
 import { AspectRatio as RadixAspectRatio, ScrollArea as RadixScrollArea, Separator as RadixSeparator } from "radix-ui";
 import { cn } from "../lib/cn";
+import { MasonryGrid } from "./masonry-grid";
 
 type Div = HTMLAttributes<HTMLDivElement>;
 
@@ -38,10 +39,16 @@ export const Inline = ({ as: As = "div", gap = 2, align = "center", justify, cla
 
 const COLS = { 2: "md:grid-cols-2", 3: "md:grid-cols-3", 4: "md:grid-cols-2 lg:grid-cols-4", 6: "md:grid-cols-3 lg:grid-cols-6", 12: "md:grid-cols-12" } as const;
 
-/** `cols`: fixed columns from 768 px (one column on phones). `min`: as many columns of at least `min` as fit. */
-export function Grid({ cols, min, gap = 6, className, style, ...rest }: Div & { cols?: keyof typeof COLS; min?: string; gap?: Gap }) {
+/**
+ * `cols`: fixed columns from 768 px (one column on phones). `min`: as many columns of at least `min` as fit.
+ * `masonry`: each child moves up into the free space of its column, so cards of very different heights leave no gaps
+ * between rows. The reading and tab order stay the DOM order (child 1, 2, 3 across, then the next row of free space).
+ * The server renders a normal grid; the browser measures the children after mount. Use `gap`, not margins, for the space.
+ */
+export function Grid({ cols, min, gap = 6, masonry = false, className, style, ...rest }: Div & { cols?: keyof typeof COLS; min?: string; gap?: Gap; masonry?: boolean }) {
+  const Root = masonry ? MasonryGrid : "div";
   return (
-    <div
+    <Root
       className={cn("grid", GAP[gap], cols && COLS[cols], min && "grid-cols-[repeat(auto-fill,minmax(min(var(--min),100%),1fr))]", className)}
       style={min ? ({ "--min": min, ...style } as CSSProperties) : style}
       {...rest}
@@ -55,6 +62,34 @@ const RATIO = { "1:1": "md:grid-cols-2", "1:2": "md:grid-cols-[1fr_2fr]", "2:1":
 export const Split = ({ ratio = "1:1", gap = 12, className, ...rest }: Div & { ratio?: keyof typeof RATIO; gap?: Gap }) => (
   <div className={cn("grid", GAP[gap], RATIO[ratio], className)} {...rest} />
 );
+
+/**
+ * A record page: the main column and a side column (2:1) from 768 px; one column on phones, main first.
+ * minmax(0, …) and min-w-0: a wide table scrolls inside its column and never pushes the page wider.
+ */
+export function DetailLayout({
+  main,
+  side,
+  sideLabel,
+  className,
+}: {
+  main: ReactNode;
+  side?: ReactNode;
+  /** The side column's name for screen readers. */
+  sideLabel?: string;
+  className?: string;
+}) {
+  return (
+    <div className={cn("grid grid-cols-1 items-start gap-6", side != null && "md:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]", className)}>
+      <div className="min-w-0">{main}</div>
+      {side != null && (
+        <aside aria-label={sideLabel} className="min-w-0">
+          {side}
+        </aside>
+      )}
+    </div>
+  );
+}
 
 export const AspectRatio = RadixAspectRatio.Root;
 

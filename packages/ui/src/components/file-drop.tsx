@@ -26,6 +26,7 @@ export function FileDrop({
   maxSizeMb?: number;
   onFilesChange?: (files: File[]) => void;
   className?: string;
+  disabled?: boolean;
   id?: string;
   "aria-describedby"?: string;
   "aria-invalid"?: boolean;
@@ -69,7 +70,7 @@ export function FileDrop({
   const drop = (e: DragEvent) => {
     e.preventDefault();
     setOver(false);
-    take(e.dataTransfer.files);
+    if (!props.disabled) take(e.dataTransfer.files);
   };
 
   return (
@@ -78,12 +79,12 @@ export function FileDrop({
         data-over={over || undefined}
         onDragOver={(e) => {
           e.preventDefault();
-          setOver(true);
+          setOver(!props.disabled);
         }}
         onDragLeave={() => setOver(false)}
         onDrop={drop}
         className={cn(
-          "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-card border border-dashed border-line-strong bg-surface px-6 py-10 text-center transition-colors hover:border-fg-3 data-over:border-fg data-over:bg-surface-2 has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-3 has-[input:focus-visible]:outline-fg",
+          "flex cursor-pointer flex-col items-center justify-center gap-2 rounded-card border border-dashed border-line-strong bg-surface px-6 py-10 text-center transition-colors hover:border-fg-3 data-over:border-fg data-over:bg-surface-2 has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-3 has-[input:focus-visible]:outline-fg has-[input:disabled]:cursor-not-allowed has-[input:disabled]:opacity-50",
           invalid && "border-danger",
         )}
       >

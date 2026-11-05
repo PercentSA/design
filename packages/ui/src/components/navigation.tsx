@@ -133,25 +133,31 @@ export function Pagination({
     ) : (
       item(to, <Chevron back={back} />, back ? s.previous : s.next)
     );
+  // Below sm the current page has no neighbours: 7 items fit a 360 px phone (9 items need 356 px).
+  const wide = paginationRange(page, total);
+  const narrow = paginationRange(page, total, 0);
+  const same = wide.length === narrow.length && wide.every((n, i) => n === narrow[i]);
+  const pages = (range: (number | "gap")[], only?: string) =>
+    range.map((n, i) => (
+      <li key={`${only ?? "all"}-${i}`} className={only}>
+        {n === "gap" ? (
+          <span aria-hidden="true" className={cn(PAGE, "text-fg-3")}>
+            …
+          </span>
+        ) : n === page ? (
+          <span aria-current="page" className={cn(PAGE, "bg-primary font-medium text-primary-fg")}>
+            {n}
+          </span>
+        ) : (
+          item(n, n, s.goToPage(n))
+        )}
+      </li>
+    ));
   return (
     <nav aria-label={s.pagination} className={className}>
       <ul className="flex items-center gap-1">
         <li>{edge(page - 1, true)}</li>
-        {paginationRange(page, total).map((n, i) => (
-          <li key={i}>
-            {n === "gap" ? (
-              <span aria-hidden="true" className={cn(PAGE, "text-fg-3")}>
-                …
-              </span>
-            ) : n === page ? (
-              <span aria-current="page" className={cn(PAGE, "bg-primary font-medium text-primary-fg")}>
-                {n}
-              </span>
-            ) : (
-              item(n, n, s.goToPage(n))
-            )}
-          </li>
-        ))}
+        {same ? pages(wide) : [...pages(wide, "max-sm:hidden"), ...pages(narrow, "sm:hidden")]}
         <li>{edge(page + 1, false)}</li>
       </ul>
     </nav>

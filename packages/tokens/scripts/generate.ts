@@ -27,6 +27,8 @@ export function tokensCss(): string {
     ...modeBlocks(modeBody("dark"), modeBody("light")),
     `:root {\n${decl(shared)}\n}`,
     `[data-density="compact"] {\n${decl(density.compact)}\n}`,
+    `[data-density="touch"] {\n${decl(density.compact)}\n}`,
+    `@media (pointer: coarse) {\n  [data-density="touch"] {\n${decl(density.touch).replace(/^/gm, "  ")}\n  }\n}`,
     `html[lang="ar"] {\n${decl({ "font-sans": "var(--p-font-sans-ar)" })}\n}`,
     "",
   ].join("\n\n");
@@ -86,7 +88,7 @@ export function tokensJson() {
     duration: group(duration, "duration"),
     easing: group(easing, "cubicBezier"),
     layer: group(layer, "number"),
-    density: { comfortable: group(density.comfortable, "dimension"), compact: group(density.compact, "dimension") },
+    density: { comfortable: group(density.comfortable, "dimension"), compact: group(density.compact, "dimension"), touch: group(density.touch, "dimension") },
     slashRun: { $type: "number", $value: SLASH_RUN },
   };
 }

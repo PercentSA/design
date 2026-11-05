@@ -8,13 +8,13 @@ const VARIANT = {
   link: "text-fg underline decoration-line-strong underline-offset-4 hover:decoration-fg",
 } as const;
 
-// md and lg follow the density tokens (smaller in data-density="compact").
+// sm, md and lg follow the density tokens (smaller in data-density="compact").
 const SIZE = {
-  sm: "h-8 px-3 text-xs",
+  sm: "h-(--p-control-h-xs) px-3 text-xs",
   md: "h-(--p-control-h-sm) px-[18px] text-[13px]",
   lg: "h-(--p-control-h) px-6 text-sm",
 } as const;
-const ICON_SIZE = { sm: "size-8", md: "size-(--p-control-h-sm)", lg: "size-(--p-control-h)" } as const;
+const ICON_SIZE = { sm: "size-(--p-control-h-xs)", md: "size-(--p-control-h-sm)", lg: "size-(--p-control-h)" } as const;
 const LINK_SIZE = { sm: "text-xs", md: "text-[13px]", lg: "text-sm" } as const;
 
 export type ButtonVariant = keyof typeof VARIANT;

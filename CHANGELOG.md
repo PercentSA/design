@@ -2,6 +2,122 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.14.1
+
+- [DescriptionList](https://design.percent.sa/en/components/description-list): with `cols` and `layout` `stack` or `auto`, a column is at least 8rem (was 9rem): 2 columns from 16rem of the list, 3 from 24rem. A card in a three-column record grid at 1280 px (about 18rem wide) now shows its short money rows in 2 columns. `layout="columns"` is unchanged.
+
+## 0.14.0
+
+Two layout options for record pages. Both are optional and off by default. Nothing changes for existing projects.
+
+- [Grid](https://design.percent.sa/en/components/grid): `masonry` (default false). Each child moves up into the free space of its column, so cards of very different heights leave no gaps between rows. The DOM order is the reading and tab order, and children are placed in it (the next free place after the previous child). The server renders a normal grid; after mount the grid gets `data-masonry` (rows of 1 px, no row gap) and each child gets `grid-row-end: span N` from its height plus the gap, measured with one ResizeObserver on the children (never the grid) and again on font load and when a child is added or removed. A span is written only when it changes. Works with `cols`, `min` and RTL. Use `gap` for the space, not margins. Children take the height of their content (`h-full` is ignored), and print shows a normal grid. The grid ends at the last child (a negative bottom margin takes back the last gap).
+- [DescriptionList](https://design.percent.sa/en/components/description-list): `cols` 1 | 2 | 3 (default 1). The pairs stay stacked (term above details) and flow in N columns, row by row. A column is at least 9rem of the list itself (a container query: 2 columns from 18rem, 3 from 27rem), so a list in a narrow card has fewer columns, down to one. The lines between rows run across each row, a last row with fewer pairs stretches them, and `density="compact"` works. `layout` still sets each pair: `stack` as above; `columns` puts the term beside its details, in columns of at least 18rem (2 columns from 36rem, 3 from 54rem); `auto` is stacked, and side by side when each column is 28rem or more.
+- [RecordSection](https://design.percent.sa/en/components/record-section): `cols`, passed to its DescriptionList, and `layout="stack"` (term above details, for short facts in columns).
+
+## 0.13.0
+
+Till and board parts for POS screens, work boards and counter tablets. Every new prop is optional. One visible change for existing projects: a [Kanban](https://design.percent.sa/en/components/kanban) column with no cards now shows "No items" (in Arabic "لا توجد عناصر"); before, it showed nothing. Nothing else changes for an app that does not use the new props: the new control height token has the old value (32 px) everywhere except inside `data-density="touch"`.
+
+- [ActionBar](https://design.percent.sa/en/components/action-bar) (new): the bottom bar of a work tool. `items` (`id`, `label`, `icon`, `keyHint`, `onSelect`, `tone` default/danger, `disabled`, `group` main/end), `label` (the name of the `nav`), `className`. Equal tiles 56 px high (64 px in touch density; 72 px when any item has a key hint and the pointer is a mouse, so the key keeps clear of the edge and the label) with a 20 px icon, the label (cut, full text in `title`) and a left-to-right `Kbd` hint hidden on a coarse pointer; `end` items follow a separator and stay in view; when a tile would be narrower than 5rem the last `main` items move into a "More" menu (label and key hint per row); no items renders nothing. The bar shows the hints, the app binds the keys. Strings `more` (and `moreActions` for the menu button name).
+- [Keypad](https://design.percent.sa/en/components/keypad) (new): digit keys on a touch screen for an amount or a PIN. `value` and `onValueChange` (the draft text, Western digits and ".", as `MoneyInput`), `mode` amount/pin, `decimals` (2; 0 hides the "." key), `maxLength`, `disabled`, `label`. Keys are buttons in a 3-column grid, left to right in both languages, 56 px high: amount mode has 1 to 9, ".", 0, "00" and a backspace key; pin mode has 1 to 9, 0 and backspace. A leading zero is replaced by the next digit, a second "." and a further decimal are refused, and at `maxLength` the digit keys do nothing. A hardware keyboard works only while the focus is on the page or inside the keypad (never in a text field, dialog or menu, on a key repeat, or with Ctrl, Meta or Alt), and the key is taken only when it did something. Strings `keypad.backspace`, `point`, `doubleZero`.
+- [PinPad](https://design.percent.sa/en/components/pin-pad): now built on the same key grid as Keypad. The API, look and behaviour are the same.
+- [Kanban](https://design.percent.sa/en/components/kanban): work-board options. `onMove` is optional (without it: no drag, no Move menu; the card actions are the content of `renderCard`). Per column: `count` (a server total; `null` shows an ellipsis), `state` (`loading`: two skeleton cards on the first read; `error`: the error line and "Try again" after the loaded cards, or an error state when there are none), `onRetry`, `empty`, `hasMore`, `loadingMore`, `onLoadMore` (a "Load more" button, and the next page also loads by itself, once per page, when the end of the column scrolls into view). Board: `fill` (the height of the parent; each column scrolls by itself), `columnWidth="fill"` (the columns share the width, at least 14rem, then the row scrolls sideways), `phone="switch"` (below 768 px one column and a switch with title and count in its own scroll box; `column` and `onColumnChange` let the app keep the shown column in the address), `density="compact"` (card padding 0.625rem). The Move button follows the touch control height. Strings `noItems`, `loadMore`, `loadFailed`.
+- [Button](https://design.percent.sa/en/components/button), [Toggle](https://design.percent.sa/en/components/toggle), SegmentedControl items, the [NumberInput](https://design.percent.sa/en/components/number-input) step buttons and menu rows: the small size follows a new token `--p-control-h-xs` (32 px in every current density, so nothing changes) instead of a fixed 32 px.
+- `data-density="touch"` (tokens): on a coarse pointer `--p-control-h` is 48 px, `--p-control-h-sm` and `--p-control-h-xs` are 44 px (WCAG 2.5.5); on a fine pointer the compact values (40, 32, 32). `tokens.json` has a `density.touch` group.
+- [AppShell](https://design.percent.sa/en/components/app-shell): `density` also accepts `"touch"`, and `fill` makes the shell as high as the screen with `<main>` a flex column with `min-h-0`, so a page box with `flex-1 min-h-0` takes the rest and scrolls inside its own regions. Default false: no change.
+- [ListItem](https://design.percent.sa/en/components/list): `onSelect` (the row is one button; the title is its text; controls in `trailing` still work) and `disabled` (dim, no press). With `href`, `href` wins.
+- [Card](https://design.percent.sa/en/components/card): `onSelect` (the whole card is one button; the title is its text, 2 lines at most with the full text in `title`), `disabled`, and `media` (above the header, the full width of the card). Works with `density="compact"`.
+- [Thumbnail](https://design.percent.sa/en/components/thumbnail): `size="fill"` (the full width of its box, 4:3, `object-cover`).
+- [Text](https://design.percent.sa/en/components/text): `tone="danger"`.
+
+## 0.12.0
+
+Form and phone-tool parts for admin forms and small field apps. Every new prop is optional. One visible change for existing projects: the footer of a `FormSheet` with `side="bottom"` now shows its two buttons in two equal columns, size large (before, they sat at the end at the normal size). Nothing else changes for an app that does not use the new props.
+
+- [LineItemsEditor](https://design.percent.sa/en/components/line-items-editor) (new): the lines of a document in a form. `lines`, `getKey`, `columns` (`header`, `cell(line, ctx)`, `width` xs/sm/md/lg/fill, `align`, `readOnly`, `card` title/field/end/hide), `caption` (`hideCaption`), `onAdd` (`addLabel`), `onRemove` (`canRemove`), `lineActions` (a "⋯" menu), `detail` (`openDetails`, `onOpenDetailsChange`), `totals`, `empty`, `loading`, `error`, `disabled`, `numbered`. Table rows, or line cards when the part (measured with ResizeObserver) is narrower than the sum of its column minimums, "#" and the buttons. Enter never submits the form from inside the editor: next editable cell, next line, and a new line from the last cell. Focus goes to the new line after an add, and to the line that took its place (else the add button) after a remove; both are announced. `ctx.next()` moves the focus on after a pick. `Field` (and `FormField`) in a cell hides its label on rows and adds the line to its accessible name; on cards the label shows. Strings `lines.add`, `line`, `remove(n)`, `details`, `number`, `added(n)`, `removed(n)`, `more`.
+- [FormBar](https://design.percent.sa/en/components/form-bar) (new): the action bar at the end of a form page or a long sheet form. `summary` (a live status area), buttons as `children`, `sticky` (default true). One row from 640 px; below it the summary has its own line and the buttons share the row.
+- [PinPad](https://design.percent.sa/en/components/pin-pad) (new): a short numeric code on large keys. `length` (4), `label`, `onComplete(pin)` (keys off while its promise runs, then the pad clears), `onStart`, `error` (an alert under the dots; clears them), `disabled`. Masked dots and a 3 x 4 key grid in left-to-right order in both languages. Digit keys and Backspace on a hardware keyboard work (not while a text field has the focus). Screen readers hear a count, never the digits. Strings `pinPad.clear`, `pinPad.progress(n, total)`.
+- [AppShell](https://design.percent.sa/en/components/app-shell): `sidebar` is optional. Without it there is no sidebar column, no menu button and no sheet, the header row shows at every width, and `--p-sticky-top` is the header height at every width. With neither a sidebar nor a header, only `<main>` renders (a development warning). The app draws its own logo and passes it in `header`; no logo part is added.
+- [Sheet](https://design.percent.sa/en/components/sheet): `size="lg"` is `min(100%, 56rem)` for a side sheet, for a document made from another document (`md`, `min(100%, 28rem)`, is the default). A bottom sheet ignores it.
+- [FormSheet](https://design.percent.sa/en/components/form-sheet): `size` (as Sheet), `blocked` (why the submit is refused now: shown above the buttons with a warning icon in a status area, the submit stays visible but disabled and points to the reason; `pending` wins over it; an empty value shows nothing), `danger` (the submit is a danger button) and `cancelLabel` (the close button's text, default Cancel). A submit while `blocked` does nothing. With `side="bottom"` the two buttons fill the footer in two equal columns, size large (the visible change above).
+
+## 0.11.0
+
+Report parts for admin dashboards and printed reports. Every new prop is optional. Two visible changes for existing projects: a [Stat](https://design.percent.sa/en/components/stat) tile now sizes its value and padding by its own width (a tile 15rem or wider looks as before), and `TableHead scope="row"` now looks like a body cell (before, it kept the column-header look).
+
+- [Stat](https://design.percent.sa/en/components/stat): the tile is a container (`@container`), and the value size and padding follow the tile width: from 15rem `text-3xl` with `p-5` (as before), from 12rem `text-2xl`, from 10rem `text-xl`, below 10rem `text-lg`, with `p-4` under 15rem. An amount with decimals fits a tile of 158 px (two per row on a phone, four per row at 1024 px). The label, change and hint keep their sizes. The tile takes its width from its parent (a grid cell, flex-1 or a width); in a parent that sizes to its content it is 9rem wide. The padding now sits on an inner element, so a `className` padding on the tile no longer changes it.
+- [PeriodPicker](https://design.percent.sa/en/components/period-picker): `presets` (the preset buttons of the custom range, as in DateRangePicker), `weekStart` (first day of the week in the custom range calendar and in "This week"; 0 Sunday … 6 Saturday) and `clearTo` (the period a cleared custom range goes back to; default this month).
+- [DataTable](https://design.percent.sa/en/components/data-table): `density="print"` for a printed report: cells `text-xs px-1 py-1`, header row `h-8 px-1` with wrapping text, no scroll box (`overflow-visible`), no cards and no sticky header. Totals and group rows take the same small cells.
+- [Table](https://design.percent.sa/en/components/table): `TableHead scope="row"` looks like a body cell (`py-3`, `text-sm`, `text-fg`, normal weight, wraps), and `TableHead wrap` lets a column header wrap with its height following the text.
+- [RecordSummary](https://design.percent.sa/en/components/record-summary): docs only, one report example (the totals of a period).
+
+## 0.10.0
+
+List parts for admin screens. No breaking change: every new prop is optional. One visible change for existing projects: the first cell of a `DataTable` row with `rowHref` is now `font-medium` at all widths (before, only on the phone cards).
+
+- [DataTable](https://design.percent.sa/en/components/data-table): a column takes `description` (a muted second line under the value; null, undefined and "" show nothing; in the first column of a row with `rowHref` it comes after the link, and links in it stay clickable) and `cardSlot` (below 768 px only: `"end"` at the end of the title line, `"meta"` in one wrapped line under the title, `"block"` full width under the meta; no header, and a cell with no value shows nothing). The table takes `density="compact"` (cells `py-2`, header row `h-9`, card rows `p-3` with `gap-y-1`).
+- [FilterBar](https://design.percent.sa/en/components/filter-bar): `collapseOnPhone` folds the filter menus below 768 px into one "Filters" button with the count of chosen values. It opens a bottom Sheet with one group per filter (checkboxes, or radios when not `multiple`) and "Clear filters". Search, `actions` and the tags stay on the bar. Above 768 px nothing changes.
+- [EmptyState](https://design.percent.sa/en/components/empty-state): `variant="plain"` has no dashed frame, for an empty state inside a table, a card or a sheet. DataTable uses it for its own default empty state (before, it set `border-0` on the framed one).
+
+## 0.9.0
+
+Record parts for admin screens. No breaking change: every new prop is optional, and a project that takes this version sees no change until it uses one.
+
+- [RecordSummary](https://design.percent.sa/en/components/record-summary): the 1 to 6 key facts of a record in one dense strip under its header (label, value, hint per cell), with an optional `media` slot. The cells follow the width of the strip (container queries): one row from 56rem, 3 per row from 36rem, 2 per row below. Empty values show "Not set", long text is cut at 2 lines, `href` makes a value a link, and `loading` shows skeleton cells. New strings: `recordSummary`.
+- [Thumbnail](https://design.percent.sa/en/components/thumbnail): a small square image (`sm` 40 px, `md` 64 px, `lg` 96 px) with a fallback icon for no image or a load error, an optional one-line `caption`, and an optional `href` that makes the whole thumbnail a link.
+- [LineItemsTable](https://design.percent.sa/en/components/line-items-table): a line takes `media` (a small image), `description` (muted lines under the name), `parts` (the sub-lines of a kit, without a price) and `extra` (chips, file thumbnails); the table takes `totals` (a TotalsList under the table, at the end side) and `empty` (text in place of the rows). They show in the phone card rows too. New strings: `lines.kitParts`.
+- [DescriptionList](https://design.percent.sa/en/components/description-list) and [RecordSection](https://design.percent.sa/en/components/record-section): `layout="auto"` puts the term and the details side by side when the list or section itself is 28rem wide or more (a container query), so one in a narrow grid cell stays stacked. `layout="columns"` is unchanged (it follows the screen, from 768 px).
+- [Card](https://design.percent.sa/en/components/card), DescriptionList and RecordSection: `density="compact"` for dense records (Card: `p-4`, header gap 3, `text-base` title; DescriptionList rows: `py-2`).
+
+## 0.8.2
+
+A layout fix. No breaking change.
+
+- Pagination, and DataTable with pages: below the `sm` breakpoint the current page shows without its neighbours (first, gap, current, gap, last). With 9 items the bar needed 356 px and pushed pages past the edge of a 360 px phone.
+
+## 0.8.1
+
+A layout fix. No breaking change.
+
+- Input with `start` or `end` content, and the parts built on it (Combobox, list search): the input no longer sets the width of its parents. In Arabic, its intrinsic width of 317 px pushed pages past the edge of a 360 px phone.
+
+## 0.8.0
+
+ERP parts for documents, records, forms and reports. New entry `@percentsa/ui/react-hook-form` (optional peer `react-hook-form`). No breaking change.
+
+- [DetailLayout](https://design.percent.sa/en/components/detail-layout): a main column and a side column (2:1) that never let a wide table push the page; one column on phones. [TotalsList](https://design.percent.sa/en/components/totals-list): document totals aligned under each other.
+- [LineItemsTable](https://design.percent.sa/en/components/line-items-table): document lines with product and SKU, quantity, unit price, discount, VAT and total, a returned-quantity chip, and card rows on phones.
+- DataTable totals (a total row) and groupBy, groupHeader, groupTotals (row groups with subtotals) for reports.
+- [FormField](https://design.percent.sa/en/components/form-field) on the new entry @percentsa/ui/react-hook-form: binds a react-hook-form field to Field (label, hint, error, ids). react-hook-form is an optional peer; @percentsa/ui alone does not need it.
+- [FormSheet](https://design.percent.sa/en/components/form-sheet): an edit form in a sheet with a sticky footer, a pending state and a guard for unsaved changes. [RecordSection](https://design.percent.sa/en/components/record-section): a record's facts as text, with its edit action.
+- AlertDialog without a trigger gives focus back to the element that had it before it opened (was: the page).
+- [ImageField](https://design.percent.sa/en/components/image-field): an image upload with preview, replace, remove and an upload callback.
+- FileDrop disabled.
+- Combobox: server search (onQueryChange, loading), long lists (limit), an "add new" option (onCreate), and valueLabel for a chosen value that is not in the results.
+- [PeriodPicker](https://design.percent.sa/en/components/period-picker): a month, quarter, year or custom period for reports. periodOf and periodOptions give the same periods on the server. `calendar="hijri"` gives Umm al-Qura months, quarters (3 Hijri months) and years; the value stays Gregorian ISO days, and a Hijri year or quarter label ends with the era (`hijriEra`: "AH", «هـ»).
+- [TimeInput](https://design.percent.sa/en/components/time-input) (12-hour time with AM/PM, ص/م in Arabic) and [DateTimePicker](https://design.percent.sa/en/components/date-time-picker). splitTime and joinTime convert between "HH:mm" and the 12-hour clock.
+- NumberInput format: how a set value shows ([TimeInput](https://design.percent.sa/en/components/time-input) shows minutes as "05").
+- [SaudiPlate](https://design.percent.sa/en/components/saudi-plate) (a Saudi private plate drawing; the middle strip shows the emblem, «السعودية», K S A and the private-car circle), [PlateInput](https://design.percent.sa/en/components/plate-input) (one field with a live plate) and parsePlate.
+- Calendar, DatePicker and DateRangePicker: a month list and a year list between the previous and next buttons, in the Gregorian and the Hijri calendar. The years go from min to max, else from 100 years back to 10 years forward; months outside min and max are disabled. monthNames gives the 12 month names of a year.
+- DateRangePicker defaultCalendar: the calendar shown first (was always Gregorian).
+- The app's own words: IbanInput uses the app's placeholder (was: the built-in one won). PhoneInput takes the country names from the strings (new key `countries`). Invoice otherLanguageStrings replaces the built-in labels of the second language. The Language page of the docs shows how to give all built-in strings.
+- useSidebarRail: the parts in the Sidebar `header` and `footer` know whether the sidebar is an icon rail. In the phone sheet the sidebar is always expanded, so it is false there.
+
+## 0.7.0
+
+ERP parts for app shells and lists. No breaking change: without the new props, components render as in 0.6.0.
+
+- [TimeText](https://design.percent.sa/en/components/time-text), formatDateTime, formatRelative, formatTimeOfDay: dates and times in Riyadh time, 12-hour clock, relative words, the exact value on hover or tap.
+- formatMoney and Money: decimals up to 6 for unit prices (maxDecimals) and brackets for negative amounts (accounting). formatPhone, phoneLinks and [PhoneText](https://design.percent.sa/en/components/phone-text): phone numbers for display, with call and WhatsApp links.
+- formatMoney and Money: a result of zero has no minus sign (was "-0.00"), and a non-finite amount shows "—" (was "NaN").
+- [StatusBadge](https://design.percent.sa/en/components/status-badge): a badge with a coloured dot in five tones; the colour is on the dot only. EmptyState tone="error" with a retry button. [NotFound](https://design.percent.sa/en/components/page-states) and [Forbidden](https://design.percent.sa/en/components/page-states) page states.
+- [PageHeader](https://design.percent.sa/en/components/page-header): page title, status badges, a meta line, a back link, one primary action, secondary actions and a "⋯" menu; optional sticky. Menu items take a description (for example why an item is disabled).
+- Calendar mode="range" and [DateRangePicker](https://design.percent.sa/en/components/date-range-picker) (size="sm" for toolbars): a date range with the presets today, yesterday, last 7 days, last 30 days, this week, this month and last month.
+- DataTable: rowHref (the whole row opens the record), rowActions (a "⋯" menu per row) and cards (each row is a card below 768 px).
+- [ColumnsMenu](https://design.percent.sa/en/components/columns-menu) (show and hide columns), DataTable hiddenColumns, a rows-per-page choice and a sticky header. FilterBar actions: the list toolbar's controls at the end of the bar.
+- [PrintArea](https://design.percent.sa/en/components/print-area) and usePrint: print one part of a page on A4 (portrait or landscape) with a header on every page.
+- PercentProvider location: a clicked link shows a pending state at once, until the new page is there. Sidebar, menus, breadcrumbs, cards, list rows and table row links get it.
+
 ## 0.6.0
 
 The logo on a grid (spec docs/brand-remake.md D9, §4): 1 square = 100 units, so every size is a round number. The shapes and the motion do not change; their sizes do.

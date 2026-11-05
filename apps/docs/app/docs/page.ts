@@ -25,12 +25,12 @@ export type DocPage = {
   group: Group;
   /** Names exported from the package, for the import line. */
   imports: string;
-  pkg?: "ui" | "motion";
+  pkg?: "ui" | "motion" | "ui/react-hook-form";
   examples: string[];
   desc: Localized;
 };
 
-export const p = (slug: string, name: string, group: Group, imports: string, examples: string[], en: string, ar: string, pkg: "ui" | "motion" = "ui"): DocPage => ({
+export const p = (slug: string, name: string, group: Group, imports: string, examples: string[], en: string, ar: string, pkg: NonNullable<DocPage["pkg"]> = "ui"): DocPage => ({
   slug,
   name,
   group,

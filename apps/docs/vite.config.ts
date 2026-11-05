@@ -12,6 +12,11 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
     // The docs always show the current source of the packages (no package build needed).
-    alias: [pkg("ui"), pkg("motion"), pkg("tokens")],
+    alias: [
+      { find: /^@percentsa\/ui\/react-hook-form$/, replacement: fileURLToPath(new URL("../../packages/ui/src/react-hook-form.tsx", import.meta.url)) },
+      pkg("ui"),
+      pkg("motion"),
+      pkg("tokens"),
+    ],
   },
 });
