@@ -263,7 +263,8 @@ export function PhoneInput({
   const countryField = countryName ?? (props.name && `${props.name}-country`);
   return (
     <div className={cn("grid gap-2.5", className)}>
-      <div className="flex gap-2">
+      {/* A phone number reads left to right in both languages: the country code first (left), then the number. */}
+      <div className="flex gap-2" dir="ltr">
         {/* A plain input, so the country posts without JavaScript too (the menu needs JavaScript). */}
         {countryField && <input type="hidden" name={countryField} value={country} form={props.form} disabled={props.disabled} />}
         <Select
@@ -272,7 +273,8 @@ export function PhoneInput({
           value={country}
           onValueChange={(code) => onCountryChange(code as PhoneCountryCode)}
           disabled={props.disabled}
-          className="w-auto shrink-0"
+          // Radix puts the page dir on the trigger; the class keeps "SA +966 ⌄" as in English. The list keeps the page dir.
+          className="w-auto shrink-0 [direction:ltr]"
           valueText={<span dir="ltr">{c.code} +{c.dialCode}</span>}
           // dir="ltr" isolates the code, so Arabic shows "(+966)", not "(966+)".
           options={GCC_PHONE_COUNTRIES.map((g) => ({
