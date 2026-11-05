@@ -10,6 +10,19 @@ import { LiveRegion } from "./utility";
 const EDITABLE = "input, textarea, select, [contenteditable]";
 const DIGITS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
+const claimed = new WeakSet<Event>();
+/**
+ * May this pad act on a key? Only when the pad holds the focus, or nothing does (body focus); then only the first pad that
+ * asks, even if it refuses the key, so two pads on one page never both take it.
+ */
+export function mayTakeKey(e: Event, group: Element | null) {
+  const at = document.activeElement;
+  if (at && at !== document.body) return !!group?.contains(at);
+  if (claimed.has(e)) return false;
+  claimed.add(e);
+  return true;
+}
+
 /**
  * A short numeric code on screen with large keys (a device lock, a cashier switch). Masked dots and a 3 x 4 key grid; both keep
  * left-to-right order in Arabic, like a phone keypad. The keys are buttons, and digit keys and Backspace on a hardware keyboard
@@ -96,8 +109,7 @@ export function PinPad({
     const onKey = (e: KeyboardEvent) => {
       if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented || (e.target as Element | null)?.closest?.(EDITABLE)) return;
       // Only when nothing else has the focus (the page) or the pad itself has it: a dialog or menu over the pad keeps its keys.
-      const at = document.activeElement;
-      if (at && at !== document.body && !group.current?.contains(at)) return;
+      if (!mayTakeKey(e, group.current)) return;
       const d = toWesternDigits(e.key);
       const took = /^[0-9]$/.test(d) ? latest.current.push(d) : e.key === "Backspace" ? latest.current.back() : false;
       if (took) e.preventDefault();

@@ -1391,7 +1391,7 @@
       "name": "pin-pad",
       "type": "registry:ui",
       "title": "PinPad",
-      "description": "@percentsa/ui: PinPad",
+      "description": "@percentsa/ui: mayTakeKey, PinPad",
       "registryDependencies": [
         "@percentsa/actions",
         "@percentsa/cn",
@@ -1408,6 +1408,7 @@
       ],
       "meta": {
         "exports": [
+          "mayTakeKey",
           "PinPad"
         ]
       }
