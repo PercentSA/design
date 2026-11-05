@@ -124,6 +124,7 @@ const en = {
   discard: "Discard",
   keepEditing: "Keep editing",
   notSet: "Not set",
+  recordSummary: "Summary",
   uploading: "Uploading",
   replaceImage: "Replace image",
   removeImage: "Remove image",
@@ -177,6 +178,7 @@ const en = {
     inclVat: "incl. VAT",
     exclVat: "excl. VAT",
     returned: (n: number) => `Returned ${n}`,
+    kitParts: "Kit parts",
   },
   address: {
     building: "Building number",
@@ -338,6 +340,7 @@ const ar: Strings = {
   discard: "تجاهل",
   keepEditing: "متابعة التعديل",
   notSet: "غير محدد",
+  recordSummary: "ملخص",
   uploading: "جارٍ الرفع",
   replaceImage: "استبدال الصورة",
   removeImage: "إزالة الصورة",
@@ -390,6 +393,7 @@ const ar: Strings = {
     inclVat: "شامل الضريبة",
     exclVat: "قبل الضريبة",
     returned: (n) => `مُرتجع ${n}`,
+    kitParts: "مكونات الطقم",
   },
   address: {
     building: "رقم المبنى",

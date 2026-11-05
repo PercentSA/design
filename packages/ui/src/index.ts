@@ -123,6 +123,8 @@ export { ColumnsMenu } from "./components/columns-menu";
 export { LineItemsTable, type LineItem } from "./components/line-items-table";
 export { DescriptionList, List, ListItem } from "./components/list";
 export { RecordSection } from "./components/record-section";
+export { RecordSummary, type RecordSummaryItem } from "./components/record-summary";
+export { Thumbnail } from "./components/thumbnail";
 export { Kanban, type KanbanColumn } from "./components/kanban";
 export { CalendarView, type CalendarEvent } from "./components/calendar-view";
 export { AreaChart, LineChart } from "./components/charts/line-chart";

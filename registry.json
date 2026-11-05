@@ -1071,12 +1071,15 @@
       "title": "LineItemsTable",
       "description": "@percentsa/ui: LineItemsTable",
       "registryDependencies": [
+        "@percentsa/cn",
         "@percentsa/data-table",
         "@percentsa/feedback",
         "@percentsa/format-number",
         "@percentsa/menus",
         "@percentsa/provider",
-        "@percentsa/saudi-money"
+        "@percentsa/saudi-money",
+        "@percentsa/thumbnail",
+        "@percentsa/totals-list"
       ],
       "files": [
         {
@@ -1410,6 +1413,30 @@
       }
     },
     {
+      "name": "record-summary",
+      "type": "registry:ui",
+      "title": "RecordSummary",
+      "description": "@percentsa/ui: RecordSummary",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/layout",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/record-summary.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/record-summary.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "RecordSummary"
+        ]
+      }
+    },
+    {
       "name": "saudi-plate",
       "type": "registry:ui",
       "title": "SaudiPlate, PlateInput",
@@ -1461,7 +1488,7 @@
       "name": "sidebar",
       "type": "registry:ui",
       "title": "SidebarInSheet, Sidebar",
-      "description": "@percentsa/ui: SidebarInSheet, Sidebar",
+      "description": "@percentsa/ui: SidebarInSheet, useSidebarRail, Sidebar",
       "dependencies": [
         "lucide-react"
       ],
@@ -1482,6 +1509,7 @@
       "meta": {
         "exports": [
           "SidebarInSheet",
+          "useSidebarRail",
           "Sidebar"
         ]
       }
@@ -1714,6 +1742,31 @@
         "exports": [
           "useTheme",
           "ThemeSwitch"
+        ]
+      }
+    },
+    {
+      "name": "thumbnail",
+      "type": "registry:ui",
+      "title": "Thumbnail",
+      "description": "@percentsa/ui: Thumbnail",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/thumbnail.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/thumbnail.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Thumbnail"
         ]
       }
     },
