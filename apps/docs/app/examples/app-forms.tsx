@@ -332,3 +332,18 @@ export function RecordSectionExample() {
     />
   );
 }
+
+export function RecordSectionAutoExample() {
+  const t = useT();
+  const items = [
+    { term: t("Name", "الاسم"), details: t("Sara Al-Qahtani", "سارة القحطاني") },
+    { term: t("Email", "البريد الإلكتروني"), details: null },
+    { term: t("City", "المدينة"), details: t("Riyadh", "الرياض") },
+  ];
+  return (
+    <div className="grid w-full gap-4 md:grid-cols-[18rem_1fr]">
+      <RecordSection layout="auto" density="compact" title={t("Customer", "العميل")} items={items} />
+      <RecordSection layout="auto" density="compact" title={t("Customer", "العميل")} items={items} />
+    </div>
+  );
+}

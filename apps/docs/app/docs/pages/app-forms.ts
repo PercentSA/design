@@ -33,9 +33,9 @@ export const pages: DocPage[] = [
     "RecordSection",
     "app",
     "RecordSection",
-    ["RecordSectionExample"],
-    "A record's facts as text in a card, with its edit action in the header. Terms and details sit side by side from 768 px. Empty details show “Not set”, so a missing value never looks like a layout gap. The heading is an h2 (`headingLevel={3}` inside a section).",
-    "بيانات السجل نصًا في بطاقة، مع إجراء التعديل في رأسها. يظهر العنوان والقيمة جنبًا إلى جنب من 768 بكسل. تعرض القيمة الفارغة «غير محدد»، فلا تبدو القيمة الناقصة فراغًا في التصميم. العنوان من المستوى h2 (أو `headingLevel={3}` داخل قسم).",
+    ["RecordSectionExample", "RecordSectionAutoExample"],
+    "A record's facts as text in a card, with its edit action in the header. Terms and details sit side by side from 768 px. Empty details show “Not set”, so a missing value never looks like a layout gap. The heading is an h2 (`headingLevel={3}` inside a section). `layout=\"auto\"` puts them side by side when the section itself is 28rem wide or more (a container query), for a section in a narrow cell. `density=\"compact\"` is for dense records.",
+    "بيانات السجل نصًا في بطاقة، مع إجراء التعديل في رأسها. يظهر العنوان والقيمة جنبًا إلى جنب من 768 بكسل. تعرض القيمة الفارغة «غير محدد»، فلا تبدو القيمة الناقصة فراغًا في التصميم. العنوان من المستوى h2 (أو `headingLevel={3}` داخل قسم). يجعل `layout=\"auto\"` العنوان والقيمة جنبًا إلى جنب عندما يبلغ عرض القسم نفسه 28rem أو أكثر (استعلام الحاوية)، لقسم في خلية ضيقة. ويناسب `density=\"compact\"` السجلات الكثيفة.",
   ),
   p(
     "auth-layout",
