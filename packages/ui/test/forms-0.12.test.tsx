@@ -428,6 +428,26 @@ describe("PinPad", () => {
     expect(ev.defaultPrevented).toBe(false);
   });
 
+  test("with the focus on the page, only one of two pads acts on a key, also when the first refuses it", async () => {
+    const el = await mount(
+      <>
+        <PinPad label="A" onComplete={() => {}} />
+        <PinPad label="B" onComplete={() => {}} />
+      </>,
+    );
+    const [a, b] = [...el.querySelectorAll('[role="group"]')];
+    await pressKey({ key: "1" });
+    expect([filled(a), filled(b)]).toEqual([1, 0]);
+    // Backspace on an empty first pad: refused, and the second pad must not take it.
+    await click(key(a, "Clear"));
+    await pressKey({ key: "7" }, document.body);
+    await click(key(b, "5"));
+    expect([filled(a), filled(b)]).toEqual([1, 1]);
+    await click(key(a, "Clear"));
+    await pressKey({ key: "Backspace" });
+    expect([filled(a), filled(b)]).toEqual([0, 1]);
+  });
+
   test("a disabled pad takes no key", async () => {
     const el = await mount(<PinPad label="A" disabled onComplete={() => {}} />);
     const ev = new KeyboardEvent("keydown", { key: "1", bubbles: true, cancelable: true });
