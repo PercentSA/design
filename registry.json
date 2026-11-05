@@ -763,7 +763,7 @@
       "name": "field",
       "type": "registry:ui",
       "title": "Field, Fieldset, Honeypot",
-      "description": "@percentsa/ui: fieldContext, useFieldControl, useFieldLabelId, Field, Fieldset, Honeypot",
+      "description": "@percentsa/ui: fieldContext, lineCellScope, useFieldControl, useFieldLabelId, Field, Fieldset, Honeypot",
       "registryDependencies": [
         "@percentsa/cn",
         "@percentsa/provider"
@@ -778,6 +778,7 @@
       "meta": {
         "exports": [
           "fieldContext",
+          "lineCellScope",
           "useFieldControl",
           "useFieldLabelId",
           "Field",
@@ -848,12 +849,37 @@
       }
     },
     {
+      "name": "form-bar",
+      "type": "registry:ui",
+      "title": "FormBar",
+      "description": "@percentsa/ui: FormBar",
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/form-bar.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/form-bar.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FormBar"
+        ]
+      }
+    },
+    {
       "name": "form-sheet",
       "type": "registry:ui",
       "title": "FormSheet",
       "description": "@percentsa/ui: FormSheet",
+      "dependencies": [
+        "lucide-react"
+      ],
       "registryDependencies": [
         "@percentsa/actions",
+        "@percentsa/cn",
         "@percentsa/overlays",
         "@percentsa/provider"
       ],
@@ -1066,6 +1092,41 @@
           "ScrollArea",
           "Surface",
           "Bleed"
+        ]
+      }
+    },
+    {
+      "name": "line-items-editor",
+      "type": "registry:ui",
+      "title": "LineItemsEditor",
+      "description": "@percentsa/ui: LineItemsEditor",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/button-class",
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/field",
+        "@percentsa/layout",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/table",
+        "@percentsa/text",
+        "@percentsa/totals-list",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/line-items-editor.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/line-items-editor.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LineItemsEditor"
         ]
       }
     },
@@ -1323,6 +1384,32 @@
       "meta": {
         "exports": [
           "PhoneText"
+        ]
+      }
+    },
+    {
+      "name": "pin-pad",
+      "type": "registry:ui",
+      "title": "PinPad",
+      "description": "@percentsa/ui: mayTakeKey, PinPad",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/provider",
+        "@percentsa/saudi-digits",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/pin-pad.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/pin-pad.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "mayTakeKey",
+          "PinPad"
         ]
       }
     },

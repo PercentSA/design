@@ -1,4 +1,6 @@
-import { Badge, Button, Field, Inline, Invoice, LineItemsTable, QrCode, Stack, Text, Textarea, TicketView, TotalsList, ZatcaQr, zatcaTlv } from "@percentsa/ui";
+import { Badge, Button, Inline, Invoice, LineItemsTable, QrCode, Stack, Text, Textarea, TicketView, TotalsList, ZatcaQr, zatcaTlv } from "@percentsa/ui";
+import { useEffect, useRef, useState } from "react";
+import { Combobox, Field, Input, invoiceTotals, LineItemsEditor, Money, MoneyInput, parseAmount, type LineEditorColumn, type MenuItem } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 const SELLER_VAT = "310123456700003";
@@ -189,5 +191,174 @@ export function LineItemsTableDetailsExample() {
       />
       <LineItemsTable caption={t("Return RT-12", "المرتجع RT-12")} prices="incl" lines={[]} empty={t("No lines yet. Add a product to start.", "لا توجد بنود بعد. أضف منتجًا للبدء.")} />
     </Stack>
+  );
+}
+
+const PRODUCTS = [
+  { value: "COF", en: "Arabic coffee, 1 kg", ar: "قهوة عربية، 1 كغ", price: 89.5 },
+  { value: "CUP", en: "Paper cups, 8 oz", ar: "أكواب ورقية، 8 أونصات", price: 0.46 },
+  { value: "DAT", en: "Dates, Sukkari", ar: "تمر سكري", price: 45 },
+];
+
+type EditorLine = { id: string; product: string; qty: string; price: string; note: string };
+
+/** An invoice line editor: product pick (the focus moves on), quantity, price, a computed total, line details, a menu and the totals. */
+export function LineItemsEditorExample() {
+  const t = useT();
+  const nextId = useRef(3);
+  const [lines, setLines] = useState<EditorLine[]>([
+    { id: "1", product: "COF", qty: "4", price: "89.50", note: "" },
+    { id: "2", product: "", qty: "1", price: "", note: "" },
+  ]);
+  const patch = (id: string, change: Partial<EditorLine>) => setLines((all) => all.map((l) => (l.id === id ? { ...l, ...change } : l)));
+  const sums = invoiceTotals(lines.map((l) => ({ quantity: parseAmount(l.qty) ?? 0, unitPrice: parseAmount(l.price) ?? 0 })));
+  const columns: LineEditorColumn<EditorLine>[] = [
+    {
+      key: "product",
+      header: t("Product", "المنتج"),
+      width: "fill",
+      card: "title",
+      cell: (l, ctx) => (
+        <Field label={t("Product", "المنتج")}>
+          <Combobox
+            value={l.product}
+            onValueChange={(value) => {
+              const hit = PRODUCTS.find((p) => p.value === value);
+              patch(l.id, { product: value, price: hit ? hit.price.toFixed(2) : l.price });
+              ctx.next();
+            }}
+            options={PRODUCTS.map((p) => ({ value: p.value, label: t(p.en, p.ar) }))}
+          />
+        </Field>
+      ),
+    },
+    {
+      key: "qty",
+      header: t("Quantity", "الكمية"),
+      width: "xs",
+      cell: (l) => (
+        <Field label={t("Quantity", "الكمية")} error={(parseAmount(l.qty) ?? 0) <= 0 ? t("Enter a quantity", "أدخل الكمية") : undefined}>
+          <Input inputMode="decimal" dir="ltr" value={l.qty} onChange={(e) => patch(l.id, { qty: e.target.value })} />
+        </Field>
+      ),
+    },
+    {
+      key: "price",
+      header: t("Unit price", "سعر الوحدة"),
+      width: "sm",
+      cell: (l) => (
+        <Field label={t("Unit price", "سعر الوحدة")}>
+          <MoneyInput value={l.price} onValueChange={(price) => patch(l.id, { price })} />
+        </Field>
+      ),
+    },
+    { key: "total", header: t("Total", "الإجمالي"), width: "sm", align: "end", readOnly: true, card: "end", cell: (_, ctx) => <Money amount={sums.lines[ctx.index]?.total ?? 0} decimals={2} /> },
+  ];
+  return (
+    <form className="w-full max-w-4xl" onSubmit={(e) => e.preventDefault()}>
+      <LineItemsEditor
+        caption={t("Invoice lines", "بنود الفاتورة")}
+        hideCaption
+        lines={lines}
+        getKey={(l) => l.id}
+        columns={columns}
+        onAdd={() => setLines((all) => [...all, { id: String(nextId.current++), product: "", qty: "1", price: "", note: "" }])}
+        addLabel={t("Add a product", "إضافة منتج")}
+        onRemove={(i) => setLines((all) => all.filter((_, j) => j !== i))}
+        canRemove={() => lines.length > 1}
+        lineActions={(l, i): MenuItem[] => [
+          { label: t("Duplicate line", "تكرار البند"), onSelect: () => setLines((all) => [...all.slice(0, i + 1), { ...l, id: String(nextId.current++) }, ...all.slice(i + 1)]) },
+        ]}
+        detail={(l) => (
+          <Field label={t("Line note", "ملاحظة البند")}>
+            <Input value={l.note} onChange={(e) => patch(l.id, { note: e.target.value })} />
+          </Field>
+        )}
+        totals={[
+          { label: t("Subtotal", "المجموع قبل الضريبة"), amount: sums.subtotal },
+          { label: t("VAT", "ضريبة القيمة المضافة"), hint: "15%", amount: sums.vat },
+          { label: t("Total incl. VAT", "الإجمالي شامل الضريبة"), amount: sums.total, total: true },
+        ]}
+      />
+    </form>
+  );
+}
+
+type CountLine = { id: string; name: string; expected: number; counted: string };
+
+/** A stocktake: no totals, read-only expected and difference. */
+export function LineItemsEditorStocktakeExample() {
+  const t = useT();
+  const [lines, setLines] = useState<CountLine[]>([
+    { id: "1", name: t("Arabic coffee, 1 kg", "قهوة عربية، 1 كغ"), expected: 24, counted: "22" },
+    { id: "2", name: t("Dates, Sukkari", "تمر سكري"), expected: 40, counted: "40" },
+  ]);
+  const diff = (l: CountLine) => (parseAmount(l.counted) ?? 0) - l.expected;
+  return (
+    <form className="w-full max-w-3xl" onSubmit={(e) => e.preventDefault()}>
+      <LineItemsEditor<CountLine>
+        caption={t("Counted products", "المنتجات المجرودة")}
+        lines={lines}
+        getKey={(l) => l.id}
+        onAdd={() => setLines((all) => [...all, { id: String(all.length + 1), name: t("New product", "منتج جديد"), expected: 0, counted: "" }])}
+        addLabel={t("Add a product", "إضافة منتج")}
+        onRemove={(i) => setLines((all) => all.filter((_, j) => j !== i))}
+        columns={[
+          { key: "name", header: t("Product", "المنتج"), width: "fill", card: "title", readOnly: true, cell: (l) => l.name },
+          { key: "expected", header: t("Expected", "المتوقع"), width: "xs", align: "end", readOnly: true, cell: (l) => l.expected },
+          {
+            key: "counted",
+            header: t("Counted", "المجرود"),
+            width: "xs",
+            cell: (l) => (
+              <Field label={t("Counted", "المجرود")}>
+                <Input inputMode="numeric" dir="ltr" value={l.counted} onChange={(e) => setLines((all) => all.map((x) => (x.id === l.id ? { ...x, counted: e.target.value } : x)))} />
+              </Field>
+            ),
+          },
+          { key: "diff", header: t("Difference", "الفرق"), width: "xs", align: "end", readOnly: true, card: "end", cell: (l) => <span dir="ltr">{diff(l)}</span> },
+        ]}
+      />
+    </form>
+  );
+}
+
+/** Lines that come from another document: no add, no remove, an empty text and a loading state. */
+export function LineItemsEditorReturnExample() {
+  const t = useT();
+  const [state, setState] = useState<"empty" | "loading" | "ready">("empty");
+  useEffect(() => {
+    if (state !== "loading") return;
+    const id = setTimeout(() => setState("ready"), 900);
+    return () => clearTimeout(id);
+  }, [state]);
+  const [qty, setQty] = useState("50");
+  const lines = state === "ready" ? [{ id: "1", name: t("Paper cups, 8 oz", "أكواب ورقية، 8 أونصات"), qty }] : [];
+  return (
+    <div className="grid w-full max-w-3xl gap-4">
+      <Button variant="secondary" size="sm" className="justify-self-start" onClick={() => setState(state === "ready" ? "empty" : "loading")}>
+        {state === "ready" ? t("Clear the order", "مسح الطلب") : t("Choose purchase order PO-2041", "اختيار أمر الشراء PO-2041")}
+      </Button>
+      <LineItemsEditor<{ id: string; name: string; qty: string }>
+        caption={t("Lines to return", "بنود الإرجاع")}
+        lines={lines}
+        getKey={(l) => l.id}
+        loading={state === "loading"}
+        empty={t("Choose a purchase order first.", "اختر أمر الشراء أولًا.")}
+        columns={[
+          { key: "name", header: t("Product", "المنتج"), width: "fill", card: "title", readOnly: true, cell: (l) => l.name },
+          {
+            key: "qty",
+            header: t("Quantity to return", "كمية الإرجاع"),
+            width: "sm",
+            cell: (l) => (
+              <Field label={t("Quantity to return", "كمية الإرجاع")}>
+                <Input inputMode="numeric" dir="ltr" value={l.qty} onChange={(e) => setQty(e.target.value)} />
+              </Field>
+            ),
+          },
+        ]}
+      />
+    </div>
   );
 }

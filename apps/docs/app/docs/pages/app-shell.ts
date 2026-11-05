@@ -6,9 +6,9 @@ export const pages: DocPage[] = [
     "AppShell",
     "app",
     "AppShell",
-    ["AppShellExample"],
-    "The frame of an app: a sidebar on the start side from 1024 px and in a sheet on smaller screens, a sticky header, and the page in <main>. Controls are compact unless density is comfortable. The embedded option drops the <header> and <main> landmarks and the skip link, for a shell inside a page that has its own.",
-    "إطار التطبيق: شريط جانبي في جهة البداية من عرض 1024 بكسل، وفي لوحة منزلقة على الشاشات الأصغر، ورأس ثابت، والصفحة داخل <main>. عناصر التحكم مضغوطة ما لم تكن الكثافة مريحة. الخاصية embedded تحذف معالم <header> و<main> ورابط التخطي، لإطار داخل صفحة لها معالمها.",
+    ["AppShellExample", "AppShellNoSidebarExample"],
+    "The frame of an app: a sidebar on the start side from 1024 px and in a sheet on smaller screens, a sticky header, and the page in <main>. Controls are compact unless density is comfortable. The embedded option drops the <header> and <main> landmarks and the skip link, for a shell inside a page that has its own. Without `sidebar` (a driver or partner app, a kiosk, a shop tablet screen) there is no sidebar column, no menu button and no sheet, and the header row shows at every width; the page centres its content with `Container`. The app draws its own logo and passes it in `header`.",
+    "إطار التطبيق: شريط جانبي في جهة البداية من عرض 1024 بكسل، وفي لوحة منزلقة على الشاشات الأصغر، ورأس ثابت، والصفحة داخل <main>. عناصر التحكم مضغوطة ما لم تكن الكثافة مريحة. الخاصية embedded تحذف معالم <header> و<main> ورابط التخطي، لإطار داخل صفحة لها معالمها. من دون `sidebar` (تطبيق سائق أو شريك، أو شاشة عرض، أو شاشة جهاز لوحي في محل) لا يوجد عمود جانبي ولا زر قائمة ولا لوحة، ويظهر صف الرأس في كل عرض؛ وتوسّط الصفحة محتواها بـ `Container`. يرسم التطبيق شعاره بنفسه ويمرره في `header`.",
   ),
   p(
     "page-header",

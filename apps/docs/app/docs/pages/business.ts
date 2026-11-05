@@ -20,6 +20,15 @@ export const pages: DocPage[] = [
     "بنود الطلب أو الفاتورة أو المرتجع: المنتج ورمزه، والكمية، وسعر الوحدة، والخصم، والضريبة، والإجمالي. يعرض البنود فقط: المبالغ تأتي من الخادم. يحدد `prices=\"incl\"` أو `\"excl\"` هل يشمل سعر الوحدة والإجمالي الضريبة، وتذكر عناوينهما ذلك. يحتفظ سعر الوحدة بست خانات عشرية كحد أقصى، والمبالغ الأخرى بخانتين. يظهر عمودا الخصم والضريبة فقط عندما يكون لبند قيمة فيهما. تظهر الكمية المرتجعة شارةً. يفتح href سجل البند، ويضيف rowActions قائمة «⋯»، وعلى الجوال يصبح كل بند بطاقة. ويمكن أن يحمل البند أيضًا `media` (صورة صغيرة في بداية الاسم) و`description` (أسطر خافتة تحت الاسم) و`parts` (البنود الفرعية لطقم، لكل منها اسم ورمز اختياري وكمية، بلا سعر) و`extra` (المزيد تحت الاسم: شارات الخيارات أو صور الملفات المصغّرة). وتظهر أيضًا في بطاقات الجوال. يضع `totals` قائمة إجماليات (TotalsList) تحت الجدول في جهة النهاية، وبعرض كامل في الجداول الضيقة؛ ويحل `empty` محل الصفوف عند عدم وجود بنود.",
   ),
   p(
+    "line-items-editor",
+    "LineItemsEditor",
+    "business",
+    "LineItemsEditor, type LineEditorColumn, type LineCellContext",
+    ["LineItemsEditorExample", "LineItemsEditorStocktakeExample", "LineItemsEditorReturnExample"],
+    "The lines of a document in a form: one row per line with your inputs in the cells, add and remove, a keyboard order, per-line details, totals, and line cards when the part is too narrow for its columns (it measures itself). It computes nothing: you own the lines and the totals. `columns` take a `cell(line, ctx)`, a `width` (xs 6rem, sm 8rem, md 10rem, lg 14rem, fill), `align`, `readOnly` (a fact or a total, not a stop for Enter) and `card` (title, field, end, hide). A `Field` in a cell hides its label on rows (the column header shows it, and the line number joins its name) and shows it on cards. Enter never submits the form from inside the editor: it moves to the next editable cell, then the next line, and from the last cell of the last line it adds a line. `ctx.next()` moves on after a pick. After an add the focus goes to the new line; after a remove to the line that took its place, else to the add button; both are announced. `detail` shows more fields under a line; closed details are not rendered.",
+    "بنود مستند داخل نموذج: صف لكل بند فيه حقولك في الخلايا، وإضافة وحذف، وترتيب للوحة المفاتيح، وتفاصيل لكل بند، وإجماليات، وبطاقات بنود حين يضيق العرض عن أعمدته (يقيس نفسه). لا يحسب شيئًا: أنت تملك البنود والإجماليات. تأخذ `columns` الدالة `cell(line, ctx)` و`width` (xs 6rem وsm 8rem وmd 10rem وlg 14rem وfill) و`align` و`readOnly` (معلومة أو إجمالي، وليس محطة للمفتاح Enter) و`card` (title وfield وend وhide). يخفي `Field` داخل الخلية عنوانه في الصفوف (يعرضه رأس العمود ويُضاف رقم البند إلى اسمه) ويعرضه في البطاقات. لا يرسل Enter النموذج أبدًا من داخل المحرر: ينتقل إلى الخلية التالية القابلة للتحرير ثم إلى البند التالي، ومن آخر خلية في آخر بند يضيف بندًا. تنقل `ctx.next()` التركيز بعد الاختيار. بعد الإضافة ينتقل التركيز إلى البند الجديد؛ وبعد الحذف إلى البند الذي أخذ مكانه وإلا إلى زر الإضافة؛ ويُعلن الأمران. يعرض `detail` حقولًا أكثر تحت البند؛ والتفاصيل المغلقة لا تُرسم.",
+  ),
+  p(
     "totals-list",
     "TotalsList",
     "business",

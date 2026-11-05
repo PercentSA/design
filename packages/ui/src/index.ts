@@ -95,6 +95,8 @@ export { TimeText } from "./components/time-text";
 export { PhoneText } from "./components/phone-text";
 export { AlertDialog, Dialog, DialogClose, HoverCard, Popover, Sheet, Tooltip } from "./components/overlays";
 export { FormSheet } from "./components/form-sheet";
+export { FormBar } from "./components/form-bar";
+export { PinPad } from "./components/pin-pad";
 export { ContextMenu, DropdownMenu, type MenuItem } from "./components/menus";
 export { dismissToast, toast, Toaster } from "./components/toast";
 export { ConsentBanner } from "./components/consent";
@@ -121,6 +123,7 @@ export { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type Tab
 export { DataTable, type DataTableColumn, type DataTableProps, type DataTableSort } from "./components/data-table";
 export { ColumnsMenu } from "./components/columns-menu";
 export { LineItemsTable, type LineItem } from "./components/line-items-table";
+export { LineItemsEditor, type LineCellContext, type LineEditorColumn } from "./components/line-items-editor";
 export { DescriptionList, List, ListItem } from "./components/list";
 export { RecordSection } from "./components/record-section";
 export { RecordSummary, type RecordSummaryItem } from "./components/record-summary";

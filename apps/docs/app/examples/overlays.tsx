@@ -82,6 +82,15 @@ export function SheetExample() {
   );
 }
 
+export function SheetLargeExample() {
+  const t = useT();
+  return (
+    <Sheet size="lg" trigger={<Button variant="secondary">{t("Convert to order", "تحويل إلى طلب")}</Button>} title={t("Convert to order", "تحويل إلى طلب")}>
+      <Text tone="muted">{t("56rem wide on a wide screen, the full width on a phone.", "بعرض 56rem على الشاشة العريضة، وبالعرض الكامل على الجوال.")}</Text>
+    </Sheet>
+  );
+}
+
 export function PopoverExample() {
   const t = useT();
   return (
