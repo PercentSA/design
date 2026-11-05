@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileText, Globe, LayoutDashboard, Plus, Receipt, Smartphone } from "lucide-react";
-import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, PhoneText, RiyalSign, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, toast, useLang } from "@percentsa/ui";
+import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, PhoneText, RiyalSign, StatusBadge, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, Thumbnail, toast, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function CardExample() {
@@ -341,6 +341,75 @@ export function ListExample() {
       />
       <ListItem leading={<FileText aria-hidden />} title={t("Project proposal", "عرض المشروع")} description={<span dir="ltr">PDF · 2.4 MB</span>} />
     </List>
+  );
+}
+
+const PADS = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 6"><rect width="8" height="6" fill="#888"/><circle cx="4" cy="3" r="1.8" fill="#ccc"/></svg>');
+const PRODUCTS = [
+  { id: "bp-01", en: "Front brake pads", ar: "فحمات أمامية", stock: 12, price: 230 },
+  { id: "of-22", en: "Oil filter", ar: "فلتر زيت", stock: 40, price: 35 },
+  { id: "sp-08", en: "Spark plug set", ar: "طقم شمعات", stock: 0, price: 120 },
+  { id: "wb-03", en: "Wiper blades", ar: "مساحات زجاج", stock: 7, price: 60 },
+];
+
+/** A product list for a counter tablet: `data-density="touch"` gives finger-sized controls on a touch screen, and each row is one button. */
+export function ListPickExample() {
+  const t = useT();
+  const [cart, setCart] = useState<string[]>([]);
+  return (
+    <div data-density="touch" className="grid w-full max-w-md gap-3">
+      <List className="rounded-card border border-line">
+        {PRODUCTS.map((p) => (
+          <ListItem
+            key={p.id}
+            title={t(p.en, p.ar)}
+            description={<span dir="ltr">{p.id.toUpperCase()}</span>}
+            trailing={<Money amount={p.price} />}
+            disabled={p.stock <= 0}
+            onSelect={() => setCart((c) => [...c, p.id])}
+          />
+        ))}
+      </List>
+      <div className="flex items-center justify-between gap-3">
+        <Text size="sm" tone="muted" aria-live="polite">
+          {t(`${cart.length} in the cart`, `${cart.length} في السلة`)}
+        </Text>
+        <Button size="sm" variant="secondary" onClick={() => setCart([])} disabled={cart.length === 0}>
+          {t("Clear", "مسح")}
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+/** A pickable tile: the image fills the width, the whole card is one button, a sold-out product is dim and does nothing. */
+export function CardPickExample() {
+  const t = useT();
+  const [picked, setPicked] = useState<string>();
+  return (
+    <div className="grid w-full gap-3">
+      <Grid min="11rem" gap={3}>
+        {PRODUCTS.map((p) => (
+          <Card
+            key={p.id}
+            density="compact"
+            media={<Thumbnail src={PADS} alt="" size="fill" />}
+            title={t(p.en, p.ar)}
+            description={<span dir="ltr">{p.id.toUpperCase()}</span>}
+            disabled={p.stock <= 0}
+            onSelect={() => setPicked(t(p.en, p.ar))}
+          >
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Money amount={p.price} />
+              <StatusBadge tone={p.stock > 0 ? "success" : "neutral"}>{p.stock > 0 ? t(`In stock: ${p.stock}`, `متوفر: ${p.stock}`) : t("Out of stock", "نفد")}</StatusBadge>
+            </div>
+          </Card>
+        ))}
+      </Grid>
+      <Text size="sm" tone="muted" aria-live="polite">
+        {picked ? t(`Added: ${picked}`, `أُضيف: ${picked}`) : t("Pick a product.", "اختر منتجًا.")}
+      </Text>
+    </div>
   );
 }
 

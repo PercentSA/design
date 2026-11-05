@@ -17,13 +17,14 @@ declare const process: { env: { NODE_ENV?: string } } | undefined;
  * App layout: the `sidebar` on the start side from 1024 px (by CSS, so it shows without JavaScript),
  * in a sheet below; a sticky header row. Without `sidebar` (a small tool with no navigation) there is no sidebar column,
  * no menu button and no sheet, and the header row shows at every width; `children` in <main id={mainId}> (default "main", the skip link's target).
- * Compact controls unless `density="comfortable"`. Sets `--p-sticky-top` (the header row's height) for a sticky PageHeader. `embedded`: inside a page that has its own <main> and skip
+ * Compact controls unless `density="comfortable"`; `density="touch"` gives finger-sized controls on a coarse pointer (44 to 48 px; compact on a mouse). `fill`: the shell is as high as the screen and `<main>` is a flex column with `min-h-0`, so a page box with `flex-1 min-h-0` takes the rest and scrolls inside its own regions (the shell itself does not scroll). Sets `--p-sticky-top` (the header row's height) for a sticky PageHeader. `embedded`: inside a page that has its own <main> and skip
  * link (an app layout, a preview), the shell adds no landmarks (<div> for <header> and <main>) and no skip link.
  */
 export function AppShell({
   sidebar,
   header,
   density = "compact",
+  fill = false,
   mainId = "main",
   embedded = false,
   className,
@@ -31,7 +32,9 @@ export function AppShell({
 }: {
   sidebar?: ReactNode;
   header?: ReactNode;
-  density?: "compact" | "comfortable";
+  density?: "compact" | "comfortable" | "touch";
+  /** The shell takes the height of the screen and the page box the rest of it: a board, a till or a calendar scrolls inside its regions. Default false. */
+  fill?: boolean;
   mainId?: string;
   embedded?: boolean;
   className?: string;
@@ -55,10 +58,10 @@ export function AppShell({
   }, [nav]);
   return (
     <div
-      data-density={density === "compact" ? "compact" : undefined}
+      data-density={density === "comfortable" ? undefined : density}
       className={cn(
-        "min-h-dvh bg-bg text-fg",
-        nav && "lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:grid-rows-[auto_1fr]",
+        fill ? "flex h-dvh flex-col overflow-hidden bg-bg text-fg" : "min-h-dvh bg-bg text-fg",
+        nav && (fill ? "lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:grid-rows-[auto_minmax(0,1fr)]" : "lg:grid lg:grid-cols-[auto_minmax(0,1fr)] lg:grid-rows-[auto_1fr]"),
         // Where a sticky PageHeader stops: under the header row (h-14), or at the top where that row is hidden.
         "[--p-sticky-top:3.5rem]",
         !header && (nav ? "lg:[--p-sticky-top:0px]" : "[--p-sticky-top:0px]"),
@@ -102,7 +105,7 @@ export function AppShell({
         {header && <div className="flex min-w-0 flex-1 items-center gap-3">{header}</div>}
       </Header>
       )}
-      <Main id={mainId} className={cn("min-w-0", nav && "lg:col-start-2 lg:row-start-2")}>
+      <Main id={mainId} className={cn("min-w-0", fill && "flex min-h-0 flex-1 flex-col", nav && "lg:col-start-2 lg:row-start-2")}>
         {children}
       </Main>
     </div>

@@ -40,6 +40,8 @@ import * as appShell from "~/examples/app-shell";
 import appShellSrc from "~/examples/app-shell.tsx?raw";
 import * as appForms from "~/examples/app-forms";
 import appFormsSrc from "~/examples/app-forms.tsx?raw";
+import * as tills from "~/examples/tills";
+import tillsSrc from "~/examples/tills.tsx?raw";
 import * as business from "~/examples/business";
 import businessSrc from "~/examples/business.tsx?raw";
 import * as text from "~/examples/text";
@@ -78,6 +80,7 @@ export const EXAMPLES: Record<Group, Examples[]> = {
   app: [
     { module: appShell, src: appShellSrc },
     { module: appForms, src: appFormsSrc },
+    { module: tills, src: tillsSrc },
   ],
   business: [{ module: business, src: businessSrc }],
 };

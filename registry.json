@@ -29,6 +29,33 @@
       }
     },
     {
+      "name": "action-bar",
+      "type": "registry:ui",
+      "title": "ActionBar",
+      "description": "@percentsa/ui: ActionBar",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/text"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/action-bar.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/action-bar.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ActionBar"
+        ]
+      }
+    },
+    {
       "name": "actions",
       "type": "registry:ui",
       "title": "Button, ButtonGroup, Toggle, SegmentedControl",
@@ -1040,7 +1067,9 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "@percentsa/actions",
         "@percentsa/cn",
+        "@percentsa/feedback",
         "@percentsa/flip",
         "@percentsa/menus",
         "@percentsa/provider",
@@ -1057,6 +1086,34 @@
         "exports": [
           "dropIndex",
           "Kanban"
+        ]
+      }
+    },
+    {
+      "name": "keypad",
+      "type": "registry:ui",
+      "title": "KeyGrid, Keypad",
+      "description": "@percentsa/ui: KeyGrid, Keypad",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/provider",
+        "@percentsa/saudi-digits"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/keypad.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/keypad.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "KeyGrid",
+          "Keypad"
         ]
       }
     },
@@ -1391,12 +1448,11 @@
       "name": "pin-pad",
       "type": "registry:ui",
       "title": "PinPad",
-      "description": "@percentsa/ui: mayTakeKey, PinPad",
+      "description": "@percentsa/ui: PinPad",
       "registryDependencies": [
-        "@percentsa/actions",
         "@percentsa/cn",
+        "@percentsa/keypad",
         "@percentsa/provider",
-        "@percentsa/saudi-digits",
         "@percentsa/utility"
       ],
       "files": [
@@ -1408,7 +1464,6 @@
       ],
       "meta": {
         "exports": [
-          "mayTakeKey",
           "PinPad"
         ]
       }
@@ -3530,6 +3585,16 @@
       "description": "Slider: adds @percentsa/inputs.",
       "registryDependencies": [
         "@percentsa/inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "key-grid",
+      "type": "registry:ui",
+      "title": "KeyGrid",
+      "description": "KeyGrid: adds @percentsa/keypad.",
+      "registryDependencies": [
+        "@percentsa/keypad"
       ],
       "files": []
     },

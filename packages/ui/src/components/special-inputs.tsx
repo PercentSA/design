@@ -16,7 +16,7 @@ import { Input, Select } from "./inputs";
 
 type InputProps = Omit<ComponentProps<"input">, "value" | "onChange" | "type">;
 const ADORN_BTN =
-  "grid size-8 place-items-center rounded-pill text-fg-3 transition-colors hover:bg-surface-2 hover:text-fg disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50";
+  "grid size-(--p-control-h-xs) place-items-center rounded-pill text-fg-3 transition-colors hover:bg-surface-2 hover:text-fg disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50";
 
 /**
  * For inputs that reformat as you type: returns clean(text) and writes show(clean(text)) into the input now,

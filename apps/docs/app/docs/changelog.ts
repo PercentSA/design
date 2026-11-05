@@ -17,6 +17,22 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.13.0",
+    date: "2026-11-05",
+    summary: "Parts for tills, work boards and counter tablets: an action bar, a digit keypad, a Kanban that works as a status board with server counts and pages, and a touch density. One visible change for existing projects: a Kanban column with no cards now says \"No items\".",
+    changes: [
+      c("new", "[ActionBar](action-bar) is the bottom bar of a till, a kiosk or a picking tool: equal tiles with an icon, a label and a key hint such as F2 (hidden on a touch screen). When any tile has a key hint, all tiles are taller so the key never touches the edge. A danger item can sit after a separator. When the bar is narrow the last tiles go into a More menu. The app binds the keys; the bar only shows them."),
+      c("new", "[Keypad](keypad) puts digit keys on a touch screen for an amount or a PIN, so the system keyboard does not cover a dialog. An amount keypad has a point, 00 and backspace and refuses a third decimal; a PIN keypad has the digits and backspace. The keys read left to right in Arabic, like a phone, and a hardware keyboard works only while the focus is on the page or inside the keypad."),
+      c("better", "[PinPad](pin-pad) now shares its key grid with the keypad. It looks and works as before."),
+      c("better", "[Kanban](kanban) can be a work board. Leave out onMove and there is no drag and no Move menu; the card actions are yours. Each column can show a count from the server, a loading state, an error with Try again (the loaded cards stay), its own empty text, and pages: a Load more button that also loads the next page by itself when you reach the end. The board can fill the height of its parent with each column scrolling alone, share the width, show one column with a switch on a phone, and use compact cards."),
+      c("better", "A [Kanban](kanban) column with no cards now shows \"No items\" (before, nothing)."),
+      c("new", "Touch density: put data-density=\"touch\" on a counter tablet screen or on [AppShell](app-shell) (density=\"touch\"). On a touch screen the controls grow to 44 to 48 px; with a mouse they keep the compact sizes. The small [Button](button), [Toggle](toggle), segmented control items, number steps and menu rows follow the new --p-control-h-xs token, which is 32 px everywhere else, so nothing changes without it."),
+      c("new", "[AppShell](app-shell) can fill the screen (fill): the page box takes the height that is left and scrolls inside its own regions, so a till, a board or a calendar needs no calc() for the header."),
+      c("new", "[ListItem](list) and [Card](card) can be one button (onSelect, disabled) for a pickable row or tile, and a card can carry an image above its header (media) with a full-width [Thumbnail](thumbnail) (size=\"fill\")."),
+      c("new", "[Text](text) has a danger tone for a shortfall or a refused state."),
+    ],
+  },
+  {
     version: "0.12.0",
     date: "2026-11-05",
     summary: "Parts for form pages and small phone tools: a line editor, a form action bar, a PIN pad, an app frame without a sidebar, and a wider sheet. One visible change for existing projects: a form sheet from the bottom now shows its two buttons in two equal columns, large.",

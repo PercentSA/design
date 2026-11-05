@@ -34,6 +34,7 @@ export function TextExample() {
       <Text>{body}</Text>
       <Text size="sm" tone="muted">{body}</Text>
       <Text size="xs" tone="subtle">{body}</Text>
+      <Text size="sm" tone="danger">{t("The shift state could not be read.", "تعذّرت قراءة حالة الوردية.")}</Text>
     </Stack>
   );
 }

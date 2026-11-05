@@ -29,7 +29,7 @@ export function Heading({ level = 2, size, className, ...rest }: HTMLAttributes<
 }
 
 const TEXT_SIZE = { lg: "text-lg", md: "text-base", sm: "text-sm", xs: "text-xs" } as const;
-const TONE = { default: "text-fg", muted: "text-fg-2", subtle: "text-fg-3" } as const;
+const TONE = { default: "text-fg", muted: "text-fg-2", subtle: "text-fg-3", danger: "text-danger" } as const;
 
 export function Text({
   as: As = "p",

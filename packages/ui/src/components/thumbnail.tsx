@@ -5,14 +5,14 @@ import { ImageIcon } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useLinkComponent } from "../provider";
 
-const SIZE = { sm: "size-10", md: "size-16", lg: "size-24" } as const;
-const WIDTH = { sm: "w-10", md: "w-16", lg: "w-24" } as const;
-const ICON = { sm: "[&>svg]:size-4", md: "[&>svg]:size-6", lg: "[&>svg]:size-8" } as const;
+const SIZE = { sm: "size-10", md: "size-16", lg: "size-24", fill: "aspect-4/3 w-full" } as const;
+const WIDTH = { sm: "w-10", md: "w-16", lg: "w-24", fill: "w-full" } as const;
+const ICON = { sm: "[&>svg]:size-4", md: "[&>svg]:size-6", lg: "[&>svg]:size-8", fill: "[&>svg]:size-8" } as const;
 
 /**
  * A small square image with a fallback icon: product photos, line images, uploaded files. The icon shows when there is
  * no `src` or the image fails to load. `alt` names the image (and the icon, and the link). `caption` is one line under
- * the image, cut with the full text in `title`. With `href` the whole thumbnail is a link.
+ * the image, cut with the full text in `title`. With `href` the whole thumbnail is a link. `size="fill"`: the full width of its box, 4:3 (a tile image, for example in a `Card`).
  */
 export function Thumbnail({
   src,
@@ -57,7 +57,7 @@ export function Thumbnail({
       )}
     </span>
   );
-  const root = cn("inline-grid max-w-full content-start gap-1.5 align-top", href && "rounded-field focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fg", className);
+  const root = cn(size === "fill" ? "grid w-full content-start gap-1.5" : "inline-grid max-w-full content-start gap-1.5 align-top", href && "rounded-field focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-fg", className);
   const body = (
     <>
       {box}
