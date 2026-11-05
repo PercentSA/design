@@ -139,7 +139,7 @@ export function FilterBar({
             title={t(s.filters)}
             trigger={
               // One name with the count, set here: the visible badge is hidden from screen readers, so the number is read once.
-              <Button ref={phoneTrigger} variant="secondary" className="md:hidden" aria-label={active.length > 0 ? `${s.filters}, ${s.selectedCount(active.length)}` : undefined}>
+              <Button ref={phoneTrigger} variant="secondary" className="md:hidden" aria-label={active.length > 0 ? s.filtersChosen(active.length) : undefined}>
                 <ListFilter aria-hidden />
                 {t(s.filters)}
                 {active.length > 0 && (

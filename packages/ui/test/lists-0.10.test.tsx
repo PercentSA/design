@@ -310,7 +310,7 @@ describe("FilterBar collapseOnPhone", () => {
   test("Arabic: the strings, the groups, and a bottom sheet", async () => {
     const ar = [{ key: "status", label: "الحالة", multiple: true, options: [{ value: "paid", label: "مدفوع" }] }];
     await render(<Harness filters={ar} initial={{ status: ["paid"] }} />, "ar");
-    expect(phone().getAttribute("aria-label")).toBe("عوامل التصفية, المحدد: 1");
+    expect(phone().getAttribute("aria-label")).toBe("عوامل التصفية، المحدد: 1");
     await click(phone());
     const dialog = sheet()!;
     expect(dialog.getAttribute("data-side")).toBe("bottom");
