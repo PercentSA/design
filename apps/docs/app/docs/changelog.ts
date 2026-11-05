@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.13.0",
-    date: null,
+    date: "2026-11-05",
     summary: "Parts for tills, work boards and counter tablets: an action bar, a digit keypad, a Kanban that works as a status board with server counts and pages, and a touch density. One visible change for existing projects: a Kanban column with no cards now says \"No items\".",
     changes: [
       c("new", "[ActionBar](action-bar) is the bottom bar of a till, a kiosk or a picking tool: equal tiles with an icon, a label and a key hint such as F2 (hidden on a touch screen). When any tile has a key hint, all tiles are taller so the key never touches the edge. A danger item can sit after a separator. When the bar is narrow the last tiles go into a More menu. The app binds the keys; the bar only shows them."),
