@@ -2,6 +2,14 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.10.0
+
+List parts for admin screens. No breaking change: every new prop is optional. One visible change for existing projects: the first cell of a `DataTable` row with `rowHref` is now `font-medium` at all widths (before, only on the phone cards).
+
+- [DataTable](https://design.percent.sa/en/components/data-table): a column takes `description` (a muted second line under the value; null, undefined and "" show nothing; in the first column of a row with `rowHref` it comes after the link, and links in it stay clickable) and `cardSlot` (below 768 px only: `"end"` at the end of the title line, `"meta"` in one wrapped line under the title, `"block"` full width under the meta; no header, and a cell with no value shows nothing). The table takes `density="compact"` (cells `py-2`, header row `h-9`, card rows `p-3` with `gap-y-1`).
+- [FilterBar](https://design.percent.sa/en/components/filter-bar): `collapseOnPhone` folds the filter menus below 768 px into one "Filters" button with the count of chosen values. It opens a bottom Sheet with one group per filter (checkboxes, or radios when not `multiple`) and "Clear filters". Search, `actions` and the tags stay on the bar. Above 768 px nothing changes.
+- [EmptyState](https://design.percent.sa/en/components/empty-state): `variant="plain"` has no dashed frame, for an empty state inside a table, a card or a sheet. DataTable uses it for its own default empty state (before, it set `border-0` on the framed one).
+
 ## 0.9.0
 
 Record parts for admin screens. No breaking change: every new prop is optional, and a project that takes this version sees no change until it uses one.
