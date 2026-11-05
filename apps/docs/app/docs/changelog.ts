@@ -29,7 +29,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: "0.9.0",
-    date: null,
+    date: "2026-11-05",
     summary: "Parts for the pages of a record in an admin app. Nothing changes for existing projects.",
     changes: [
       c("new", "[RecordSummary](record-summary) shows the 1 to 6 key facts of a record in one dense strip under its header: a label, a value and a hint per cell, and an optional picture at the start. It fits the width it is given: one row when wide, three per row in the middle, two per row on a phone. An empty value shows “Not set”, long text is cut at two lines, and a value can be a link."),
