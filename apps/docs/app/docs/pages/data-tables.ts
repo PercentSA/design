@@ -51,8 +51,8 @@ export const pages: DocPage[] = [
     "DescriptionList",
     "data",
     "DescriptionList",
-    ["DescriptionListExample", "DescriptionListAutoExample"],
-    "Terms and their details, such as project facts. layout=\"columns\" puts them side by side from 768 px of the screen. layout=\"auto\" does it when the list itself is 28rem wide or more (a container query), so a list in a narrow cell stays stacked; the list must not take its width from its content. density=\"compact\" makes the rows tighter (py-2 in place of py-3).",
-    "مصطلحات وتفاصيلها، مثل بيانات مشروع. مع layout=\"columns\" تظهر جنبًا إلى جنب من 768 بكسل من الشاشة. ويفعل layout=\"auto\" ذلك عندما يبلغ عرض القائمة نفسها 28rem أو أكثر (استعلام الحاوية)، فتبقى القائمة في خلية ضيقة مكدّسة؛ ويجب ألا تأخذ القائمة عرضها من محتواها. يضغط density=\"compact\" الصفوف (py-2 بدل py-3).",
+    ["DescriptionListExample", "DescriptionListAutoExample", "DescriptionListColsExample"],
+    "Terms and their details, such as project facts. layout=\"columns\" puts them side by side from 768 px of the screen. layout=\"auto\" does it when the list itself is 28rem wide or more (a container query), so a list in a narrow cell stays stacked; the list must not take its width from its content. density=\"compact\" makes the rows tighter (py-2 in place of py-3). cols={2} or cols={3} puts the pairs in columns, row by row, with the term above its details (short money rows such as a cash summary): a column is at least 9rem of the list itself (a container query, so a list in a narrow card has fewer columns, down to one), the lines run across each row, and a last row with fewer pairs stretches them. cols above 1 replaces layout.",
+    "مصطلحات وتفاصيلها، مثل بيانات مشروع. مع layout=\"columns\" تظهر جنبًا إلى جنب من 768 بكسل من الشاشة. ويفعل layout=\"auto\" ذلك عندما يبلغ عرض القائمة نفسها 28rem أو أكثر (استعلام الحاوية)، فتبقى القائمة في خلية ضيقة مكدّسة؛ ويجب ألا تأخذ القائمة عرضها من محتواها. يضغط density=\"compact\" الصفوف (py-2 بدل py-3). ويضع cols={2} أو cols={3} الأزواج في أعمدة صفًا بصف، والمصطلح فوق تفاصيله (للصفوف القصيرة مثل ملخص النقد): عرض العمود 9rem على الأقل من القائمة نفسها (استعلام الحاوية، فتقلّ الأعمدة في بطاقة ضيقة حتى عمود واحد)، وتمتد الخطوط عبر كل صف، وتتمدد الأزواج في الصف الأخير الأقصر. ويحل cols الأكبر من 1 محل layout.",
   ),
 ];

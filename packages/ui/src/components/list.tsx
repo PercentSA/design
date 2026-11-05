@@ -81,28 +81,42 @@ export function ListItem({
  * when the list itself is 28rem wide or more (a container query), so a list in a narrow cell stays stacked. The list
  * must not take its width from its content (a block, grid or flex child with a width is fine).
  * `density="compact"`: tighter rows, for dense records.
+ * `cols` 2 or 3: the pairs (term above details) flow in that many columns, row by row, each column at least 9rem
+ * wide by the same container query on the list (so a list in a narrow card has fewer columns, down to one). The
+ * lines between rows run across the whole row, and a last row with fewer pairs stretches its pairs. `cols` above 1
+ * replaces `layout`: the pairs are always stacked.
  */
 export function DescriptionList({
   items,
   layout = "stack",
   density = "default",
+  cols = 1,
   className,
 }: {
   items: { term: ReactNode; details: ReactNode }[];
   layout?: "stack" | "columns" | "auto";
   density?: "default" | "compact";
+  cols?: 1 | 2 | 3;
   className?: string;
 }) {
+  const multi = cols > 1;
   return (
-    <dl className={cn("divide-y divide-line", layout === "auto" && "@container", className)}>
+    <dl className={cn(multi ? "flex flex-wrap @container" : "divide-y divide-line", !multi && layout === "auto" && "@container", className)}>
       {items.map((item, i) => (
         <div
           key={i}
           className={cn(
             "grid gap-1 text-sm",
             density === "compact" ? "py-2" : "py-3",
-            layout === "columns" && "md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-6",
-            layout === "auto" && "@md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] @md:gap-6",
+            !multi && layout === "columns" && "md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-6",
+            !multi && layout === "auto" && "@md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] @md:gap-6",
+            // Multi-column: a pair is 100% wide, 1/2 from 18rem and 1/3 from 27rem of the list; `grow` fills a short last row.
+            multi && "min-w-0 grow basis-full @min-[18rem]:basis-1/2 @min-[18rem]:pe-6",
+            cols === 3 && "@min-[27rem]:basis-1/3",
+            // The line above a pair that starts a row after the first: pair i is in the first row when i < the shown columns.
+            multi && i > 0 && "border-t border-line",
+            multi && i === 1 && "@min-[18rem]:border-t-0",
+            cols === 3 && i === 2 && "@min-[27rem]:border-t-0",
           )}
         >
           <dt className="text-fg-3">{item.term}</dt>

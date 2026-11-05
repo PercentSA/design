@@ -16,6 +16,7 @@ export function RecordSection({
   headingLevel = 2,
   layout = "columns",
   density = "default",
+  cols = 1,
   className,
 }: {
   title: ReactNode;
@@ -27,6 +28,8 @@ export function RecordSection({
   layout?: "columns" | "auto";
   /** `compact` for dense records. */
   density?: "default" | "compact";
+  /** 2 or 3: the facts flow in columns (each at least 9rem of the section), term above details; replaces `layout`. */
+  cols?: 1 | 2 | 3;
   className?: string;
 }) {
   const s = useStrings();
@@ -35,6 +38,7 @@ export function RecordSection({
       <DescriptionList
         layout={layout}
         density={density}
+        cols={cols}
         items={items.map((i) => ({ term: i.term, details: empty(i.details) ? <span className="text-fg-3">{s.notSet}</span> : i.details }))}
       />
     </Card>

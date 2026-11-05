@@ -446,6 +446,31 @@ export function DescriptionListAutoExample() {
   );
 }
 
+export function DescriptionListColsExample() {
+  const t = useT();
+  const row = (term: string, termAr: string, amount: number) => ({ term: t(term, termAr), details: <Money amount={amount} /> });
+  const items = [
+    row("Opening", "الافتتاحي", 500),
+    row("Cash sales", "مبيعات نقدية", 9120),
+    row("Cash in", "إيداع", 300),
+    row("Cash out", "سحب", 150),
+    row("Refunds", "المرتجعات", 180),
+    row("Expected", "المتوقع", 9590),
+    row("Counted", "المعدود", 9570),
+    row("Difference", "الفرق", 20),
+  ];
+  return (
+    <div className="grid w-full gap-6 sm:grid-cols-[1fr_16rem]">
+      <Card title={t("Cash, 2 columns", "النقد، عمودان")} headingLevel={4} density="compact">
+        <DescriptionList cols={2} density="compact" items={items} />
+      </Card>
+      <Card title={t("The same list in a narrow card", "القائمة نفسها في بطاقة ضيقة")} headingLevel={4} density="compact">
+        <DescriptionList cols={2} density="compact" items={items.slice(0, 4)} />
+      </Card>
+    </div>
+  );
+}
+
 export function CardCompactExample() {
   const t = useT();
   return (

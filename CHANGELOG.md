@@ -2,6 +2,14 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.14.0
+
+Two layout options for record pages. Both are optional and off by default. Nothing changes for existing projects.
+
+- [Grid](https://design.percent.sa/en/components/grid): `masonry` (default false). Each child moves up into the free space of its column, so cards of very different heights leave no gaps between rows. The DOM order is the reading and tab order, and children are placed in it (the next free place after the previous child). The server renders a normal grid; after mount the grid gets `data-masonry` (rows of 1 px, no row gap) and each child gets `grid-row-end: span N` from its height plus the gap, measured with one ResizeObserver on the children (never the grid) and again on font load and when a child is added or removed. A span is written only when it changes. Works with `cols`, `min` and RTL. Use `gap` for the space, not margins. The grid ends at the last child (a negative bottom margin takes back the last gap).
+- [DescriptionList](https://design.percent.sa/en/components/description-list): `cols` 1 | 2 | 3 (default 1). The pairs stay stacked (term above details) and flow in N columns, row by row. A column is at least 9rem of the list itself (a container query: 2 columns from 18rem, 3 from 27rem), so a list in a narrow card has fewer columns, down to one. The lines between rows run across each row, a last row with fewer pairs stretches them, and `density="compact"` works. `cols` above 1 replaces `layout` (`columns` and `auto` are ignored).
+- [RecordSection](https://design.percent.sa/en/components/record-section): `cols`, passed to its DescriptionList.
+
 ## 0.13.0
 
 Till and board parts for POS screens, work boards and counter tablets. Every new prop is optional. One visible change for existing projects: a [Kanban](https://design.percent.sa/en/components/kanban) column with no cards now shows "No items" (in Arabic "لا توجد عناصر"); before, it showed nothing. Nothing else changes for an app that does not use the new props: the new control height token has the old value (32 px) everywhere except inside `data-density="touch"`.
