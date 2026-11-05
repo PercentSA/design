@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.14.1",
-    date: null,
+    date: "2026-11-06",
     summary: "Description lists in columns fit narrower cards.",
     changes: [
       c("better", "[DescriptionList](description-list) with cols: a column of stacked pairs is now at least 8rem (was 9rem), so a card in a three-column record grid shows its short money rows in 2 columns. Lists with the term beside its details are unchanged."),
