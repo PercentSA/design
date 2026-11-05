@@ -10,6 +10,8 @@ import { cn } from "../lib/cn";
  * Children are measured with one ResizeObserver (never the grid), so a span change cannot start a loop:
  * a child is `align-self: start`, and its height does not depend on its span.
  * Spacing between children comes from the gap, not from margins (margins are not measured).
+ * Children get `height: auto` (a child with `h-full` would follow its span and grow on each measure), and print
+ * drops the spans (the paper width differs from the screen, so screen spans could make cards overlap).
  */
 export function MasonryGrid({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
   const ref = useRef<HTMLDivElement>(null);
@@ -51,5 +53,6 @@ export function MasonryGrid({ className, ...rest }: HTMLAttributes<HTMLDivElemen
       grid.removeAttribute("data-masonry");
     };
   }, []);
-  return <div ref={ref} className={cn(className, "data-masonry:-mb-(--p-masonry-gap) data-masonry:auto-rows-[1px] data-masonry:items-start data-masonry:gap-y-0")} {...rest} />;
+  return <div ref={ref} className={cn(className, "data-masonry:-mb-(--p-masonry-gap) data-masonry:auto-rows-[1px] data-masonry:items-start data-masonry:gap-y-0 data-masonry:*:h-auto!",
+        "print:data-masonry:mb-0 print:data-masonry:auto-rows-auto print:data-masonry:gap-y-(--p-masonry-gap) print:data-masonry:*:row-end-auto!")} {...rest} />;
 }

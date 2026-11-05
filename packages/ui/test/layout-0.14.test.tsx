@@ -132,6 +132,12 @@ describe("Grid masonry", () => {
   });
 });
 
+test("children keep their own height, and print is a normal grid", async () => {
+  const el = await mount(<Grid masonry>{cards([10])}</Grid>);
+  const c = el.firstElementChild!.className.split(" ");
+  for (const k of ["data-masonry:*:h-auto!", "print:data-masonry:*:row-end-auto!", "print:data-masonry:auto-rows-auto", "print:data-masonry:gap-y-(--p-masonry-gap)", "print:data-masonry:mb-0"]) expect(c).toContain(k);
+});
+
 describe("Grid masonry cleanup", () => {
   test("unmount disconnects the observers and removes data-masonry", async () => {
     const { createRoot } = await import("react-dom/client");
