@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.14.0",
-    date: null,
+    date: "2026-11-05",
     summary: "Two layout options for record pages: a grid where cards move up into the free space, and description lists in two or three columns. Nothing changes for existing projects.",
     changes: [
       c("new", "[Grid](grid) has a masonry option. On a record page with a long details card next to a short refunds card, each card moves up into the free space of its column, so there are no big gaps between rows. The reading and tab order stay the page order. The server sends a normal grid and the browser arranges the cards after the page loads. Use the grid gap for the space, not margins. Cards keep the height of their content, and a printed page shows a normal grid."),
