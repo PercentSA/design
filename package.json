@@ -12,7 +12,8 @@
     "typecheck": "bun run --filter '*' typecheck",
     "dev": "bun run --filter '@percentsa/tokens' build && bun run --filter docs dev",
     "registry": "bun scripts/registry.ts",
-    "logo-files": "bun scripts/logo-files.ts"
+    "logo-files": "bun scripts/logo-files.ts",
+    "logo-videos": "bun scripts/logo-videos.ts"
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^21.0.1",
