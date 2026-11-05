@@ -22,10 +22,10 @@ describe("docs changelog page", () => {
     expect(fileSlugs.length).toBeGreaterThan(0);
     expect([...pageSlugs, ...fileSlugs].filter((s) => !findPage(s))).toEqual([]);
   });
-  test("dates: YYYY-MM-DD, newest first; only the newest version may be unreleased", () => {
+  test("dates: YYYY-MM-DD, newest first; only the newest versions (stacked releases) may be unreleased", () => {
     const dated = RELEASES.filter((r) => r.date);
     expect(dated.every((r) => /^\d{4}-\d{2}-\d{2}$/.test(r.date!))).toBe(true);
     expect(dated.map((r) => r.date)).toEqual(dated.map((r) => r.date).sort().reverse());
-    expect(RELEASES.slice(1).filter((r) => !r.date).map((r) => r.version)).toEqual([]);
+    expect(RELEASES.slice(RELEASES.findIndex((r) => r.date)).filter((r) => !r.date).map((r) => r.version)).toEqual([]);
   });
 });

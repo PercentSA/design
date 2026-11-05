@@ -703,6 +703,7 @@
         "@percentsa/navigation",
         "@percentsa/provider",
         "@percentsa/table",
+        "@percentsa/text",
         "@percentsa/utility"
       ],
       "files": [
@@ -823,10 +824,13 @@
       ],
       "registryDependencies": [
         "@percentsa/actions",
+        "@percentsa/choices",
         "@percentsa/cn",
         "@percentsa/feedback",
+        "@percentsa/field",
         "@percentsa/flip",
         "@percentsa/input-classes",
+        "@percentsa/overlays",
         "@percentsa/provider",
         "@percentsa/special-inputs"
       ],

@@ -17,6 +17,17 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.10.0",
+    date: "2026-11-05",
+    summary: "Parts for lists in an admin app. Nothing changes for existing projects, except that the first cell of a row that opens a record is now medium weight on wide screens too.",
+    changes: [
+      c("new", "[DataTable](data-table) columns can show a muted second line under the value (a phone under a name), and, on phones, place a cell on the card: at the end of the title line, in one line under the title, or full width for long text. A new compact density makes dense lists tighter."),
+      c("new", "[FilterBar](filter-bar) has collapseOnPhone: on a phone the filter menus fold into one “Filters” button with the number of chosen values. It opens a sheet from the bottom with one group per filter and a “Clear filters” button. On wide screens the bar is the same."),
+      c("new", "[EmptyState](empty-state) has variant=\"plain\": no dashed frame, for an empty state inside a table, a card or a sheet. DataTable now uses it for its own empty state."),
+      c("better", "The first cell of a DataTable row that opens a record (rowHref) is now medium weight at all widths. Before, only the phone cards had it."),
+    ],
+  },
+  {
     version: "0.9.0",
     date: "2026-11-05",
     summary: "Parts for the pages of a record in an admin app. Nothing changes for existing projects.",

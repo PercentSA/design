@@ -347,3 +347,42 @@ export function RecordSectionAutoExample() {
     </div>
   );
 }
+
+/** `collapseOnPhone`: below 768 px the two filter menus become one "Filters" button with a count, which opens a bottom sheet. Narrow the window to see it. */
+export function FilterBarCollapseExample() {
+  const t = useT();
+  const [value, setValue] = useState<FilterValue>({ status: ["paid"] });
+  return (
+    <FilterBar
+      className="w-full"
+      collapseOnPhone
+      value={value}
+      onValueChange={setValue}
+      filters={[
+        {
+          key: "status",
+          label: t("Status", "الحالة"),
+          multiple: true,
+          options: [
+            { value: "paid", label: t("Paid", "مدفوع") },
+            { value: "open", label: t("Open", "مفتوح") },
+            { value: "void", label: t("Void", "ملغى") },
+          ],
+        },
+        {
+          key: "branch",
+          label: t("Branch", "الفرع"),
+          options: [
+            { value: "riyadh", label: t("Riyadh", "الرياض") },
+            { value: "jeddah", label: t("Jeddah", "جدة") },
+          ],
+        },
+      ]}
+      actions={
+        <Button variant="secondary" iconOnly aria-label={t("Refresh", "تحديث")}>
+          <RefreshCw aria-hidden />
+        </Button>
+      }
+    />
+  );
+}

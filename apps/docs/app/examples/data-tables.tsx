@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileText, Globe, LayoutDashboard, Plus, Receipt, Smartphone } from "lucide-react";
-import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, toast, useLang } from "@percentsa/ui";
+import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, PhoneText, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, toast, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function CardExample() {
@@ -334,4 +334,23 @@ export function CardCompactExample() {
       </Card>
     </Grid>
   );
+}
+
+/** A dense list: `density="compact"`, a muted line under the customer (a phone, with a link in it), and the card slots below 768 px. */
+export function DataTableDenseExample() {
+  const t = useT();
+  type Order = { id: string; number: string; name: string; phone: string; total: number; comment: string };
+  const rows: Order[] = [
+    { id: "1", number: "INV-1042", name: t("Sara Al-Qahtani", "سارة القحطاني"), phone: "0551234567", total: 1850, comment: t("Deliver after 5 pm. Call before arriving.", "التسليم بعد الخامسة مساءً. الاتصال قبل الوصول.") },
+    { id: "2", number: "INV-1043", name: t("Omar Al-Harbi", "عمر الحربي"), phone: "0507654321", total: 320, comment: "" },
+    { id: "3", number: "INV-1044", name: t("Lina Al-Otaibi", "لينا العتيبي"), phone: "0561112233", total: 12400, comment: t("Gift wrap.", "تغليف هدية.") },
+  ];
+  const columns: DataTableColumn<Order>[] = [
+    // The first cell is the row link; the description comes after it, and the phone stays a working link.
+    { key: "name", header: t("Customer", "العميل"), description: (r) => <PhoneText value={r.phone} /> },
+    { key: "number", header: t("Invoice", "الفاتورة"), description: () => t("Simplified tax invoice", "فاتورة ضريبية مبسطة"), cardSlot: "meta" },
+    { key: "total", header: t("Total", "المجموع"), cell: (r) => <Money amount={r.total} />, align: "end", cardSlot: "end" },
+    { key: "comment", header: t("Comment", "ملاحظة"), cardSlot: "block", hideable: false },
+  ];
+  return <DataTable className="w-full" density="compact" cards columns={columns} rows={rows} getRowId={(r) => r.id} caption={t("Orders", "الطلبات")} hideCaption rowHref={(r) => `#${r.id}`} />;
 }
