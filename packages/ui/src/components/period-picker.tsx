@@ -3,7 +3,7 @@
 import { useMemo, useState, useSyncExternalStore } from "react";
 import { cn } from "../lib/cn";
 import { useLang, useStrings, useText } from "../provider";
-import { partsOf, todayPlain, viewLabel, type PlainDate } from "../saudi/calendar";
+import { partsOf, todayPlain, viewLabel, type DateRangePresetId, type PlainDate } from "../saudi/calendar";
 import type { CalendarKind } from "../saudi/date";
 import { periodOf, periodOptions, type Period, type PeriodKind } from "../saudi/period";
 import { SegmentedControl } from "./actions";
@@ -16,7 +16,7 @@ const noSubscribe = () => () => {};
 /**
  * A report period: a month, quarter or year from a list (newest first), or a custom date range. `calendar="hijri"` gives
  * Umm al-Qura months, quarters (3 months) and years; the value stays Gregorian ISO days.
- * A kind switch keeps the end of the current period. A cleared custom range goes back to this month.
+ * A kind switch keeps the end of the current period. A cleared custom range goes back to `clearTo` (default: this month).
  */
 export function PeriodPicker({
   value,
@@ -24,6 +24,9 @@ export function PeriodPicker({
   kinds = KINDS,
   today: todayProp,
   calendar = "gregorian",
+  presets,
+  weekStart,
+  clearTo,
   className,
 }: {
   value: Period;
@@ -33,6 +36,12 @@ export function PeriodPicker({
   today?: PlainDate;
   /** The calendar of the periods and the first calendar of a custom range. Default "gregorian". */
   calendar?: CalendarKind;
+  /** Preset buttons of the custom range, as in DateRangePicker. Default: the DateRangePicker presets. */
+  presets?: DateRangePresetId[];
+  /** First day of the week in the custom range calendar: 0 Sunday … 6 Saturday. Default 0. */
+  weekStart?: number;
+  /** The period a cleared custom range goes back to. Default: this month. */
+  clearTo?: Period;
   className?: string;
 }) {
   const s = useStrings();
@@ -73,10 +82,12 @@ export function PeriodPicker({
           value={start && value.from === start && value.to === start ? { from: start, to: null } : value}
           onValueChange={(range) => {
             setStart(range.to ? null : range.from);
-            if (!range.from && !range.to) return onValueChange(periodOf("month", today, calendar));
+            if (!range.from && !range.to) return onValueChange(clearTo ?? periodOf("month", today, calendar));
             onValueChange({ kind: "custom", from: range.from ?? range.to!, to: range.to ?? range.from! });
           }}
           defaultCalendar={calendar}
+          presets={presets}
+          weekStart={weekStart}
           className="w-64 max-w-full"
         />
       ) : (
