@@ -150,3 +150,44 @@ export function TicketViewExample() {
     />
   );
 }
+
+export function LineItemsTableDetailsExample() {
+  const t = useT();
+  return (
+    <Stack gap={6} className="w-full max-w-4xl">
+      <LineItemsTable
+        caption={t("Quote QT-318", "عرض السعر QT-318")}
+        prices="excl"
+        lines={[
+          {
+            id: "1",
+            name: t("Front brake kit", "طقم فرامل أمامي"),
+            sku: "KIT-FB-01",
+            quantity: 1,
+            unitPrice: 200,
+            total: 200,
+            media: { alt: t("Front brake kit", "طقم فرامل أمامي") },
+            description: t("VAT 15%", "معدل الضريبة 15%"),
+            parts: [
+              { id: "a", name: t("Brake disc", "قرص فرامل"), sku: "BD-12", quantity: 2 },
+              { id: "b", name: t("Pad set", "طقم فحمات"), sku: "BP-01", quantity: 1 },
+            ],
+            extra: (
+              <Inline gap={2}>
+                <Badge variant="outline">{t("Ceramic", "سيراميك")}</Badge>
+                <Badge variant="outline">{t("Front axle", "المحور الأمامي")}</Badge>
+              </Inline>
+            ),
+          },
+          { id: "2", name: t("Brake fluid, 1 L", "زيت فرامل، 1 لتر"), sku: "BF-1", quantity: 2, unitPrice: 25, total: 50, description: t("VAT 15%", "معدل الضريبة 15%") },
+        ]}
+        totals={[
+          { label: t("Subtotal", "المجموع"), amount: 250 },
+          { label: t("VAT", "الضريبة"), amount: 37.5, hint: "15%" },
+          { label: t("Total", "الإجمالي"), amount: 287.5, total: true },
+        ]}
+      />
+      <LineItemsTable caption={t("Return RT-12", "المرتجع RT-12")} prices="incl" lines={[]} empty={t("No lines yet. Add a product to start.", "لا توجد بنود بعد. أضف منتجًا للبدء.")} />
+    </Stack>
+  );
+}

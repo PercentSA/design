@@ -14,6 +14,8 @@ export function RecordSection({
   items,
   action,
   headingLevel = 2,
+  layout = "columns",
+  density = "default",
   className,
 }: {
   title: ReactNode;
@@ -21,13 +23,18 @@ export function RecordSection({
   items: { term: ReactNode; details: ReactNode }[];
   action?: ReactNode;
   headingLevel?: 2 | 3;
+  /** `columns` (default): side by side from 768 px of the screen. `auto`: when the section itself is 28rem wide or more. */
+  layout?: "columns" | "auto";
+  /** `compact` for dense records. */
+  density?: "default" | "compact";
   className?: string;
 }) {
   const s = useStrings();
   return (
-    <Card title={title} description={description} action={action} headingLevel={headingLevel} className={className}>
+    <Card title={title} description={description} action={action} headingLevel={headingLevel} density={density} className={className}>
       <DescriptionList
-        layout="columns"
+        layout={layout}
+        density={density}
         items={items.map((i) => ({ term: i.term, details: empty(i.details) ? <span className="text-fg-3">{s.notSet}</span> : i.details }))}
       />
     </Card>

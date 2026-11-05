@@ -306,3 +306,32 @@ export function DescriptionListExample() {
     />
   );
 }
+
+export function DescriptionListAutoExample() {
+  const t = useT();
+  const items = [
+    { term: t("Client", "العميل"), details: t("Masar", "مسار") },
+    { term: t("Services", "الخدمات"), details: t("Product design, mobile app, hosting", "تصميم المنتج، تطبيق جوال، استضافة") },
+    { term: t("Budget", "الميزانية"), details: <Money amount={240000} /> },
+  ];
+  return (
+    <div className="grid w-full gap-6 sm:grid-cols-[16rem_1fr]">
+      <DescriptionList layout="auto" density="compact" items={items} />
+      <DescriptionList layout="auto" density="compact" items={items} />
+    </div>
+  );
+}
+
+export function CardCompactExample() {
+  const t = useT();
+  return (
+    <Grid min="14rem" gap={4} className="w-full">
+      <Card title={t("Default", "افتراضي")} description={t("p-6, title text-lg.", "حشوة p-6، والعنوان text-lg.")}>
+        <Text size="sm" tone="muted">{t("The usual card.", "البطاقة المعتادة.")}</Text>
+      </Card>
+      <Card density="compact" title={t("Compact", "مضغوط")} description={t("p-4, title text-base.", "حشوة p-4، والعنوان text-base.")}>
+        <Text size="sm" tone="muted">{t("For dense records.", "للسجلات الكثيفة.")}</Text>
+      </Card>
+    </Grid>
+  );
+}

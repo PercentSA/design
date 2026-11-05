@@ -57,20 +57,35 @@ export function ListItem({
   );
 }
 
-/** Terms and their details. `columns`: term and details side by side from 768 px. */
+/**
+ * Terms and their details. `columns`: term and details side by side from 768 px of the screen. `auto`: side by side
+ * when the list itself is 28rem wide or more (a container query), so a list in a narrow cell stays stacked. The list
+ * must not take its width from its content (a block, grid or flex child with a width is fine).
+ * `density="compact"`: tighter rows, for dense records.
+ */
 export function DescriptionList({
   items,
   layout = "stack",
+  density = "default",
   className,
 }: {
   items: { term: ReactNode; details: ReactNode }[];
-  layout?: "stack" | "columns";
+  layout?: "stack" | "columns" | "auto";
+  density?: "default" | "compact";
   className?: string;
 }) {
   return (
-    <dl className={cn("divide-y divide-line", className)}>
+    <dl className={cn("divide-y divide-line", layout === "auto" && "@container", className)}>
       {items.map((item, i) => (
-        <div key={i} className={cn("grid gap-1 py-3 text-sm", layout === "columns" && "md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-6")}>
+        <div
+          key={i}
+          className={cn(
+            "grid gap-1 text-sm",
+            density === "compact" ? "py-2" : "py-3",
+            layout === "columns" && "md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] md:gap-6",
+            layout === "auto" && "@md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] @md:gap-6",
+          )}
+        >
           <dt className="text-fg-3">{item.term}</dt>
           <dd className="text-fg">{item.details}</dd>
         </div>

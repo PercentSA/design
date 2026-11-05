@@ -1,5 +1,5 @@
 import { FileText, Folder } from "lucide-react";
-import { Accordion, Avatar, AvatarGroup, FormattedNumber, Inline, Money, Stack, Stat, Timeline, Tree } from "@percentsa/ui";
+import { Accordion, Avatar, AvatarGroup, FormattedNumber, Inline, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function StatExample() {
@@ -116,5 +116,55 @@ export function AvatarGroupExample() {
         ))}
       </AvatarGroup>
     </Stack>
+  );
+}
+
+export function RecordSummaryExample() {
+  const t = useT();
+  return (
+    <RecordSummary
+      className="w-full"
+      items={[
+        { id: "total", label: t("Total", "الإجمالي"), value: <Money amount={1150} /> },
+        { id: "paid", label: t("Paid", "المدفوع"), value: <Money amount={500} /> },
+        { id: "due", label: t("Balance", "المتبقي"), value: <Money amount={650} />, hint: t("Due 3 Mar", "الاستحقاق 3 مارس") },
+        { id: "customer", label: t("Customer", "العميل"), value: t("Al Rayan Trading Est.", "مؤسسة الريان للتجارة"), href: "#customer" },
+        { id: "branch", label: t("Branch", "الفرع"), value: null },
+        { id: "note", label: t("Note", "ملاحظة"), value: t("Deliver to the side entrance of the warehouse before noon", "التسليم عند المدخل الجانبي للمستودع قبل الظهر") },
+      ]}
+    />
+  );
+}
+
+export function RecordSummaryMediaExample() {
+  const t = useT();
+  return (
+    <Stack gap={4} className="w-full">
+      <RecordSummary
+        className="w-full"
+        media={<Thumbnail alt={t("Brake pad set", "طقم فحمات")} size="lg" />}
+        items={[
+          { id: "stock", label: t("Available", "المتوفر"), value: "12" },
+          { id: "price", label: t("Price incl. VAT", "السعر شامل الضريبة"), value: <Money amount={230} />, hint: t("Before VAT: 200.00", "قبل الضريبة: 200.00") },
+          { id: "category", label: t("Category", "التصنيف"), value: t("Brake pads", "فحمات الفرامل") },
+        ]}
+      />
+      <RecordSummary className="w-full" loading items={[{ id: "a", label: t("Total", "الإجمالي"), value: null }, { id: "b", label: t("Paid", "المدفوع"), value: null }, { id: "c", label: t("Balance", "المتبقي"), value: null }]} />
+    </Stack>
+  );
+}
+
+export function ThumbnailExample() {
+  const t = useT();
+  // data: URL, so the example needs no file.
+  const photo = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 8"><rect width="8" height="8" fill="#888"/><circle cx="4" cy="4" r="2.5" fill="#ccc"/></svg>');
+  return (
+    <Inline gap={6} align="start" className="w-full">
+      <Thumbnail src={photo} alt={t("Product photo", "صورة المنتج")} size="sm" />
+      <Thumbnail src={photo} alt={t("Product photo", "صورة المنتج")} size="md" />
+      <Thumbnail src={photo} alt={t("Product photo", "صورة المنتج")} size="lg" />
+      <Thumbnail src={null} alt={t("Brake pad set", "طقم فحمات")} size="md" />
+      <Thumbnail alt="supplier-invoice.pdf" fallback={<FileText />} caption="supplier-invoice.pdf" href="#file" size="md" />
+    </Inline>
   );
 }

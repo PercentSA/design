@@ -19,6 +19,8 @@ export type DataTableColumn<Row> = {
   header: ReactNode;
   /** Default: the row's field named `key`. */
   cell?: (row: Row) => ReactNode;
+  /** First column of a row with `rowHref`: content after the row link, outside it (links and buttons here stay clickable). */
+  afterLink?: (row: Row) => ReactNode;
   /** Default: the row's field named `key`. */
   sortValue?: (row: Row) => string | number;
   sortable?: boolean;
@@ -230,9 +232,12 @@ export function DataTable<Row>({
               >
                 {k === 0 && href ? (
                   // -outline-offset keeps the row's focus ring inside the table's scroll box.
-                  <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "max-md:after:rounded-card")}>
-                    {value}
-                  </L>
+                  <>
+                    <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "max-md:after:rounded-card")}>
+                      {value}
+                    </L>
+                    {c.afterLink?.(row)}
+                  </>
                 ) : cards && k > 0 ? (
                   <>
                     <span className="text-xs text-fg-3 md:hidden">{c.header}</span>

@@ -2,6 +2,16 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.9.0
+
+Record parts for admin screens. No breaking change: every new prop is optional, and a project that takes this version sees no change until it uses one.
+
+- [RecordSummary](https://design.percent.sa/en/components/record-summary): the 1 to 6 key facts of a record in one dense strip under its header (label, value, hint per cell), with an optional `media` slot. The cells follow the width of the strip (container queries): one row from 56rem, 3 per row from 36rem, 2 per row below. Empty values show "Not set", long text is cut at 2 lines, `href` makes a value a link, and `loading` shows skeleton cells. New strings: `recordSummary`.
+- [Thumbnail](https://design.percent.sa/en/components/thumbnail): a small square image (`sm` 40 px, `md` 64 px, `lg` 96 px) with a fallback icon for no image or a load error, an optional one-line `caption`, and an optional `href` that makes the whole thumbnail a link.
+- [LineItemsTable](https://design.percent.sa/en/components/line-items-table): a line takes `media` (a small image), `description` (muted lines under the name), `parts` (the sub-lines of a kit, without a price) and `extra` (chips, file thumbnails); the table takes `totals` (a TotalsList under the table, at the end side) and `empty` (text in place of the rows). They show in the phone card rows too. New strings: `lines.kitParts`.
+- [DescriptionList](https://design.percent.sa/en/components/description-list) and [RecordSection](https://design.percent.sa/en/components/record-section): `layout="auto"` puts the term and the details side by side when the list or section itself is 28rem wide or more (a container query), so one in a narrow grid cell stays stacked. `layout="columns"` is unchanged (it follows the screen, from 768 px).
+- [Card](https://design.percent.sa/en/components/card), DescriptionList and RecordSection: `density="compact"` for dense records (Card: `p-4`, header gap 3, `text-base` title; DescriptionList rows: `py-2`).
+
 ## 0.8.2
 
 A layout fix. No breaking change.

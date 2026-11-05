@@ -17,6 +17,18 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.9.0",
+    date: "2026-11-05",
+    summary: "Parts for the pages of a record in an admin app. Nothing changes for existing projects.",
+    changes: [
+      c("new", "[RecordSummary](record-summary) shows the 1 to 6 key facts of a record in one dense strip under its header: a label, a value and a hint per cell, and an optional picture at the start. It fits the width it is given: one row when wide, three per row in the middle, two per row on a phone. An empty value shows “Not set”, long text is cut at two lines, and a value can be a link."),
+      c("new", "[Thumbnail](thumbnail) is a small square picture in three sizes, with an icon when there is no picture or it does not load, an optional caption, and an optional link around the whole picture."),
+      c("new", "[LineItemsTable](line-items-table) lines can show a small picture, muted description lines, the parts of a kit and more content (such as chips) under the name. The table can show the document totals under it and a text when there are no lines. On phones the same details show in each card."),
+      c("new", "[DescriptionList](description-list) and [RecordSection](record-section) have layout=\"auto\": the term and its details sit side by side only when the list itself is wide enough, so one in a narrow column stays stacked. The existing layouts do not change."),
+      c("new", "[Card](card), DescriptionList and RecordSection have density=\"compact\" for dense records: less padding and a smaller title."),
+    ],
+  },
+  {
     version: "0.8.2",
     date: "2026-11-03",
     summary: "A layout fix for phones. Nothing else changes.",
