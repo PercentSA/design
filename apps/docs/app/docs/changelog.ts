@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.12.0",
-    date: null,
+    date: "2026-11-05",
     summary: "Parts for form pages and small phone tools: a line editor, a form action bar, a PIN pad, an app frame without a sidebar, and a wider sheet. One visible change for existing projects: a form sheet from the bottom now shows its two buttons in two equal columns, large.",
     changes: [
       c("new", "[LineItemsEditor](line-items-editor) is for the lines of a quote, order, invoice or stocktake in a form. Your inputs sit in the cells, with add, remove, a menu and details for each line, and totals below. Enter moves to the next cell and the next line, and from the last cell it adds a line; it never sends the form. After an add or a remove the focus goes to the right place and a screen reader hears what changed. On a narrow width the rows become cards."),
