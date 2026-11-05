@@ -225,7 +225,8 @@ export function DataTable<Row>({
     hasSlots && "max-md:gap-y-0",
     hasMeta && SLOT_BREAK,
   );
-  const bodyClass = cn(cards && "max-md:grid max-md:gap-3 max-md:[&_tr:last-child]:border");
+  // grid-cols-1 (minmax(0, 1fr)): a wide group or total row cannot make the column, and so every card, wider than the box.
+  const bodyClass = cn(cards && "max-md:grid max-md:grid-cols-1 max-md:gap-3 max-md:[&_tr:last-child]:border");
 
   // `i` makes the row's ids (for the checkbox and "⋯" names) unique in the table.
   const renderRow = (row: Row, i: number | string) => {

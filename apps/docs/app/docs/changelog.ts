@@ -17,6 +17,15 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.14.3",
+    date: null,
+    summary: "A chosen link button shows, and phone cards stay inside their box.",
+    changes: [
+      c("better", "[Button](button): a link button that is pressed (aria-pressed) is bold with a full underline, so the chosen item of a list of link buttons shows."),
+      c("fixed", "[DataTable](data-table) with cards: a wide group or total row no longer makes the phone cards wider than the table box."),
+    ],
+  },
+  {
     version: "0.14.2",
     date: "2026-11-06",
     summary: "The phone field looks the same in Arabic and English.",
