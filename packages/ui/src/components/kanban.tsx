@@ -107,7 +107,7 @@ export function Kanban<Card>({
   columnWidth?: "fixed" | "fill";
   /** Below 768 px: "scroll" (a sideways row with snap) or "switch" (one column and a switch with title and count). */
   phone?: "scroll" | "switch";
-  /** The shown column in "switch" mode. Controlled when `onColumnChange` is set (the app keeps it in the address). Default: the first. */
+  /** The shown column in "switch" mode. Controlled whenever `column` is set (the app keeps it in the address and changes it in `onColumnChange`). Default: the first. */
   column?: string;
   onColumnChange?: (columnId: string) => void;
   /** "compact": card padding 0.625rem, gap 0.5rem. */
@@ -167,8 +167,15 @@ export function Kanban<Card>({
   };
 
   const sw = useRef<HTMLDivElement>(null);
+  // Only the switch row scrolls (not the page); the offsets are measured, so it works in both directions.
   useEffect(() => {
-    sw.current?.querySelector<HTMLElement>("[aria-pressed=true]")?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+    const row = sw.current;
+    const b = row?.querySelector<HTMLElement>("[aria-pressed=true]");
+    if (!row || !b) return;
+    const r = row.getBoundingClientRect();
+    const x = b.getBoundingClientRect();
+    if (x.left < r.left) row.scrollLeft -= r.left - x.left;
+    else if (x.right > r.right) row.scrollLeft += x.right - r.right;
   }, [active]);
   const countOf = (c: KanbanColumn<Card>) => (c.count === undefined ? c.cards.length : c.count);
   const countText = (c: KanbanColumn<Card>) => countOf(c) ?? "…";
@@ -249,12 +256,17 @@ export function Kanban<Card>({
                       data-card-id={cardId}
                       data-flip={cardId}
                       draggable={!!onMove}
-                      onDragStart={(e) => {
-                        e.dataTransfer.setData("text/plain", label);
-                        e.dataTransfer.effectAllowed = "move";
-                        setDrag({ card: cardId, column: column.id, index: i });
-                      }}
-                      onDragEnd={end}
+                      // Without onMove no handlers: a link or image inside the card keeps its own drag.
+                      onDragStart={
+                        onMove
+                          ? (e) => {
+                              e.dataTransfer.setData("text/plain", label);
+                              e.dataTransfer.effectAllowed = "move";
+                              setDrag({ card: cardId, column: column.id, index: i });
+                            }
+                          : undefined
+                      }
+                      onDragEnd={onMove ? end : undefined}
                       className={cn(
                         "relative flex items-start gap-2 rounded-field border border-line bg-bg text-sm",
                         compact ? "p-2.5" : "p-3",

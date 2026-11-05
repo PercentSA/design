@@ -10,6 +10,8 @@ import { Button } from "./actions";
 const EDITABLE = "input, textarea, select, [contenteditable]";
 const DIGITS = ["1", "2", "3", "4", "5", "6", "7", "8", "9"];
 const KEY = "h-14 w-full tabular-nums";
+// Events a grid has already looked at: with the focus on the page only the first mounted grid may act on a key, even when it refused it.
+const seen = new WeakSet<Event>();
 
 /** A key of the grid: "0" to "9", "00", "." or "back". */
 export type KeyName = string;
@@ -56,12 +58,15 @@ export function KeyGrid({
   useEffect(() => {
     const onDown = (e: KeyboardEvent) => {
       const now = latest.current;
-      if (now.off || e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented || (e.target as Element | null)?.closest?.(EDITABLE)) return;
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented || (e.target as Element | null)?.closest?.(EDITABLE)) return;
       // Only when nothing else has the focus (the page) or the grid itself has it: a dialog or menu over the pad keeps its keys.
       const at = document.activeElement;
       if (at && at !== document.body && !root.current?.contains(at)) return;
+      if (seen.has(e)) return;
+      seen.add(e);
+      if (now.off) return;
       const d = toWesternDigits(e.key);
-      const key = /^[0-9]$/.test(d) ? d : e.key === "Backspace" ? "back" : now.mode === "amount" && (e.key === "." || e.key === "," || e.key === "٫") ? "." : null;
+      const key = /^[0-9]$/.test(d) ? d : e.key === "Backspace" ? "back" : now.mode === "amount" && (e.key === "." || e.key === "٫") ? "." : null;
       if (key && now.onKey(key)) e.preventDefault();
     };
     document.addEventListener("keydown", onDown);

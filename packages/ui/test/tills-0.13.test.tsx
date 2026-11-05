@@ -501,11 +501,11 @@ describe("Keypad", () => {
     expect(draft(el)).toBe("125");
     await tap(el, "Delete last digit", "Delete last digit", "Delete last digit", "Delete last digit");
     expect(draft(el)).toBe("");
-    await tap(el, "Double zero");
+    await tap(el, "00, double zero");
     expect(draft(el)).toBe("0");
     await tap(el, "0", "7");
     expect(draft(el)).toBe("7");
-    await tap(el, "Double zero");
+    await tap(el, "00, double zero");
     expect(draft(el)).toBe("700");
   });
 
@@ -515,11 +515,11 @@ describe("Keypad", () => {
     expect(draft(el)).toBe("0.");
     await tap(el, "Decimal point", "2", "5", "9");
     expect(draft(el)).toBe("0.25");
-    await tap(el, "Delete last digit", "Delete last digit", "Double zero");
+    await tap(el, "Delete last digit", "Delete last digit", "00, double zero");
     expect(draft(el)).toBe("0.00");
     await tap(el, "Delete last digit", "Delete last digit", "Delete last digit", "Delete last digit", "Delete last digit");
     expect(draft(el)).toBe("");
-    await tap(el, "1", "Decimal point", "Double zero", "Double zero");
+    await tap(el, "1", "Decimal point", "00, double zero", "00, double zero");
     expect(draft(el)).toBe("1.00");
   });
 
@@ -535,7 +535,7 @@ describe("Keypad", () => {
   test("maxLength: the digit keys refuse at the limit; backspace still works", async () => {
     const log: string[] = [];
     const el = await mount(inLang(<Amount maxLength={4} log={log} />));
-    await tap(el, "1", "2", "3", "4", "5", "Decimal point", "Double zero");
+    await tap(el, "1", "2", "3", "4", "5", "Decimal point", "00, double zero");
     expect(draft(el)).toBe("1234");
     expect(log).toEqual(["1", "12", "123", "1234"]);
     await tap(el, "Delete last digit");
@@ -628,9 +628,109 @@ describe("Keypad", () => {
   });
 
   test("the strings exist in both languages", () => {
-    expect(STRINGS.en.keypad).toEqual({ backspace: "Delete last digit", point: "Decimal point", doubleZero: "Double zero" });
+    expect(STRINGS.en.keypad).toEqual({ backspace: "Delete last digit", point: "Decimal point", doubleZero: "00, double zero" });
     expect(Object.keys(STRINGS.ar.keypad).sort()).toEqual(Object.keys(STRINGS.en.keypad).sort());
     expect(Object.values(STRINGS.ar.keypad).every((v) => /[؀-ۿ]/.test(v))).toBe(true);
+  });
+});
+
+describe("review fixes", () => {
+  const keydown = (init: KeyboardEventInit, target: EventTarget = document.body) =>
+    act(async () => {
+      target.dispatchEvent(new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ...init }));
+    });
+
+  test("two keypads on one page: with the focus on the page only the first acts, even when it refuses the key", async () => {
+    function Two() {
+      const [a, setA] = useState("");
+      const [b, setB] = useState("");
+      return (
+        <>
+          <output data-a>{a}</output>
+          <output data-b>{b}</output>
+          <Keypad label="A" mode="pin" maxLength={1} value={a} onValueChange={setA} />
+          <Keypad label="B" mode="pin" maxLength={4} value={b} onValueChange={setB} />
+        </>
+      );
+    }
+    const el = await mount(inLang(<Two />));
+    const a = () => el.querySelector("[data-a]")!.textContent;
+    const b = () => el.querySelector("[data-b]")!.textContent;
+    // Backspace on an empty first pad is refused: the second pad must not see it either.
+    await keydown({ key: "Backspace" });
+    await keydown({ key: "7" });
+    expect([a(), b()]).toEqual(["7", ""]);
+    // At maxLength the first pad refuses a digit; the second stays unchanged.
+    await keydown({ key: "8" });
+    expect([a(), b()]).toEqual(["7", ""]);
+    // Focus inside the second pad: it acts, the first does not.
+    const key = el.querySelectorAll<HTMLElement>('[role="group"]')[1]!.querySelector("button")!;
+    key.focus();
+    await keydown({ key: "3" }, key);
+    expect([a(), b()]).toEqual(["7", "3"]);
+  });
+
+  test('a comma is not a decimal point ("1,250" gives no point); "." and the Arabic point are', async () => {
+    function One() {
+      const [v, set] = useState("");
+      return (
+        <>
+          <output data-d>{v}</output>
+          <Keypad label="A" value={v} onValueChange={set} />
+        </>
+      );
+    }
+    const el = await mount(inLang(<One />));
+    for (const k of ["1", ",", "2", "5", "0"]) await keydown({ key: k });
+    expect(el.querySelector("[data-d]")!.textContent).toBe("1250");
+    await keydown({ key: "٫" });
+    expect(el.querySelector("[data-d]")!.textContent).toBe("1250.");
+  });
+
+  test('the "00" key keeps its digits in its name, in both languages', () => {
+    expect(STRINGS.en.keypad.doubleZero).toContain("00");
+    expect(STRINGS.ar.keypad.doubleZero).toContain("00");
+  });
+
+  test("Kanban without onMove attaches no drag handlers; with onMove it does", async () => {
+    const cols = [{ id: "a", title: "A", cards: cards(1) }];
+    const plain = await mount(inLang(<Lanes columns={cols} />));
+    const dragged = new Event("dragstart", { bubbles: true, cancelable: true });
+    Object.assign(dragged, { dataTransfer: { setData() {}, effectAllowed: "" } });
+    await act(async () => {
+      plain.querySelector("li[data-card-id] a")!.dispatchEvent(dragged);
+    });
+    expect(plain.querySelector("li[data-card-id]")!.className).not.toContain("opacity-50");
+    const moving = await mount(inLang(<Lanes columns={cols} onMove={() => {}} />));
+    const d2 = new Event("dragstart", { bubbles: true, cancelable: true });
+    Object.assign(d2, { dataTransfer: { setData() {}, effectAllowed: "" } });
+    await act(async () => {
+      moving.querySelector("li[data-card-id]")!.dispatchEvent(d2);
+    });
+    expect(moving.querySelector("li[data-card-id]")!.className).toContain("opacity-50");
+  });
+
+  test("the phone switch scrolls only its own row, never the page (no scrollIntoView)", async () => {
+    const original = HTMLElement.prototype.scrollIntoView;
+    const spy = mock(() => {});
+    HTMLElement.prototype.scrollIntoView = spy;
+    try {
+      const cols = [
+        { id: "a", title: "A", cards: [] },
+        { id: "b", title: "B", cards: [] },
+      ];
+      const el = await mount(inLang(<Lanes columns={cols} phone="switch" />));
+      await click(byText(el, "nav button", "B(0)"));
+      expect(spy.mock.calls.length).toBe(0);
+    } finally {
+      HTMLElement.prototype.scrollIntoView = original;
+    }
+  });
+
+  test("a disabled ActionBar tile keeps pointer events, so its title tooltip can show", () => {
+    const doc = dom(<ActionBar label="A" items={[{ id: "a", label: "History", icon: null, disabled: true, onSelect: () => {} }]} />);
+    const b = doc.querySelector("button")!;
+    expect([b.disabled, b.title, b.className.includes("pointer-events-none")]).toEqual([true, "History", false]);
   });
 });
 

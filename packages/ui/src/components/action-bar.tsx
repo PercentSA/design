@@ -21,7 +21,7 @@ export type ActionBarItem = {
 };
 
 const TILE =
-  "flex h-14 in-data-[density=touch]:h-16 min-w-0 flex-1 basis-0 flex-col items-center justify-center gap-0.5 rounded-field border px-1 text-xs transition-colors disabled:pointer-events-none disabled:opacity-50 [&_svg]:size-5 [&_svg]:shrink-0";
+  "flex h-14 in-data-[density=touch]:h-16 min-w-0 flex-1 basis-0 flex-col items-center justify-center gap-0.5 rounded-field border px-1 text-xs transition-colors disabled:opacity-50 [&_svg]:size-5 [&_svg]:shrink-0";
 const TONE = {
   default: "border-line text-fg-2 hover:border-fg-3 hover:text-fg",
   danger: "border-danger text-danger hover:bg-danger/10",
