@@ -222,8 +222,11 @@ describe("FilterBar collapseOnPhone", () => {
     expect(phone().textContent).toBe("Filters");
     await render(<Harness initial={{ status: ["paid", "open"], owner: ["sara"] }} />);
     const withCount = buttons().filter((b) => b.textContent!.startsWith("Filters") && b.className.includes("md:hidden"))[1]!;
-    expect(withCount.textContent).toContain("3 selected");
+    // One accessible name with the number once: aria-label, and the visible badge is hidden from screen readers.
+    expect(withCount.getAttribute("aria-label")).toBe("Filters, 3 selected");
     expect(withCount.querySelector('[aria-hidden="true"]:not(svg)')!.textContent).toBe("3");
+    expect(withCount.querySelector(".sr-only")).toBeNull();
+    expect(phone().getAttribute("aria-label")).toBeNull();
   });
 
   test("no filters: no button", async () => {
@@ -240,6 +243,9 @@ describe("FilterBar collapseOnPhone", () => {
     expect(dialog.textContent).toContain("Filters");
     const groups = [...dialog.querySelectorAll("fieldset")];
     expect(groups.map((g) => g.querySelector("legend")!.textContent)).toEqual(["Status", "Owner"]);
+    // The house Fieldset (min-w-0), and one name per group: the legend, no aria-label.
+    expect(groups.every((g) => g.className.includes("min-w-0"))).toBe(true);
+    expect(dialog.querySelector("[aria-label='Owner'],[aria-label='Status']")).toBeNull();
     expect(groups[0]!.querySelectorAll('[role="checkbox"]').length).toBe(2);
     expect(groups[1]!.querySelectorAll('[role="radio"]').length).toBe(2);
   });
@@ -265,11 +271,19 @@ describe("FilterBar collapseOnPhone", () => {
     await render(<Harness initial={{ status: ["paid"], owner: ["sara"] }} />);
     await click(phone());
     const clear = [...document.querySelectorAll('[role="dialog"] button')].find((b) => b.textContent === "Clear filters") as HTMLButtonElement;
-    expect(clear.disabled).toBe(false);
+    expect(clear.hasAttribute("aria-disabled")).toBe(false);
+    clear.focus();
     await click(clear);
     expect(last).toEqual({ status: [], owner: [] });
-    expect(clear.disabled).toBe(true);
+    // Not `disabled`: it keeps focus, which stays in the sheet. A click with nothing chosen does nothing.
+    expect(clear.disabled).toBe(false);
+    expect(clear.getAttribute("aria-disabled")).toBe("true");
+    expect(document.activeElement).toBe(clear);
+    expect(sheet()!.contains(document.activeElement)).toBe(true);
+    await click(clear);
+    expect(last).toEqual({ status: [], owner: [] });
     expect(phone().textContent).toBe("Filters");
+    expect(phone().getAttribute("aria-label")).toBeNull();
   });
 
   test("the sheet closes with its close button; focus goes into the sheet and back to the Filters button", async () => {
@@ -296,7 +310,7 @@ describe("FilterBar collapseOnPhone", () => {
   test("Arabic: the strings, the groups, and a bottom sheet", async () => {
     const ar = [{ key: "status", label: "الحالة", multiple: true, options: [{ value: "paid", label: "مدفوع" }] }];
     await render(<Harness filters={ar} initial={{ status: ["paid"] }} />, "ar");
-    expect(phone().textContent).toContain("المحدد: 1");
+    expect(phone().getAttribute("aria-label")).toBe("عوامل التصفية, المحدد: 1");
     await click(phone());
     const dialog = sheet()!;
     expect(dialog.getAttribute("data-side")).toBe("bottom");

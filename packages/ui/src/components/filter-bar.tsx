@@ -8,6 +8,7 @@ import { useFlip } from "../lib/flip";
 import { useStrings, useText } from "../provider";
 import { Button } from "./actions";
 import { Checkbox, RadioGroup } from "./choices";
+import { Fieldset } from "./field";
 import { Badge, Tag } from "./feedback";
 import { MENU_ITEM } from "./input-classes";
 import { Sheet } from "./overlays";
@@ -137,7 +138,8 @@ export function FilterBar({
             side="bottom"
             title={t(s.filters)}
             trigger={
-              <Button ref={phoneTrigger} variant="secondary" className="md:hidden">
+              // One name with the count, set here: the visible badge is hidden from screen readers, so the number is read once.
+              <Button ref={phoneTrigger} variant="secondary" className="md:hidden" aria-label={active.length > 0 ? `${s.filters}, ${s.selectedCount(active.length)}` : undefined}>
                 <ListFilter aria-hidden />
                 {t(s.filters)}
                 {active.length > 0 && (
@@ -145,7 +147,6 @@ export function FilterBar({
                     <Badge variant="solid" aria-hidden="true" className="h-5 min-w-5 justify-center px-1.5 tabular-nums">
                       {active.length}
                     </Badge>
-                    <span className="sr-only">{s.selectedCount(active.length)}</span>
                   </>
                 )}
               </Button>
@@ -154,24 +155,25 @@ export function FilterBar({
             {filters.map((f) => {
               const chosen = value[f.key] ?? [];
               return (
-                <fieldset key={f.key} className="grid gap-3">
-                  <legend className="mb-3 text-sm font-medium text-fg">{f.label}</legend>
+                <Fieldset key={f.key} legend={f.label}>
                   {f.multiple ? (
-                    f.options.map((o) => (
-                      <Checkbox
-                        key={o.value}
-                        label={o.label}
-                        checked={chosen.includes(o.value)}
-                        onCheckedChange={(on) => set(f.key, on === true ? [...chosen, o.value] : chosen.filter((v) => v !== o.value))}
-                      />
-                    ))
+                    <div className="grid gap-3">
+                      {f.options.map((o) => (
+                        <Checkbox
+                          key={o.value}
+                          label={o.label}
+                          checked={chosen.includes(o.value)}
+                          onCheckedChange={(on) => set(f.key, on === true ? [...chosen, o.value] : chosen.filter((v) => v !== o.value))}
+                        />
+                      ))}
+                    </div>
                   ) : (
-                    <RadioGroup aria-label={f.label} value={chosen[0] ?? ""} onValueChange={(v) => set(f.key, [v])} options={f.options} />
+                    <RadioGroup value={chosen[0] ?? ""} onValueChange={(v) => set(f.key, [v])} options={f.options} />
                   )}
-                </fieldset>
+                </Fieldset>
               );
             })}
-            <Button variant="ghost" disabled={active.length === 0} onClick={clear}>
+            <Button variant="ghost" aria-disabled={active.length === 0 || undefined} onClick={() => active.length > 0 && clear()}>
               {t(s.clearFilters)}
             </Button>
           </Sheet>

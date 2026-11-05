@@ -347,7 +347,7 @@ export function DataTableDenseExample() {
   ];
   const columns: DataTableColumn<Order>[] = [
     // The first cell is the row link; the description comes after it, and the phone stays a working link.
-    { key: "name", header: t("Customer", "العميل"), description: (r) => <PhoneText value={r.phone} />, cardSlot: "meta" },
+    { key: "name", header: t("Customer", "العميل"), description: (r) => <PhoneText value={r.phone} /> },
     { key: "number", header: t("Invoice", "الفاتورة"), description: () => t("Simplified tax invoice", "فاتورة ضريبية مبسطة"), cardSlot: "meta" },
     { key: "total", header: t("Total", "المجموع"), cell: (r) => <Money amount={r.total} />, align: "end", cardSlot: "end" },
     { key: "comment", header: t("Comment", "ملاحظة"), cardSlot: "block", hideable: false },

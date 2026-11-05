@@ -827,6 +827,7 @@
         "@percentsa/choices",
         "@percentsa/cn",
         "@percentsa/feedback",
+        "@percentsa/field",
         "@percentsa/flip",
         "@percentsa/input-classes",
         "@percentsa/overlays",
