@@ -332,7 +332,8 @@ export function LineItemsEditorReturnExample() {
     const id = setTimeout(() => setState("ready"), 900);
     return () => clearTimeout(id);
   }, [state]);
-  const lines = state === "ready" ? [{ id: "1", name: t("Paper cups, 8 oz", "أكواب ورقية، 8 أونصات"), qty: "50" }] : [];
+  const [qty, setQty] = useState("50");
+  const lines = state === "ready" ? [{ id: "1", name: t("Paper cups, 8 oz", "أكواب ورقية، 8 أونصات"), qty }] : [];
   return (
     <div className="grid w-full max-w-3xl gap-4">
       <Button variant="secondary" size="sm" className="justify-self-start" onClick={() => setState(state === "ready" ? "empty" : "loading")}>
@@ -352,7 +353,7 @@ export function LineItemsEditorReturnExample() {
             width: "sm",
             cell: (l) => (
               <Field label={t("Quantity to return", "كمية الإرجاع")}>
-                <Input inputMode="numeric" dir="ltr" defaultValue={l.qty} />
+                <Input inputMode="numeric" dir="ltr" value={l.qty} onChange={(e) => setQty(e.target.value)} />
               </Field>
             ),
           },

@@ -44,37 +44,47 @@ export function PinPad({
   const lastKey = useRef<HTMLElement | null>(null);
   const [count, setCount] = useState(0);
   const [busy, setBusy] = useState(false);
-  const latest = useRef({ push: (_d: string) => {}, back: () => {} });
+  const latest = useRef<{ push: (d: string) => boolean; back: () => boolean }>({ push: () => false, back: () => false });
+  const group = useRef<HTMLDivElement>(null);
+  const lastError = useRef<ReactNode>(null);
 
   const reset = () => {
     entry.current = "";
     setCount(0);
   };
+  /** Each returns whether it did something (the keyboard handler only then takes the key). */
   const back = () => {
-    if (disabled || working.current || !entry.current) return;
+    if (disabled || working.current || !entry.current) return false;
     entry.current = entry.current.slice(0, -1);
     setCount(entry.current.length);
+    return true;
   };
-  const push = async (digit: string) => {
-    if (disabled || working.current || entry.current.length >= length) return;
-    if (!entry.current) onStart?.();
-    entry.current += digit;
-    setCount(entry.current.length);
-    if (entry.current.length < length) return;
+  const finish = async (pin: string) => {
     working.current = true;
     setBusy(true);
     try {
-      await onComplete(entry.current);
+      await onComplete(pin);
     } finally {
       working.current = false;
       setBusy(false);
       reset();
     }
   };
+  const push = (digit: string) => {
+    if (disabled || working.current || entry.current.length >= length) return false;
+    if (!entry.current) onStart?.();
+    entry.current += digit;
+    setCount(entry.current.length);
+    if (entry.current.length === length) void finish(entry.current);
+    return true;
+  };
   latest.current = { push, back };
 
+  // Only a new error clears the dots (a JSX node is a new value on every parent render).
   useEffect(() => {
-    if (error) reset();
+    const had = lastError.current;
+    lastError.current = error;
+    if (error && !had) reset();
   }, [error]);
 
   // The pressed key was disabled while the code was checked: give the focus back to it.
@@ -84,12 +94,13 @@ export function PinPad({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented || (e.target as Element | null)?.closest?.(EDITABLE)) return;
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.defaultPrevented || (e.target as Element | null)?.closest?.(EDITABLE)) return;
+      // Only when nothing else has the focus (the page) or the pad itself has it: a dialog or menu over the pad keeps its keys.
+      const at = document.activeElement;
+      if (at && at !== document.body && !group.current?.contains(at)) return;
       const d = toWesternDigits(e.key);
-      if (/^[0-9]$/.test(d)) latest.current.push(d);
-      else if (e.key === "Backspace") latest.current.back();
-      else return;
-      e.preventDefault();
+      const took = /^[0-9]$/.test(d) ? latest.current.push(d) : e.key === "Backspace" ? latest.current.back() : false;
+      if (took) e.preventDefault();
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
@@ -111,7 +122,7 @@ export function PinPad({
     </Button>
   );
   return (
-    <div role="group" aria-label={label} aria-busy={busy || undefined} className={cn("mx-auto grid w-full max-w-72 justify-items-center gap-5", className)}>
+    <div ref={group} role="group" aria-label={label} aria-busy={busy || undefined} className={cn("mx-auto grid w-full max-w-72 justify-items-center gap-5", className)}>
       <div aria-hidden="true" dir="ltr" className="flex gap-3">
         {Array.from({ length }, (_, i) => (
           <span key={i} className={cn("size-3.5 rounded-pill border transition-colors", i < count ? "border-fg bg-fg" : "border-line-strong")} />

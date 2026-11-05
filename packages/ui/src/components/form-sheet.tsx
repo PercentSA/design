@@ -99,7 +99,7 @@ export function FormSheet({
                 </p>
               )}
             </div>
-            <div className={cn(bottom ? "grid grid-cols-2 gap-3" : "flex flex-wrap justify-end gap-2")}>
+            <div className={cn(bottom ? "flex flex-wrap gap-3 *:grow *:basis-[calc(50%-0.375rem)]" : "flex flex-wrap justify-end gap-2")}>
               <Button variant="secondary" size={bottom ? "lg" : undefined} disabled={pending} onClick={() => request(false)}>
                 {cancelLabel ?? s.cancel}
               </Button>
@@ -108,7 +108,10 @@ export function FormSheet({
                 variant={danger ? "danger" : undefined}
                 size={bottom ? "lg" : undefined}
                 loading={pending}
-                disabled={refused && !pending}
+                // aria-disabled, not disabled: the button keeps its focus and can be read with the reason.
+                {...(refused && !pending ? { "aria-disabled": true } : {})}
+                className={cn(refused && !pending && "cursor-not-allowed opacity-50")}
+                onClick={refused && !pending ? (e) => e.preventDefault() : undefined}
                 aria-describedby={refused && !pending ? reasonId : undefined}
               >
                 {submitLabel ?? s.save}

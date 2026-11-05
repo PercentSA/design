@@ -27,6 +27,7 @@ const dom = (node: ReactNode, lang: "en" | "ar" = "en") => {
   doc.innerHTML = html(node, lang);
   return doc;
 };
+const refusing = (b: HTMLElement) => b.getAttribute("aria-disabled") === "true";
 const hasClass = (el: Element, ...names: string[]) => names.every((n) => el.className.split(/\s+/).includes(n));
 const inLang = (node: ReactNode, lang: "en" | "ar") => <PercentProvider lang={lang}>{node}</PercentProvider>;
 const buttonNamed = (root: ParentNode, name: string) => [...root.querySelectorAll("button")].find((b) => (b.getAttribute("aria-label") ?? b.textContent) === name) as HTMLButtonElement;
@@ -129,7 +130,11 @@ describe("FormSheet", () => {
     const status = footer().querySelector('[role="status"]')!;
     expect(status.textContent).toBe("A machining charge is not paid.");
     expect(status.querySelector("svg")!.getAttribute("aria-hidden")).toBe("true");
-    expect(submit().disabled).toBe(true);
+    expect([submit().disabled, refusing(submit())]).toEqual([false, true]);
+    // A click does nothing and the button keeps the focus.
+    submit().focus();
+    await click(submit());
+    expect([onSubmit.mock.calls.length, document.activeElement]).toEqual([0, submit()]);
     expect(status.querySelector("p")!.id).toBe(submit().getAttribute("aria-describedby")!);
     await act(async () => {
       document.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
@@ -150,19 +155,19 @@ describe("FormSheet", () => {
     const status = footer().querySelector('[role="status"]')!;
     expect(status.textContent).toBe("");
     await click(buttonNamed(document.body, "Refuse"));
-    expect([footer().querySelector('[role="status"]'), status.textContent, submit().disabled]).toEqual([status, "Pay first.", true]);
+    expect([footer().querySelector('[role="status"]'), status.textContent, refusing(submit())]).toEqual([status, "Pay first.", true]);
   });
 
   test("an empty reason (null, empty text, false) refuses nothing", async () => {
     for (const blocked of [null, "", false, undefined]) {
       await form({ blocked });
-      expect([footer().querySelector('[role="status"]')!.childElementCount, submit().disabled]).toEqual([0, false]);
+      expect([footer().querySelector('[role="status"]')!.childElementCount, refusing(submit())]).toEqual([0, false]);
     }
   });
 
   test("pending wins over blocked: loading, no reason", async () => {
     await form({ blocked: "Pay first.", pending: true });
-    expect([submit().getAttribute("aria-busy"), submit().disabled, footer().querySelector('[role="status"]')!.childElementCount]).toEqual(["true", false, 0]);
+    expect([submit().getAttribute("aria-busy"), refusing(submit()) && submit().getAttribute("aria-busy") !== "true", footer().querySelector('[role="status"]')!.childElementCount]).toEqual(["true", false, 0]);
   });
 
   test("blocked with dirty: the close button still asks first", async () => {
@@ -181,7 +186,8 @@ describe("FormSheet", () => {
   test("side bottom: two equal columns at every width, large buttons", async () => {
     await form({ side: "bottom" });
     const row = buttonsRow();
-    expect(hasClass(row, "grid", "grid-cols-2", "gap-3")).toBe(true);
+    // Two equal columns when both labels fit; a long label wraps to its own line (no overflow at 360 px).
+    expect(hasClass(row, "flex", "flex-wrap", "gap-3", "*:grow", "*:basis-[calc(50%-0.375rem)]")).toBe(true);
     expect(row.className).not.toMatch(/sm:|md:|lg:/);
     for (const b of row.querySelectorAll("button")) expect(b.className).toContain("h-(--p-control-h)");
   });
@@ -194,7 +200,7 @@ describe("FormSheet", () => {
   test("Arabic: the reason, the labels and the strings", async () => {
     await form({ blocked: "اختر سبب الإلغاء.", cancelLabel: "تراجع", submitLabel: "إلغاء الموعد", danger: true, side: "bottom" }, "ar");
     expect(footer().textContent).toBe("اختر سبب الإلغاء.تراجعإلغاء الموعد");
-    expect(submit().disabled).toBe(true);
+    expect(refusing(submit())).toBe(true);
   });
 });
 
@@ -394,6 +400,58 @@ describe("PinPad", () => {
     expect(onComplete.mock.calls).toEqual([["1234"]]);
   });
 
+  test("the keyboard only works when the page or the pad has the focus, and only a used key is taken", async () => {
+    const onComplete = mock((_: string) => {});
+    const el = await mount(
+      <>
+        <button id="menu">menu</button>
+        <PinPad label="A" onComplete={onComplete} />
+        <PinPad label="B" onComplete={onComplete} />
+      </>,
+    );
+    const [a, b] = [...el.querySelectorAll('[role="group"]')];
+    // Focus in something else (a dialog, a menu): the pad gets nothing.
+    el.querySelector<HTMLElement>("#menu")!.focus();
+    await pressKey({ key: "1" }, document.activeElement!);
+    expect(filled(a) + filled(b)).toBe(0);
+    // Each pad works when it holds the focus; the other one stays empty.
+    a.querySelector("button")!.focus();
+    await pressKey({ key: "5" }, document.activeElement!);
+    expect([filled(a), filled(b)]).toEqual([1, 0]);
+    // A key repeat is ignored.
+    await pressKey({ key: "6", repeat: true }, document.activeElement!);
+    expect(filled(a)).toBe(1);
+    // A key the pad did not use is not taken.
+    const ev = new KeyboardEvent("keydown", { key: "Backspace", bubbles: true, cancelable: true });
+    b.querySelector("button")!.focus();
+    await act(async () => void document.activeElement!.dispatchEvent(ev));
+    expect(ev.defaultPrevented).toBe(false);
+  });
+
+  test("a disabled pad takes no key", async () => {
+    const el = await mount(<PinPad label="A" disabled onComplete={() => {}} />);
+    const ev = new KeyboardEvent("keydown", { key: "1", bubbles: true, cancelable: true });
+    await act(async () => void document.body.dispatchEvent(ev));
+    expect([ev.defaultPrevented, filled(el)]).toEqual([false, 0]);
+  });
+
+  test("a parent re-render with the same error (a new JSX node) keeps the dots", async () => {
+    function Parent() {
+      const [n, setN] = useState(0);
+      return (
+        <>
+          <button id="re" onClick={() => setN(n + 1)}>re</button>
+          <PinPad label="A" error={<span>Wrong</span>} onComplete={() => {}} />
+        </>
+      );
+    }
+    const el = await mount(<Parent />);
+    await type(el, "12");
+    // the error was set from the first render, so typing starts from empty and stays
+    await click(el.querySelector("#re")!);
+    expect(filled(el)).toBe(2);
+  });
+
   test("disabled: the keys are off and the keyboard does nothing", async () => {
     const el = await mount(<PinPad label="Code" disabled onComplete={() => {}} />);
     expect(keys(el).every((b) => b.disabled)).toBe(true);
@@ -508,6 +566,12 @@ describe("LineItemsEditor", () => {
     expect(doc.querySelector("tbody tr")!.textContent).toContain("10.00");
   });
 
+  test("a hidden label leaves no space in the grid (the wrapper is sr-only, also with Optional)", () => {
+    const doc = dom(<LineItemsEditor<L> caption="x" lines={start(1)} getKey={(l) => l.id} columns={[{ key: "q", header: "Q", cell: () => <Field label="Quantity" optional><Input /></Field> }]} />);
+    const wrapper = doc.querySelector("tbody label")!.parentElement!;
+    expect(wrapper.className).toContain("sr-only");
+  });
+
   test("column widths become minimum widths of the headers; fill takes the rest", () => {
     const heads = [...dom(<Harness />).querySelectorAll("th")];
     expect(heads[1].className).toContain("w-full");
@@ -617,11 +681,58 @@ describe("LineItemsEditor", () => {
     expect([document.activeElement, live(el)]).toEqual([buttonNamed(el, "Add line"), "Line 2 removed"]);
   });
 
-  test("removing a line without an add button announces it and keeps the focus in the editor", async () => {
+  test("removing the last line without an add button focuses the line before, then the editor itself", async () => {
     const el = await mount(<Harness count={2} onAdd={undefined} />);
+    await click(buttonNamed(el, "Remove line 2"));
+    expect(live(el)).toBe("Line 2 removed");
+    expect(document.activeElement === inputs(el)[0]).toBe(true);
     await click(buttonNamed(el, "Remove line 1"));
-    expect(live(el)).toBe("Line 1 removed");
-    expect(el.contains(document.activeElement)).toBe(true);
+    expect([document.activeElement === document.body, document.activeElement === el.querySelector("[tabindex='-1']")]).toEqual([false, true]);
+  });
+
+  test("the same message twice in a row is announced again (a new node each time)", async () => {
+    const el = await mount(<Harness count={4} onAdd={undefined} />);
+    await click(buttonNamed(el, "Remove line 4"));
+    const first = el.querySelector('[role="status"] span');
+    expect(first!.textContent).toBe("Line 4 removed");
+    await click(buttonNamed(el, "Remove line 3"));
+    await click(buttonNamed(el, "Remove line 2"));
+    expect(el.querySelector('[role="status"] span')).not.toBe(first);
+  });
+
+  test("the focus stays on the same cell when rows turn into cards", async () => {
+    function Controlled() {
+      const [v, setV] = useState("abc");
+      return (
+        <LineItemsEditor<L>
+          caption="x"
+          lines={start(2)}
+          getKey={(l) => l.id}
+          columns={[
+            {
+              key: "q",
+              header: "Q",
+              cell: (l) => (
+                <Field label="Quantity">
+                  <Input value={l.id === "l2" ? v : "x"} onChange={(e) => setV(e.target.value)} />
+                </Field>
+              ),
+            },
+          ]}
+        />
+      );
+    }
+    const el = await mount(<Controlled />);
+    inputs(el)[1].focus();
+    await width(150);
+    expect(el.querySelector("table")).toBeNull();
+    const now = document.activeElement as HTMLInputElement;
+    expect([now.value, el.contains(now), now.closest("[data-lc]")!.getAttribute("data-line")]).toEqual(["abc", true, "1"]);
+  });
+
+  test("a hidden label leaves no space in the grid (the wrapper is sr-only, also with Optional)", () => {
+    const doc = dom(<LineItemsEditor<L> caption="x" lines={start(1)} getKey={(l) => l.id} columns={[{ key: "q", header: "Q", cell: () => <Field label="Quantity" optional><Input /></Field> }]} />);
+    expect(doc.querySelector("tbody label")!.parentElement!.className).toContain("sr-only");
   });
 
   test("no trash without onRemove or when canRemove says no; no add button without onAdd", () => {

@@ -73,7 +73,7 @@ export function Field({
   const ctx: FieldCtx = { id: cid, labelId: `${cid}-label`, describedBy: join(ids.hint, ids.count, ids.error), invalid: !!error, required };
   return (
     <div className={cn("grid gap-2.5", className)}>
-      <div className="flex items-baseline justify-between gap-4">
+      <div className={cn("flex items-baseline justify-between gap-4", scope?.hideLabel && "sr-only")}>
         <label id={ctx.labelId} htmlFor={cid} className={cn(LABEL, scope?.hideLabel && "sr-only")}>
           {label}
           {scope?.suffix && <span className="sr-only">, {scope.suffix}</span>}

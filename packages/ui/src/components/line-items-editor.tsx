@@ -57,6 +57,8 @@ type After = { kind: "add"; from: number } | { kind: "remove"; index: number; fr
  * cell of the last line adds a line (`onAdd`). After an add the focus goes to the new line; after a remove to the line that took
  * its place, else to the add button. Both are announced. A `Field` inside a cell hides its label on rows (the column header shows
  * it) and shows it on cards. The part computes nothing: the app owns the lines and the totals. Closed details are not rendered.
+ * Rows and cards are different elements, so cell inputs must be controlled (`value`, not `defaultValue`): an uncontrolled input
+ * would lose its text when the width crosses the switch. The focused cell keeps its focus across the switch.
  */
 export function LineItemsEditor<Line>({
   lines,
@@ -121,7 +123,11 @@ export function LineItemsEditor<Line>({
   const addButton = useRef<HTMLButtonElement>(null);
   const after = useRef<After | null>(null);
   const [cards, setCards] = useState(false);
-  const [message, setMessage] = useState("");
+  const cardsRef = useRef(false);
+  const [announce, setAnnounce] = useState({ text: "", n: 0 });
+  const setMessage = (text: string) => setAnnounce((a) => ({ text, n: a.n + 1 }));
+  // The cell that has the focus when rows and cards switch (they remount), so the focus can come back to it.
+  const held = useRef<{ line: string; col: string; start: number | null; end: number | null } | null>(null);
   const [kept, setKept] = useState<string[]>([]);
   const open = openDetails ?? kept;
   const setOpen = (keys: string[]) => {
@@ -138,11 +144,27 @@ export function LineItemsEditor<Line>({
     const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     const ro = new ResizeObserver(([e]) => {
       const w = e?.contentRect.width ?? 0;
-      if (w > 0) setCards(w < need * rem);
+      if (w <= 0) return;
+      const next = w < need * rem;
+      if (next === cardsRef.current) return;
+      cardsRef.current = next;
+      const at = document.activeElement as HTMLInputElement | null;
+      const cell = at && el.contains(at) ? at.closest<HTMLElement>("[data-lc]") : null;
+      held.current = cell ? { line: cell.dataset.line!, col: cell.dataset.col!, start: at!.selectionStart ?? null, end: at!.selectionEnd ?? null } : null;
+      setCards(next);
     });
     ro.observe(el);
     return () => ro.disconnect();
   }, [need]);
+
+  useLayoutEffect(() => {
+    const h = held.current;
+    held.current = null;
+    if (!h) return;
+    const input = root.current?.querySelector(`[data-lc][data-line="${h.line}"][data-col="${h.col}"]`)?.querySelector<HTMLInputElement>(FOCUSABLE);
+    input?.focus();
+    if (input && h.start != null && h.end != null) try { input.setSelectionRange(h.start, h.end); } catch { /* not a text input */ }
+  }, [cards]);
 
   const cellsOf = (line: number) => [...(root.current?.querySelectorAll<HTMLElement>(`[data-lc][data-line="${line}"]`) ?? [])];
   const focusIn = (el: Element | undefined) => el?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
@@ -180,7 +202,9 @@ export function LineItemsEditor<Line>({
     } else if (a.kind === "remove" && lines.length < a.from) {
       after.current = null;
       if (a.index < lines.length) focusLine(a.index);
-      else addButton.current?.focus();
+      else if (addButton.current) addButton.current.focus();
+      else if (lines.length) focusLine(lines.length - 1);
+      else root.current?.focus();
       setMessage(s.removed(a.index + 1));
     }
   }, [lines.length]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -401,7 +425,7 @@ export function LineItemsEditor<Line>({
   );
 
   return (
-    <div ref={root} onKeyDown={onKeyDown} className={cn("@container grid gap-4", className)}>
+    <div ref={root} tabIndex={-1} onKeyDown={onKeyDown} className={cn("@container grid gap-4 outline-none", className)}>
       {cards ? cardList : table}
       {error && (
         <p id={errorId} className="text-sm text-danger">
@@ -417,7 +441,9 @@ export function LineItemsEditor<Line>({
         </div>
       )}
       {totals && <TotalsList items={totals} className="w-full @xl:max-w-sm @xl:justify-self-end" />}
-      <LiveRegion>{message}</LiveRegion>
+      <LiveRegion>
+        <span key={announce.n}>{announce.text}</span>
+      </LiveRegion>
     </div>
   );
 }
