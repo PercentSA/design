@@ -1,14 +1,16 @@
 "use client";
 
 import { useRef, type ReactNode } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, ListFilter } from "lucide-react";
 import { DropdownMenu as RadixDropdown } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useFlip } from "../lib/flip";
 import { useStrings, useText } from "../provider";
 import { Button } from "./actions";
+import { Checkbox, RadioGroup } from "./choices";
 import { Badge, Tag } from "./feedback";
 import { MENU_ITEM } from "./input-classes";
+import { Sheet } from "./overlays";
 import { SearchInput } from "./special-inputs";
 
 /** One filter: a button with a menu. `multiple` gives checkbox items, otherwise radio items (one choice). Labels are text: they also name the tags. */
@@ -25,13 +27,15 @@ const Indicator = () => (
   </RadixDropdown.ItemIndicator>
 );
 
-/** Search and filter menus above a list or table. Active choices show as removable tags. Controlled. */
+/** Search and filter menus above a list or table. Active choices show as removable tags. Controlled.
+    `collapseOnPhone`: below 768 px the filter menus fold into one "Filters" button (with the count of chosen values) that opens a bottom sheet. */
 export function FilterBar({
   search,
   filters,
   value,
   onValueChange,
   actions,
+  collapseOnPhone,
   className,
 }: {
   search?: { value: string; onValueChange: (value: string) => void; placeholder?: string };
@@ -40,16 +44,26 @@ export function FilterBar({
   onValueChange: (value: FilterValue) => void;
   /** The list's other controls (date range, columns, refresh, "⋯"), at the end of the first row. */
   actions?: ReactNode;
+  /** Below 768 px the filter menus fold into one "Filters" button with the count of chosen values. It opens a bottom Sheet with one group
+   *  per filter (checkboxes for `multiple`, else radios) and "Clear filters". Search, `actions` and the tags stay on the bar. Default false. */
+  collapseOnPhone?: boolean;
   className?: string;
 }) {
   const s = useStrings();
   const t = useText();
   // Removing a tag or clearing removes the focused button; focus goes to a filter button instead of the page.
   const triggers = useRef<Record<string, HTMLButtonElement | null>>({});
+  const phoneTrigger = useRef<HTMLButtonElement>(null);
+  // Below 768 px with collapseOnPhone the filter buttons are hidden and cannot take focus: the "Filters" button does.
+  const focusFilter = (key: string) => {
+    triggers.current[key]?.focus();
+    if (collapseOnPhone && document.activeElement !== triggers.current[key]) phoneTrigger.current?.focus();
+  };
   // Tags glide when one is added or removed.
   const root = useRef<HTMLDivElement>(null);
   useFlip(root, [value]);
   const set = (key: string, values: string[]) => onValueChange({ ...value, [key]: values });
+  const clear = () => onValueChange(Object.fromEntries(filters.map((f) => [f.key, []])));
   const active = filters.flatMap((f) => (value[f.key] ?? []).map((v) => ({ f, v, label: f.options.find((o) => o.value === v)?.label ?? v })));
 
   return (
@@ -73,7 +87,7 @@ export function FilterBar({
                     triggers.current[f.key] = el;
                   }}
                   variant="secondary"
-                  className="group"
+                  className={cn("group", collapseOnPhone && "max-md:hidden")}
                 >
                   {f.label}
                   {chosen.length > 0 && (
@@ -118,6 +132,50 @@ export function FilterBar({
             </RadixDropdown.Root>
           );
         })}
+        {collapseOnPhone && filters.length > 0 && (
+          <Sheet
+            side="bottom"
+            title={t(s.filters)}
+            trigger={
+              <Button ref={phoneTrigger} variant="secondary" className="md:hidden">
+                <ListFilter aria-hidden />
+                {t(s.filters)}
+                {active.length > 0 && (
+                  <>
+                    <Badge variant="solid" aria-hidden="true" className="h-5 min-w-5 justify-center px-1.5 tabular-nums">
+                      {active.length}
+                    </Badge>
+                    <span className="sr-only">{s.selectedCount(active.length)}</span>
+                  </>
+                )}
+              </Button>
+            }
+          >
+            {filters.map((f) => {
+              const chosen = value[f.key] ?? [];
+              return (
+                <fieldset key={f.key} className="grid gap-3">
+                  <legend className="mb-3 text-sm font-medium text-fg">{f.label}</legend>
+                  {f.multiple ? (
+                    f.options.map((o) => (
+                      <Checkbox
+                        key={o.value}
+                        label={o.label}
+                        checked={chosen.includes(o.value)}
+                        onCheckedChange={(on) => set(f.key, on === true ? [...chosen, o.value] : chosen.filter((v) => v !== o.value))}
+                      />
+                    ))
+                  ) : (
+                    <RadioGroup aria-label={f.label} value={chosen[0] ?? ""} onValueChange={(v) => set(f.key, [v])} options={f.options} />
+                  )}
+                </fieldset>
+              );
+            })}
+            <Button variant="ghost" disabled={active.length === 0} onClick={clear}>
+              {t(s.clearFilters)}
+            </Button>
+          </Sheet>
+        )}
         {actions && <div className="ms-auto flex flex-wrap items-center gap-2">{actions}</div>}
       </div>
       {active.length > 0 && (
@@ -126,7 +184,7 @@ export function FilterBar({
             <span key={`${f.key}:${v}`} data-flip={`${f.key}:${v}`} className="flex">
               <Tag
                 onRemove={() => {
-                  triggers.current[f.key]?.focus();
+                  focusFilter(f.key);
                   set(f.key, (value[f.key] ?? []).filter((x) => x !== v));
                 }}
               >
@@ -139,8 +197,8 @@ export function FilterBar({
             variant="ghost"
             size="sm"
             onClick={() => {
-              triggers.current[filters[0]!.key]?.focus();
-              onValueChange(Object.fromEntries(filters.map((f) => [f.key, []])));
+              focusFilter(filters[0]!.key);
+              clear();
             }}
           >
             {t(s.clearFilters)}

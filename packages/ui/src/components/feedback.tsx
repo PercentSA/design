@@ -161,13 +161,15 @@ export const Skeleton = ({ className }: { className?: string }) => (
   <div aria-hidden="true" className={cn("animate-pulse rounded-field bg-surface-2 motion-reduce:animate-none", className)} />
 );
 
-/** Nothing to show yet, with the next action. `tone="error"`: a load error, announced at once; `onRetry` adds a "Try again" button. */
+/** Nothing to show yet, with the next action. `tone="error"`: a load error, announced at once; `onRetry` adds a "Try again" button.
+    `variant="plain"`: no frame, for an empty state inside a table, a card or a sheet. */
 export function EmptyState({
   title,
   description,
   action,
   icon,
   tone = "neutral",
+  variant = "framed",
   onRetry,
   className,
 }: {
@@ -176,6 +178,8 @@ export function EmptyState({
   action?: ReactNode;
   icon?: ReactNode;
   tone?: "neutral" | "error";
+  /** `plain`: no dashed frame. Default `framed`. */
+  variant?: "framed" | "plain";
   onRetry?: () => void;
   className?: string;
 }) {
@@ -184,7 +188,7 @@ export function EmptyState({
   const t = useText();
   const error = tone === "error";
   return (
-    <div role={error ? "alert" : undefined} className={cn("flex flex-col items-center gap-3 rounded-card border border-dashed border-line px-6 py-14 text-center", className)}>
+    <div role={error ? "alert" : undefined} className={cn("flex flex-col items-center gap-3", variant === "framed" && "rounded-card border border-dashed border-line", "px-6 py-14 text-center", className)}>
       <div className={cn("mb-2 text-fg-3 [&_svg]:size-6", error && "text-danger")}>{icon ?? (error ? <CircleAlert aria-hidden /> : (logo ?? <Mark className="h-6" />))}</div>
       <p className="heading text-lg">{title}</p>
       {description && <p className="max-w-sm text-sm text-fg-2">{description}</p>}
