@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.14.2",
-    date: null,
+    date: "2026-11-06",
     summary: "The phone field looks the same in Arabic and English.",
     changes: [
       c("fixed", "[PhoneInput](phone-input): in Arabic the country code now sits on the left of the number, as in English, because a phone number reads left to right. Labels and messages keep the page direction."),
