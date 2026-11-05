@@ -1040,7 +1040,9 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "@percentsa/actions",
         "@percentsa/cn",
+        "@percentsa/feedback",
         "@percentsa/flip",
         "@percentsa/menus",
         "@percentsa/provider",

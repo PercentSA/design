@@ -17,13 +17,15 @@ export function List({ className, ...rest }: HTMLAttributes<HTMLUListElement>) {
   return <ul className={cn("divide-y divide-line", className)} {...rest} ref={ref} />;
 }
 
-/** One row: `leading` (icon, avatar), title and description, `trailing` (meta, action). With `href` the row is one link; controls in `trailing` still work. */
+/** One row: `leading` (icon, avatar), title and description, `trailing` (meta, action). With `href` the row is one link, with `onSelect` one button; controls in `trailing` still work. */
 export function ListItem({
   leading,
   title,
   description,
   trailing,
   href,
+  onSelect,
+  disabled,
   className,
   "data-flip": flip,
 }: {
@@ -32,13 +34,26 @@ export function ListItem({
   description?: ReactNode;
   trailing?: ReactNode;
   href?: string;
+  /** The row is one button (the title is its text); controls in `trailing` still work. Not with `href` (then `href` wins). */
+  onSelect?: () => void;
+  /** With `onSelect`: dim, and the row does not press. */
+  disabled?: boolean;
   className?: string;
   /** Stable id for the reorder glide of List. */
   "data-flip"?: string;
 }) {
   const L = useLinkComponent();
+  const pick = !href && !!onSelect;
   return (
-    <li data-flip={flip} className={cn("relative flex items-center gap-4 px-3 py-3", href && cn("transition-colors hover:bg-surface-2", ABOVE_STRETCHED_LINK), className)}>
+    <li
+      data-flip={flip}
+      className={cn(
+        "relative flex items-center gap-4 px-3 py-3",
+        (href || pick) && cn("transition-colors", !(pick && disabled) && "hover:bg-surface-2", ABOVE_STRETCHED_LINK),
+        pick && disabled && "opacity-50",
+        className,
+      )}
+    >
       {leading && <div className="shrink-0 text-fg-3 [&_svg]:size-5">{leading}</div>}
       <div className="grid min-w-0 flex-1 gap-0.5">
         <div className="text-sm font-medium text-fg">
@@ -46,6 +61,10 @@ export function ListItem({
             <L href={href} data-stretched="" className={STRETCHED_LINK}>
               {title}
             </L>
+          ) : pick ? (
+            <button type="button" data-stretched="" disabled={disabled} onClick={onSelect} className={cn(STRETCHED_LINK, "text-start", disabled ? "cursor-not-allowed" : "cursor-pointer")}>
+              {title}
+            </button>
           ) : (
             title
           )}

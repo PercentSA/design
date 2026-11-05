@@ -99,8 +99,10 @@ export const layer = { base: 0, sticky: 20, header: 40, overlay: 50, toast: 60, 
 
 /** Control sizes: roomy for websites, compact for apps (`data-density="compact"`). */
 export const density = {
-  comfortable: { "control-h": "48px", "control-h-sm": "40px", "control-px": "16px" },
-  compact: { "control-h": "40px", "control-h-sm": "32px", "control-px": "12px" },
+  comfortable: { "control-h": "48px", "control-h-sm": "40px", "control-h-xs": "32px", "control-px": "16px" },
+  compact: { "control-h": "40px", "control-h-sm": "32px", "control-h-xs": "32px", "control-px": "12px" },
+  /** `data-density="touch"`: on a coarse pointer (a finger) these values; on a fine pointer the compact ones. */
+  touch: { "control-h": "48px", "control-h-sm": "44px", "control-h-xs": "44px", "control-px": "12px" },
 } as const;
 
 /** Page gutter (left and right padding of sections). */

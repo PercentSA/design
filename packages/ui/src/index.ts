@@ -97,6 +97,7 @@ export { AlertDialog, Dialog, DialogClose, HoverCard, Popover, Sheet, Tooltip } 
 export { FormSheet } from "./components/form-sheet";
 export { FormBar } from "./components/form-bar";
 export { PinPad } from "./components/pin-pad";
+export { ActionBar, type ActionBarItem } from "./components/action-bar";
 export { ContextMenu, DropdownMenu, type MenuItem } from "./components/menus";
 export { dismissToast, toast, Toaster } from "./components/toast";
 export { ConsentBanner } from "./components/consent";
