@@ -2,6 +2,16 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.11.0
+
+Report parts for admin dashboards and printed reports. Every new prop is optional. Two visible changes for existing projects: a [Stat](https://design.percent.sa/en/components/stat) tile now sizes its value and padding by its own width (a tile 15rem or wider looks as before), and `TableHead scope="row"` now looks like a body cell (before, it kept the column-header look).
+
+- [Stat](https://design.percent.sa/en/components/stat): the tile is a container (`@container`), and the value size and padding follow the tile width: from 15rem `text-3xl` with `p-5` (as before), from 12rem `text-2xl`, from 10rem `text-xl`, below 10rem `text-lg`, with `p-4` under 15rem. An amount with decimals fits a tile of 158 px (two per row on a phone, four per row at 1024 px). The label, change and hint keep their sizes. The padding now sits on an inner element, so a `className` padding on the tile no longer changes it.
+- [PeriodPicker](https://design.percent.sa/en/components/period-picker): `presets` (the preset buttons of the custom range, as in DateRangePicker), `weekStart` (first day of the week in the custom range calendar and in "This week"; 0 Sunday … 6 Saturday) and `clearTo` (the period a cleared custom range goes back to; default this month).
+- [DataTable](https://design.percent.sa/en/components/data-table): `density="print"` for a printed report: cells `text-xs px-1 py-1`, header row `h-8 px-1` with wrapping text, no scroll box (`overflow-visible`), no cards and no sticky header. Totals and group rows take the same small cells.
+- [Table](https://design.percent.sa/en/components/table): `TableHead scope="row"` looks like a body cell (`py-3`, `text-sm`, `text-fg`, normal weight, wraps), and `TableHead wrap` lets a column header wrap with its height following the text.
+- [RecordSummary](https://design.percent.sa/en/components/record-summary): docs only, one report example (the totals of a period).
+
 ## 0.10.0
 
 List parts for admin screens. No breaking change: every new prop is optional. One visible change for existing projects: the first cell of a `DataTable` row with `rowHref` is now `font-medium` at all widths (before, only on the phone cards).

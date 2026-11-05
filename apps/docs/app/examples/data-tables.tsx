@@ -26,6 +26,39 @@ export function CardExample() {
   );
 }
 
+/** A form table: `scope="row"` for the line labels (the look of a body cell), `wrap` for long column titles. */
+export function TableRowHeadersExample() {
+  const t = useT();
+  const lines = [
+    { label: t("Standard rated sales", "المبيعات الخاضعة للنسبة الأساسية"), base: 120000, vat: 18000 },
+    { label: t("Zero rated sales", "المبيعات الخاضعة لنسبة الصفر"), base: 30000, vat: 0 },
+  ];
+  return (
+    <Table caption={t("VAT return", "الإقرار الضريبي")} className="max-w-lg">
+      <TableHeader>
+        <TableRow>
+          <TableHead>{t("Line", "البند")}</TableHead>
+          <TableHead wrap align="end">{t("Amount (⃁)", "المبلغ (⃁)")}</TableHead>
+          <TableHead wrap align="end">{t("VAT amount (⃁)", "مبلغ الضريبة (⃁)")}</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {lines.map((l) => (
+          <TableRow key={l.label}>
+            <TableHead scope="row">{l.label}</TableHead>
+            <TableCell align="end">
+              <Money amount={l.base} />
+            </TableCell>
+            <TableCell align="end">
+              <Money amount={l.vat} />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
 export function TableExample() {
   const t = useT();
   const lines = [
@@ -161,6 +194,28 @@ export function DataTableReportExample() {
       caption={t("Invoices by status", "الفواتير حسب الحالة")}
       hideCaption
       defaultSort={{ key: "amount", direction: "desc" }}
+      groupBy={(r) => r.status}
+      groupHeader={(key, group) => `${status[key as Invoice["status"]]} (${group.length})`}
+      groupTotals={(_, group) => ({ amount: sum(group) })}
+      totals={{ amount: sum(rows) }}
+    />
+  );
+}
+
+/** A print copy: small cells, wrapping headers, no scroll box, no cards. The caller leaves out pages and row links. */
+export function DataTablePrintExample() {
+  const t = useT();
+  const status = { paid: t("Paid", "مدفوعة"), due: t("Due", "مستحقة"), overdue: t("Overdue", "متأخرة") };
+  const sum = (rows: Invoice[]) => <Money amount={rows.reduce((n, r) => n + r.amount, 0)} />;
+  const rows = INVOICES.slice(0, 8);
+  return (
+    <DataTable
+      className="w-full"
+      density="print"
+      columns={useInvoiceColumns().map((c) => (c.key === "amount" ? { ...c, header: t("Amount including VAT (⃁)", "المبلغ شاملًا الضريبة (⃁)") } : c))}
+      rows={rows}
+      getRowId={(r) => r.id}
+      caption={t("Tax documents", "المستندات الضريبية")}
       groupBy={(r) => r.status}
       groupHeader={(key, group) => `${status[key as Invoice["status"]]} (${group.length})`}
       groupTotals={(_, group) => ({ amount: sum(group) })}

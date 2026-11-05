@@ -6,9 +6,10 @@ export const pages: DocPage[] = [
     "Stat",
     "data",
     "Stat",
-    ["StatExample"],
-    'A key number with its change and an optional chart. The arrow is neutral; use tone="danger" only when the change is bad.',
-    'رقم رئيسي مع مقدار تغيّره ورسم بياني اختياري. السهم محايد؛ استخدم tone="danger" فقط عندما يكون التغيّر سيئًا.',
+    ["StatExample", "StatMoneyRowExample"],
+    'A key number with its change and an optional chart. The arrow is neutral; use tone="danger" only when the change is bad. The tile is a container: the value size and the padding follow the width of the tile, not the screen. From 15rem the value is text-3xl with p-5; from 12rem text-2xl; from 10rem text-xl; below that text-lg, with p-4 under 15rem. So four money tiles in a row, or two on a phone (about 158 px each), hold an amount with decimals. The label, change and hint keep their sizes.',
+    'رقم رئيسي مع مقدار تغيّره ورسم بياني اختياري. السهم محايد؛ استخدم tone="danger" فقط عندما يكون التغيّر سيئًا. البطاقة حاوية: يتبع حجم القيمة والحشوة عرض البطاقة نفسها لا الشاشة. من 15rem تكون القيمة text-3xl مع p-5؛ ومن 12rem text-2xl؛ ومن 10rem text-xl؛ وما دون ذلك text-lg، مع p-4 تحت 15rem. فتتسع أربع بطاقات مبالغ في صف، أو بطاقتان على الهاتف (نحو 158 بكسل لكل منهما)، لمبلغ بكسور عشرية. يبقى حجم العنوان والتغيّر والتلميح كما هو.',
+
   ),
   p(
     "timeline",
@@ -42,9 +43,9 @@ export const pages: DocPage[] = [
     "RecordSummary",
     "data",
     "RecordSummary, type RecordSummaryItem",
-    ["RecordSummaryExample", "RecordSummaryMediaExample"],
-    "The 1 to 6 key facts of a record in one dense strip, for example under its header: a label, a value and an optional hint per cell. Cells follow the width of the strip itself (a container query, not the screen): one row from 56rem, 3 per row from 36rem (all when there are 4 or fewer), 2 per row below. `media` sits at the start (a Thumbnail), above the cells on narrow strips. An empty value shows “Not set”, long text is cut at 2 lines with the full text in the title, `href` makes the value a link, and `loading` shows a skeleton in each cell. `label` names the strip (default “Summary”). More than 6 items is a warning in development.",
-    "الحقائق الرئيسية للسجل، من واحدة إلى ست، في شريط واحد كثيف، مثلًا تحت رأس الصفحة: عنوان وقيمة وتلميح اختياري لكل خلية. تتبع الخلايا عرض الشريط نفسه (استعلام الحاوية لا الشاشة): صف واحد من 56rem، وثلاث خلايا في الصف من 36rem (كلها إن كانت أربعًا أو أقل)، وخليتان في الصف دونها. يوضع `media` في البداية (صورة مصغّرة)، وفوق الخلايا في الشرائط الضيقة. تعرض القيمة الفارغة «غير محدد»، ويُقطع النص الطويل عند سطرين مع النص الكامل في title، ويجعل `href` القيمة رابطًا، ويعرض `loading` هيكلًا مؤقتًا في كل خلية. يسمّي `label` الشريط (الافتراضي «ملخص»). أكثر من 6 عناصر تحذير في وضع التطوير.",
+    ["RecordSummaryExample", "RecordSummaryMediaExample", "RecordSummaryReportExample"],
+    "The 1 to 6 key facts of a record in one dense strip, for example under its header: a label, a value and an optional hint per cell. Cells follow the width of the strip itself (a container query, not the screen): one row from 56rem, 3 per row from 36rem (all when there are 4 or fewer), 2 per row below. `media` sits at the start (a Thumbnail), above the cells on narrow strips. An empty value shows “Not set”, long text is cut at 2 lines with the full text in the title, `href` makes the value a link, and `loading` shows a skeleton in each cell. `label` names the strip (default “Summary”). More than 6 items is a warning in development. In a report, the strip shows the totals of a period (sales, returns, VAT, net) above the table.",
+    "الحقائق الرئيسية للسجل، من واحدة إلى ست، في شريط واحد كثيف، مثلًا تحت رأس الصفحة: عنوان وقيمة وتلميح اختياري لكل خلية. تتبع الخلايا عرض الشريط نفسه (استعلام الحاوية لا الشاشة): صف واحد من 56rem، وثلاث خلايا في الصف من 36rem (كلها إن كانت أربعًا أو أقل)، وخليتان في الصف دونها. يوضع `media` في البداية (صورة مصغّرة)، وفوق الخلايا في الشرائط الضيقة. تعرض القيمة الفارغة «غير محدد»، ويُقطع النص الطويل عند سطرين مع النص الكامل في title، ويجعل `href` القيمة رابطًا، ويعرض `loading` هيكلًا مؤقتًا في كل خلية. يسمّي `label` الشريط (الافتراضي «ملخص»). أكثر من 6 عناصر تحذير في وضع التطوير. وفي التقرير يعرض الشريط إجماليات الفترة (المبيعات والمرتجعات والضريبة والصافي) فوق الجدول.",
   ),
   p(
     "thumbnail",

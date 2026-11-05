@@ -18,6 +18,7 @@ import {
   parseAmount,
   parsePlate,
   periodOf,
+  rangePreset,
   PeriodPicker,
   PhoneInput,
   PlateInput,
@@ -234,6 +235,17 @@ export function PeriodPickerExample() {
   return (
     <Stack gap={3}>
       <PeriodPicker value={period} onValueChange={setPeriod} />
+      <Text size="sm" tone="muted" dir="ltr" className="font-mono">{`${period.from} – ${period.to}`}</Text>
+    </Stack>
+  );
+}
+
+/** A report period: presets in the custom range, a week that starts on Saturday, and a cleared range that goes back to the report's default. */
+export function PeriodPickerReportExample() {
+  const [period, setPeriod] = useState<Period>(() => ({ kind: "custom", ...rangePreset("last7Days", todayPlain()) }) as Period);
+  return (
+    <Stack gap={3}>
+      <PeriodPicker value={period} onValueChange={setPeriod} presets={["today", "yesterday", "last7Days", "last30Days"]} weekStart={6} clearTo={periodOf("year", todayPlain())} />
       <Text size="sm" tone="muted" dir="ltr" className="font-mono">{`${period.from} – ${period.to}`}</Text>
     </Stack>
   );

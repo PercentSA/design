@@ -17,6 +17,19 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.11.0",
+    date: null,
+    summary: "Parts for reports and dashboards. Two visible changes for existing projects: a Stat tile now sizes its value by its own width, and a row header in a table now looks like a normal cell.",
+    changes: [
+      c("new", "[PeriodPicker](period-picker) can show preset buttons in its custom range (today, yesterday, last 7 days…), start the week on Saturday, and go back to a period you choose when the custom range is cleared."),
+      c("new", "[DataTable](data-table) has density=\"print\" for a printed report: small cells, headers that wrap, no scroll box and no cards, so a wide table fits the page. Total and group rows follow."),
+      c("new", "[Table](table) column headers can wrap onto more lines (wrap)."),
+      c("better", "A [Stat](stat) tile now sizes its value and padding by its own width, not the screen. A wide tile looks as before; narrower tiles use smaller text, so an amount with decimals fits four tiles in a row or two on a phone. Padding set with className on the tile no longer changes the inner padding."),
+      c("better", "A row header in a [Table](table) (TableHead with scope=\"row\") now looks like a normal cell: normal weight, regular text size and colour, and it wraps. Before, it looked like a column header."),
+      c("new", "The [RecordSummary](record-summary) page has a report example: the totals of a period."),
+    ],
+  },
+  {
     version: "0.10.0",
     date: null,
     summary: "Parts for lists in an admin app. Nothing changes for existing projects, except that the first cell of a row that opens a record is now medium weight on wide screens too.",

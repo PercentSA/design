@@ -13,6 +13,19 @@ export function StatExample() {
   );
 }
 
+/** Four money tiles in a row: the value size follows the tile width (a container query on the tile), so an amount with decimals fits at 158 px. */
+export function StatMoneyRowExample() {
+  const t = useT();
+  return (
+    <div className="grid w-full grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+      <Stat label={t("Collected", "المبالغ المحصلة")} value={<Money amount={123456.78} decimals={2} />} change={{ value: "12.5%", direction: "up" }} hint={t("Yesterday: 98,000.00", "أمس: 98,000.00")} />
+      <Stat label={t("Sales", "المبيعات")} value={<Money amount={248910.5} decimals={2} />} change={{ value: "3.0%", direction: "down" }} />
+      <Stat label={t("Refunds", "المرتجعات")} value={<Money amount={4120} decimals={2} />} change={{ value: "0.4%", direction: "up", tone: "danger" }} />
+      <Stat label={t("Orders", "الطلبات")} value="1,284" change={{ value: "3.0%", direction: "down" }} hint={t("Yesterday: 1,324", "أمس: 1,324")} />
+    </div>
+  );
+}
+
 export function TimelineExample() {
   const t = useT();
   return (
@@ -131,6 +144,23 @@ export function RecordSummaryExample() {
         { id: "customer", label: t("Customer", "العميل"), value: t("Al Rayan Trading Est.", "مؤسسة الريان للتجارة"), href: "#customer" },
         { id: "branch", label: t("Branch", "الفرع"), value: null },
         { id: "note", label: t("Note", "ملاحظة"), value: t("Deliver to the side entrance of the warehouse before noon", "التسليم عند المدخل الجانبي للمستودع قبل الظهر") },
+      ]}
+    />
+  );
+}
+
+/** A report: the totals of a period (a month), with a link on the largest figure. */
+export function RecordSummaryReportExample() {
+  const t = useT();
+  return (
+    <RecordSummary
+      className="w-full"
+      label={t("Totals of September 2026", "إجماليات سبتمبر 2026")}
+      items={[
+        { id: "sales", label: t("Sales", "المبيعات"), value: <Money amount={248910.5} decimals={2} />, hint: t("1,284 invoices", "1,284 فاتورة"), href: "#sales" },
+        { id: "returns", label: t("Returns", "المرتجعات"), value: <Money amount={4120} decimals={2} />, hint: t("23 credit notes", "23 إشعار دائن") },
+        { id: "vat", label: t("VAT collected", "الضريبة المحصلة"), value: <Money amount={32466.58} decimals={2} /> },
+        { id: "net", label: t("Net", "الصافي"), value: <Money amount={212323.92} decimals={2} />, hint: t("Cash and cards", "نقدًا وبطاقات") },
       ]}
     />
   );
