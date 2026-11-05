@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.10.0",
-    date: null,
+    date: "2026-11-05",
     summary: "Parts for lists in an admin app. Nothing changes for existing projects, except that the first cell of a row that opens a record is now medium weight on wide screens too.",
     changes: [
       c("new", "[DataTable](data-table) columns can show a muted second line under the value (a phone under a name), and, on phones, place a cell on the card: at the end of the title line, in one line under the title, or full width for long text. A new compact density makes dense lists tighter."),
