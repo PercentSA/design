@@ -7,7 +7,8 @@ import { mount, useDom } from "./dom";
 useDom();
 
 // happy-dom reports every image as complete; a browser says so only after the load or the error.
-const complete = (value: boolean, naturalWidth = 0) => {
+const complete = (value: boolean, naturalWidth = 0, decodes = false) => {
+  Object.defineProperty(HTMLImageElement.prototype, "decode", { configurable: true, value: () => (decodes ? Promise.resolve() : Promise.reject(new Error("broken"))) });
   Object.defineProperty(HTMLImageElement.prototype, "complete", { configurable: true, get: () => value });
   Object.defineProperty(HTMLImageElement.prototype, "naturalWidth", { configurable: true, get: () => naturalWidth });
   Object.defineProperty(HTMLImageElement.prototype, "currentSrc", { configurable: true, get() { return this.getAttribute("src") ?? ""; } });
@@ -63,6 +64,10 @@ describe("Thumbnail", () => {
     expect(el.querySelector('[role="img"]')!.getAttribute("aria-label")).toBe("Gone");
     complete(true, 40);
     expect((await render("en", <Thumbnail src="/ok.png" alt="Ok" />)).querySelector("img")).not.toBeNull();
+    // A width of 0 for a good SVG with only a viewBox (Firefox): decode() succeeds, so the image stays.
+    complete(true, 0, true);
+    const svg = await render("en", <Thumbnail src="/logo.svg" alt="Logo" />);
+    expect(svg.querySelector("img")).not.toBeNull();
   });
 
   test("a custom fallback replaces the icon", async () => {
@@ -125,13 +130,17 @@ describe("RecordSummary", () => {
   test("media sits first: above the cells below 36rem, at the start (border-e) from 36rem", async () => {
     const el = await render("ar", <RecordSummary items={ITEMS(3)} media={<Thumbnail alt="x" size="lg" />} />);
     const strip = el.querySelector('[role="group"]')!;
-    expect(strip.className).toContain("flex-col");
-    expect(strip.className).toContain("@xl:flex-row");
-    const media = strip.children[0]!;
+    // A container variant applies only to descendants: the row class is on a child of the @container element.
+    expect(strip.className).toContain("@container");
+    expect(strip.className).not.toContain("@xl:flex-row");
+    const rowBox = strip.children[0]!;
+    expect(rowBox.className).toContain("flex-col");
+    expect(rowBox.className).toContain("@xl:flex-row");
+    const media = rowBox.children[0]!;
     expect(media.querySelector('[role="img"]')).not.toBeNull();
     expect(media.className).toContain("@xl:border-e");
-    expect(strip.children[1]!.tagName).toBe("DL");
-    expect((await render("en", <RecordSummary items={ITEMS(3)} />)).querySelector('[role="group"]')!.children.length).toBe(1);
+    expect(rowBox.children[1]!.tagName).toBe("DL");
+    expect((await render("en", <RecordSummary items={ITEMS(3)} />)).querySelector('[role="group"]')!.children[0]!.children.length).toBe(1);
   });
 
   test("an empty value shows the Not set word in both languages, subtle", async () => {
@@ -157,8 +166,14 @@ describe("RecordSummary", () => {
     const long = "A very long customer name that cannot fit in one cell of the strip";
     const el = await render("en", <RecordSummary items={[{ id: "c", label: "Customer", value: long }]} />);
     const dd = el.querySelector("dd")!;
-    expect(dd.className).toContain("line-clamp-2");
+    expect(dd.className).not.toContain("line-clamp-2");
+    expect(dd.firstElementChild!.className).toContain("line-clamp-2");
     expect(dd.getAttribute("title")).toBe(long);
+    // A link: the clamp is inside the link, so the link's focus ring is not clipped.
+    const link = await render("en", <RecordSummary items={[{ id: "c", label: "Customer", value: long, href: "/c/1" }]} />);
+    const a = link.querySelector("dd a")!;
+    expect(a.firstElementChild!.className).toContain("line-clamp-2");
+    expect(link.querySelector("dd")!.className).not.toContain("overflow");
   });
 
   test("value styling, hint, and a link with the router link isolated in bdi", async () => {
@@ -319,6 +334,26 @@ describe("LineItemsTable record details", () => {
     expect([sku!.getAttribute("dir"), sku!.textContent, qty!.getAttribute("dir"), qty!.textContent]).toEqual(["ltr", "BP-01", "ltr", "× 2"]);
     // The kit's own SKU stays a mono LTR span.
     expect([...ar.querySelectorAll("tbody span")].find((s) => s.textContent === "KIT-1")!.getAttribute("dir")).toBe("ltr");
+  });
+
+  test("href: the row link holds the name only; details come after it, so links in extra are not nested", async () => {
+    const lines: LineItem[] = [{ ...LINES[0]!, href: "/products/1", extra: <a data-extra-link="" href="/file">File</a> }];
+    const el = await table("en", { lines });
+    expect(el.querySelectorAll("a a").length).toBe(0);
+    const row = el.querySelector("tbody tr")!;
+    const rowLink = row.querySelector("a[data-stretched]")!;
+    expect(rowLink.getAttribute("href")).toBe("/products/1");
+    expect(rowLink.textContent).toBe("Front brake kitKIT-1");
+    const cell = rowLink.parentElement!;
+    expect(cell.textContent).toContain("VAT 15%");
+    expect(rowLink.querySelector("ul")).toBeNull();
+    expect(cell.querySelector("ul")).not.toBeNull();
+    // The extra link is a sibling of the row link; the row's rule puts links and buttons above the overlay.
+    expect(cell.querySelector("[data-extra-link]")!.closest("a[data-stretched]")).toBeNull();
+    expect(row.className).toContain(":not([data-stretched]");
+    // A line with href and no details renders as before.
+    const plain = await table("en", { lines: [{ ...LINES[1]!, href: "/p/2" }] });
+    expect(plain.querySelector("tbody td")!.children.length).toBe(1);
   });
 
   test("phones: the same name cell is the card title, so the details show in card rows", async () => {

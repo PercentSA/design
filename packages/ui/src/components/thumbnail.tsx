@@ -35,10 +35,16 @@ export function Thumbnail({
   const img = useRef<HTMLImageElement>(null);
   const [failed, setFailed] = useState<string | null | undefined>(undefined);
   const broken = !src || failed === src;
-  // A load error before hydration fires no event: the image is complete but empty.
+  // A load error before hydration fires no event: the image is complete but empty. Some browsers also report a width of 0
+  // for a good SVG that has only a viewBox, so decode() decides: it rejects only for a broken image.
   useEffect(() => {
     const el = img.current;
-    if (el?.complete && el.naturalWidth === 0 && el.currentSrc) setFailed(src);
+    if (!el?.complete || el.naturalWidth !== 0 || !el.currentSrc) return;
+    let live = true;
+    (typeof el.decode === "function" ? el.decode() : Promise.reject()).catch(() => live && setFailed(src));
+    return () => {
+      live = false;
+    };
   }, [src]);
   const box = (
     <span className={cn("grid shrink-0 place-items-center overflow-hidden rounded-field border border-line bg-surface-2 text-fg-3", SIZE[size])}>

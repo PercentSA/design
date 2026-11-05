@@ -35,6 +35,8 @@ export type LineItem = {
   extra?: ReactNode;
 };
 
+const hasDetails = (x: LineItem) => x.description != null || (x.parts?.length ?? 0) > 0 || x.extra != null;
+
 /**
  * Document lines, for display: the amounts come as given, the table computes nothing.
  * `prices` says whether unit prices and totals include VAT; their headers say it too.
@@ -69,6 +71,34 @@ export function LineItemsTable({
   const tax = prices === "incl" ? s.inclVat : s.exclVat;
   const money = (amount: number) => <Money amount={amount} decimals={2} />;
   const has = (key: "discount" | "vat") => lines.some((line) => (line[key] ?? 0) !== 0);
+  const details = (x: LineItem) => (
+    <>
+      {x.description != null && <span className="text-xs font-normal text-fg-3">{x.description}</span>}
+      {x.parts && x.parts.length > 0 && (
+        <ul aria-label={s.kitParts} className="grid gap-0.5 text-xs font-normal text-fg-3">
+          {x.parts.map((part) => (
+            <li key={part.id}>
+              {part.name}
+              {part.sku && (
+                <>
+                  {" ("}
+                  <bdi dir="ltr" className="font-mono">
+                    {part.sku}
+                  </bdi>
+                  {")"}
+                </>
+              )}{" "}
+              {/* The "×" stays before the number, after the name, in both directions. */}
+              <bdi dir="ltr" className="tabular-nums">
+                × {formatNumber(part.quantity, lang)}
+              </bdi>
+            </li>
+          ))}
+        </ul>
+      )}
+      {x.extra != null && <span className="font-normal">{x.extra}</span>}
+    </>
+  );
   const optional: DataTableColumn<LineItem>[] = [
     ...(has("discount") ? [{ key: "discount", header: t(s.discount), align: "end" as const, cell: (x: LineItem) => money(x.discount ?? 0) }] : []),
     ...(has("vat") ? [{ key: "vat", header: t(s.vat), align: "end" as const, cell: (x: LineItem) => money(x.vat ?? 0) }] : []),
@@ -79,8 +109,8 @@ export function LineItemsTable({
       header: t(s.product),
       cell: (x) => {
         // justify-items-start: the LTR SKU still sits at the start of an Arabic cell.
-        const text = (
-          <span className="grid justify-items-start gap-0.5">
+        const title = (
+          <>
             <span className="inline-flex flex-wrap items-center gap-2">
               {x.name}
               {(x.returned ?? 0) > 0 && <Badge>{t(s.returned(x.returned!))}</Badge>}
@@ -90,41 +120,28 @@ export function LineItemsTable({
                 {x.sku}
               </span>
             )}
-            {x.description != null && <span className="text-xs font-normal text-fg-3">{x.description}</span>}
-            {x.parts && x.parts.length > 0 && (
-              <ul aria-label={s.kitParts} className="grid gap-0.5 text-xs font-normal text-fg-3">
-                {x.parts.map((part) => (
-                  <li key={part.id}>
-                    {part.name}
-                    {part.sku && (
-                      <>
-                        {" ("}
-                        <bdi dir="ltr" className="font-mono">
-                          {part.sku}
-                        </bdi>
-                        {")"}
-                      </>
-                    )}{" "}
-                    {/* The "×" stays before the number, after the name, in both directions. */}
-                    <bdi dir="ltr" className="tabular-nums">
-                      × {formatNumber(part.quantity, lang)}
-                    </bdi>
-                  </li>
-                ))}
-              </ul>
-            )}
-            {x.extra != null && <span className="font-normal">{x.extra}</span>}
-          </span>
+          </>
         );
-        return x.media ? (
-          <span className="flex items-start gap-3">
-            <Thumbnail size="sm" src={x.media.src} alt={x.media.alt} />
-            {text}
-          </span>
-        ) : (
-          text
+        const withMedia = (text: ReactNode) =>
+          x.media ? (
+            <span className="flex items-start gap-3">
+              <Thumbnail size="sm" src={x.media.src} alt={x.media.alt} />
+              {text}
+            </span>
+          ) : (
+            text
+          );
+        // With href the row link wraps only the title: description, parts and extra come after it (see `afterLink`).
+        if (x.href) return withMedia(<span className="grid justify-items-start gap-0.5">{title}</span>);
+        return withMedia(
+          <span className="grid justify-items-start gap-0.5">
+            {title}
+            {details(x)}
+          </span>,
         );
       },
+      afterLink: (x) =>
+        x.href && hasDetails(x) ? <span className={cn("mt-0.5 grid justify-items-start gap-0.5", x.media && "ps-13")}>{details(x)}</span> : null,
     },
     {
       key: "quantity",

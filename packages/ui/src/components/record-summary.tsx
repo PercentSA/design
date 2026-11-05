@@ -25,6 +25,9 @@ const WIDE = ["", "@4xl:grid-cols-1", "@4xl:grid-cols-2", "@4xl:grid-cols-3", "@
 // The bundler of the app replaces process.env.NODE_ENV; the package has no Node types.
 declare const process: { env: { NODE_ENV?: string } } | undefined;
 
+// 2 lines, then cut. On an inner element, so the focus ring of a link around it is not clipped.
+const CLAMP = "line-clamp-2 break-words";
+
 const empty = (v: ReactNode) => v == null || v === "";
 
 /**
@@ -57,8 +60,10 @@ export function RecordSummary({
       role="group"
       aria-label={label ?? s.recordSummary}
       aria-busy={loading || undefined}
-      className={cn("@container flex flex-col overflow-hidden @xl:flex-row", className)}
+      className={cn("@container overflow-hidden", className)}
     >
+      {/* A container variant applies only inside the container: the row layout is on this child. */}
+      <div className="flex flex-col @xl:flex-row">
       {media != null && <div className="flex items-center border-b border-line p-4 @xl:border-b-0 @xl:border-e">{media}</div>}
       {/* The trailing border of the last cells is pushed out of the Surface (-mb-px -me-px) and clipped. */}
       <dl className={cn("-mb-px -me-px grid min-w-0 flex-1", BASE[n], MID[n], WIDE[n])}>
@@ -72,15 +77,15 @@ export function RecordSummary({
               </dd>
             ) : (
               <>
-                <dd title={typeof item.value === "string" ? item.value : undefined} className="line-clamp-2 min-w-0 text-lg font-semibold break-words text-fg tabular-nums">
+                <dd title={typeof item.value === "string" ? item.value : undefined} className="min-w-0 text-lg font-semibold text-fg tabular-nums">
                   {empty(item.value) ? (
                     <span className="text-base font-normal text-fg-3">{s.notSet}</span>
                   ) : item.href ? (
-                    <L href={item.href} className="underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
-                      <bdi>{item.value}</bdi>
+                    <L href={item.href} className="rounded-field underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
+                      <bdi className={CLAMP}>{item.value}</bdi>
                     </L>
                   ) : (
-                    item.value
+                    <span className={CLAMP}>{item.value}</span>
                   )}
                 </dd>
                 {item.hint != null && <dd className="text-xs text-fg-3">{item.hint}</dd>}
@@ -89,6 +94,7 @@ export function RecordSummary({
           </div>
         ))}
       </dl>
+      </div>
     </Surface>
   );
 }
