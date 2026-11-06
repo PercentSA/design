@@ -17,6 +17,16 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.14.4",
+    date: null,
+    summary: "The line editor puts the focus in the right place.",
+    changes: [
+      c("fixed", "[LineItemsEditor](line-items-editor): a focus move (Enter, a new line, a removed line) goes to the text input of the cell, not to the \"−\" button of a NumberInput, and selects the text, so a typed value replaces the old one."),
+      c("better", "[LineItemsEditor](line-items-editor): with disabled, the add button shows disabled instead of hidden; the table is no longer an extra tab stop."),
+      c("new", "[Table](table): scrolls={false} for a table that never scrolls sideways; its region is then no tab stop."),
+    ],
+  },
+  {
     version: "0.14.3",
     date: "2026-11-06",
     summary: "A chosen link button shows, and phone cards stay inside their box.",

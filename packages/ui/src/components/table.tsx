@@ -10,10 +10,17 @@ export type TableAlign = keyof typeof ALIGN;
 export function Table({
   caption,
   hideCaption,
+  scrolls = true,
   className,
   children,
   ...rest
-}: TableHTMLAttributes<HTMLTableElement> & { caption?: ReactNode; /** Keeps the caption for screen readers only. */ hideCaption?: boolean }) {
+}: TableHTMLAttributes<HTMLTableElement> & {
+  caption?: ReactNode;
+  /** Keeps the caption for screen readers only. */
+  hideCaption?: boolean;
+  /** False: the table never scrolls sideways (its parent switches to another layout first), so its region is no tab stop. */
+  scrolls?: boolean;
+}) {
   const id = useId();
   return (
     // relative: holds the visually hidden caption (absolute) inside the scroll container.
@@ -21,7 +28,7 @@ export function Table({
     <div
       role={caption ? "region" : undefined}
       aria-labelledby={caption ? id : undefined}
-      tabIndex={caption ? 0 : undefined}
+      tabIndex={caption && scrolls ? 0 : undefined}
       className={cn("relative w-full overflow-x-auto focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-fg", className)}
     >
       <table className="w-full border-collapse text-sm" {...rest}>

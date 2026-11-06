@@ -47,6 +47,9 @@ const WIDTH = {
 const NUMBER_REM = 2.5;
 const BUTTON_REM = 2.5;
 const FOCUSABLE = 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
+const TEXT_INPUT = 'input:not([type="hidden"]):not([disabled]), textarea:not([disabled])';
+/** The control of a cell the editor moves to: its text input first (a NumberInput has its "−" button before it), else the first control. */
+const controlOf = (cell: Element | null | undefined) => cell?.querySelector<HTMLElement>(TEXT_INPUT) ?? cell?.querySelector<HTMLElement>(FOCUSABLE) ?? null;
 
 type After = { kind: "add"; from: number } | { kind: "remove"; index: number; from: number };
 
@@ -111,7 +114,7 @@ export function LineItemsEditor<Line>({
   loading?: boolean;
   /** A list error (no lines, too many); linked to the table. */
   error?: ReactNode;
-  /** No add, no trash, no menu; the app disables its inputs. */
+  /** The add button disabled; no trash, no menu; the app disables its inputs. */
   disabled?: boolean;
   /** The "#" column. Default true. */
   numbered?: boolean;
@@ -161,13 +164,19 @@ export function LineItemsEditor<Line>({
     const h = held.current;
     held.current = null;
     if (!h) return;
-    const input = root.current?.querySelector(`[data-lc][data-line="${h.line}"][data-col="${h.col}"]`)?.querySelector<HTMLInputElement>(FOCUSABLE);
+    const cell = root.current?.querySelector(`[data-lc][data-line="${h.line}"][data-col="${h.col}"]`);
+    const input = controlOf(cell) as HTMLInputElement | null;
     input?.focus();
     if (input && h.start != null && h.end != null) try { input.setSelectionRange(h.start, h.end); } catch { /* not a text input */ }
   }, [cards]);
 
   const cellsOf = (line: number) => [...(root.current?.querySelectorAll<HTMLElement>(`[data-lc][data-line="${line}"]`) ?? [])];
-  const focusIn = (el: Element | undefined) => el?.querySelector<HTMLElement>(FOCUSABLE)?.focus();
+  // A move by the editor selects the text, so a typed value replaces the old one.
+  const focusIn = (el: Element | undefined) => {
+    const c = controlOf(el);
+    c?.focus();
+    if (c instanceof HTMLInputElement || c instanceof HTMLTextAreaElement) c.select();
+  };
   const focusLine = (line: number) => {
     const first = cellsOf(line).find((c) => c.querySelector(FOCUSABLE));
     if (first) return focusIn(first);
@@ -283,7 +292,7 @@ export function LineItemsEditor<Line>({
   const showEmpty = lines.length === 0 && !loading;
 
   const table = (
-    <Table caption={caption} hideCaption={hideCaption} aria-describedby={errorId} aria-busy={loading || undefined}>
+    <Table caption={caption} hideCaption={hideCaption} scrolls={false} aria-describedby={errorId} aria-busy={loading || undefined}>
       <TableHeader>
         <TableRow>
           {numbered && <TableHead className="w-10">{s.number}</TableHead>}
@@ -432,9 +441,9 @@ export function LineItemsEditor<Line>({
           {error}
         </p>
       )}
-      {onAdd && !disabled && (
+      {onAdd && (
         <div>
-          <Button ref={addButton} variant="secondary" size="sm" onClick={add}>
+          <Button ref={addButton} variant="secondary" size="sm" disabled={disabled} onClick={add}>
             <Plus aria-hidden />
             {addLabel ?? s.add}
           </Button>

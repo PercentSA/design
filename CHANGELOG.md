@@ -2,6 +2,11 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.14.4
+
+- [LineItemsEditor](https://design.percent.sa/en/components/line-items-editor): when the editor moves the focus (Enter, a new line, a removed line), it goes to the text input of the cell, not to the "−" button of a `NumberInput`, and selects the text, so a typed value replaces the old one. With `disabled`, the add button shows disabled instead of hidden. The table is no longer an extra tab stop (the rows turn into cards before they would scroll).
+- [Table](https://design.percent.sa/en/components/table): new `scrolls={false}` for a table that never scrolls sideways; its region is then no tab stop.
+
 ## 0.14.3
 
 - [Button](https://design.percent.sa/en/components/button): a `link` button with `aria-pressed="true"` is bold with a full underline, so the chosen item of a list of link buttons shows.
