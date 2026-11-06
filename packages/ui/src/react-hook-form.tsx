@@ -58,6 +58,7 @@ export function FormSettingsRow<TFieldValues extends FieldValues, TName extends 
   rules,
   render,
   id,
+  group,
   ...props
 }: {
   control: Control<TFieldValues, any, TTransformedValues>;
@@ -65,6 +66,8 @@ export function FormSettingsRow<TFieldValues extends FieldValues, TName extends 
   rules?: UseControllerProps<TFieldValues, TName>["rules"];
   label: ReactNode;
   description?: ReactNode;
+  /** For controls with their own label (Switch, Checkbox): the row is a group named by the label and the error is in its description. */
+  group?: boolean;
   required?: boolean;
   optional?: boolean;
   id?: string;
@@ -73,5 +76,5 @@ export function FormSettingsRow<TFieldValues extends FieldValues, TName extends 
 }) {
   const auto = useId();
   const { field, fieldState } = useController({ control, name, rules });
-  return <SettingsRow {...props} controlId={id ?? auto} error={fieldState.error?.message} control={render({ field, fieldState })} />;
+  return <SettingsRow {...props} controlId={group ? undefined : (id ?? auto)} error={fieldState.error?.message} control={render({ field, fieldState })} />;
 }

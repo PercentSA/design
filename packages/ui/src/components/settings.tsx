@@ -40,7 +40,7 @@ export function SettingsSection({
           <div className="flex flex-wrap justify-end gap-2">{footer}</div>
         ) : (
           <div className="flex flex-wrap items-center gap-x-4 gap-y-3">
-            <div role="status" className="min-w-0 basis-full text-sm text-fg-2 sm:flex-1 sm:basis-0">
+            <div role="status" className="min-w-0 basis-full text-sm text-fg-2 empty:sr-only sm:flex-1 sm:basis-0">
               {status}
             </div>
             <div className="flex flex-wrap justify-end gap-2 max-sm:w-full">{footer}</div>
@@ -55,7 +55,7 @@ export function SettingsSection({
  * For a single field, give the control an `id` and pass the same `controlId`: the label then names the field.
  * Without it the row is a group named by the label (for switches or checkboxes that have their own labels).
  * With it the row is not a group (its name would repeat the label); controls that use useFieldControl get the description.
- * `error` shows under the control and is announced at once. With `controlId` the control gets `aria-invalid` and the error in
+ * `error` shows under the control. With `controlId` the control gets `aria-invalid` and the error in
  * `aria-describedby`; a group row names the error in its own description. `required` and `optional` mark the label, as Field does.
  */
 export function SettingsRow({
@@ -110,7 +110,7 @@ export function SettingsRow({
           control
         )}
         {error && (
-          <p id={errorId} role="alert" className="text-sm text-danger md:text-end">
+          <p id={errorId} className="text-sm text-danger md:text-end">
             {error}
           </p>
         )}

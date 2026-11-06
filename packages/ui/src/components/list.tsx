@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, isValidElement, useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
+import { Children, createContext, isValidElement, useContext, useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useFlip } from "../lib/flip";
@@ -8,6 +8,9 @@ import { useLinkComponent, useStrings } from "../provider";
 import { Button } from "./actions";
 import { LiveRegion } from "./utility";
 import { ABOVE_STRETCHED_LINK, STRETCHED_LINK } from "./card";
+
+// The list's one live region: rows write the move they made, so the text is not tied to a row that moves in the DOM.
+const announceContext = createContext<((text: string) => void) | null>(null);
 
 /** Rows of ListItem with dividers between them. Rows with a stable `data-flip` id glide to their new place when the order changes. */
 export function List({ className, ...rest }: HTMLAttributes<HTMLUListElement>) {
@@ -17,7 +20,22 @@ export function List({ className, ...rest }: HTMLAttributes<HTMLUListElement>) {
     .map((c) => (isValidElement<{ "data-flip"?: string }>(c) ? `${c.key}=${c.props["data-flip"] ?? ""}` : ""))
     .join(" ");
   useFlip(ref, [order]);
-  return <ul className={cn("divide-y divide-line", className)} {...rest} ref={ref} />;
+  const [said, setSaid] = useState({ text: "", n: 0 });
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const announce = (text: string) => {
+    setSaid((x) => ({ text, n: x.n + 1 }));
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setSaid((x) => ({ ...x, text: "" })), 2000);
+  };
+  return (
+    <announceContext.Provider value={announce}>
+      <ul className={cn("divide-y divide-line", className)} {...rest} ref={ref} />
+      <LiveRegion>
+        <span key={said.n}>{said.text}</span>
+      </LiveRegion>
+    </announceContext.Provider>
+  );
 }
 
 /** One row: `leading` (icon, avatar), title and description, `trailing` (meta, action). With `href` the row is one link, with `onSelect` one button; controls in `trailing` still work. */
@@ -59,22 +77,26 @@ export function ListItem({
   const s = useStrings();
   const up = useRef<HTMLButtonElement>(null);
   const down = useRef<HTMLButtonElement>(null);
-  const want = useRef<{ to: number; key: "up" | "down" } | null>(null);
-  const [said, setSaid] = useState("");
+  const want = useRef<{ to: number; key: "up" | "down"; at: number } | null>(null);
+  const announce = useContext(announceContext);
+  const [own, setOwn] = useState("");
   const name = move?.label ?? (typeof title === "string" ? title : "");
   // A moved row is re-inserted in the DOM and loses focus: give it back once the app has changed `index`.
   useEffect(() => {
     const w = want.current;
-    if (!move || !w || w.to !== move.index) return;
-    want.current = null;
+    if (!move || !w) return;
+    want.current = null; // a refused move must not steal the focus from a later one
+    if (w.to !== move.index || Date.now() - w.at > 1500) return; // a refused move expires
     const first = w.key === "up" ? up.current : down.current;
     (first && !first.disabled ? first : w.key === "up" ? down.current : up.current)?.focus();
-    setSaid(s.moved(name, move.index + 1, move.count));
+    const text = s.moved(name, move.index + 1, move.count);
+    if (announce) announce(text);
+    else setOwn(text);
   }, [move?.index]); // eslint-disable-line react-hooks/exhaustive-deps
   const go = (key: "up" | "down") => {
     if (!move) return;
     const to = move.index + (key === "up" ? -1 : 1);
-    want.current = { to, key };
+    want.current = { to, key, at: Date.now() };
     move.onMove(move.index, to);
   };
   // The press button holds the title; a screen reader also hears the description and the trailing part (phone, price).
@@ -118,7 +140,7 @@ export function ListItem({
           <Button ref={down} variant="ghost" size="sm" iconOnly aria-label={s.moveItemDown(name)} disabled={move.disabled || move.index >= move.count - 1} onClick={() => go("down")}>
             <ArrowDown aria-hidden />
           </Button>
-          <LiveRegion>{said}</LiveRegion>
+          {!announce && <LiveRegion>{own}</LiveRegion>}
         </div>
       )}
       {trailing && (

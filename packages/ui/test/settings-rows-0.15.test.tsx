@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 import { act, useState, type ReactNode } from "react";
 import { useForm } from "react-hook-form";
 import { renderToStaticMarkup } from "react-dom/server";
-import { Button, Input, List, ListItem, PercentProvider, SettingsRow, SettingsSection, Switch } from "../src";
+import { Button, Checkbox, Input, List, ListItem, PercentProvider, SettingsRow, SettingsSection, Switch } from "../src";
 import { FormSettingsRow } from "../src/react-hook-form";
 import { click, mount, useDom } from "./dom";
 
@@ -43,7 +43,7 @@ describe("SettingsRow error, required, optional", () => {
       expect(label.textContent).toContain(" *");
       expect(label.textContent).toContain(lang === "en" ? "Optional" : "اختياري");
     }
-    expect(document.querySelectorAll('[role="alert"]').length).toBe(2);
+    expect(document.querySelector('[role="alert"]')).toBeNull();
   });
   test("without an error nothing changes", async () => {
     await mount(wrap("en", <SettingsRow label="A" controlId="a" control={<Input id="a" />} />));
@@ -83,6 +83,29 @@ describe("FormSettingsRow", () => {
       expect(describedBy(input)).toEqual(["Return period", lang === "en" ? "Required" : "مطلوب"]);
     });
   }
+  test("group: a Switch in the row is named by the label and the error is in the group description", async () => {
+    function G() {
+      const { control, handleSubmit } = useForm({ defaultValues: { on: false } });
+      return (
+        <PercentProvider lang="en">
+          <form onSubmit={handleSubmit(() => {})}>
+            <FormSettingsRow group control={control} name="on" label="Alerts" rules={{ validate: (v) => v || "Turn on" }} render={({ field }) => <Switch label="Email" checked={field.value} onCheckedChange={field.onChange} />} />
+          </form>
+        </PercentProvider>
+      );
+    }
+    await mount(<G />);
+    await act(async () => {
+      document.querySelector("form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    });
+    const group = document.querySelector('[role="group"]')!;
+    expect(describedBy(group)).toEqual(["Turn on"]);
+    expect(document.querySelector("label[for]")).toBeNull();
+  });
+  test("a Checkbox in a group SettingsRow", async () => {
+    await mount(wrap("en", <SettingsRow label="Terms" error="Accept" control={<Checkbox label="I accept" />} />));
+    expect(describedBy(document.querySelector('[role="group"]')!)).toEqual(["Accept"]);
+  });
 });
 
 describe("ListItem move", () => {
@@ -121,9 +144,9 @@ describe("ListItem move", () => {
     expect(btn("Move Gamma down").disabled).toBe(true);
     document.body.innerHTML = "";
     await mount(<Ordered lang="ar" start={["أ", "ب"]} />);
-    expect(btn("تحريك أ لأعلى").disabled).toBe(true);
-    expect(btn("تحريك ب لأسفل").disabled).toBe(true);
-    expect(btn("تحريك أ لأسفل").disabled).toBe(false);
+    expect(btn("نقل أ للأعلى").disabled).toBe(true);
+    expect(btn("نقل ب للأسفل").disabled).toBe(true);
+    expect(btn("نقل أ للأسفل").disabled).toBe(false);
   });
   test("a move reorders, keeps the focus on the same button and announces", async () => {
     await mount(<Ordered lang="en" />);
@@ -145,11 +168,47 @@ describe("ListItem move", () => {
   });
   test("a row at an end passes the focus to the other button; Arabic announcement", async () => {
     await mount(<Ordered lang="ar" start={["أ", "ب", "ج"]} />);
-    const up = btn("تحريك ب لأعلى");
+    const up = btn("نقل ب للأعلى");
     up.focus();
     await click(up);
-    expect(document.activeElement).toBe(btn("تحريك ب لأسفل"));
+    expect(document.activeElement).toBe(btn("نقل ب للأسفل"));
     expect(status()).toEqual(["نُقل ب إلى الموضع 1 من 3"]);
+  });
+  test("one live region for the list keeps the last message", async () => {
+    await mount(<Ordered lang="en" start={["A", "B", "C"]} />);
+    await click(btn("Move A down"));
+    await click(btn("Move A down"));
+    expect(document.querySelectorAll('[role="status"]').length).toBe(1);
+    expect(status()).toEqual(["Moved A to position 3 of 3"]);
+  });
+  test("a refused move does not steal the focus or announce later", async () => {
+    function Refuse() {
+      const [rows, setRows] = useState(["A", "B", "C"]);
+      const [refuse, setRefuse] = useState(true);
+      const swap = (from: number, to: number) =>
+        setRows((x) => {
+          const n = [...x];
+          n.splice(to, 0, ...n.splice(from, 1));
+          return n;
+        });
+      return (
+        <PercentProvider lang="en">
+          <button onClick={() => setRefuse(false)}>allow</button>
+          <List>
+            {rows.map((r, i) => (
+              <ListItem key={r} title={r} move={{ index: i, count: 3, onMove: (from, to) => !(refuse && r === "A") && swap(from, to) }} />
+            ))}
+          </List>
+        </PercentProvider>
+      );
+    }
+    await mount(<Refuse />);
+    await click(btn("Move A down")); // refused: A stays at index 0
+    const now = Date.now;
+    Date.now = () => now() + 5000;
+    await click(btn("Move B up")); // B moves to index 0, A to index 1 = A's stale target
+    Date.now = now;
+    expect(status()).toEqual(["Moved B to position 1 of 3"]);
   });
   test("a row without move is unchanged", () => {
     const html = renderToStaticMarkup(wrap("en", <ListItem title="Plain" />));

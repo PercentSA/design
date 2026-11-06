@@ -375,7 +375,7 @@ export function ListMoveExample() {
   );
 }
 
-const PADS ="data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 6"><rect width="8" height="6" fill="#888"/><circle cx="4" cy="3" r="1.8" fill="#ccc"/></svg>');
+const PADS = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 6"><rect width="8" height="6" fill="#888"/><circle cx="4" cy="3" r="1.8" fill="#ccc"/></svg>');
 const PRODUCTS = [
   { id: "bp-01", en: "Front brake pads", ar: "فحمات أمامية", stock: 12, price: 230 },
   { id: "of-22", en: "Oil filter", ar: "فلتر زيت", stock: 40, price: 35 },
