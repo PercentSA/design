@@ -6,6 +6,7 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 
 - [LineItemsEditor](https://design.percent.sa/en/components/line-items-editor): when the editor moves the focus (Enter, a new line, a removed line), it goes to the text input of the cell, not to the "−" button of a `NumberInput`, and selects the text, so a typed value replaces the old one. With `disabled`, the add button shows disabled instead of hidden. The table is no longer an extra tab stop (the rows turn into cards before they would scroll).
 - [Table](https://design.percent.sa/en/components/table): new `scrolls={false}` for a table that never scrolls sideways; its region is then no tab stop.
+- [Card](https://design.percent.sa/en/components/card) and [ListItem](https://design.percent.sa/en/components/list) with `onSelect`: the press button is described by the description and the body (Card) or the trailing part (ListItem), so a screen reader hears the price, the state or the phone with the name. The Card body is in a `display: contents` wrapper (no layout change).
 
 ## 0.14.3
 

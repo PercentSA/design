@@ -19,11 +19,12 @@ export const RELEASES: Release[] = [
   {
     version: "0.14.4",
     date: null,
-    summary: "The line editor puts the focus in the right place.",
+    summary: "The line editor puts the focus in the right place, and pressable cards and rows read their facts.",
     changes: [
       c("fixed", "[LineItemsEditor](line-items-editor): a focus move (Enter, a new line, a removed line) goes to the text input of the cell, not to the \"−\" button of a NumberInput, and selects the text, so a typed value replaces the old one."),
       c("better", "[LineItemsEditor](line-items-editor): with disabled, the add button shows disabled instead of hidden; the table is no longer an extra tab stop."),
       c("new", "[Table](table): scrolls={false} for a table that never scrolls sideways; its region is then no tab stop."),
+      c("better", "[Card](card) and [ListItem](list) with onSelect: the press button is described by the description and the body or the trailing part, so a screen reader hears the price, the state or the phone with the name."),
     ],
   },
   {
