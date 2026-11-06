@@ -114,6 +114,7 @@ export function KeyGrid({
  * field it serves (Western digits and "."), as `MoneyInput`; the keypad writes the next draft with `onValueChange`.
  * `mode="amount"`: 1 to 9, ".", 0, "00" and a backspace key (the "." key only with `decimals` above 0); a leading zero is replaced by the next
  * digit and a third decimal is refused. `mode="pin"`: 1 to 9, 0, backspace. At `maxLength` the digit keys do nothing. Left-to-right in both languages.
+ * A value the keypad did not write (a prefilled total, a value set by the app) is replaced by the first key, as on a calculator; backspace clears it.
  * The hardware keyboard works too (digits, ".", Backspace) while the focus is on the page or in the keypad, never in a text field, dialog or menu.
  */
 export function Keypad({
@@ -144,6 +145,8 @@ export function Keypad({
   // The draft lives in a ref, so two taps in one frame both count.
   const draft = useRef(value);
   draft.current = value;
+  // The last draft the keypad wrote: any other non-empty value came from outside and the first key replaces it.
+  const written = useRef<string | null>(null);
   const room = (d: string) => maxLength === undefined || d.length < maxLength;
   const add = (d: string, token: string) => {
     if (!room(d)) return null;
@@ -155,15 +158,18 @@ export function Keypad({
   };
   const press = (key: string) => {
     if (disabled) return false;
-    let next: string | null = draft.current;
-    if (key === "back") next = draft.current ? draft.current.slice(0, -1) : null;
+    const fresh = draft.current !== "" && draft.current !== written.current;
+    const from = fresh ? "" : draft.current;
+    let next: string | null = from;
+    if (key === "back") next = fresh ? "" : from ? from.slice(0, -1) : null;
     else if (key === "00") {
       // Two zeros, as far as the room goes; on an empty draft one.
-      const one = add(draft.current, "0");
+      const one = add(from, "0");
       next = one === null ? null : (add(one, "0") ?? one);
-    } else next = add(draft.current, key);
+    } else next = add(from, key);
     if (next === null) return false;
     draft.current = next;
+    written.current = next;
     onValueChange(next);
     return true;
   };

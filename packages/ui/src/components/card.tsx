@@ -1,6 +1,6 @@
 "use client";
 
-import type { ReactNode } from "react";
+import { useId, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useLinkComponent } from "../provider";
 import { Surface } from "./layout";
@@ -42,6 +42,9 @@ export function Card({ title, description, action, footer, href, onSelect, disab
   const L = useLinkComponent();
   const H = `h${headingLevel}` as const;
   const compact = density === "compact";
+  const id = useId();
+  // The press button holds the title; a screen reader also hears the description and the body (price, state).
+  const describedBy = onSelect ? [description && `${id}d`, children != null && children !== false && `${id}b`].filter(Boolean).join(" ") || undefined : undefined;
   return (
     <Surface className={cn("relative flex flex-col gap-4 [--p-avatar-ring:var(--p-surface)]", compact ? "p-4" : "p-6", (href || onSelect) && cn("transition-colors", !disabled && "hover:border-fg-3", ABOVE_STRETCHED_LINK), disabled && "opacity-50", className)}>
       {media}
@@ -60,6 +63,7 @@ export function Card({ title, description, action, footer, href, onSelect, disab
                     data-stretched=""
                     disabled={disabled}
                     title={typeof title === "string" ? title : undefined}
+                    aria-describedby={describedBy}
                     onClick={onSelect}
                     className={cn(STRETCHED_LINK, "line-clamp-2 text-start after:rounded-card", disabled ? "cursor-not-allowed" : "cursor-pointer")}
                   >
@@ -70,12 +74,22 @@ export function Card({ title, description, action, footer, href, onSelect, disab
                 )}
               </H>
             )}
-            {description && <div className="text-sm text-fg-2">{description}</div>}
+            {description && (
+              <div id={`${id}d`} className="text-sm text-fg-2">
+                {description}
+              </div>
+            )}
           </div>
           {action && <div className="shrink-0">{action}</div>}
         </div>
       )}
-      {children}
+      {onSelect && children != null && children !== false ? (
+        <div id={`${id}b`} className="contents">
+          {children}
+        </div>
+      ) : (
+        children
+      )}
       {footer && <div className="mt-auto flex flex-wrap items-center gap-3 border-t border-line pt-4 text-sm text-fg-2">{footer}</div>}
     </Surface>
   );

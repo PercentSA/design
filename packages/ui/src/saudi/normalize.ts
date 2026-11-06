@@ -5,7 +5,10 @@ export const normalizeDigits = (raw: string, length?: number) => toWesternDigits
 
 /** An amount as typed: Western digits, "." decimal point, no grouping, 2 decimals at most. */
 export function normalizeAmount(raw: string) {
-  const s = toWesternDigits(raw).replace(/٫/g, ".").replace(/[^\d.]/g, "");
+  // «٫» is a decimal mark. A comma is one too when the text has no "." («10,5» is 10.5, never 105); next to a "." it groups
+  // thousands and is dropped («1,250.50» is 1250.50).
+  const w = toWesternDigits(raw).replace(/٫/g, ".");
+  const s = (w.includes(".") ? w : w.replace(/,/g, ".")).replace(/[^\d.]/g, "");
   const dot = s.indexOf(".");
   return dot < 0 ? s : s.slice(0, dot + 1) + s.slice(dot + 1).replace(/\./g, "").slice(0, 2);
 }

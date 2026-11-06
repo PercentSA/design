@@ -495,6 +495,22 @@ describe("Keypad", () => {
     }
   });
 
+  test("a prefilled value is replaced by the first key (no 2505 from 250.00 then 5); backspace clears it; then keys add as before", async () => {
+    const el = await mount(inLang(<Amount start="250.00" />));
+    await tap(el, "5");
+    expect(draft(el)).toBe("5");
+    await tap(el, "0");
+    expect(draft(el)).toBe("50");
+    const top = await mount(inLang(<Amount start="40" />));
+    await tap(top, STRINGS.en.keypad.backspace);
+    expect(draft(top)).toBe("");
+    await tap(top, "3", "7");
+    expect(draft(top)).toBe("37");
+    const point = await mount(inLang(<Amount start="12.5" />));
+    await tap(point, STRINGS.en.keypad.point);
+    expect(draft(point)).toBe("0.");
+  });
+
   test("typing builds the draft; a leading zero is replaced; '0' on '0' does nothing; 00 on an empty draft gives one zero", async () => {
     const el = await mount(inLang(<Amount />));
     await tap(el, "1", "2", "5");

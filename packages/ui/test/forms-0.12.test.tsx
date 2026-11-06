@@ -11,6 +11,7 @@ import {
   Input,
   LineItemsEditor,
   Money,
+  NumberInput,
   PercentProvider,
   PinPad,
   Sheet,
@@ -576,6 +577,8 @@ describe("LineItemsEditor", () => {
     const doc = dom(<Harness />);
     const table = doc.querySelector("table")!;
     expect(table.querySelector("caption")!.className).toBe("sr-only");
+    // The rows turn into cards before they would scroll, so the table region is no tab stop.
+    expect(table.parentElement!.hasAttribute("tabindex")).toBe(false);
     expect([...table.querySelectorAll("th")].map((th) => th.textContent)).toEqual(["#", "Product", "Quantity", "Total", "Line actions"]);
     expect(doc.querySelectorAll("tbody tr").length).toBe(2);
     expect(buttonNamed(doc, "Add line")).toBeDefined();
@@ -761,10 +764,26 @@ describe("LineItemsEditor", () => {
     expect([doc.querySelector('[aria-label="Remove line 1"]'), doc.querySelector('[aria-label="Remove line 2"]') != null, buttonNamed(doc, "Add line") === undefined]).toEqual([null, true, true]);
   });
 
-  test("disabled: no add, no trash, no menu; the details toggle stays", () => {
+  test("disabled: the add button shows disabled; no trash, no menu; the details toggle stays", () => {
     const doc = dom(<Harness disabled detail={() => <span>More</span>} lineActions={() => [{ label: "Duplicate" }]} />);
-    expect([buttonNamed(doc, "Add line") === undefined, doc.querySelector('[aria-label^="Remove"]'), doc.querySelector('[aria-label^="Line actions "]')]).toEqual([true, null, null]);
+    expect([buttonNamed(doc, "Add line").hasAttribute("disabled"), doc.querySelector('[aria-label^="Remove"]'), doc.querySelector('[aria-label^="Line actions "]')]).toEqual([true, null, null]);
     expect(doc.querySelector('[aria-label="Line details 1"]')).not.toBeNull();
+    expect(buttonNamed(dom(<Harness />), "Add line").hasAttribute("disabled")).toBe(false);
+  });
+
+  test("a NumberInput cell: the move lands on its text input (not the − button) and selects the number; Enter goes on", async () => {
+    const numberColumns: LineEditorColumn<L>[] = [
+      columns()[0]!,
+      { key: "qty", header: "Quantity", width: "sm", cell: (l) => <NumberInput aria-label="Qty" value={l.qty} onValueChange={() => {}} min={0} /> },
+    ];
+    const el = await mount(<Harness columns={numberColumns} />);
+    const [name1, qty1, name2] = inputs(el);
+    await enter(name1!);
+    expect(document.activeElement).toBe(qty1);
+    expect([qty1!.selectionStart, qty1!.selectionEnd]).toEqual([0, qty1!.value.length]);
+    // Enter in the number goes to the next line; the number keeps its value.
+    await enter(qty1!);
+    expect([document.activeElement, qty1!.value]).toEqual([name2, "1"]);
   });
 
   test("details open under the row, with aria-expanded and aria-controls; closed details are not rendered", async () => {

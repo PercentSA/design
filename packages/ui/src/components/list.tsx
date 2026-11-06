@@ -1,6 +1,6 @@
 "use client";
 
-import { Children, isValidElement, useRef, type HTMLAttributes, type ReactNode } from "react";
+import { Children, isValidElement, useId, useRef, type HTMLAttributes, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useFlip } from "../lib/flip";
 import { useLinkComponent } from "../provider";
@@ -44,6 +44,9 @@ export function ListItem({
 }) {
   const L = useLinkComponent();
   const pick = !href && !!onSelect;
+  const id = useId();
+  // The press button holds the title; a screen reader also hears the description and the trailing part (phone, price).
+  const describedBy = pick ? [description && `${id}d`, trailing && `${id}t`].filter(Boolean).join(" ") || undefined : undefined;
   return (
     <li
       data-flip={flip}
@@ -62,16 +65,24 @@ export function ListItem({
               {title}
             </L>
           ) : pick ? (
-            <button type="button" data-stretched="" disabled={disabled} onClick={onSelect} className={cn(STRETCHED_LINK, "text-start", disabled ? "cursor-not-allowed" : "cursor-pointer")}>
+            <button type="button" data-stretched="" disabled={disabled} aria-describedby={describedBy} onClick={onSelect} className={cn(STRETCHED_LINK, "text-start", disabled ? "cursor-not-allowed" : "cursor-pointer")}>
               {title}
             </button>
           ) : (
             title
           )}
         </div>
-        {description && <div className="text-sm text-fg-2">{description}</div>}
+        {description && (
+          <div id={`${id}d`} className="text-sm text-fg-2">
+            {description}
+          </div>
+        )}
       </div>
-      {trailing && <div className="shrink-0 text-sm text-fg-3">{trailing}</div>}
+      {trailing && (
+        <div id={`${id}t`} className="shrink-0 text-sm text-fg-3">
+          {trailing}
+        </div>
+      )}
     </li>
   );
 }

@@ -17,6 +17,19 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.14.4",
+    date: "2026-11-06",
+    summary: "A comma in an amount is the decimal mark, the keypad replaces a prefilled amount, and the line editor puts the focus in the right place.",
+    changes: [
+      c("fixed", "[MoneyInput](money-input) and [NumberInput](number-input): a comma in a number without a \".\" is now the decimal mark (10,5 is 10.5, before it read as 105). Next to a \".\" a comma still groups thousands and is dropped (1,250.50 is 1250.50)."),
+      c("fixed", "[Keypad](keypad): a prefilled value is replaced by the first key, as on a calculator; backspace clears it. Before, a digit was added to the end of the prefilled value."),
+      c("fixed", "[LineItemsEditor](line-items-editor): a focus move (Enter, a new line, a removed line) goes to the text input of the cell, not to the \"−\" button of a NumberInput, and selects the text, so a typed value replaces the old one."),
+      c("better", "[LineItemsEditor](line-items-editor): with disabled, the add button shows disabled instead of hidden; the table is no longer an extra tab stop."),
+      c("new", "[Table](table): scrolls={false} for a table that never scrolls sideways; its region is then no tab stop."),
+      c("better", "[Card](card) and [ListItem](list) with onSelect: the press button is described by the description and the body or the trailing part, so a screen reader hears the price, the state or the phone with the name."),
+    ],
+  },
+  {
     version: "0.14.3",
     date: "2026-11-06",
     summary: "A chosen link button shows, and phone cards stay inside their box.",
