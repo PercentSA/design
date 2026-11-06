@@ -17,6 +17,17 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.15.0",
+    date: "2026-11-06",
+    summary: "Settings rows show errors and a saved state, a form settings row for react-hook-form, and move buttons for ordered lists.",
+    changes: [
+      c("new", "[SettingsSection](settings): status, a short state at the start of the footer (Unsaved changes, Changes saved.), read politely. It shows with footer and wraps above the buttons below 640 px."),
+      c("new", "[SettingsRow](settings): error, required and optional. The error shows under the control; with controlId the control gets aria-invalid and the error in aria-describedby, as in Field."),
+      c("new", "[FormSettingsRow](form-settings-row): a react-hook-form field in a SettingsRow, as FormField is for Field (group for a Switch or Checkbox). Import it from @percentsa/ui/react-hook-form."),
+      c("new", "[ListItem](list): move, with move up and move down buttons for an ordered list. The focus stays on the moved row's button and the new place is announced in the page language."),
+    ],
+  },
+  {
     version: "0.14.4",
     date: "2026-11-06",
     summary: "A comma in an amount is the decimal mark, the keypad replaces a prefilled amount, and the line editor puts the focus in the right place.",

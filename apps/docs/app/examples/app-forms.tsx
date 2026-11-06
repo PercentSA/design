@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { ArrowLeft, Download, Ellipsis, Printer, RefreshCw } from "lucide-react";
-import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SettingsRow, SettingsSection, Stack, Switch, Textarea, toast } from "@percentsa/ui";
+import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, NumberInput, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SettingsRow, SettingsSection, Stack, Switch, Textarea, toast } from "@percentsa/ui";
 import { Card, FormBar, Money, PinPad, Text } from "@percentsa/ui";
+import { useForm } from "react-hook-form";
+import { FormSettingsRow } from "@percentsa/ui/react-hook-form";
 import { useT } from "~/lib/t";
 
 // The recipes show the layout only: the forms send nothing.
@@ -274,6 +276,71 @@ export function SettingsExample() {
         }
       />
     </SettingsSection>
+  );
+}
+
+/** `status` at the start of the footer, and `error` on a row with `required` and `optional`. */
+export function SettingsStatusExample() {
+  const t = useT();
+  const [name, setName] = useState("Sara");
+  const [saved, setSaved] = useState<string | null>(null);
+  const [dirty, setDirty] = useState(false);
+  const error = name.trim() ? undefined : t("Enter a name.", "أدخل اسمًا.");
+  return (
+    <SettingsSection
+      className="w-full"
+      title={t("Profile", "الملف الشخصي")}
+      status={dirty ? t("Unsaved changes", "تغييرات غير محفوظة") : saved}
+      footer={
+        <Button
+          disabled={!dirty || !!error}
+          onClick={() => {
+            setDirty(false);
+            setSaved(t("Changes saved.", "حُفظت التغييرات."));
+          }}
+        >
+          {t("Save", "حفظ")}
+        </Button>
+      }
+    >
+      <SettingsRow
+        label={t("Display name", "الاسم الظاهر")}
+        controlId="status-name"
+        required
+        error={error}
+        control={
+          <Input
+            id="status-name"
+            value={name}
+            onChange={(e) => {
+              setName(e.target.value);
+              setDirty(true);
+            }}
+          />
+        }
+      />
+      <SettingsRow label={t("Job title", "المسمى الوظيفي")} controlId="status-title" optional control={<Input id="status-title" />} />
+    </SettingsSection>
+  );
+}
+
+export function FormSettingsRowExample() {
+  const t = useT();
+  const { control, handleSubmit } = useForm({ defaultValues: { days: 14 as number | null } });
+  return (
+    <form noValidate onSubmit={handleSubmit(() => {})} className="w-full">
+      <SettingsSection title={t("Returns", "المرتجعات")} footer={<Button type="submit">{t("Save", "حفظ")}</Button>}>
+        <FormSettingsRow
+          control={control}
+          name="days"
+          label={t("Return period (days)", "مهلة إصدار المرتجع (بالأيام)")}
+          description={t("After this the invoice cannot be returned.", "بعدها لا يمكن إرجاع الفاتورة.")}
+          required
+          rules={{ validate: (v) => (v != null && v >= 1 && v <= 365) || t("Enter 1 to 365.", "أدخل من 1 إلى 365.") }}
+          render={({ field }) => <NumberInput value={field.value} onValueChange={field.onChange} onBlur={field.onBlur} name={field.name} min={1} max={365} />}
+        />
+      </SettingsSection>
+    </form>
   );
 }
 

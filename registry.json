@@ -1222,11 +1222,16 @@
       "type": "registry:ui",
       "title": "List, ListItem, DescriptionList",
       "description": "@percentsa/ui: List, ListItem, DescriptionList",
+      "dependencies": [
+        "lucide-react"
+      ],
       "registryDependencies": [
+        "@percentsa/actions",
         "@percentsa/card",
         "@percentsa/cn",
         "@percentsa/flip",
-        "@percentsa/provider"
+        "@percentsa/provider",
+        "@percentsa/utility"
       ],
       "files": [
         {
@@ -1636,7 +1641,8 @@
       "description": "@percentsa/ui: SettingsSection, SettingsRow",
       "registryDependencies": [
         "@percentsa/cn",
-        "@percentsa/field"
+        "@percentsa/field",
+        "@percentsa/provider"
       ],
       "files": [
         {
@@ -2372,13 +2378,14 @@
     {
       "name": "react-hook-form",
       "type": "registry:ui",
-      "title": "FormField",
-      "description": "@percentsa/ui: FormField",
+      "title": "FormField, FormSettingsRow",
+      "description": "@percentsa/ui: FormField, FormSettingsRow",
       "dependencies": [
         "react-hook-form"
       ],
       "registryDependencies": [
-        "@percentsa/field"
+        "@percentsa/field",
+        "@percentsa/settings"
       ],
       "files": [
         {
@@ -2389,7 +2396,8 @@
       ],
       "meta": {
         "exports": [
-          "FormField"
+          "FormField",
+          "FormSettingsRow"
         ]
       }
     },
@@ -4355,6 +4363,16 @@
       "type": "registry:ui",
       "title": "FormField",
       "description": "FormField: adds @percentsa/react-hook-form.",
+      "registryDependencies": [
+        "@percentsa/react-hook-form"
+      ],
+      "files": []
+    },
+    {
+      "name": "form-settings-row",
+      "type": "registry:ui",
+      "title": "FormSettingsRow",
+      "description": "FormSettingsRow: adds @percentsa/react-hook-form.",
       "registryDependencies": [
         "@percentsa/react-hook-form"
       ],

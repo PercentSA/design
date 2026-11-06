@@ -344,6 +344,37 @@ export function ListExample() {
   );
 }
 
+/** An ordered list: `move` adds the up and down buttons. The app reorders; rows have stable keys and `data-flip` so they glide. */
+export function ListMoveExample() {
+  const t = useT();
+  const [rows, setRows] = useState([
+    { id: "a", en: "Delivery", ar: "التوصيل" },
+    { id: "b", en: "Returns", ar: "المرتجعات" },
+    { id: "c", en: "Warranty", ar: "الضمان" },
+  ]);
+  return (
+    <List className="w-full max-w-md">
+      {rows.map((r, i) => (
+        <ListItem
+          key={r.id}
+          data-flip={r.id}
+          title={t(r.en, r.ar)}
+          move={{
+            index: i,
+            count: rows.length,
+            onMove: (from, to) =>
+              setRows((x) => {
+                const n = [...x];
+                n.splice(to, 0, ...n.splice(from, 1));
+                return n;
+              }),
+          }}
+        />
+      ))}
+    </List>
+  );
+}
+
 const PADS = "data:image/svg+xml," + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 8 6"><rect width="8" height="6" fill="#888"/><circle cx="4" cy="3" r="1.8" fill="#ccc"/></svg>');
 const PRODUCTS = [
   { id: "bp-01", en: "Front brake pads", ar: "فحمات أمامية", stock: 12, price: 230 },

@@ -1,10 +1,16 @@
 "use client";
 
-import { Children, isValidElement, useId, useRef, type HTMLAttributes, type ReactNode } from "react";
+import { Children, createContext, isValidElement, useContext, useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode } from "react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useFlip } from "../lib/flip";
-import { useLinkComponent } from "../provider";
+import { useLinkComponent, useStrings } from "../provider";
+import { Button } from "./actions";
+import { LiveRegion } from "./utility";
 import { ABOVE_STRETCHED_LINK, STRETCHED_LINK } from "./card";
+
+// The list's one live region: rows write the move they made, so the text is not tied to a row that moves in the DOM.
+const announceContext = createContext<((text: string) => void) | null>(null);
 
 /** Rows of ListItem with dividers between them. Rows with a stable `data-flip` id glide to their new place when the order changes. */
 export function List({ className, ...rest }: HTMLAttributes<HTMLUListElement>) {
@@ -14,7 +20,22 @@ export function List({ className, ...rest }: HTMLAttributes<HTMLUListElement>) {
     .map((c) => (isValidElement<{ "data-flip"?: string }>(c) ? `${c.key}=${c.props["data-flip"] ?? ""}` : ""))
     .join(" ");
   useFlip(ref, [order]);
-  return <ul className={cn("divide-y divide-line", className)} {...rest} ref={ref} />;
+  const [said, setSaid] = useState({ text: "", n: 0 });
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const announce = (text: string) => {
+    setSaid((x) => ({ text, n: x.n + 1 }));
+    clearTimeout(timer.current);
+    timer.current = setTimeout(() => setSaid((x) => ({ ...x, text: "" })), 2000);
+  };
+  return (
+    <announceContext.Provider value={announce}>
+      <ul className={cn("divide-y divide-line", className)} {...rest} ref={ref} />
+      <LiveRegion>
+        <span key={said.n}>{said.text}</span>
+      </LiveRegion>
+    </announceContext.Provider>
+  );
 }
 
 /** One row: `leading` (icon, avatar), title and description, `trailing` (meta, action). With `href` the row is one link, with `onSelect` one button; controls in `trailing` still work. */
@@ -26,6 +47,7 @@ export function ListItem({
   href,
   onSelect,
   disabled,
+  move,
   className,
   "data-flip": flip,
 }: {
@@ -38,6 +60,13 @@ export function ListItem({
   onSelect?: () => void;
   /** With `onSelect`: dim, and the row does not press. */
   disabled?: boolean;
+  /**
+   * Move up and move down buttons at the end of the row, before `trailing`, for an ordered list. The first row's up button and
+   * the last row's down button are disabled. `onMove(from, to)` asks the app to reorder (give the rows stable keys); after the
+   * row has its new `index`, the focus returns to the same button (to the other one when the row reached an end) and the move
+   * is announced. `label` names the row in the button names and the announcement (default: `title` when it is a string).
+   */
+  move?: { index: number; count: number; onMove: (from: number, to: number) => void; label?: string; disabled?: boolean };
   className?: string;
   /** Stable id for the reorder glide of List. */
   "data-flip"?: string;
@@ -45,6 +74,31 @@ export function ListItem({
   const L = useLinkComponent();
   const pick = !href && !!onSelect;
   const id = useId();
+  const s = useStrings();
+  const up = useRef<HTMLButtonElement>(null);
+  const down = useRef<HTMLButtonElement>(null);
+  const want = useRef<{ to: number; key: "up" | "down"; at: number } | null>(null);
+  const announce = useContext(announceContext);
+  const [own, setOwn] = useState("");
+  const name = move?.label ?? (typeof title === "string" ? title : "");
+  // A moved row is re-inserted in the DOM and loses focus: give it back once the app has changed `index`.
+  useEffect(() => {
+    const w = want.current;
+    if (!move || !w) return;
+    want.current = null; // a refused move must not steal the focus from a later one
+    if (w.to !== move.index || Date.now() - w.at > 1500) return; // a refused move expires
+    const first = w.key === "up" ? up.current : down.current;
+    (first && !first.disabled ? first : w.key === "up" ? down.current : up.current)?.focus();
+    const text = s.moved(name, move.index + 1, move.count);
+    if (announce) announce(text);
+    else setOwn(text);
+  }, [move?.index]); // eslint-disable-line react-hooks/exhaustive-deps
+  const go = (key: "up" | "down") => {
+    if (!move) return;
+    const to = move.index + (key === "up" ? -1 : 1);
+    want.current = { to, key, at: Date.now() };
+    move.onMove(move.index, to);
+  };
   // The press button holds the title; a screen reader also hears the description and the trailing part (phone, price).
   const describedBy = pick ? [description && `${id}d`, trailing && `${id}t`].filter(Boolean).join(" ") || undefined : undefined;
   return (
@@ -78,6 +132,17 @@ export function ListItem({
           </div>
         )}
       </div>
+      {move && (
+        <div className="flex shrink-0 gap-1">
+          <Button ref={up} variant="ghost" size="sm" iconOnly aria-label={s.moveItemUp(name)} disabled={move.disabled || move.index <= 0} onClick={() => go("up")}>
+            <ArrowUp aria-hidden />
+          </Button>
+          <Button ref={down} variant="ghost" size="sm" iconOnly aria-label={s.moveItemDown(name)} disabled={move.disabled || move.index >= move.count - 1} onClick={() => go("down")}>
+            <ArrowDown aria-hidden />
+          </Button>
+          {!announce && <LiveRegion>{own}</LiveRegion>}
+        </div>
+      )}
       {trailing && (
         <div id={`${id}t`} className="shrink-0 text-sm text-fg-3">
           {trailing}

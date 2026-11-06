@@ -42,9 +42,9 @@ export const pages: DocPage[] = [
     "List",
     "data",
     "List, ListItem",
-    ["ListExample", "ListPickExample"],
-    "Rows with an icon, title, description and a trailing value or action, with dividers between them. With href a row is one link. With `onSelect` a row is one button instead (the title is its text; controls in `trailing` still work), and `disabled` dims it. Inside `data-density=\"touch\"` the rows and buttons are finger-sized on a touch screen.",
-    "صفوف بأيقونة وعنوان ووصف وقيمة أو إجراء في النهاية، تفصل بينها خطوط. مع href يصبح الصف رابطًا واحدًا. مع `onSelect` يصبح الصف زرًا واحدًا (العنوان هو نصه، وتبقى عناصر التحكم في `trailing` تعمل)، ويخفّت `disabled` الصف. داخل `data-density=\"touch\"` تكون الصفوف والأزرار بحجم الإصبع على شاشة اللمس.",
+    ["ListExample", "ListPickExample", "ListMoveExample"],
+    "Rows with an icon, title, description and a trailing value or action, with dividers between them. With href a row is one link. With `onSelect` a row is one button instead (the title is its text; controls in `trailing` still work), and `disabled` dims it. `move` adds move up and move down buttons for an ordered list: you pass the row's `index`, the `count` and `onMove(from, to)`, and reorder in your state (give the rows stable keys, and `data-flip` to make them glide). The first row's up button and the last row's down button are disabled. After the move the focus stays on the same button (on the other one when the row reaches an end) and the new place is announced in the page language (one live region per List); `label` names the row (default: the title when it is a string). Inside `data-density=\"touch\"` the rows and buttons are finger-sized on a touch screen.",
+    "صفوف بأيقونة وعنوان ووصف وقيمة أو إجراء في النهاية، تفصل بينها خطوط. مع href يصبح الصف رابطًا واحدًا. مع `onSelect` يصبح الصف زرًا واحدًا (العنوان هو نصه، وتبقى عناصر التحكم في `trailing` تعمل)، ويخفّت `disabled` الصف. يضيف `move` زرّي التحريك لأعلى ولأسفل لقائمة مرتّبة: تمرّر `index` الصف و`count` و`onMove(from, to)` وتعيد الترتيب في حالتك (أعطِ الصفوف مفاتيح ثابتة، و`data-flip` لتنزلق). يتعطل زر «لأعلى» في الصف الأول وزر «لأسفل» في الأخير. بعد النقل يبقى التركيز على الزر نفسه (أو على الآخر إن بلغ الصف طرفًا) ويُعلن المكان الجديد بلغة الصفحة؛ وتسمّي `label` الصف (الافتراضي: العنوان إن كان نصًا). داخل `data-density=\"touch\"` تكون الصفوف والأزرار بحجم الإصبع على شاشة اللمس.",
   ),
   p(
     "description-list",
