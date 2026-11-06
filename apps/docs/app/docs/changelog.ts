@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.15.1",
-    date: null,
+    date: "2026-11-07",
     summary: "Fields in one row stay aligned when one of them is taller.",
     changes: [
       c("fixed", "[Field](field) and [PhoneInput](phone-input): next to a taller field in a grid row, the label and the control stay at the top of the cell. Before, the field stretched and its label and control moved apart."),
