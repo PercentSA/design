@@ -17,6 +17,14 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.16.1",
+    date: null,
+    summary: "An image field can show a whole logo, and a white logo on a dark surface.",
+    changes: [
+      c("new", "[ImageField](image-field): `fit` (\"contain\" shows the whole image, for a logo; the default \"cover\" is unchanged) and `previewTheme` (\"dark\" shows the preview on a dark surface in both page themes, for a white logo)."),
+    ],
+  },
+  {
     version: "0.16.0",
     date: "2026-11-07",
     summary: "A side navigation for settings areas and other areas with many sections.",

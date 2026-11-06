@@ -20,6 +20,8 @@ export function ImageField({
   accept = "image/*",
   maxSizeMb = 2,
   aspect,
+  fit = "cover",
+  previewTheme,
   name,
   disabled,
   id,
@@ -34,6 +36,10 @@ export function ImageField({
   maxSizeMb?: number;
   /** CSS aspect ratio of the preview, for example "1 / 1" or "16 / 9". */
   aspect?: string;
+  /** `contain` shows the whole image (a logo); `cover` fills the box and may cut the sides (a photo). */
+  fit?: "cover" | "contain";
+  /** The preview's own theme, for an image made for one background: `dark` shows a white logo on a dark surface in both page themes. */
+  previewTheme?: "light" | "dark";
   name?: string;
   disabled?: boolean;
   id?: string;
@@ -91,7 +97,13 @@ export function ImageField({
     <div ref={box} aria-busy={uploading || undefined} className={cn("grid gap-3", className)}>
       {value && (
         <div className="flex flex-wrap items-end gap-4">
-          <img src={value} alt={alt} style={aspect ? { aspectRatio: aspect } : undefined} className="h-32 w-auto max-w-full rounded-card border border-line bg-surface object-cover" />
+          <img
+            src={value}
+            alt={alt}
+            data-theme={previewTheme}
+            style={aspect ? { aspectRatio: aspect } : undefined}
+            className={cn("h-32 w-auto max-w-full rounded-card border border-line bg-surface", fit === "contain" ? "object-contain p-2" : "object-cover")}
+          />
           <div className="flex flex-wrap gap-2">
             {/* Loading, not disabled: a button that was used keeps the focus while the upload runs. */}
             <Button variant="secondary" size="sm" loading={uploading} disabled={disabled} onClick={() => input()?.click()}>

@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.16.1
+
+- [ImageField](https://design.percent.sa/en/components/image-field): new `fit` (`"contain"` shows the whole image, for a logo; the default `"cover"` is unchanged) and `previewTheme` (`"dark"` shows the preview on a dark surface in both page themes, for a white logo).
+
 ## 0.16.0
 
 - [SideNav](https://design.percent.sa/en/components/side-nav): new. In-page navigation for an area with many sections, such as an app's settings. Groups of router links with a small heading each; the current page has `aria-current="page"` and the same selected look as the Sidebar item. `variant="column"` (default) is a compact column that fills its box, so the app sets the width; `sticky` keeps it in view under the AppShell header (`--p-sticky-top`) and it scrolls on its own when taller than the screen. `variant="list"` is the same groups as a full-width list with each `description` under its label and a chevron at the end (mirrored in RTL): the area's home on a phone. Labels wrap; icons are hidden from screen readers. All new; nothing changes for existing projects.
