@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { ChartColumn, Copy, Download, FileText, Inbox, LayoutDashboard, Languages, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
+import { Bell, ChartColumn, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
 import {
   AppShell,
   Button,
@@ -17,7 +17,13 @@ import {
   Money,
   PageHeader,
   PrintArea,
+  Input,
+  SettingsRow,
+  SettingsSection,
   Sidebar,
+  SideNav,
+  type SideNavGroup,
+  Switch,
   type SidebarSection,
   StatusBadge,
   TableBody,
@@ -381,6 +387,65 @@ export function AppShellNoSidebarExample() {
           ))}
         </Container>
       </AppShell>
+    </div>
+  );
+}
+
+function useSettingsGroups(current: string): SideNavGroup[] {
+  const t = useT();
+  const groups: SideNavGroup[] = [
+    {
+      label: t("Account", "الحساب"),
+      items: [
+        { href: "#profile", label: t("Profile", "الملف الشخصي"), description: t("Name, photo and language", "الاسم والصورة واللغة"), icon: <UserRound /> },
+        { href: "#security", label: t("Sign-in and security", "تسجيل الدخول والأمان"), description: t("Password and active sessions", "كلمة المرور والجلسات النشطة"), icon: <Shield /> },
+        { href: "#keys", label: t("Access keys", "مفاتيح الوصول"), description: t("Keys for other apps", "مفاتيح للتطبيقات الأخرى"), icon: <KeyRound />, badge: 2 },
+      ],
+    },
+    {
+      label: t("Workspace", "مساحة العمل"),
+      items: [
+        { href: "#notifications", label: t("Notifications", "الإشعارات"), description: t("What we send you, and how", "ما نرسله إليك وكيف"), icon: <Bell /> },
+        { href: "#billing", label: t("Plan and billing", "الباقة والفوترة"), description: t("Invoices and payment method", "الفواتير وطريقة الدفع"), icon: <CreditCard /> },
+      ],
+    },
+  ];
+  return groups.map((g) => ({ ...g, items: g.items.map((i) => ({ ...i, current: i.href === current })) }));
+}
+
+/** An area with many sections: the column on the start side, the section next to it. The app sets the column width (15rem here). Click an item: it becomes the current page. */
+export function SideNavExample() {
+  const t = useT();
+  const [current, setCurrent] = useState("#profile");
+  const groups = useSettingsGroups(current);
+  const title = groups.flatMap((g) => g.items).find((i) => i.current)?.label;
+  return (
+    <div
+      className="grid w-full gap-8 md:grid-cols-[15rem_minmax(0,1fr)]"
+      onClick={(e) => {
+        const href = (e.target as Element).closest("nav a")?.getAttribute("href");
+        if (!href) return;
+        e.preventDefault(); // an app's router sets `current`; here a click does
+        setCurrent(href);
+      }}
+    >
+      {/* Add `sticky` to keep the column in view while the page scrolls. Leave it out in a box that scrolls on its own. */}
+      <SideNav groups={groups} label={t("Settings", "الإعدادات")} />
+      <SettingsSection title={title} description={t("How this part of your account works.", "كيف يعمل هذا الجزء من حسابك.")} footer={<Button>{t("Save", "حفظ")}</Button>}>
+        <SettingsRow label={t("Display name", "الاسم الظاهر")} controlId="side-nav-name" control={<Input id="side-nav-name" defaultValue={t("Sara", "سارة")} />} />
+        <SettingsRow label={t("Email me about changes", "راسلني عند حدوث تغييرات")} control={<Switch defaultChecked label={t("On", "مفعّل")} />} />
+      </SettingsSection>
+    </div>
+  );
+}
+
+/** The settings home on a phone: the same groups as a full-width list with a description under each label. */
+export function SideNavListExample() {
+  const t = useT();
+  const groups = useSettingsGroups("");
+  return (
+    <div className="w-full max-w-sm" onClick={(e) => (e.target as Element).closest("nav a") && e.preventDefault()}>
+      <SideNav variant="list" groups={groups} label={t("Settings", "الإعدادات")} />
     </div>
   );
 }

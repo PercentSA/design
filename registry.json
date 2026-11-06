@@ -1659,6 +1659,32 @@
       }
     },
     {
+      "name": "side-nav",
+      "type": "registry:ui",
+      "title": "SideNav",
+      "description": "@percentsa/ui: SideNav",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/side-nav.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/side-nav.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "SideNav"
+        ]
+      }
+    },
+    {
       "name": "sidebar",
       "type": "registry:ui",
       "title": "SidebarInSheet, Sidebar",
