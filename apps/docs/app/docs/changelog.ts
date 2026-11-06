@@ -19,8 +19,10 @@ export const RELEASES: Release[] = [
   {
     version: "0.14.4",
     date: null,
-    summary: "The line editor puts the focus in the right place, and pressable cards and rows read their facts.",
+    summary: "A comma in an amount is the decimal mark, the keypad replaces a prefilled amount, and the line editor puts the focus in the right place.",
     changes: [
+      c("fixed", "[MoneyInput](money-input) and [NumberInput](number-input): a comma in a number without a \".\" is now the decimal mark (10,5 is 10.5, before it read as 105). Next to a \".\" a comma still groups thousands and is dropped (1,250.50 is 1250.50)."),
+      c("fixed", "[Keypad](keypad): a prefilled value is replaced by the first key, as on a calculator; backspace clears it. Before, a digit was added to the end of the prefilled value."),
       c("fixed", "[LineItemsEditor](line-items-editor): a focus move (Enter, a new line, a removed line) goes to the text input of the cell, not to the \"−\" button of a NumberInput, and selects the text, so a typed value replaces the old one."),
       c("better", "[LineItemsEditor](line-items-editor): with disabled, the add button shows disabled instead of hidden; the table is no longer an extra tab stop."),
       c("new", "[Table](table): scrolls={false} for a table that never scrolls sideways; its region is then no tab stop."),

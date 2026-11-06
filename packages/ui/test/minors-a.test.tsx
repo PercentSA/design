@@ -54,7 +54,7 @@ describe("A1: inputs that reformat as you type keep the caret", () => {
     for (const [node, typed, caret, value, after] of [
       [<Money />, "12x50", 3, "1250", 2],
       [<Id />, "1٠a10", 3, "1010", 2],
-      [<Num />, "12,50", 3, "1250", 2],
+      [<Num />, "12x50", 3, "1250", 2],
     ] as const) {
       const input = (await mount(node)).querySelector("input")!;
       await edit(input, typed, caret);

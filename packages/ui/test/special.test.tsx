@@ -44,6 +44,8 @@ describe("normalizers: what people type becomes Western digits", () => {
   test("amounts: Arabic separators, grouping removed, two decimals at most", () => {
     expect(normalizeAmount("١٬٢٥٠٫٥٠٧")).toBe("1250.50");
     expect(normalizeAmount("1,250.5.5")).toBe("1250.55");
+    // A comma without a "." is the decimal mark: a dropped comma would read 10.5 as 105.
+    expect(["10,5", "1,5", "100,50", "1,250.50", "10،5"].map(normalizeAmount)).toEqual(["10.5", "1.5", "100.50", "1250.50", "105"]);
     expect(normalizeAmount("abc")).toBe("");
     expect(parseAmount("1250.5")).toBe(1250.5);
     expect(parseAmount("")).toBeNull();
