@@ -138,7 +138,7 @@ describe("special inputs render", () => {
     // The picker shows "SA +966 ⌄" as in English (its trigger is ltr).
     expect(row![1]).toContain("[direction:ltr]");
     // The outer box has no dir, so labels and messages follow the page.
-    expect(out.startsWith('<div class="grid gap-2.5">')).toBe(true);
+    expect(out.startsWith('<div class="grid content-start gap-2.5">')).toBe(true);
   });
   test("Combobox is an ARIA combobox", () => {
     const out = html(<Combobox options={[{ value: "ruh", label: "Riyadh" }]} value="ruh" onValueChange={noop} />);

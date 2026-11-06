@@ -17,6 +17,14 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.15.1",
+    date: null,
+    summary: "Fields in one row stay aligned when one of them is taller.",
+    changes: [
+      c("fixed", "[Field](field) and [PhoneInput](phone-input): next to a taller field in a grid row, the label and the control stay at the top of the cell. Before, the field stretched and its label and control moved apart."),
+    ],
+  },
+  {
     version: "0.15.0",
     date: "2026-11-06",
     summary: "Settings rows show errors and a saved state, a form settings row for react-hook-form, and move buttons for ordered lists.",
