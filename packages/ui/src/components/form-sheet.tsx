@@ -89,7 +89,8 @@ export function FormSheet({
           className="flex flex-1 flex-col gap-6"
         >
           {children}
-          <div className="sticky bottom-0 -mx-6 -mb-6 mt-auto grid gap-3 border-t border-line bg-surface-2 px-6 py-4">
+          {/* -bottom-6, not bottom-0: a sticky footer stops at the scroller's padding (p-6), and the content would show under it. */}
+          <div className="sticky -bottom-6 -mx-6 -mb-6 mt-auto grid gap-3 border-t border-line bg-surface-2 px-6 py-4">
             {/* The status element stays in the page, so a reason that appears later is announced. */}
             <div role="status" className="empty:hidden">
               {refused && !pending && (

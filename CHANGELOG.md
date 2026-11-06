@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.16.2
+
+- [FormSheet](https://design.percent.sa/en/components/form-sheet): the footer now reaches the bottom edge of the sheet. Before, it stopped 24 px above the edge, and a long form showed its fields in that gap.
+
 ## 0.16.1
 
 - [ImageField](https://design.percent.sa/en/components/image-field): new `fit` (`"contain"` shows the whole image, for a logo; the default `"cover"` is unchanged) and `previewTheme` (`"dark"` shows the preview on a dark surface in both page themes, for a white logo).
