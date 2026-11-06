@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.15.0",
-    date: null,
+    date: "2026-11-06",
     summary: "Settings rows show errors and a saved state, a form settings row for react-hook-form, and move buttons for ordered lists.",
     changes: [
       c("new", "[SettingsSection](settings): status, a short state at the start of the footer (Unsaved changes, Changes saved.), read politely. It shows with footer and wraps above the buttons below 640 px."),
@@ -29,7 +29,7 @@ export const RELEASES: Release[] = [
   },
   {
     version: "0.14.4",
-    date: null,
+    date: "2026-11-06",
     summary: "A comma in an amount is the decimal mark, the keypad replaces a prefilled amount, and the line editor puts the focus in the right place.",
     changes: [
       c("fixed", "[MoneyInput](money-input) and [NumberInput](number-input): a comma in a number without a \".\" is now the decimal mark (10,5 is 10.5, before it read as 105). Next to a \".\" a comma still groups thousands and is dropped (1,250.50 is 1250.50)."),
