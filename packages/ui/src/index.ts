@@ -142,6 +142,7 @@ export { bandScale, linearScale, linePath, niceTicks, stack } from "./components
 export { AppShell } from "./components/app-shell";
 export { PageHeader } from "./components/page-header";
 export { Sidebar, useSidebarRail, type SidebarItem, type SidebarSection } from "./components/sidebar";
+export { SideNav, type SideNavGroup, type SideNavItem } from "./components/side-nav";
 export { CommandPalette, useCommandShortcut, type Command } from "./components/command-palette";
 export { invoiceTotals, zatcaTlv, type InvoiceLineAmounts, type ZatcaFields } from "./saudi/invoice";
 export { QrCode, ZatcaQr } from "./components/qr-code";

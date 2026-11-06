@@ -38,6 +38,15 @@ export const pages: DocPage[] = [
     "تنقّل التطبيق في أقسام، مع أيقونات وشارات وتمييز الصفحة الحالية؛ تنزلق علامة التمييز إلى الصفحة الجديدة (دون انزلاق مع تقليل الحركة). يُطوى إلى شريط أيقونات مع تلميحات. مرّر موقع الموجّه إلى PercentProvider عبر الخاصية location، فيُظهر الرابط المنقور شريط انتظار فورًا حتى تظهر الصفحة الجديدة.",
   ),
   p(
+    "side-nav",
+    "SideNav",
+    "app",
+    "SideNav",
+    ["SideNavExample", "SideNavListExample"],
+    "In-page navigation for an area with many sections, such as an app's settings. Groups of router links, each with a small heading; the current page has `aria-current=\"page\"` and the Sidebar's selected look. By default it is a compact column that fills its box: the app sets the width and puts the section next to it, for example `grid gap-8 md:grid-cols-[15rem_minmax(0,1fr)]`. `sticky` keeps the column in view while the page scrolls, under the AppShell header (`--p-sticky-top`); it scrolls on its own when it is taller than the screen. `variant=\"list\"` is the same groups as a full-width list with each `description` under its label and a chevron at the end: the area's home on a phone (`description` shows only there). Show the column from 768 px and the list below it. Labels wrap; they are never cut. Use Sidebar for the app menu and Tabs for a few items in a row.",
+    "تنقّل داخل الصفحة لمنطقة فيها أقسام كثيرة، مثل إعدادات التطبيق. مجموعات من روابط الموجّه، لكل منها عنوان صغير؛ وللصفحة الحالية `aria-current=\"page\"` ومظهر التحديد نفسه في Sidebar. افتراضيًا هو عمود مضغوط يملأ صندوقه: يحدد التطبيق العرض ويضع القسم بجانبه، مثل `grid gap-8 md:grid-cols-[15rem_minmax(0,1fr)]`. تُبقي `sticky` العمود ظاهرًا أثناء تمرير الصفحة، تحت رأس AppShell (`--p-sticky-top`)؛ ويتمرر وحده إذا كان أطول من الشاشة. `variant=\"list\"` هو المجموعات نفسها قائمة بكامل العرض، يظهر `description` تحت كل عنوان وسهم في النهاية: صفحة المنطقة الرئيسية على الهاتف (يظهر `description` هناك فقط). اعرض العمود من 768 بكسل والقائمة تحتها. تلتف العناوين ولا تُقطع. استخدم Sidebar لقائمة التطبيق وTabs لبضعة عناصر في صف.",
+  ),
+  p(
     "command-palette",
     "CommandPalette",
     "app",
