@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.16.0",
-    date: null,
+    date: "2026-11-07",
     summary: "A side navigation for settings areas and other areas with many sections.",
     changes: [
       c("new", "[SideNav](side-nav): in-page navigation in groups with headings. A compact column (sticky if you want, under the AppShell header) or, with variant list, a full-width list with a description under each label and a chevron: the settings home on a phone."),
