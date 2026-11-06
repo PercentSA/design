@@ -262,7 +262,7 @@ export function PhoneInput({
   const issue = touched ? getPhoneIssue(value, c) : null;
   const countryField = countryName ?? (props.name && `${props.name}-country`);
   return (
-    <div className={cn("grid gap-2.5", className)}>
+    <div className={cn("grid content-start gap-2.5", className)}>
       {/* A phone number reads left to right in both languages: the country code first (left), then the number. */}
       <div className="flex gap-2" dir="ltr">
         {/* A plain input, so the country posts without JavaScript too (the menu needs JavaScript). */}

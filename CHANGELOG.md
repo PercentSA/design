@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.15.1
+
+- [Field](https://design.percent.sa/en/components/field) and [PhoneInput](https://design.percent.sa/en/components/phone-input): in a grid row next to a taller field (one with a hint, an error or a button under it), the label and the control stay at the top of the cell. Before, the field stretched to the row height and its label and control moved apart, so the controls of one row were not aligned.
+
 ## 0.15.0
 
 Parts for settings pages. All new props are optional; nothing changes for existing projects.
