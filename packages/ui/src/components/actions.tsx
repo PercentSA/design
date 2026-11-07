@@ -62,7 +62,8 @@ export const Toggle = ({ className, ...rest }: ComponentProps<typeof RadixToggle
 type Option = { value: string; label: React.ReactNode; disabled?: boolean };
 type GroupBase = { options: Option[]; className?: string; "aria-label"?: string; disabled?: boolean };
 
-const GROUP = "inline-flex items-center gap-1 rounded-pill border border-line bg-surface p-1";
+// The radius of a pill for one row (half the item height, the padding and the border), so a group that wraps stays a rounded box, not an ellipse.
+const GROUP = "inline-flex items-center gap-1 rounded-[calc(var(--p-control-h-xs)/2+0.25rem+1px)] border border-line bg-surface p-1";
 
 /** One choice out of a few, always one chosen (billing period, view mode). */
 export function SegmentedControl({
@@ -118,7 +119,7 @@ export function ToggleGroup({
   ...rest
 }: GroupBase & { value?: string[]; defaultValue?: string[]; onValueChange?: (value: string[]) => void }) {
   return (
-    <RadixToggleGroup.Root type="multiple" className={cn(GROUP, className)} {...rest}>
+    <RadixToggleGroup.Root type="multiple" className={cn(GROUP, "flex-wrap", className)} {...rest}>
       {options.map((o) => (
         <RadixToggleGroup.Item key={o.value} value={o.value} disabled={o.disabled} className={TOGGLE_ITEM}>
           {o.label}
