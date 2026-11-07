@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.16.4",
-    date: null,
+    date: "2026-11-07",
     summary: "A segmented choice whose label wraps keeps space around the text.",
     changes: [
       c("fixed", "[SegmentedControl](segmented-control) and [ToggleGroup](segmented-control): a choice whose label wraps to two lines keeps space above and below the text and shows as a rounded box. Before, the text touched the edges. A choice of one line looks the same as before."),
