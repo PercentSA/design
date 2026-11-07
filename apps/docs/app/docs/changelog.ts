@@ -17,6 +17,14 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.16.4",
+    date: "2026-11-07",
+    summary: "A segmented choice whose label wraps keeps space around the text.",
+    changes: [
+      c("fixed", "[SegmentedControl](segmented-control) and [ToggleGroup](segmented-control): a choice whose label wraps to two lines keeps space above and below the text and shows as a rounded box. Before, the text touched the edges. A choice of one line looks the same as before."),
+    ],
+  },
+  {
     version: "0.16.3",
     date: "2026-11-07",
     summary: "A toggle group that wraps stays a rounded box.",
