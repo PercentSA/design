@@ -1669,6 +1669,7 @@
       "registryDependencies": [
         "@percentsa/cn",
         "@percentsa/feedback",
+        "@percentsa/overlays",
         "@percentsa/provider"
       ],
       "files": [
