@@ -17,6 +17,14 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.16.3",
+    date: "2026-11-07",
+    summary: "A toggle group that wraps stays a rounded box.",
+    changes: [
+      c("fixed", "[ToggleGroup](segmented-control): the choices wrap to more rows when they do not fit, and the group stays a rounded box. Before, a group that wrapped showed as an ellipse. A group of one row looks the same as before."),
+    ],
+  },
+  {
     version: "0.16.2",
     date: "2026-11-07",
     summary: "A form sheet's footer reaches the bottom edge of the sheet, and the step buttons of a time field follow the page direction.",

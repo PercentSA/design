@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.16.3
+
+- [ToggleGroup](https://design.percent.sa/en/components/segmented-control): the choices wrap to more rows when they do not fit, and the group stays a rounded box. Before, a group that wrapped showed as an ellipse. A group of one row looks the same as before.
+
 ## 0.16.2
 
 - [FormSheet](https://design.percent.sa/en/components/form-sheet): the footer now reaches the bottom edge of the sheet. Before, it stopped 24 px above the edge, and a long form showed its fields in that gap.
