@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.16.2",
-    date: null,
+    date: "2026-11-07",
     summary: "A form sheet's footer reaches the bottom edge of the sheet, and the step buttons of a time field follow the page direction.",
     changes: [
       c("fixed", "[FormSheet](form-sheet): the footer now reaches the bottom edge of the sheet. Before, it stopped 24 px above the edge, and a long form showed its fields in that gap."),
