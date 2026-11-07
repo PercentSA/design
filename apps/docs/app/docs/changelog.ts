@@ -19,9 +19,10 @@ export const RELEASES: Release[] = [
   {
     version: "0.16.2",
     date: null,
-    summary: "A form sheet's footer reaches the bottom edge of the sheet.",
+    summary: "A form sheet's footer reaches the bottom edge of the sheet, and the step buttons of a time field follow the page direction.",
     changes: [
       c("fixed", "[FormSheet](form-sheet): the footer now reaches the bottom edge of the sheet. Before, it stopped 24 px above the edge, and a long form showed its fields in that gap."),
+      c("fixed", "[TimeInput](time-input): the step buttons of each box follow the page direction, as in every NumberInput (in Arabic, minus on the right). The boxes stay in clock order, hour first."),
     ],
   },
   {

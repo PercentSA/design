@@ -133,6 +133,17 @@ describe("TimeInput", () => {
     expect(log.at(-1)).toEqual({ date: "2026-09-27", time: "21:00" });
   });
 
+  test("the step buttons of each box follow the page direction; the boxes stay in clock order", async () => {
+    for (const [lang, dir] of [["ar", "rtl"], ["en", "ltr"]] as const) {
+      const el = await mount(<Time start="09:00" log={[]} lang={lang} />);
+      const group = el.querySelector('[role="group"]')!;
+      expect(group.getAttribute("dir")).toBe("ltr");
+      const boxes = [...group.querySelectorAll(":scope > div.contents")];
+      expect(boxes.map((b) => b.getAttribute("dir"))).toEqual([dir, dir]);
+      expect(boxes.every((b) => b.querySelector("input") && b.querySelectorAll("button").length === 2)).toBe(true);
+    }
+  });
+
   test("in a Field the group is labelled by the field label", async () => {
     const el = await mount(
       <Field label="Opens at" id="opens" hint="Riyadh time">
