@@ -17,6 +17,15 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.16.2",
+    date: "2026-11-07",
+    summary: "A form sheet's footer reaches the bottom edge of the sheet, and the step buttons of a time field follow the page direction.",
+    changes: [
+      c("fixed", "[FormSheet](form-sheet): the footer now reaches the bottom edge of the sheet. Before, it stopped 24 px above the edge, and a long form showed its fields in that gap."),
+      c("fixed", "[TimeInput](time-input): the step buttons of each box follow the page direction, as in every NumberInput (in Arabic, minus on the right). The boxes stay in clock order, hour first."),
+    ],
+  },
+  {
     version: "0.16.1",
     date: "2026-11-07",
     summary: "An image field can show a whole logo, and a white logo on a dark surface.",

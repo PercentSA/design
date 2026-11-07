@@ -118,7 +118,7 @@ describe("FormSheet", () => {
 
   test("without the new props the footer and buttons are as before", async () => {
     await form();
-    expect(footer().className).toContain("sticky bottom-0");
+    expect(footer().className).toContain("sticky -bottom-6");
     expect(buttonsRow().className).toBe("flex flex-wrap justify-end gap-2");
     expect(footer().querySelector('[role="status"]')!.childElementCount).toBe(0);
     expect([submit().disabled, submit().textContent, submit().className.includes("bg-primary"), buttonNamed(footer(), "Cancel") != null]).toEqual([false, "Save", true, true]);

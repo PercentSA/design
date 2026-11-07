@@ -2,6 +2,11 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.16.2
+
+- [FormSheet](https://design.percent.sa/en/components/form-sheet): the footer now reaches the bottom edge of the sheet. Before, it stopped 24 px above the edge, and a long form showed its fields in that gap.
+- [TimeInput](https://design.percent.sa/en/components/time-input): the step buttons of each box follow the page direction, as in every NumberInput (in Arabic, minus on the right). The boxes stay in clock order, hour first.
+
 ## 0.16.1
 
 - [ImageField](https://design.percent.sa/en/components/image-field): new `fit` (`"contain"` shows the whole image, for a logo; the default `"cover"` is unchanged) and `previewTheme` (`"dark"` shows the preview on a dark surface in both page themes, for a white logo).

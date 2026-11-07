@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import { cn } from "../lib/cn";
-import { useStrings } from "../provider";
+import { useDir, useStrings } from "../provider";
 import type { PlainDate } from "../saudi/calendar";
 import { joinTime, splitTime } from "../saudi/date-time";
 import { SegmentedControl } from "./actions";
@@ -14,6 +14,7 @@ const pad = (n: number) => String(n).padStart(2, "0");
 
 /**
  * A time of day on the 12-hour clock: hour 1–12, minute, AM/PM (ص/م in Arabic). Always left to right, hour first.
+ * The step buttons of each box follow the page direction, as in every NumberInput.
  * The value is "HH:mm" (24 hours), null while empty; `name` posts it. A step from 11 to 12 crosses noon or midnight.
  */
 export function TimeInput({
@@ -36,6 +37,7 @@ export function TimeInput({
   className?: string;
 }) {
   const s = useStrings();
+  const pageDir = useDir();
   const minuteId = useId();
   const labelledBy = useFieldLabelId();
   // The field label points at the hour box (a click on it starts there); the group carries the name.
@@ -51,39 +53,43 @@ export function TimeInput({
       aria-describedby={field["aria-describedby"]}
       className={cn("flex flex-wrap items-center gap-2", className)}
     >
-      <NumberInput
-        id={field.id}
-        aria-label={s.hour}
-        value={time && hour12}
-        min={1}
-        max={12}
-        disabled={disabled}
-        className="w-30"
-        onValueChange={(h) => {
-          if (h == null || !Number.isInteger(h) || h < 1 || h > 12) return;
-          // As on a clock: between 11 and 12 the time crosses noon or midnight.
-          const crosses = time != null && ((hour12 === 11 && h === 12) || (hour12 === 12 && h === 11));
-          set(h, minute, crosses ? !pm : pm);
-        }}
-      />
+      <div dir={pageDir} className="contents">
+        <NumberInput
+          id={field.id}
+          aria-label={s.hour}
+          value={time && hour12}
+          min={1}
+          max={12}
+          disabled={disabled}
+          className="w-30"
+          onValueChange={(h) => {
+            if (h == null || !Number.isInteger(h) || h < 1 || h > 12) return;
+            // As on a clock: between 11 and 12 the time crosses noon or midnight.
+            const crosses = time != null && ((hour12 === 11 && h === 12) || (hour12 === 12 && h === 11));
+            set(h, minute, crosses ? !pm : pm);
+          }}
+        />
+      </div>
       <span aria-hidden="true" className="text-fg-3">
         :
       </span>
-      <NumberInput
-        id={minuteId}
-        aria-label={s.minute}
-        value={time && minute}
-        min={0}
-        // The last minute on the step grid, so a step never lands on 59 from 55.
-        max={Math.floor(59 / minuteStep) * minuteStep}
-        step={minuteStep}
-        format={pad}
-        disabled={disabled}
-        className="w-30"
-        onValueChange={(m) => {
-          if (m != null && Number.isInteger(m) && m >= 0 && m <= 59) set(hour12, m, pm);
-        }}
-      />
+      <div dir={pageDir} className="contents">
+        <NumberInput
+          id={minuteId}
+          aria-label={s.minute}
+          value={time && minute}
+          min={0}
+          // The last minute on the step grid, so a step never lands on 59 from 55.
+          max={Math.floor(59 / minuteStep) * minuteStep}
+          step={minuteStep}
+          format={pad}
+          disabled={disabled}
+          className="w-30"
+          onValueChange={(m) => {
+            if (m != null && Number.isInteger(m) && m >= 0 && m <= 59) set(hour12, m, pm);
+          }}
+        />
+      </div>
       <SegmentedControl
         value={time ? (pm ? "pm" : "am") : ""}
         onValueChange={(v) => set(hour12, minute, v === "pm")}
