@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.16.3",
-    date: null,
+    date: "2026-11-07",
     summary: "A toggle group that wraps stays a rounded box.",
     changes: [
       c("fixed", "[ToggleGroup](segmented-control): the choices wrap to more rows when they do not fit, and the group stays a rounded box. Before, a group that wrapped showed as an ellipse. A group of one row looks the same as before."),
