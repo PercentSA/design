@@ -64,6 +64,26 @@ function Section({ section, collapsed, slid }: { section: SidebarSection; collap
   );
 }
 
+function ToggleButton({ rail, showLabel, tipSide, onClick }: { rail: boolean; showLabel: boolean; tipSide: "left" | "right"; onClick: () => void }) {
+  const s = useStrings();
+  const Icon = rail ? PanelLeftOpen : PanelLeftClose;
+  const words = rail ? s.expandSidebar : s.collapseSidebar;
+  const withText = !rail && showLabel;
+  const [tip, setTip] = useState(false);
+  const button = (
+    <button type="button" aria-expanded={!rail} aria-label={words} onClick={onClick} className={cn(ITEM, "shrink-0 text-fg-3", rail && "justify-center px-0")}>
+      <Icon aria-hidden className="rtl:-scale-x-100" />
+      {withText && <span className="min-w-0 flex-1 truncate text-start">{words}</span>}
+    </button>
+  );
+  // One tree in both states, so the button keeps focus when it toggles; with the text shown there is no tooltip.
+  return (
+    <Tooltip content={words} side={tipSide} open={withText ? false : tip} onOpenChange={(open) => setTip(!withText && open)}>
+      {button}
+    </Tooltip>
+  );
+}
+
 /**
  * App navigation: sections of router links with icons and badges, a brand `header` and a `footer` (user menu).
  * Collapsed, it is an icon rail with tooltips; give every item an icon. Without `collapsed` it keeps its own state.
@@ -75,6 +95,7 @@ export function Sidebar({
   collapsed,
   onCollapsedChange,
   label,
+  toggleLabel = true,
   className,
 }: {
   sections: SidebarSection[];
@@ -84,9 +105,12 @@ export function Sidebar({
   onCollapsedChange?: (collapsed: boolean) => void;
   /** Name of the navigation; default the "Menu" string. */
   label?: string;
+  /** Show the words "Collapse sidebar" beside the toggle icon while expanded (default). `false`: icon only. The rail always shows the icon only, with the words as tooltip. */
+  toggleLabel?: boolean;
   className?: string;
 }) {
   const s = useStrings();
+  const tipSide = useDir() === "rtl" ? "left" : "right";
   const inSheet = useContext(SidebarInSheet);
   const [own, setOwn] = useState(false);
   const rail = !inSheet && (collapsed ?? own);
@@ -94,7 +118,6 @@ export function Sidebar({
     setOwn(!rail);
     onCollapsedChange?.(!rail);
   };
-  const Icon = rail ? PanelLeftOpen : PanelLeftClose;
   // After the first measure one background slides to the current item; before it, the item draws its own.
   const [navRef, mark] = useSlidingIndicator<HTMLElement>("aria-current", "page");
   return (
@@ -114,17 +137,7 @@ export function Sidebar({
         ))}
       </nav>
       {footer && <div className="shrink-0 overflow-hidden"><SidebarRail.Provider value={rail}>{footer}</SidebarRail.Provider></div>}
-      {!inSheet && (
-        <button
-          type="button"
-          aria-expanded={!rail}
-          aria-label={rail ? s.expandSidebar : s.collapseSidebar}
-          onClick={toggle}
-          className={cn(ITEM, "shrink-0 text-fg-3", rail && "justify-center px-0")}
-        >
-          <Icon aria-hidden className="rtl:-scale-x-100" />
-        </button>
-      )}
+      {!inSheet && <ToggleButton rail={rail} showLabel={toggleLabel} tipSide={tipSide} onClick={toggle} />}
     </div>
   );
 }

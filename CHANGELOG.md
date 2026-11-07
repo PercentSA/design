@@ -2,6 +2,11 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.17.0
+
+- [Sidebar](https://design.percent.sa/en/components/sidebar): the collapse button shows its words beside the icon while the sidebar is expanded. In the rail it is the icon alone, with the words as tooltip and accessible name. The words are the provider strings `collapseSidebar` and `expandSidebar`, so an app can override them. New prop `toggleLabel` (default `true`); `false` keeps the icon only, as before. The button keeps its place, its keyboard behaviour and `aria-expanded`.
+- [SideNav](https://design.percent.sa/en/components/side-nav): new prop `iconOnly` for `variant="column"`. Each item is its icon in a touch-sized box (44 px), with the label as tooltip and accessible name. Group headings stay for screen readers only. The current item keeps `aria-current="page"` and its selected look. A badge shows as a small dot, and its value stays for screen readers. An item without an icon shows the first letter of its label. `iconOnly` has no effect on `variant="list"`. The part has no breakpoints: the docs show an icon column from 768 px and the full column from 1280 px with two renders and responsive classes. Nothing changes for existing projects.
+
 ## 0.16.4
 
 - [SegmentedControl](https://design.percent.sa/en/components/segmented-control) and [ToggleGroup](https://design.percent.sa/en/components/segmented-control): a choice whose label wraps to two lines keeps space above and below the text and shows as a rounded box. Before, the text touched the edges. A choice of one line looks the same as before.

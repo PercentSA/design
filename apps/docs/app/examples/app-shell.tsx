@@ -449,3 +449,25 @@ export function SideNavListExample() {
     </div>
   );
 }
+
+/** An icon column from 768 px, the full column from 1280 px: two renders, each shown by responsive classes. Below 768 px use `variant="list"`. Resize the window to see it. */
+export function SideNavIconsExample() {
+  const t = useT();
+  const [current, setCurrent] = useState("#profile");
+  const groups = useSettingsGroups(current);
+  return (
+    <div
+      className="flex w-full gap-8"
+      onClick={(e) => {
+        const href = (e.target as Element).closest("nav a")?.getAttribute("href");
+        if (!href) return;
+        e.preventDefault(); // an app's router sets `current`; here a click does
+        setCurrent(href);
+      }}
+    >
+      <SideNav groups={groups} label={t("Settings", "الإعدادات")} iconOnly className="hidden w-11 shrink-0 md:grid xl:hidden" />
+      <SideNav groups={groups} label={t("Settings", "الإعدادات")} className="hidden w-60 shrink-0 xl:grid" />
+      <p className="text-sm text-fg-3">{t("Narrower than 768 px both columns hide: show the list variant there. From 768 px the icon column shows; from 1280 px the full column.", "تحت 768 بكسل يختفي العمودان: اعرض نمط القائمة هناك. من 768 بكسل يظهر عمود الأيقونات؛ ومن 1280 بكسل العمود الكامل.")}</p>
+    </div>
+  );
+}

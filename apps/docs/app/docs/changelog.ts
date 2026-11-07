@@ -17,6 +17,15 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.17.0",
+    date: "2026-11-08",
+    summary: "The Sidebar collapse button shows its words, and SideNav can be an icon column.",
+    changes: [
+      c("new", "[Sidebar](sidebar): the collapse button shows its words beside the icon while the sidebar is expanded. In the rail it is the icon alone, with the words as tooltip and accessible name. The words are the provider strings collapseSidebar and expandSidebar. New prop toggleLabel (default true); false keeps the icon only."),
+      c("new", "[SideNav](side-nav): new prop iconOnly for variant column. Each item is its icon in a touch-sized box, with the label as tooltip and accessible name; group headings are for screen readers only; a badge is a small dot; an item without an icon shows the first letter of its label. No effect on variant list. The docs show an icon column from 768 px and the full column from 1280 px."),
+    ],
+  },
+  {
     version: "0.16.4",
     date: "2026-11-07",
     summary: "A segmented choice whose label wraps keeps space around the text.",
