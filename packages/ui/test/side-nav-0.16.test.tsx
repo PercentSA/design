@@ -79,6 +79,12 @@ describe("SideNav scrollbar (0.17.1)", () => {
     expect(html(<SideNav groups={groups} label="Settings" />)).not.toContain("scrollbar-none");
   });
 
+  test("className scrollbar-auto takes scrollbar-none off", () => {
+    const out = html(<SideNav groups={groups} label="Settings" sticky className="scrollbar-auto" />);
+    expect(out).toContain("scrollbar-auto");
+    expect(out).not.toContain("scrollbar-none");
+  });
+
   test("styles.css defines the scrollbar-none utility", async () => {
     const css = await Bun.file(new URL("../styles.css", import.meta.url)).text();
     expect(css).toMatch(/@utility scrollbar-none \{\s*scrollbar-width: none;\s*&::-webkit-scrollbar \{\s*display: none;/);

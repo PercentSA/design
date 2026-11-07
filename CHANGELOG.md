@@ -4,8 +4,8 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 
 ## 0.17.1
 
-- New CSS utility `scrollbar-none` in `@percentsa/ui/styles.css`: a box that scrolls with its scrollbar hidden (`scrollbar-width: none` and `::-webkit-scrollbar { display: none }`). Wheel, touch, trackpad and keyboard scrolling still work, and a focused item still scrolls into view.
-- [SideNav](https://design.percent.sa/en/components/side-nav): with `sticky`, the column that scrolls on its own now hides its scrollbar (it uses `scrollbar-none`). There is no new prop; the column scrolls as before. An app that wants the visible scrollbar can override it with `[scrollbar-width:auto]` in `className`.
+- `scrollbar-none` now also hides the WebKit scrollbar. Tailwind's own `scrollbar-none` sets only `scrollbar-width: none`; `@percentsa/ui/styles.css` adds `::-webkit-scrollbar { display: none }` to it, for every app that imports the file. Wheel, touch, trackpad and keyboard scrolling still work, and a focused item still scrolls into view.
+- [SideNav](https://design.percent.sa/en/components/side-nav): with `sticky`, the column that scrolls on its own now hides its scrollbar (it uses `scrollbar-none`). There is no new prop; the column scrolls as before. An app that wants the visible scrollbar can put `scrollbar-auto` in `className`: `cn` removes `scrollbar-none`.
 
 ## 0.17.0
 

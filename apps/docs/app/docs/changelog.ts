@@ -19,10 +19,10 @@ export const RELEASES: Release[] = [
   {
     version: "0.17.1",
     date: null,
-    summary: "SideNav hides its scrollbar when it scrolls on its own; new scrollbar-none utility.",
+    summary: "SideNav hides its scrollbar when it scrolls on its own; scrollbar-none also hides the WebKit scrollbar.",
     changes: [
-      c("new", "New CSS utility scrollbar-none in @percentsa/ui/styles.css: a box that scrolls with its scrollbar hidden. Wheel, touch, trackpad and keyboard scrolling still work."),
-      c("better", "[SideNav](side-nav): with sticky, the column that scrolls on its own now hides its scrollbar. No new prop. An app that wants the visible scrollbar can override it with [scrollbar-width:auto] in className."),
+      c("new", "scrollbar-none now also hides the WebKit scrollbar. Tailwind's own scrollbar-none sets only scrollbar-width: none; @percentsa/ui/styles.css adds the ::-webkit-scrollbar rule to it, for every app that imports the file. Wheel, touch, trackpad and keyboard scrolling still work."),
+      c("better", "[SideNav](side-nav): with sticky, the column that scrolls on its own now hides its scrollbar. No new prop. An app that wants the visible scrollbar can put scrollbar-auto in className (cn removes scrollbar-none)."),
     ],
   },
   {
