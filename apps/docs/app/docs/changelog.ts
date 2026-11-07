@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.17.1",
-    date: null,
+    date: "2026-11-08",
     summary: "SideNav hides its scrollbar when it scrolls on its own; scrollbar-none also hides the WebKit scrollbar.",
     changes: [
       c("new", "scrollbar-none now also hides the WebKit scrollbar. Tailwind's own scrollbar-none sets only scrollbar-width: none; @percentsa/ui/styles.css adds the ::-webkit-scrollbar rule to it, for every app that imports the file. Wheel, touch, trackpad and keyboard scrolling still work."),
