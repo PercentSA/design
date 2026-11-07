@@ -53,7 +53,8 @@ export const ButtonGroup = ({ className, ...rest }: HTMLAttributes<HTMLDivElemen
 );
 
 const TOGGLE_ITEM =
-  "inline-flex h-(--p-control-h-xs) min-w-(--p-control-h-xs) items-center justify-center gap-2 rounded-pill px-3 text-[13px] font-medium text-fg-2 transition-colors hover:text-fg data-[state=on]:bg-surface-2 data-[state=on]:text-fg disabled:opacity-50 [&_svg]:size-4";
+  // A minimum height, not a fixed one: a label that wraps to two lines keeps space above and below it.
+  "inline-flex min-h-(--p-control-h-xs) min-w-(--p-control-h-xs) items-center justify-center gap-2 rounded-[calc(var(--p-control-h-xs)/2)] px-3 py-1 text-center text-[13px] leading-tight font-medium text-fg-2 transition-colors hover:text-fg data-[state=on]:bg-surface-2 data-[state=on]:text-fg disabled:opacity-50 [&_svg]:size-4";
 
 export const Toggle = ({ className, ...rest }: ComponentProps<typeof RadixToggle.Root>) => (
   <RadixToggle.Root className={cn(TOGGLE_ITEM, className)} {...rest} />
@@ -92,7 +93,7 @@ export function SegmentedControl({
       className={cn(GROUP, "relative isolate", className)}
       {...rest}
     >
-      {pill && <span {...pill} className={cn(pill.className, "rounded-pill bg-primary")} />}
+      {pill && <span {...pill} className={cn(pill.className, "rounded-[calc(var(--p-control-h-xs)/2)] bg-primary")} />}
       {options.map((o) => (
         <RadixToggleGroup.Item
           key={o.value}

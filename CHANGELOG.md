@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.16.4
+
+- [SegmentedControl](https://design.percent.sa/en/components/segmented-control) and [ToggleGroup](https://design.percent.sa/en/components/segmented-control): a choice whose label wraps to two lines keeps space above and below the text and shows as a rounded box. Before, the text touched the edges. A choice of one line looks the same as before.
+
 ## 0.16.3
 
 - [ToggleGroup](https://design.percent.sa/en/components/segmented-control): the choices wrap to more rows when they do not fit, and the group stays a rounded box. Before, a group that wrapped showed as an ellipse. A group of one row looks the same as before.
