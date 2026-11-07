@@ -78,7 +78,7 @@ function ToggleButton({ rail, showLabel, tipSide, onClick }: { rail: boolean; sh
   );
   // One tree in both states, so the button keeps focus when it toggles; with the text shown there is no tooltip.
   return (
-    <Tooltip content={words} side={tipSide} open={withText ? false : tip} onOpenChange={setTip}>
+    <Tooltip content={words} side={tipSide} open={withText ? false : tip} onOpenChange={(open) => setTip(!withText && open)}>
       {button}
     </Tooltip>
   );

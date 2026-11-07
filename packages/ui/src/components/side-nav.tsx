@@ -46,7 +46,8 @@ function Group({ group, list, iconOnly }: { group: SideNavGroup; list: boolean; 
               </li>
             );
           // Icon column: the icon (or the first letter of a text label) in a touch-sized box; the label stays in the link for screen readers and shows as a tooltip.
-          const letter = typeof item.label === "string" ? Array.from(item.label.trim())[0] : undefined;
+          // A leading Arabic article «ال» is skipped, so «الإعدادات» shows «إ», not the same «ا» as most Arabic labels.
+          const letter = typeof item.label === "string" ? Array.from(item.label.trim().replace(/^ال(?=\S)/, ""))[0] : undefined;
           return (
             <li key={item.href}>
               <Tooltip content={item.label} side={tipSide}>

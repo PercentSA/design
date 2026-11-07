@@ -102,6 +102,12 @@ describe("SideNav iconOnly", () => {
     expect(out.match(/font-medium uppercase/g)).toHaveLength(1);
   });
 
+  test("no icon, Arabic label: the article «ال» is skipped", () => {
+    const out = html(<SideNav groups={[{ items: [{ href: "/a", label: "الإعدادات" }, { href: "/b", label: "باقة" }] }]} label="الإعدادات" iconOnly />);
+    expect(out).toContain('class="font-medium uppercase">إ</span>');
+    expect(out).toContain('class="font-medium uppercase">ب</span>');
+  });
+
   test("RTL: renders all links; the dot sits at the end edge", async () => {
     const out = html(ar(<SideNav groups={groups} label="الإعدادات" iconOnly />));
     expect(out).toContain("end-2");
