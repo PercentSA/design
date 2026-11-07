@@ -17,6 +17,15 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.17.1",
+    date: null,
+    summary: "SideNav hides its scrollbar when it scrolls on its own; new scrollbar-none utility.",
+    changes: [
+      c("new", "New CSS utility scrollbar-none in @percentsa/ui/styles.css: a box that scrolls with its scrollbar hidden. Wheel, touch, trackpad and keyboard scrolling still work."),
+      c("better", "[SideNav](side-nav): with sticky, the column that scrolls on its own now hides its scrollbar. No new prop. An app that wants the visible scrollbar can override it with [scrollbar-width:auto] in className."),
+    ],
+  },
+  {
     version: "0.17.0",
     date: "2026-11-08",
     summary: "The Sidebar collapse button shows its words, and SideNav can be an icon column.",

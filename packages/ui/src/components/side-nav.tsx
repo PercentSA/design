@@ -73,7 +73,7 @@ function Group({ group, list, iconOnly }: { group: SideNavGroup; list: boolean; 
 /**
  * In-page navigation for an area with many sections (a settings area): groups of router links, a heading per group.
  * `column` (default) is the compact column next to the content; it fills its box, so the app sets the width.
- * `sticky` keeps it in view while the page scrolls, under the AppShell header (`--p-sticky-top`); it scrolls on its own when taller than the screen.
+ * `sticky` keeps it in view while the page scrolls, under the AppShell header (`--p-sticky-top`); it scrolls on its own when taller than the screen, with its scrollbar hidden (`scrollbar-none`); wheel, touch and keyboard scrolling still work.
  * `iconOnly` (column only; `list` ignores it) shows each item as its icon in a 44 px box (the first letter of the label when there is no icon), the label as tooltip and for screen readers, group headings for screen readers only, and a badge as a small dot. Use it for a narrow screen; show the full column from a wider one.
  * `list` is the same groups as a full-width list with each `description` and a chevron: the area's home on a phone.
  */
@@ -101,7 +101,7 @@ export function SideNav({
       aria-label={label}
       className={cn(
         "grid content-start gap-4",
-        sticky && !list && "sticky top-(--p-sticky-top,0px) max-h-[calc(100dvh-var(--p-sticky-top,0px))] self-start overflow-y-auto",
+        sticky && !list && "sticky top-(--p-sticky-top,0px) max-h-[calc(100dvh-var(--p-sticky-top,0px))] self-start overflow-y-auto scrollbar-none",
         className,
       )}
     >

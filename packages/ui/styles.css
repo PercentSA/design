@@ -433,3 +433,11 @@
     }
   }
 }
+
+/* A box that scrolls with its scrollbar hidden. Wheel, touch and keyboard scrolling still work. */
+@utility scrollbar-none {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

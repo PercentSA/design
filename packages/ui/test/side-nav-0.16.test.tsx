@@ -71,3 +71,16 @@ describe("SideNav", () => {
     expect(out).toContain('<span aria-hidden="true" class="contents"><svg data-icon="true">');
   });
 });
+
+describe("SideNav scrollbar (0.17.1)", () => {
+  test("a sticky column scrolls on its own with the scrollbar hidden; a plain one does not", () => {
+    const sticky = html(<SideNav groups={groups} label="Settings" sticky />);
+    expect(sticky).toMatch(/^<nav[^>]*class="[^"]*overflow-y-auto scrollbar-none/);
+    expect(html(<SideNav groups={groups} label="Settings" />)).not.toContain("scrollbar-none");
+  });
+
+  test("styles.css defines the scrollbar-none utility", async () => {
+    const css = await Bun.file(new URL("../styles.css", import.meta.url)).text();
+    expect(css).toMatch(/@utility scrollbar-none \{\s*scrollbar-width: none;\s*&::-webkit-scrollbar \{\s*display: none;/);
+  });
+});

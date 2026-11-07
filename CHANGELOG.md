@@ -2,6 +2,11 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.17.1
+
+- New CSS utility `scrollbar-none` in `@percentsa/ui/styles.css`: a box that scrolls with its scrollbar hidden (`scrollbar-width: none` and `::-webkit-scrollbar { display: none }`). Wheel, touch, trackpad and keyboard scrolling still work, and a focused item still scrolls into view.
+- [SideNav](https://design.percent.sa/en/components/side-nav): with `sticky`, the column that scrolls on its own now hides its scrollbar (it uses `scrollbar-none`). There is no new prop; the column scrolls as before. An app that wants the visible scrollbar can override it with `[scrollbar-width:auto]` in `className`.
+
 ## 0.17.0
 
 - [Sidebar](https://design.percent.sa/en/components/sidebar): the collapse button shows its words beside the icon while the sidebar is expanded. In the rail it is the icon alone, with the words as tooltip and accessible name. The words are the provider strings `collapseSidebar` and `expandSidebar`, so an app can override them. New prop `toggleLabel` (default `true`); `false` keeps the icon only, as before. The button keeps its place, its keyboard behaviour and `aria-expanded`.
