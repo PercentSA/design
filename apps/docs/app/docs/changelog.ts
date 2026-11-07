@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.17.0",
-    date: null,
+    date: "2026-11-08",
     summary: "The Sidebar collapse button shows its words, and SideNav can be an icon column.",
     changes: [
       c("new", "[Sidebar](sidebar): the collapse button shows its words beside the icon while the sidebar is expanded. In the rail it is the icon alone, with the words as tooltip and accessible name. The words are the provider strings collapseSidebar and expandSidebar. New prop toggleLabel (default true); false keeps the icon only."),
