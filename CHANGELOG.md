@@ -2,6 +2,11 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.17.1
+
+- `scrollbar-none` now also hides the WebKit scrollbar. Tailwind's own `scrollbar-none` sets only `scrollbar-width: none`; `@percentsa/ui/styles.css` adds `::-webkit-scrollbar { display: none }` to it, for every app that imports the file. Wheel, touch, trackpad and keyboard scrolling still work, and a focused item still scrolls into view.
+- [SideNav](https://design.percent.sa/en/components/side-nav): with `sticky`, the column that scrolls on its own now hides its scrollbar (it uses `scrollbar-none`). There is no new prop; the column scrolls as before. An app that wants the visible scrollbar can put `scrollbar-auto` in `className`: `cn` removes `scrollbar-none`.
+
 ## 0.17.0
 
 - [Sidebar](https://design.percent.sa/en/components/sidebar): the collapse button shows its words beside the icon while the sidebar is expanded. In the rail it is the icon alone, with the words as tooltip and accessible name. The words are the provider strings `collapseSidebar` and `expandSidebar`, so an app can override them. New prop `toggleLabel` (default `true`); `false` keeps the icon only, as before. The button keeps its place, its keyboard behaviour and `aria-expanded`.
