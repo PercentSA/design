@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.19.0
+
+- [Sidebar](https://design.percent.sa/en/components/sidebar): `href` is optional. An item without `href` is a plain row, for a status such as "Loading clients…": it is not a link and not focusable, it is never current (`current` is ignored), it has no hover style, and `children` are ignored (no chevron). It has the same height, padding, icon and label layout as a link row, in a quieter text colour, so the list does not move when links replace it. In the icon rail it shows the icon, with the label for screen readers only. A child without `href` is a plain row too. The app gives the live role to the label (`<span role="status">`) when the text changes. Before, every item had to be a link, so a loading row was a tab stop that the router marked as the current page. Link rows render as before.
+
 ## 0.18.0
 
 - [Sidebar](https://design.percent.sa/en/components/sidebar): an item can have `children`, a list of links that fold under it. The item stays a link to its own `href`; a chevron button beside it (`aria-expanded`, `aria-controls`) folds and unfolds the children. One level only: the children of a child are not shown. A group starts open when it or one of its children is `current`, and it opens when the current page moves into it; the new item option `defaultOpen` opens it at first. The icon rail shows no children, and the parent's icon stays a link. The button's name comes from the new provider strings `showSubItems` and `hideSubItems`, which are functions of the group label ("Show Al Noor links"); an app that overrides them must pass functions. `defaultOpen={false}` keeps a group folded even when the current page is inside it; a folded group (or the rail) whose child is current shows the selected look on the parent, without `aria-current`. Item `href`s must be unique within a sidebar. The chevron follows the page direction. A sidebar without `children` renders as before.

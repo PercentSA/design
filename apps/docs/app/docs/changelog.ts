@@ -17,6 +17,14 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.19.0",
+    date: "2026-11-12",
+    summary: "Sidebar items can be plain rows without a link.",
+    changes: [
+      c("new", "[Sidebar](sidebar): href is now optional. An item without href is a plain row for a status such as 'Loading clients…'. It is not a link and not focusable, never the current page (current is ignored), has no hover style, and ignores children. It has the same size and layout as a link row, in a quieter colour, so the list does not move when links replace it. The icon rail shows its icon, with the label for screen readers only. A child without href is a plain row too. The app gives the label role='status' so screen readers announce a change of the text. Before, a loading row had to be a link: a tab stop that the router could mark as the current page. Link rows are unchanged."),
+    ],
+  },
+  {
     version: "0.18.0",
     date: "2026-11-11",
     summary: "Sidebar items can fold open to a list of links.",

@@ -9,8 +9,8 @@ import { Badge } from "./feedback";
 import { Tooltip } from "./overlays";
 
 export type SidebarItem = {
-  /** Unique within the sidebar: it keys the saved fold state of a group. */
-  href: string;
+  /** Unique within the sidebar: it keys the saved fold state of a group. Without it the item is a plain row: not a link, never current, no children; for a status such as loading text. */
+  href?: string;
   label: ReactNode;
   icon?: ReactNode;
   badge?: ReactNode;
@@ -39,8 +39,20 @@ export const useSidebarRail = () => useContext(SidebarRail);
 const ITEM =
   "relative flex h-9 items-center gap-3 rounded-field px-3 text-sm text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg aria-[current=page]:bg-surface-2 aria-[current=page]:font-medium aria-[current=page]:text-fg [&_svg]:size-4 [&_svg]:shrink-0";
 
+const PLAIN = "relative flex h-9 items-center gap-3 rounded-field px-3 text-sm text-fg-3 [&_svg]:size-4 [&_svg]:shrink-0";
+
 // A plain function, not a component: the rail's Tooltip needs the link element itself to pass its trigger props to.
 function itemLink(L: LinkComponent | "a", item: SidebarItem, collapsed: boolean, slid: boolean, grow?: boolean, childCurrent?: boolean) {
+  if (item.href == null) {
+    // A plain row: same box as a link row, but no link, no hover, never current.
+    return (
+      <div className={cn(PLAIN, collapsed && "justify-center px-0", grow && "min-w-0 flex-1")}>
+        {item.icon}
+        <span className={cn(collapsed ? "sr-only" : "min-w-0 flex-1 truncate")}>{item.label}</span>
+        {item.badge != null && <Badge className={cn("h-5 px-2", collapsed && "sr-only")}>{item.badge}</Badge>}
+      </div>
+    );
+  }
   return (
     <L
       href={item.href}
@@ -61,19 +73,20 @@ function itemLink(L: LinkComponent | "a", item: SidebarItem, collapsed: boolean,
 function Group({ L, item, slid, folds, onFold }: { L: LinkComponent | "a"; item: SidebarItem; slid: boolean; folds: Folds; onFold: OnFold }) {
   const s = useStrings();
   const id = useId();
+  const href = item.href!;
   const kids = item.children!;
   const childCurrent = kids.some((k) => k.current);
-  const cur = item.current ? item.href : kids.find((k) => k.current)?.href;
-  const [open, setOpen] = useState(folds[item.href]?.open ?? item.defaultOpen ?? !!cur);
+  const cur = item.current ? href : kids.find((k) => k.current)?.href;
+  const [open, setOpen] = useState(folds[href]?.open ?? item.defaultOpen ?? !!cur);
   // Starts from the page the group saw last, so a page change that happened while the sidebar was a rail opens it on expand.
-  const [seen, setSeen] = useState(item.href in folds ? folds[item.href].cur : cur);
+  const [seen, setSeen] = useState(href in folds ? folds[href].cur : cur);
   // The current page changes into a group: open it. A fold by the user stays until the current page changes again.
   if (cur !== seen) {
     setSeen(cur);
     if (cur) setOpen(true);
   }
   // Keep the choice above the group, so it survives a switch to the rail and back.
-  useEffect(() => onFold(item.href, open, cur), [open, cur, item.href, onFold]);
+  useEffect(() => onFold(href, open, cur), [open, cur, href, onFold]);
   const name = typeof item.label === "string" ? item.label : "";
   return (
     <>
@@ -91,8 +104,8 @@ function Group({ L, item, slid, folds, onFold }: { L: LinkComponent | "a"; item:
         </button>
       </div>
       <ul id={id} hidden={!open} className={cn("ms-7 gap-0.5", open ? "grid" : "hidden")}>
-        {kids.map((kid) => (
-          <li key={kid.href} className="flex">
+        {kids.map((kid, i) => (
+          <li key={kid.href ?? `plain-${i}`} className="flex">
             {itemLink(L, kid, false, slid, true)}
           </li>
         ))}
@@ -113,17 +126,18 @@ function Section({ section, collapsed, slid, folds, onFold }: { section: Sidebar
         </h2>
       )}
       <ul aria-labelledby={section.title ? id : undefined} className="grid gap-0.5">
-        {section.items.map((item) => {
-          if (!collapsed && item.children?.length) {
+        {section.items.map((item, i) => {
+          const key = item.href ?? `plain-${i}`;
+          if (!collapsed && item.href != null && item.children?.length) {
             return (
-              <li key={item.href}>
+              <li key={key}>
                 <Group L={L} item={item} slid={slid} folds={folds} onFold={onFold} />
               </li>
             );
           }
-          const link = itemLink(L, item, collapsed, slid, false, collapsed && !!item.children?.some((k) => k.current));
+          const link = itemLink(L, item, collapsed, slid, false, collapsed && item.href != null && !!item.children?.some((k) => k.current));
           return (
-            <li key={item.href}>
+            <li key={key}>
               {collapsed ? (
                 <Tooltip content={item.label} side={tipSide}>
                   {link}
