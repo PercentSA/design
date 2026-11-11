@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Bell, ChartColumn, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
+import { Bell, ChartColumn, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, Lock, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
 import {
   AppShell,
   Button,
@@ -172,6 +172,43 @@ export function SidebarExample() {
         header={<SidebarLogo collapsed={collapsed} />}
         footer={<User collapsed={collapsed} />}
       />
+    </div>
+  );
+}
+
+/** Items with `children` fold open to their links; the group with the current page starts open. */
+export function SidebarNestedExample() {
+  const t = useT();
+  const [current, setCurrent] = useState("#al-noor-app");
+  const dot = (href: string, label: string) => ({ href, label, current: href === current });
+  const group = (href: string, label: string, children: { href: string; label: string }[]) => {
+    const kids = children.map((c) => dot(c.href, c.label));
+    return { href, label, current: href === current, children: kids };
+  };
+  const sections: SidebarSection[] = [
+    {
+      title: t("Clients", "العملاء"),
+      items: [
+        { ...group("#al-noor", t("Al Noor", "النور"), [
+          { href: "#al-noor-app", label: t("Mobile app", "تطبيق الجوال") },
+          { href: "#al-noor-site", label: t("Website", "الموقع") },
+        ]), icon: <Users /> },
+        { ...group("#sahab", t("Sahab", "سحاب"), [{ href: "#sahab-portal", label: t("Portal", "البوابة") }]), icon: <Users /> },
+        { ...group("#private", t("Private client", "عميل خاص"), [{ href: "#private-erp", label: t("ERP", "نظام ERP") }]), icon: <Lock /> },
+      ],
+    },
+  ];
+  return (
+    <div
+      className="h-[28rem] overflow-hidden rounded-card border border-line"
+      onClick={(e) => {
+        const href = (e.target as Element).closest("nav a")?.getAttribute("href");
+        if (!href) return;
+        e.preventDefault();
+        setCurrent(href);
+      }}
+    >
+      <Sidebar sections={sections} />
     </div>
   );
 }
