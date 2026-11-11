@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Bell, ChartColumn, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, Lock, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
+import { Bell, ChartColumn, Loader2, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, Lock, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
 import {
   AppShell,
   Button,
@@ -208,6 +208,27 @@ export function SidebarNestedExample() {
         setCurrent(href);
       }}
     >
+      <Sidebar sections={sections} />
+    </div>
+  );
+}
+
+/** An item without `href` is a plain row: here a loading status. The app puts `role="status"` on the label, so a screen reader announces the text when it changes. */
+export function SidebarPlainRowExample() {
+  const t = useT();
+  const sections: SidebarSection[] = [
+    {
+      title: t("Clients", "العملاء"),
+      items: [
+        {
+          icon: <Loader2 aria-hidden className="motion-safe:animate-spin" />,
+          label: <span role="status">{t("Loading clients…", "جارٍ تحميل العملاء…")}</span>,
+        },
+      ],
+    },
+  ];
+  return (
+    <div className="h-48 overflow-hidden rounded-card border border-line">
       <Sidebar sections={sections} />
     </div>
   );
