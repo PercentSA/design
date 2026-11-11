@@ -128,6 +128,30 @@ describe("Sidebar nested items", () => {
     expect(group(el).getAttribute("aria-expanded")).toBe("false");
   });
 
+  test("a page change while the sidebar is a rail shows on expand", async () => {
+    const { createRoot } = await import("react-dom/client");
+    const { act } = await import("react");
+    const rail = () => el.querySelector("button[aria-expanded]:not([aria-controls])")!;
+    const site = () => { const m = make("/a/app"); m[0].items[1].children![0].current = false; m[0].items[1].children![1].current = true; return m; };
+    let el!: HTMLElement;
+    const run = async (first: SidebarSection[], second: SidebarSection[] | null, fold: boolean) => {
+      el = document.createElement("div");
+      document.body.append(el);
+      const root = createRoot(el);
+      await act(async () => root.render(<Sidebar sections={first} />));
+      if (fold) await click(group(el));
+      await click(rail());
+      if (second) await act(async () => root.render(<Sidebar sections={second} />));
+      await click(rail());
+      const open = group(el).getAttribute("aria-expanded");
+      await act(async () => root.unmount());
+      return open;
+    };
+    expect(await run(make("/home"), make("/a/app"), false)).toBe("true");
+    expect(await run(make("/a/app"), site(), true)).toBe("true");
+    expect(await run(make("/a/app"), null, true)).toBe("false");
+  });
+
   test("defaultOpen", async () => {
     const s = make("/home");
     s[0].items[1].defaultOpen = true;

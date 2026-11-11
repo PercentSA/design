@@ -21,7 +21,7 @@ export const RELEASES: Release[] = [
     date: null,
     summary: "Sidebar items can fold open to a list of links.",
     changes: [
-      c("new", "[Sidebar](sidebar): an item can have children, links that fold under it. The item stays a link to its own address; a chevron button beside it folds and unfolds the children. One level only. A group starts open when it or a child is the current page, and opens when the current page moves into it; defaultOpen opens it at first. The icon rail shows no children. The button's name comes from the provider strings showSubItems and hideSubItems. A sidebar without children looks the same as before."),
+      c("new", "[Sidebar](sidebar): an item can have children, links that fold under it. The item stays a link to its own address; a chevron button beside it folds and unfolds the children. One level only. A group starts open when it or a child is the current page, and opens when the current page moves into it; defaultOpen opens it at first. The icon rail shows no children. The button's name includes the group label ('Show Al Noor links'). The strings showSubItems and hideSubItems are functions of the label, so an app that overrides them must pass functions. defaultOpen={false} keeps a group folded even when the current page is inside it. A folded group (or the rail) whose child is current shows the selected look on the parent, without aria-current. Item hrefs must be unique within a sidebar. A sidebar without children looks the same as before."),
     ],
   },
   {

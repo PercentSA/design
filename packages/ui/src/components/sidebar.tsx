@@ -9,6 +9,7 @@ import { Badge } from "./feedback";
 import { Tooltip } from "./overlays";
 
 export type SidebarItem = {
+  /** Unique within the sidebar: it keys the saved fold state of a group. */
   href: string;
   label: ReactNode;
   icon?: ReactNode;
@@ -22,6 +23,9 @@ export type SidebarItem = {
   /** Open at first. `true` opens it even when no child is current; `false` keeps it folded even when the current page is inside. Without it the item opens at first when it or a child is `current`. */
   defaultOpen?: boolean;
 };
+type Folds = Record<string, { open: boolean; cur?: string }>;
+type OnFold = (href: string, open: boolean, cur?: string) => void;
+
 export type SidebarSection = { title?: ReactNode; items: SidebarItem[] };
 
 /** True when AppShell shows the sidebar in its phone sheet: always expanded, no collapse toggle. */
@@ -54,21 +58,22 @@ function itemLink(L: LinkComponent | "a", item: SidebarItem, collapsed: boolean,
 }
 
 /** An item with children (expanded sidebar only): its link, a disclosure button, and the folded list. */
-function Group({ L, item, slid, folds, onFold }: { L: LinkComponent | "a"; item: SidebarItem; slid: boolean; folds: Record<string, boolean>; onFold: (href: string, open: boolean) => void }) {
+function Group({ L, item, slid, folds, onFold }: { L: LinkComponent | "a"; item: SidebarItem; slid: boolean; folds: Folds; onFold: OnFold }) {
   const s = useStrings();
   const id = useId();
   const kids = item.children!;
   const childCurrent = kids.some((k) => k.current);
   const cur = item.current ? item.href : kids.find((k) => k.current)?.href;
-  const [open, setOpen] = useState(folds[item.href] ?? item.defaultOpen ?? !!cur);
-  const [seen, setSeen] = useState(cur);
+  const [open, setOpen] = useState(folds[item.href]?.open ?? item.defaultOpen ?? !!cur);
+  // Starts from the page the group saw last, so a page change that happened while the sidebar was a rail opens it on expand.
+  const [seen, setSeen] = useState(item.href in folds ? folds[item.href].cur : cur);
   // The current page changes into a group: open it. A fold by the user stays until the current page changes again.
   if (cur !== seen) {
     setSeen(cur);
     if (cur) setOpen(true);
   }
   // Keep the choice above the group, so it survives a switch to the rail and back.
-  useEffect(() => onFold(item.href, open), [open, item.href, onFold]);
+  useEffect(() => onFold(item.href, open, cur), [open, cur, item.href, onFold]);
   const name = typeof item.label === "string" ? item.label : "";
   return (
     <>
@@ -96,7 +101,7 @@ function Group({ L, item, slid, folds, onFold }: { L: LinkComponent | "a"; item:
   );
 }
 
-function Section({ section, collapsed, slid, folds, onFold }: { section: SidebarSection; collapsed: boolean; slid: boolean; folds: Record<string, boolean>; onFold: (href: string, open: boolean) => void }) {
+function Section({ section, collapsed, slid, folds, onFold }: { section: SidebarSection; collapsed: boolean; slid: boolean; folds: Folds; onFold: OnFold }) {
   const L = useLinkComponent();
   const id = useId();
   const tipSide = useDir() === "rtl" ? "left" : "right";
@@ -188,8 +193,8 @@ export function Sidebar({
     setOwn(!rail);
     onCollapsedChange?.(!rail);
   };
-  const [folds, setFolds] = useState<Record<string, boolean>>({});
-  const onFold = useCallback((href: string, open: boolean) => setFolds((f) => (f[href] === open ? f : { ...f, [href]: open })), []);
+  const [folds, setFolds] = useState<Folds>({});
+  const onFold = useCallback<OnFold>((href, open, cur) => setFolds((f) => (f[href]?.open === open && f[href].cur === cur ? f : { ...f, [href]: { open, cur } })), []);
   // After the first measure one background slides to the current item; before it, the item draws its own.
   const [navRef, mark] = useSlidingIndicator<HTMLElement>("aria-current", "page");
   return (
