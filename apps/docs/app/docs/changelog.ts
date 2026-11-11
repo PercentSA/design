@@ -17,6 +17,14 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.18.0",
+    date: null,
+    summary: "Sidebar items can fold open to a list of links.",
+    changes: [
+      c("new", "[Sidebar](sidebar): an item can have children, links that fold under it. The item stays a link to its own address; a chevron button beside it folds and unfolds the children. One level only. A group starts open when it or a child is the current page, and opens when the current page moves into it; defaultOpen opens it at first. The icon rail shows no children. The button's name comes from the provider strings showSubItems and hideSubItems. A sidebar without children looks the same as before."),
+    ],
+  },
+  {
     version: "0.17.1",
     date: "2026-11-08",
     summary: "SideNav hides its scrollbar when it scrolls on its own; scrollbar-none also hides the WebKit scrollbar.",

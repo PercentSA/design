@@ -1,14 +1,27 @@
 "use client";
 
 import { createContext, useContext, useId, useState, type ReactNode } from "react";
-import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
+import { ChevronDown, PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
-import { useDir, useLinkComponent, useStrings } from "../provider";
+import { useDir, useLinkComponent, useStrings, type LinkComponent } from "../provider";
 import { Badge } from "./feedback";
 import { Tooltip } from "./overlays";
 
-export type SidebarItem = { href: string; label: ReactNode; icon?: ReactNode; badge?: ReactNode; current?: boolean };
+export type SidebarItem = {
+  href: string;
+  label: ReactNode;
+  icon?: ReactNode;
+  badge?: ReactNode;
+  current?: boolean;
+  /**
+   * Links that fold under this item. The item stays a link to its own `href`; a chevron button beside it folds the children.
+   * One level only: the children of a child are not shown. The icon rail shows no children.
+   */
+  children?: SidebarItem[];
+  /** Open at first even when no child is current. Without it the item opens at first when it or a child is `current`. */
+  defaultOpen?: boolean;
+};
 export type SidebarSection = { title?: ReactNode; items: SidebarItem[] };
 
 /** True when AppShell shows the sidebar in its phone sheet: always expanded, no collapse toggle. */
@@ -21,6 +34,62 @@ export const useSidebarRail = () => useContext(SidebarRail);
 
 const ITEM =
   "relative flex h-9 items-center gap-3 rounded-field px-3 text-sm text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg aria-[current=page]:bg-surface-2 aria-[current=page]:font-medium aria-[current=page]:text-fg [&_svg]:size-4 [&_svg]:shrink-0";
+
+// A plain function, not a component: the rail's Tooltip needs the link element itself to pass its trigger props to.
+function itemLink(L: LinkComponent | "a", item: SidebarItem, collapsed: boolean, slid: boolean, grow?: boolean) {
+  return (
+    <L
+      href={item.href}
+      aria-current={item.current ? "page" : undefined}
+      className={cn(ITEM, slid && "aria-[current=page]:bg-transparent", collapsed && "justify-center px-0", grow && "min-w-0 flex-1")}
+    >
+      {item.icon}
+      <span className={cn(collapsed ? "sr-only" : "min-w-0 flex-1 truncate")}>{item.label}</span>
+      {item.badge != null && <Badge className={cn("h-5 px-2", collapsed && "sr-only")}>{item.badge}</Badge>}
+      {item.badge != null && collapsed && <span aria-hidden className="absolute end-2.5 top-1.5 size-1.5 rounded-pill bg-fg" />}
+    </L>
+  );
+}
+
+/** An item with children (expanded sidebar only): its link, a disclosure button, and the folded list. */
+function Group({ L, item, slid }: { L: LinkComponent | "a"; item: SidebarItem; slid: boolean }) {
+  const s = useStrings();
+  const id = useId();
+  const kids = item.children!;
+  const hasCurrent = !!item.current || kids.some((k) => k.current);
+  const [open, setOpen] = useState(item.defaultOpen ?? hasCurrent);
+  const [seen, setSeen] = useState(hasCurrent);
+  // The route moves into a folded group: open it. Later the user can fold it again.
+  if (hasCurrent !== seen) {
+    setSeen(hasCurrent);
+    if (hasCurrent) setOpen(true);
+  }
+  return (
+    <>
+      <div className="flex items-center gap-0.5">
+        {itemLink(L, item, false, slid, true)}
+        <button
+          type="button"
+          aria-expanded={open}
+          aria-controls={id}
+          aria-label={open ? s.hideSubItems : s.showSubItems}
+          title={open ? s.hideSubItems : s.showSubItems}
+          onClick={() => setOpen(!open)}
+          className="flex size-9 shrink-0 items-center justify-center rounded-field text-fg-3 transition-colors hover:bg-surface-2 hover:text-fg [&_svg]:size-4"
+        >
+          <ChevronDown aria-hidden className={cn(!open && "-rotate-90 rtl:rotate-90")} />
+        </button>
+      </div>
+      <ul id={id} hidden={!open} className={cn("ms-5 gap-0.5", open ? "grid" : "hidden")}>
+        {kids.map((kid) => (
+          <li key={kid.href} className="flex">
+            {itemLink(L, kid, false, slid, true)}
+          </li>
+        ))}
+      </ul>
+    </>
+  );
+}
 
 function Section({ section, collapsed, slid }: { section: SidebarSection; collapsed: boolean; slid: boolean }) {
   const L = useLinkComponent();
@@ -35,18 +104,14 @@ function Section({ section, collapsed, slid }: { section: SidebarSection; collap
       )}
       <ul aria-labelledby={section.title ? id : undefined} className="grid gap-0.5">
         {section.items.map((item) => {
-          const link = (
-            <L
-              href={item.href}
-              aria-current={item.current ? "page" : undefined}
-              className={cn(ITEM, slid && "aria-[current=page]:bg-transparent", collapsed && "justify-center px-0")}
-            >
-              {item.icon}
-              <span className={cn(collapsed ? "sr-only" : "min-w-0 flex-1 truncate")}>{item.label}</span>
-              {item.badge != null && <Badge className={cn("h-5 px-2", collapsed && "sr-only")}>{item.badge}</Badge>}
-              {item.badge != null && collapsed && <span aria-hidden className="absolute end-2.5 top-1.5 size-1.5 rounded-pill bg-fg" />}
-            </L>
-          );
+          if (!collapsed && item.children?.length) {
+            return (
+              <li key={item.href}>
+                <Group L={L} item={item} slid={slid} />
+              </li>
+            );
+          }
+          const link = itemLink(L, item, collapsed, slid);
           return (
             <li key={item.href}>
               {collapsed ? (

@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.18.0
+
+- [Sidebar](https://design.percent.sa/en/components/sidebar): an item can have `children`, a list of links that fold under it. The item stays a link to its own `href`; a chevron button beside it (`aria-expanded`, `aria-controls`) folds and unfolds the children. One level only: the children of a child are not shown. A group starts open when it or one of its children is `current`, and it opens when the current page moves into it; the new item option `defaultOpen` opens it at first. The icon rail shows no children, and the parent's icon stays a link. The button's name comes from the new provider strings `showSubItems` and `hideSubItems`. The chevron follows the page direction. A sidebar without `children` renders as before.
+
 ## 0.17.1
 
 - `scrollbar-none` now also hides the WebKit scrollbar. Tailwind's own `scrollbar-none` sets only `scrollbar-width: none`; `@percentsa/ui/styles.css` adds `::-webkit-scrollbar { display: none }` to it, for every app that imports the file. Wheel, touch, trackpad and keyboard scrolling still work, and a focused item still scrolls into view.
