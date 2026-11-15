@@ -2,6 +2,10 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.19.1
+
+- Charts (LineChart, AreaChart, BarChart, DonutChart): the hidden data table for screen readers no longer makes the page longer. The `sr-only` class was on the `<table>`, and a table ignores `height: 1px` and `overflow: hidden`: a chart with many points (for example 24 hours of metrics) kept its full table height, invisible, and the page scrolled far below its content. The class is now on a wrapper `<div>` around the table. Screen readers read the same table as before; nothing changes on screen.
+
 ## 0.19.0
 
 - [Sidebar](https://design.percent.sa/en/components/sidebar): `href` is optional. An item without `href` is a plain row, for a status such as "Loading clients…": it is not a link and not focusable, it is never current (`current` is ignored), it has no hover style, and `children` are ignored (no chevron). It has the same height, padding, icon and label layout as a link row, in a quieter text colour, so the list does not move when links replace it. In the icon rail it shows the icon, with the label for screen readers only. A child without `href` is a plain row too. The app gives the live role to the label (`<span role="status">`) when the text changes. Before, every item had to be a link, so a loading row was a tab stop that the router marked as the current page. Link rows render as before.

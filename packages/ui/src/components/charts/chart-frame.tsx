@@ -231,28 +231,31 @@ export function ChartFrame({
               </>
             )}
           </LiveRegion>
-          <table className="sr-only">
-            <caption>{title}</caption>
-            <thead>
-              <tr>
-                {columns.map((c, j) => (
-                  <th key={j} scope="col">
-                    {c}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r, i) => (
-                <tr key={i}>
-                  <th scope="row">{r.label}</th>
-                  {r.values.map((v, j) => (
-                    <td key={j}>{v}</td>
+          {/* sr-only on a wrapper: a table ignores height: 1px and overflow: hidden, so a long hidden table would make the page scroll */}
+          <div className="sr-only">
+            <table>
+              <caption>{title}</caption>
+              <thead>
+                <tr>
+                  {columns.map((c, j) => (
+                    <th key={j} scope="col">
+                      {c}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {rows.map((r, i) => (
+                  <tr key={i}>
+                    <th scope="row">{r.label}</th>
+                    {r.values.map((v, j) => (
+                      <td key={j}>{v}</td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </figure>
