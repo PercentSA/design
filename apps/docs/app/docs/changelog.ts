@@ -17,6 +17,14 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.19.1",
+    date: "2026-11-16",
+    summary: "The hidden data table of a chart no longer makes the page longer.",
+    changes: [
+      c("fixed", "Charts: the screen reader table sat in the page with the sr-only class on the table itself. A table ignores height 1px and overflow hidden, so a chart with many points (for example 24 hours of metrics) kept its full table height, invisible, and the page scrolled far below its content. The class is now on a wrapper around the table. Screen readers read the same table; nothing changes on screen."),
+    ],
+  },
+  {
     version: "0.19.0",
     date: "2026-11-12",
     summary: "Sidebar items can be plain rows without a link.",

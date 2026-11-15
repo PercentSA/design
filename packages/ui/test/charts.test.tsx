@@ -103,9 +103,16 @@ describe("cartesian charts (server render)", () => {
   });
   test("hidden data table: caption = title, headers = x + series labels, formatted values (EN)", () => {
     const out = en(<LineChart {...props} />);
-    expect(out).toMatch(/<table class="sr-only"><caption>Revenue by month<\/caption>/);
+    expect(out).toMatch(/<div class="sr-only"><table><caption>Revenue by month<\/caption>/);
     expect(out).toContain('<th scope="col">month</th><th scope="col">Revenue</th><th scope="col">Costs</th>');
     expect(out).toContain('<th scope="row">Feb</th><td>1,200</td><td>6</td>');
+  });
+  // A table ignores `height: 1px` and `overflow: hidden`: with sr-only on the table itself, a long table stays its full
+  // height and makes the page scroll far below the content. The class goes on a wrapper.
+  test("the hidden table sits in an sr-only wrapper and has no sr-only class itself", () => {
+    const out = en(<LineChart {...props} />);
+    expect(out).not.toContain('<table class=');
+    expect(out).toContain('<div class="sr-only"><table>');
   });
   test("hidden data table in Arabic with xLabel", () => {
     const out = ar(
