@@ -21,7 +21,8 @@
       ],
       "registryDependencies": [
         "@percentsa/cn",
-        "@percentsa/provider"
+        "@percentsa/provider",
+        "@percentsa/strings"
       ],
       "files": [
         {

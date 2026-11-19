@@ -31,11 +31,18 @@ function bareImports(entry: string) {
   return [...bare];
 }
 const formLib = (specs: string[]) => specs.filter((s) => s.startsWith("react-hook-form"));
+const editorLib = (specs: string[]) => specs.filter((s) => s.startsWith("@codemirror/") || s.startsWith("@lezer/"));
 
 // react-hook-form is an optional peer: only the entry @percentsa/ui/react-hook-form may import it.
 test("@percentsa/ui core: no module reachable from src/index.ts imports react-hook-form", () => {
   expect(formLib(bareImports(resolve(UI, "src/index.ts")))).toEqual([]);
   expect(formLib(bareImports(resolve(UI, "src/react-hook-form.tsx")))).toEqual(["react-hook-form"]);
+});
+
+// CodeMirror is heavy: only the entry @percentsa/ui/code-editor may import it.
+test("@percentsa/ui core: no module reachable from src/index.ts imports CodeMirror", () => {
+  expect(editorLib(bareImports(resolve(UI, "src/index.ts")))).toEqual([]);
+  expect(editorLib(bareImports(resolve(UI, "src/code-editor.tsx"))).length).toBeGreaterThan(0);
 });
 
 describe("published packages", () => {
@@ -82,6 +89,17 @@ describe("published packages", () => {
 
   test("@percentsa/ui dist/index.js does not import react-hook-form", () => {
     expect(formLib(bareImports(resolve(UI, "dist/index.js")))).toEqual([]);
+  });
+  test("@percentsa/ui dist/index.js does not import CodeMirror", () => {
+    expect(editorLib(bareImports(resolve(UI, "dist/index.js")))).toEqual([]);
+    expect(readFileSync(resolve(UI, "dist/index.js"), "utf8")).not.toContain("code-editor");
+  });
+  test("@percentsa/ui/code-editor loads in Node and its export points to files that exist", () => {
+    const r = run(["node", "--input-type=module", "-e", `const m = await import(${JSON.stringify(pathToFileURL(resolve(UI, "dist/code-editor.js")).href)}); if (typeof m.CodeEditor !== "function" || typeof m.CodeDiff !== "function") process.exit(2)`]);
+    expect(r.stderr.toString().split("\n")[0]).toBe("");
+    expect(r.exitCode).toBe(0);
+    const entry = JSON.parse(readFileSync(resolve(UI, "package.json"), "utf8")).exports["./code-editor"];
+    expect([entry.types, entry.default].map((f: string) => existsSync(resolve(UI, f)))).toEqual([true, true]);
   });
   test("@percentsa/ui/react-hook-form loads in Node", () => {
     const r = run(["node", "--input-type=module", "-e", `await import(${JSON.stringify(pathToFileURL(resolve(UI, "dist/react-hook-form.js")).href)})`]);

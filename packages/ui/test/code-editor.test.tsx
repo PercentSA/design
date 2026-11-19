@@ -1,8 +1,6 @@
 // CodeEditor and CodeDiff (0.21.0): the entry @percentsa/ui/code-editor.
 import { describe, expect, test } from "bun:test";
 import { act, useState } from "react";
-import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
 import { EditorView } from "@codemirror/view";
 import { CodeDiff, CodeEditor } from "../src/code-editor";
 import { PercentProvider } from "../src";
@@ -111,6 +109,45 @@ describe("CodeEditor", () => {
     );
     await act(async () => void openSearchPanel(view()));
     expect(document.querySelector<HTMLInputElement>('.cm-search input[name="search"]')!.placeholder).toBe("بحث");
+    const panel = document.querySelector(".cm-search")!;
+    // The visible words of the whole panel are Arabic: no English word is left.
+    expect(panel.textContent!.replace(/[^A-Za-z]/g, "")).toBe("");
+    expect(panel.querySelector<HTMLInputElement>('input[name="replace"]')!.placeholder).toBe("استبدال");
+    expect(panel.querySelector('button[name="replaceAll"]')!.textContent).toBe("استبدال الكل");
+    expect(panel.querySelector('button[name="close"]')!.getAttribute("aria-label")).toBe("إغلاق");
+  });
+
+  test("Go to line uses the page language", async () => {
+    const { gotoLine } = await import("@codemirror/search");
+    await mount(
+      <PercentProvider lang="ar">
+        <CodeEditor label="x" value="a: 1" />
+      </PercentProvider>,
+    );
+    await act(async () => void gotoLine(view()));
+    const dialog = document.querySelector(".cm-dialog")!;
+    expect(dialog.textContent).toContain("الانتقال إلى سطر");
+    expect(dialog.querySelector("button")!.textContent).toBe("انتقال");
+  });
+
+  test("a read-only editor stays focusable and keeps its caret", async () => {
+    await mount(<CodeEditor label="x" value="a: 1" readOnly />);
+    expect(content().getAttribute("contenteditable")).toBe("true");
+    content().focus();
+    expect(document.activeElement).toBe(content());
+  });
+
+  test("the theme has no hue: every rule is a token and wins over the CodeMirror base themes", async () => {
+    await mount(<CodeEditor label="x" value="a: 1" diagnostics={[{ line: 1, message: "m" }]} />);
+    const rules = [...document.querySelectorAll("style")].flatMap((e) => (e.textContent ?? "").split("\n")).filter((l) => l.includes("var(--p-"));
+    expect(rules.length).toBeGreaterThan(20);
+    // Token rules of the syntax highlight are a single class; all others must beat the base themes.
+    const wrong = rules
+      .filter((l) => !/^\.\S+ \{/.test(l))
+      .flatMap((l) => l.slice(l.indexOf("{") + 1, l.lastIndexOf("}")).split(";"))
+      .filter((d) => d.trim() && !d.includes("!important"));
+    expect(wrong).toEqual([]);
+    expect(rules.filter((l) => /#[0-9a-fA-F]{3,8}\b/.test(l))).toEqual([]);
   });
 });
 
@@ -119,14 +156,7 @@ describe("CodeDiff", () => {
     await mount(<CodeDiff label="Changes" before={"a: 1\nb: 2\n"} after={"a: 1\nb: 3\n"} />);
     const editors = [...document.querySelectorAll<HTMLElement>(".cm-content")];
     expect(editors.map((e) => e.getAttribute("aria-label"))).toEqual(["Saved", "Not saved"]);
-    expect(editors.every((e) => e.getAttribute("aria-readonly") === "true")).toBe(true);
+    expect(editors.every((e) => e.getAttribute("aria-readonly") === "true" && e.getAttribute("contenteditable") === "true")).toBe(true);
     expect(document.querySelectorAll(".cm-changedLine").length).toBe(2);
-  });
-});
-
-describe("entry", () => {
-  test("the root entry does not load CodeMirror", () => {
-    const src = readFileSync(resolve(import.meta.dir, "../src/index.ts"), "utf8");
-    expect(src).not.toMatch(/code-editor|@codemirror/);
   });
 });
