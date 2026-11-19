@@ -4,6 +4,40 @@
   "homepage": "https://github.com/PercentSA/design",
   "items": [
     {
+      "name": "code-editor",
+      "type": "registry:ui",
+      "title": "CodeEditor, CodeDiff",
+      "description": "@percentsa/ui: CodeEditor, CodeDiff",
+      "dependencies": [
+        "@codemirror/commands",
+        "@codemirror/lang-yaml",
+        "@codemirror/language",
+        "@codemirror/lint",
+        "@codemirror/merge",
+        "@codemirror/search",
+        "@codemirror/state",
+        "@codemirror/view",
+        "@lezer/highlight"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/code-editor.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/code-editor.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "CodeEditor",
+          "CodeDiff"
+        ]
+      }
+    },
+    {
       "name": "accordion",
       "type": "registry:ui",
       "title": "Accordion",
@@ -3185,6 +3219,16 @@
           "target": "components/percent/motion/styles.css"
         }
       ]
+    },
+    {
+      "name": "code-diff",
+      "type": "registry:ui",
+      "title": "CodeDiff",
+      "description": "CodeDiff: adds @percentsa/code-editor.",
+      "registryDependencies": [
+        "@percentsa/code-editor"
+      ],
+      "files": []
     },
     {
       "name": "button",
