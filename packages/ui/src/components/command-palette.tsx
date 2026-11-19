@@ -20,6 +20,12 @@ export type Command = {
   shortcut?: string;
   /** Other words that find the command. */
   keywords?: string[];
+  /** One line under the label; searched too. */
+  description?: string;
+  /** The reason the command cannot run now. The row shows it and stays in the list, but cannot be chosen. */
+  disabled?: string;
+  /** Short text at the end of the row, for example "New". */
+  badge?: string;
   onSelect: () => void;
 };
 
@@ -41,7 +47,7 @@ export function useCommandShortcut(onOpen: () => void) {
 }
 
 const matches = (c: Command, words: string[]) => {
-  const hay = searchKey([c.label, ...(c.keywords ?? [])].join(" "));
+  const hay = searchKey([c.label, c.description ?? "", ...(c.keywords ?? [])].join(" "));
   return words.every((w) => hay.includes(w));
 };
 
@@ -65,7 +71,7 @@ function Palette({ commands, placeholder, close }: { commands: Command[]; placeh
   });
 
   const run = (c: Command | undefined) => {
-    if (!c) return;
+    if (!c || c.disabled) return;
     c.onSelect();
     close();
   };
@@ -79,15 +85,20 @@ function Palette({ commands, placeholder, close }: { commands: Command[]; placeh
         id={optionId(i)}
         role="option"
         aria-selected={i === active}
+        aria-disabled={c.disabled ? true : undefined}
         data-highlighted={i === active ? "" : undefined}
-        className={cn(MENU_ITEM, "pe-3")}
+        className={cn(MENU_ITEM, "pe-3", c.disabled && "opacity-50")}
         // Keep focus in the input.
         onMouseDown={(e) => e.preventDefault()}
         onMouseMove={() => setActive(i)}
         onClick={() => run(c)}
       >
         {c.icon && <span className="flex shrink-0 text-fg-3 [&_svg]:size-4">{c.icon}</span>}
-        <span className="min-w-0 flex-1 truncate">{c.label}</span>
+        <span className="min-w-0 flex-1">
+          <span className="block truncate">{c.label}</span>
+          {(c.disabled || c.description) && <span className="block truncate text-xs text-fg-3">{c.disabled || c.description}</span>}
+        </span>
+        {c.badge && <span className="shrink-0 rounded-pill border border-line px-2 text-xs text-fg-2">{c.badge}</span>}
         {c.shortcut && <Kbd>{c.shortcut}</Kbd>}
       </li>
     );

@@ -131,6 +131,51 @@ export function NumberInput({
   );
 }
 
+/** A number with its unit (a time, a size) in one box. `onValueChange` gets the number and the unit together. */
+export function UnitInput({
+  unit,
+  units,
+  unitLabel,
+  onValueChange,
+  className,
+  disabled,
+  ...props
+}: Omit<ComponentProps<typeof NumberInput>, "onValueChange"> & {
+  unit: string;
+  units: { value: string; label: string }[];
+  /** Accessible name of the unit menu. */
+  unitLabel: string;
+  onValueChange: (value: number | null, unit: string) => void;
+}) {
+  const selectId = useId();
+  return (
+    <div
+      dir="ltr"
+      className={cn(
+        "flex h-(--p-control-h) w-full min-w-0 items-center rounded-field border border-line-strong bg-surface transition-colors hover:border-fg-3 has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-3 has-[input:focus-visible]:outline-fg",
+        disabled && "cursor-not-allowed opacity-50",
+        className,
+      )}
+    >
+      <NumberInput
+        {...props}
+        disabled={disabled}
+        onValueChange={(v) => onValueChange(v, unit)}
+        className="h-full flex-1 border-0 bg-transparent hover:border-0 has-[input:focus-visible]:outline-0"
+      />
+      <Select
+        id={selectId}
+        aria-label={unitLabel}
+        value={unit}
+        disabled={disabled}
+        onValueChange={(u) => onValueChange(props.value, u)}
+        options={units}
+        className="h-full w-auto shrink-0 rounded-s-none border-0 border-s border-line-strong bg-transparent hover:border-line-strong"
+      />
+    </div>
+  );
+}
+
 /** Amount in riyals. `value` is the draft text (Western digits, "."); read the number with parseAmount(). */
 export const MoneyInput = ({ value, onValueChange, ...props }: InputProps & { value: string; onValueChange: (draft: string) => void }) => (
   <Input

@@ -52,7 +52,7 @@ export const pages: DocPage[] = [
     "app",
     "CommandPalette, useCommandShortcut",
     ["CommandPaletteExample"],
-    "Search and run commands from the keyboard. Ctrl+K or ⌘K opens it; the search ignores case, accents and Arabic letter forms.",
-    "ابحث عن الأوامر ونفّذها من لوحة المفاتيح. يفتحها Ctrl+K أو ⌘K، ويتجاهل البحث حالة الأحرف والتشكيل وأشكال الحروف العربية.",
+    "Search and run commands from the keyboard. Ctrl+K or ⌘K opens it; the search ignores case, accents and Arabic letter forms. A command can have a `description` (one line under the label; the search reads it too), a `badge` (short text at the end of the row) and `disabled` (the reason the command cannot run now). A disabled row shows its reason and stays in the list: the arrow keys pass over it, but Enter and a click do nothing.",
+    "ابحث عن الأوامر ونفّذها من لوحة المفاتيح. يفتحها Ctrl+K أو ⌘K، ويتجاهل البحث حالة الأحرف والتشكيل وأشكال الحروف العربية. يمكن أن يحمل الأمر `description` (سطر واحد تحت العنوان ويقرؤه البحث أيضًا) و`badge` (نص قصير في نهاية الصف) و`disabled` (سبب تعذّر تنفيذ الأمر الآن). يعرض الصف المعطّل سببه ويبقى في القائمة: تمرّ عليه مفاتيح الأسهم، ولا يفعل Enter ولا النقر شيئًا.",
   ),
 ];

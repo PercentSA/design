@@ -24,6 +24,7 @@ import {
   Textarea,
   type AutocompleteSuggestion,
   type ComboboxOption,
+  UnitInput,
 } from "@percentsa/ui";
 import { FormField } from "@percentsa/ui/react-hook-form";
 import { useT } from "~/lib/t";
@@ -352,6 +353,27 @@ export function SliderExample() {
         <Slider min={10} max={500} step={10} value={range} onValueChange={setRange} />
       </Field>
     </Stack>
+  );
+}
+
+export function UnitInputExample() {
+  const t = useT();
+  const [timeout, setTimeout] = useState<{ value: number | null; unit: string }>({ value: 30, unit: "s" });
+  return (
+    <Field label={t("Request timeout", "مهلة الطلب")} className="w-60">
+      <UnitInput
+        value={timeout.value}
+        unit={timeout.unit}
+        onValueChange={(value, unit) => setTimeout({ value, unit })}
+        min={0}
+        units={[
+          { value: "ms", label: t("milliseconds", "ملّي ثانية") },
+          { value: "s", label: t("seconds", "ثوانٍ") },
+          { value: "min", label: t("minutes", "دقائق") },
+        ]}
+        unitLabel={t("Unit", "الوحدة")}
+      />
+    </Field>
   );
 }
 

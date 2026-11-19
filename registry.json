@@ -1832,8 +1832,8 @@
     {
       "name": "special-inputs",
       "type": "registry:ui",
-      "title": "PasswordInput, SearchInput, NumberInput, MoneyInput",
-      "description": "@percentsa/ui: reformat, PasswordInput, SearchInput, NumberInput, MoneyInput, IbanInput, NationalIdInput, CrInput, VatInput, OtpInput, PhoneInput, DigitsInput",
+      "title": "PasswordInput, SearchInput, NumberInput, UnitInput",
+      "description": "@percentsa/ui: reformat, PasswordInput, SearchInput, NumberInput, UnitInput, MoneyInput, IbanInput, NationalIdInput, CrInput, VatInput, OtpInput, PhoneInput, DigitsInput",
       "dependencies": [
         "lucide-react",
         "radix-ui"
@@ -1863,6 +1863,7 @@
           "PasswordInput",
           "SearchInput",
           "NumberInput",
+          "UnitInput",
           "MoneyInput",
           "IbanInput",
           "NationalIdInput",
@@ -4146,6 +4147,16 @@
       "type": "registry:ui",
       "title": "NumberInput",
       "description": "NumberInput: adds @percentsa/special-inputs.",
+      "registryDependencies": [
+        "@percentsa/special-inputs"
+      ],
+      "files": []
+    },
+    {
+      "name": "unit-input",
+      "type": "registry:ui",
+      "title": "UnitInput",
+      "description": "UnitInput: adds @percentsa/special-inputs.",
       "registryDependencies": [
         "@percentsa/special-inputs"
       ],

@@ -14,6 +14,7 @@ export default defineConfig({
     // The docs always show the current source of the packages (no package build needed).
     alias: [
       { find: /^@percentsa\/ui\/react-hook-form$/, replacement: fileURLToPath(new URL("../../packages/ui/src/react-hook-form.tsx", import.meta.url)) },
+      { find: /^@percentsa\/ui\/code-editor$/, replacement: fileURLToPath(new URL("../../packages/ui/src/code-editor.tsx", import.meta.url)) },
       pkg("ui"),
       pkg("motion"),
       pkg("tokens"),

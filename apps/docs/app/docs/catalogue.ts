@@ -85,6 +85,7 @@ export const PAGES: DocPage[] = [
   p("switch", "Switch", "forms", "Switch", ["SwitchExample"], "An on/off setting that applies at once.", "إعداد تشغيل وإيقاف يُطبَّق فورًا."),
   p("slider", "Slider", "forms", "Slider", ["SliderExample"], "A value or a range. Inside Field one thumb takes the field label; a range is a group with the field label, and its thumbs are named Minimum and Maximum (or `thumbLabels`).", "قيمة أو نطاق. داخل Field يأخذ المقبض الواحد عنوان الحقل؛ والنطاق مجموعة بعنوان الحقل، واسما مقبضيه «الحد الأدنى» و«الحد الأقصى» (أو thumbLabels)."),
   p("number-input", "NumberInput", "forms", "NumberInput", ["NumberInputExample"], "A number with step buttons. Accepts Arabic digits.", "رقم مع أزرار الزيادة والإنقاص. يقبل الأرقام العربية."),
+  p("unit-input", "UnitInput", "forms", "UnitInput", ["UnitInputExample"], "A number with its unit, for example a time or a size.", "رقم مع وحدته، مثل مدة أو حجم."),
   p("password-input", "PasswordInput", "forms", "PasswordInput", ["PasswordInputExample"], "Password with a show/hide button.", "كلمة مرور مع زر إظهار وإخفاء."),
   p("search-input", "SearchInput", "forms", "SearchInput", ["SearchInputExample"], "A search box with the search icon.", "مربع بحث مع أيقونة البحث."),
   p("fieldset", "Fieldset", "forms", "Fieldset", ["FieldsetExample"], "Groups choices under a legend with a hint and an error.", "يجمع الخيارات تحت عنوان مع تلميح وخطأ."),

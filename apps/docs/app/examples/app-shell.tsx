@@ -89,11 +89,12 @@ function useCommands(): Command[] {
   const settings = t("Settings", "الإعدادات");
   return [
     { id: "new-invoice", group: actions, label: t("Create invoice", "إنشاء فاتورة"), icon: <Plus />, shortcut: "Ctrl N", keywords: ["bill"], onSelect: done(t("New invoice", "فاتورة جديدة")) },
-    { id: "invite", group: actions, label: t("Invite a member", "دعوة عضو"), icon: <Users />, onSelect: done(t("Invitation sent", "أُرسلت الدعوة")) },
+    { id: "invite", group: actions, label: t("Invite a member", "دعوة عضو"), description: t("Send an email invitation", "إرسال دعوة بالبريد"), icon: <Users />, onSelect: done(t("Invitation sent", "أُرسلت الدعوة")) },
     { id: "inbox", group: go, label: t("Inbox", "الوارد"), icon: <Inbox />, onSelect: done(t("Inbox", "الوارد")) },
-    { id: "reports", group: go, label: t("Reports", "التقارير"), icon: <ChartColumn />, keywords: ["charts", "رسوم"], onSelect: done(t("Reports", "التقارير")) },
+    { id: "reports", group: go, label: t("Reports", "التقارير"), badge: t("New", "جديد"), icon: <ChartColumn />, keywords: ["charts", "رسوم"], onSelect: done(t("Reports", "التقارير")) },
     { id: "theme", group: settings, label: t("Switch theme", "تبديل المظهر"), icon: <Moon />, keywords: ["dark", "light", "داكن", "فاتح"], onSelect: done(t("Theme switched", "تم تبديل المظهر")) },
     { id: "lang", group: settings, label: t("Change language", "تغيير اللغة"), icon: <Languages />, keywords: ["arabic", "english", "عربي"], onSelect: done(t("Language changed", "تم تغيير اللغة")) },
+    { id: "export", group: actions, label: t("Export data", "تصدير البيانات"), disabled: t("Needs the Admin role", "يتطلب دور المشرف"), icon: <Download />, onSelect: done(t("Exported", "تم التصدير")) },
     { id: "sign-out", group: settings, label: t("Sign out", "تسجيل الخروج"), icon: <LogOut />, onSelect: done(t("Signed out", "تم تسجيل الخروج")) },
   ];
 }
