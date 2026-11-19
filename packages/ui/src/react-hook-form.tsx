@@ -17,7 +17,7 @@ import { SettingsRow } from "./components/settings";
 /**
  * A react-hook-form field in a <Field>: label, hint, the field's error message and a character counter
  * (`max`). The control from `render` gets its id and aria wiring from Field. Controls with
- * `onValueChange` (PhoneInput, Combobox, DatePicker) take `field.onChange` in `render`.
+ * `onValueChange` (PhoneInput, Combobox, Autocomplete, DatePicker) take `field.onChange` in `render`.
  * TTransformedValues: a form whose resolver changes the values (a zod schema with coerce or transform).
  */
 export function FormField<TFieldValues extends FieldValues, TName extends FieldPath<TFieldValues>, TTransformedValues = TFieldValues>({

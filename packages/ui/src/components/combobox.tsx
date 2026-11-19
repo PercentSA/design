@@ -7,10 +7,7 @@ import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
 import { searchKey } from "../saudi/normalize";
 import { Input } from "./inputs";
-import { MENU_ITEM } from "./input-classes";
-
-// The highlighted option of a long list stays in view (runs when the highlight lands on an option).
-const inView = (el: HTMLElement | null) => el?.scrollIntoView?.({ block: "nearest" });
+import { MENU_ITEM, inView } from "./input-classes";
 
 export type ComboboxOption = { value: string; label: string; disabled?: boolean };
 
