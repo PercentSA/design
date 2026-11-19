@@ -292,6 +292,103 @@ describe("Autocomplete", () => {
   });
 });
 
+describe("Autocomplete fixes", () => {
+  test("a choice that keeps the text leaves no pending cursor", async () => {
+    await mount(<Box />);
+    await type(input(), "main");
+    await press(input(), { key: "ArrowDown" });
+    await press(input(), { key: "Enter" });
+    expect(input().value).toBe("main");
+    await type(input(), "mainx");
+    expect(input().value).toBe("mainx");
+    expect(input().selectionStart).toBe(5);
+  });
+
+  test("openOnFocus: a focus that follows Tab elsewhere does not open", async () => {
+    await mount(
+      <>
+        <button>Edit</button>
+        <Box openOnFocus />
+      </>,
+    );
+    await act(async () => {
+      document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+      document.querySelector("button")!.focus();
+    });
+    await act(async () => void input().focus());
+    expect(list()).toBeNull();
+  });
+
+  test("openOnFocus: a press on the label opens the list", async () => {
+    await mount(
+      <>
+        <label htmlFor="b">Branch</label>
+        <Box id="b" openOnFocus />
+      </>,
+    );
+    await act(async () => {
+      document.querySelector("label")!.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      input().focus();
+    });
+    expect(list()).not.toBeNull();
+  });
+
+  const status = () => document.querySelector('[role="status"]')!.textContent;
+  test("the live region is empty when token gives no range", async () => {
+    await mount(<Box initial="x" token={() => null} />);
+    await press(input(), { key: "ArrowDown" });
+    await type(input(), "xy");
+    await wait(450);
+    expect(status()).toBe("");
+  });
+
+  test("the live region is empty while loading and before the person acts", async () => {
+    await mount(<Box loading />);
+    await wait(450);
+    expect(status()).toBe("");
+    await type(input(), "a");
+    await wait(450);
+    expect(status()).toBe("");
+  });
+
+  test("after a choice, Down uses the new cursor", async () => {
+    const token = (text: string, cursor: number) => ({ start: text.lastIndexOf(",", cursor - 1) + 1, end: cursor });
+    await mount(<Box initial="x," token={token} />);
+    await type(input(), "x,m");
+    await press(input(), { key: "ArrowDown" });
+    await press(input(), { key: "Enter" });
+    expect(input().value).toBe("x,main");
+    await press(input(), { key: "ArrowDown" });
+    await press(input(), { key: "Enter" });
+    expect(input().value).toBe("x,main");
+  });
+
+  test("rows have no extra end padding", async () => {
+    await mount(<Box />);
+    await press(input(), { key: "ArrowDown" });
+    const cls = document.querySelector('[role="option"]')!.className;
+    expect(cls).toContain("pe-3");
+    expect(cls).not.toContain("pe-8");
+  });
+
+  test("Enter with keyCode 229 is not touched", async () => {
+    await mount(<Box />);
+    await press(input(), { key: "ArrowDown" });
+    const e = new KeyboardEvent("keydown", { key: "Enter", keyCode: 229, bubbles: true, cancelable: true });
+    await act(async () => void input().dispatchEvent(e));
+    expect(e.defaultPrevented).toBe(false);
+    expect(input().value).toBe("");
+  });
+
+  test("with mono the row value is left-to-right in the mono font", async () => {
+    await mount(<Box mono />);
+    await press(input(), { key: "ArrowDown" });
+    const v = document.querySelector('[role="option"] span')!;
+    expect(v.getAttribute("dir")).toBe("ltr");
+    expect(v.className).toContain("font-mono");
+  });
+});
+
 describe("autocomplete-match", () => {
   test("boldRange", () => {
     expect(boldRange("feature/login", "FEA")).toEqual([0, 3]);

@@ -32,8 +32,6 @@ export type AutocompleteProps = Omit<ComponentProps<"input">, "value" | "default
   ref?: Ref<HTMLInputElement>;
 };
 
-// A focus that follows a pointer press or Tab within this time counts as the person moving in.
-const FOCUS_WINDOW_MS = 1000;
 const LIVE_DELAY_MS = 400;
 
 /**
@@ -64,7 +62,7 @@ export function Autocomplete({
   const t = useText();
   const listId = useId();
   const inputEl = useRef<HTMLInputElement | null>(null);
-  const userFocusAt = useRef(0);
+  const userFocus = useRef(false);
   const pendingCursor = useRef<number | null>(null);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
@@ -88,15 +86,23 @@ export function Autocomplete({
   }, [value]);
 
   // Moving in with a pointer or Tab opens the list; a programmatic focus (a dialog opening) does not.
+  // The flag is set by a Tab key or a pointer press anywhere and cleared at the next focus change (after this field read it).
   useEffect(() => {
     if (!openOnFocus) return;
-    const onKey = (e: KeyboardEvent) => e.key === "Tab" && (userFocusAt.current = Date.now());
-    document.addEventListener("keydown", onKey, true);
-    return () => document.removeEventListener("keydown", onKey, true);
+    const set = (e: Event) => (userFocus.current = e.type === "pointerdown" || (e as KeyboardEvent).key === "Tab");
+    const clear = () => (userFocus.current = false);
+    document.addEventListener("keydown", set, true);
+    document.addEventListener("pointerdown", set, true);
+    document.addEventListener("focusin", clear);
+    return () => {
+      document.removeEventListener("keydown", set, true);
+      document.removeEventListener("pointerdown", set, true);
+      document.removeEventListener("focusin", clear);
+    };
   }, [openOnFocus]);
 
   // The live region says the result once typing settles.
-  const message = !open || loading ? "" : unavailable ? unavailableText : matches.length ? t(s.suggestionCount(matches.length)) : (emptyText ?? t(s.noSuggestions));
+  const message = !open || loading || !range ? "" : unavailable ? unavailableText : matches.length ? t(s.suggestionCount(matches.length)) : (emptyText ?? t(s.noSuggestions));
   useEffect(() => {
     const id = setTimeout(() => setAnnounced(message), LIVE_DELAY_MS);
     return () => clearTimeout(id);
@@ -108,8 +114,13 @@ export function Autocomplete({
   };
   const choose = (row: AutocompleteSuggestion | undefined) => {
     if (!row || !range) return;
-    pendingCursor.current = range.start + row.value.length;
-    onValueChange(value.slice(0, range.start) + row.value + value.slice(range.end));
+    const next = value.slice(0, range.start) + row.value + value.slice(range.end);
+    const at = range.start + row.value.length;
+    setCursor(at);
+    // The layout effect runs only when the text changes; otherwise set the caret now.
+    if (next === value) inputEl.current?.setSelectionRange(at, at);
+    else pendingCursor.current = at;
+    onValueChange(next);
     onSuggestionSelect?.(row);
     close();
   };
@@ -164,12 +175,8 @@ export function Autocomplete({
               setCursor(e.currentTarget.selectionStart);
               props.onKeyUp?.(e);
             }}
-            onPointerDown={(e) => {
-              userFocusAt.current = Date.now();
-              props.onPointerDown?.(e);
-            }}
             onFocus={(e) => {
-              if (openOnFocus && Date.now() - userFocusAt.current < FOCUS_WINDOW_MS) {
+              if (openOnFocus && userFocus.current) {
                 setCursor(e.currentTarget.selectionStart);
                 setActive(-1);
                 setOpen(true);
@@ -187,7 +194,7 @@ export function Autocomplete({
                   setOpen(true);
                   setActive(e.altKey ? -1 : down ? 0 : shown.length - 1);
                 } else if (shown.length) move(down ? 1 : -1);
-              } else if (e.key === "Enter" && expanded && shown[active] && !e.nativeEvent.isComposing) choose(shown[active]);
+              } else if (e.key === "Enter" && expanded && shown[active] && !e.nativeEvent.isComposing && e.keyCode !== 229) choose(shown[active]);
               else if (e.key === "Escape" && expanded) close();
               else {
                 if (e.key === "Tab") close();
@@ -224,7 +231,7 @@ export function Autocomplete({
                 aria-selected={i === active}
                 data-highlighted={i === active ? "" : undefined}
                 ref={i === active ? inView : undefined}
-                className={MENU_ITEM}
+                className={cn(MENU_ITEM, "pe-3")}
                 onMouseMove={() => setActive(i)}
                 onClick={() => choose(row)}
               >
