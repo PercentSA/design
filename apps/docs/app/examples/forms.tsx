@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AtSign } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {
@@ -185,21 +185,27 @@ export function ComboboxAsyncExample() {
   );
 }
 
-const CITY_DETAILS: AutocompleteSuggestion[] = [
-  { value: "Riyadh", detail: "Riyadh Province" },
-  { value: "Jeddah", detail: "Makkah Province" },
-  { value: "Dammam", detail: "Eastern Province" },
-  { value: "Khobar", detail: "Eastern Province" },
-  { value: "Abha", detail: "Asir Province" },
-  { value: "Tabuk", detail: "Tabuk Province" },
-];
+const CITY_DETAILS = [
+  ["Riyadh", "الرياض", "Riyadh Province", "منطقة الرياض"],
+  ["Jeddah", "جدة", "Makkah Province", "منطقة مكة المكرمة"],
+  ["Dammam", "الدمام", "Eastern Province", "المنطقة الشرقية"],
+  ["Khobar", "الخبر", "Eastern Province", "المنطقة الشرقية"],
+  ["Abha", "أبها", "Asir Province", "منطقة عسير"],
+  ["Tabuk", "تبوك", "Tabuk Province", "منطقة تبوك"],
+] as const;
+
+const useCitySuggestions = (): AutocompleteSuggestion[] => {
+  const t = useT();
+  return CITY_DETAILS.map(([en, ar, detailEn, detailAr]) => ({ value: t(en, ar), detail: t(detailEn, detailAr) }));
+};
 
 export function AutocompleteExample() {
   const t = useT();
   const [city, setCity] = useState("");
+  const cities = useCitySuggestions();
   return (
-    <Field label={t("City", "المدينة")} hint={t("Type any text; suggestions open on focus", "اكتب أي نص؛ تفتح الاقتراحات عند التركيز")} className="w-full max-w-xs">
-      <Autocomplete value={city} onValueChange={setCity} suggestions={CITY_DETAILS} openOnFocus name="city" />
+    <Field label={t("City", "المدينة")} hint={t("Type any text; suggestions open on focus", "اكتب أي نص؛ تظهر الاقتراحات عند التركيز على الحقل")} className="w-full max-w-xs">
+      <Autocomplete value={city} onValueChange={setCity} suggestions={cities} openOnFocus name="city" />
     </Field>
   );
 }
@@ -210,13 +216,15 @@ export function AutocompleteAsyncExample() {
   const [results, setResults] = useState<AutocompleteSuggestion[]>([]);
   const [loading, setLoading] = useState(false);
   const [unavailable, setUnavailable] = useState(false);
+  const cities = useCitySuggestions();
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
   // Stands in for a server search. A real app debounces the query in its data hook.
   const search = (query: string) => {
     clearTimeout(timer.current);
     setLoading(true);
     timer.current = setTimeout(() => {
-      setResults(CITY_DETAILS.filter((o) => searchKey(o.value).includes(searchKey(query))));
+      setResults(cities.filter((o) => searchKey(o.value).includes(searchKey(query))));
       setLoading(false);
     }, 600);
   };
@@ -245,8 +253,10 @@ const TAGS: AutocompleteSuggestion[] = [{ value: "alpha" }, { value: "beta" }, {
 const tagAt = (text: string, cursor: number) => {
   let start = text.lastIndexOf(",", cursor - 1) + 1;
   while (text[start] === " ") start++;
-  const comma = text.indexOf(",", cursor);
-  return { start: Math.min(start, cursor), end: comma === -1 ? text.length : comma };
+  let end = text.indexOf(",", cursor);
+  if (end === -1) end = text.length;
+  while (end > start && text[end - 1] === " ") end--;
+  return { start: Math.min(start, cursor), end: Math.max(end, cursor) };
 };
 
 export function AutocompleteTokenExample() {

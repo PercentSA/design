@@ -85,12 +85,10 @@ export function Autocomplete({
     pendingCursor.current = null;
   }, [value]);
 
-  // Moving in with a pointer or Tab opens the list; a programmatic focus (a dialog opening) does not.
-  // The flag is set by a Tab key, or by a press on the field or its label while the field has no focus, and cleared at the next focus change (after this field read it).
+  // Moving in with a pointer or Tab opens the list; a programmatic focus (a dialog opening) does not. The flag is set by a Tab key, or by a press on the field or its label while the field has no focus. A focus change, a cancelled press or a window blur clears it.
   useEffect(() => {
     if (!openOnFocus) return;
     const key = (e: KeyboardEvent) => (userFocus.current = e.key === "Tab");
-    // Only a press on the field or its label, while the field has no focus, counts as moving in.
     const press = (e: Event) => {
       const el = inputEl.current;
       const target = e.target as Node;
