@@ -358,12 +358,22 @@ describe("Autocomplete fixes", () => {
   test("openOnFocus: a press on a plain element, then a focus, does not open", async () => {
     await mount(
       <>
-        <div>Card</div>
+        <div id="card">Card</div>
         <Box openOnFocus />
       </>,
     );
     await act(async () => {
-      document.querySelector("div")!.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      document.getElementById("card")!.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      input().focus();
+    });
+    expect(list()).toBeNull();
+  });
+
+  test("openOnFocus: a cancelled press clears the flag, so a later focus does not open", async () => {
+    await mount(<Box openOnFocus />);
+    await act(async () => {
+      input().dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      document.dispatchEvent(new Event("pointercancel", { bubbles: true }));
       input().focus();
     });
     expect(list()).toBeNull();
