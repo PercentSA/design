@@ -89,15 +89,23 @@ export function Autocomplete({
   // The flag is set by a Tab key or a pointer press anywhere and cleared at the next focus change (after this field read it).
   useEffect(() => {
     if (!openOnFocus) return;
-    const set = (e: Event) => (userFocus.current = e.type === "pointerdown" || (e as KeyboardEvent).key === "Tab");
+    const key = (e: KeyboardEvent) => (userFocus.current = e.key === "Tab");
+    // Only a press on the field or its label, while the field has no focus, counts as moving in.
+    const press = (e: Event) => {
+      const el = inputEl.current;
+      const target = e.target as Node;
+      userFocus.current = !!el && document.activeElement !== el && (el.contains(target) || [...(el.labels ?? [])].some((l) => l.contains(target)));
+    };
     const clear = () => (userFocus.current = false);
-    document.addEventListener("keydown", set, true);
-    document.addEventListener("pointerdown", set, true);
+    document.addEventListener("keydown", key, true);
+    document.addEventListener("pointerdown", press, true);
     document.addEventListener("focusin", clear);
+    window.addEventListener("blur", clear);
     return () => {
-      document.removeEventListener("keydown", set, true);
-      document.removeEventListener("pointerdown", set, true);
+      document.removeEventListener("keydown", key, true);
+      document.removeEventListener("pointerdown", press, true);
       document.removeEventListener("focusin", clear);
+      window.removeEventListener("blur", clear);
     };
   }, [openOnFocus]);
 

@@ -342,13 +342,45 @@ describe("Autocomplete fixes", () => {
     expect(status()).toBe("");
   });
 
-  test("the live region is empty while loading and before the person acts", async () => {
+  test("the live region is empty while loading", async () => {
     await mount(<Box loading />);
-    await wait(450);
-    expect(status()).toBe("");
     await type(input(), "a");
     await wait(450);
     expect(status()).toBe("");
+  });
+
+  test("the live region is empty before the person acts", async () => {
+    await mount(<Box />);
+    await wait(450);
+    expect(status()).toBe("");
+  });
+
+  test("openOnFocus: a press on a plain element, then a focus, does not open", async () => {
+    await mount(
+      <>
+        <div>Card</div>
+        <Box openOnFocus />
+      </>,
+    );
+    await act(async () => {
+      document.querySelector("div")!.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      input().focus();
+    });
+    expect(list()).toBeNull();
+  });
+
+  test("openOnFocus: a press inside the focused input does not open on a later focus", async () => {
+    await mount(<Box openOnFocus />);
+    await act(async () => {
+      input().dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      input().focus();
+    });
+    expect(list()).not.toBeNull();
+    await press(input(), { key: "Escape" });
+    await act(async () => void input().dispatchEvent(new Event("pointerdown", { bubbles: true })));
+    await act(async () => void input().blur());
+    await act(async () => void input().focus());
+    expect(list()).toBeNull();
   });
 
   test("after a choice, Down uses the new cursor", async () => {
