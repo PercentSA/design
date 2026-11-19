@@ -148,6 +148,12 @@ describe("CodeEditor", () => {
       .filter((d) => d.trim() && !d.includes("!important"));
     expect(wrong).toEqual([]);
     expect(rules.filter((l) => /#[0-9a-fA-F]{3,8}\b/.test(l))).toEqual([]);
+    const mine = rules.filter((l) => l.includes("!important")).join("\n");
+    // The active line must not hide the selection; a search match is an outline, not the selection fill; the close buttons keep their base look; lint points use the danger token.
+    expect(mine).toMatch(/\.cm-activeLine \{background-color: color-mix\(/);
+    expect(mine).toMatch(/\.cm-searchMatch-selected \{[^}]*outline: 2px solid var\(--p-fg\)/);
+    expect(mine).toContain("button:not([name=close]):not(.cm-dialog-close)");
+    expect(mine).toMatch(/\.cm-lintPoint:after \{border-bottom-color: var\(--p-danger\)/);
   });
 });
 
