@@ -16,7 +16,7 @@ const saved = {
   caf: globalThis.cancelAnimationFrame,
   io: globalThis.IntersectionObserver,
   matchMedia: globalThis.matchMedia,
-  getAnimations: HTMLElement.prototype.getAnimations,
+  getAnimations: Element.prototype.getAnimations,
 };
 
 beforeEach(() => {
@@ -35,7 +35,7 @@ beforeEach(() => {
     observe() {}
     disconnect() {}
   } as unknown as typeof IntersectionObserver;
-  HTMLElement.prototype.getAnimations = function () {
+  Element.prototype.getAnimations = function () {
     return this.classList.contains("p-marquee-list") ? [anim as unknown as Animation] : [];
   };
 });
@@ -45,7 +45,7 @@ afterEach(() => {
   globalThis.cancelAnimationFrame = saved.caf;
   globalThis.IntersectionObserver = saved.io;
   globalThis.matchMedia = saved.matchMedia;
-  HTMLElement.prototype.getAnimations = saved.getAnimations;
+  Element.prototype.getAnimations = saved.getAnimations;
 });
 
 /** Runs the frames that are waiting, 16 ms after the last ones. */

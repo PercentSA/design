@@ -727,9 +727,9 @@ describe("review fixes", () => {
   });
 
   test("the phone switch scrolls only its own row, never the page (no scrollIntoView)", async () => {
-    const original = HTMLElement.prototype.scrollIntoView;
+    const original = Element.prototype.scrollIntoView;
     const spy = mock(() => {});
-    HTMLElement.prototype.scrollIntoView = spy;
+    Element.prototype.scrollIntoView = spy;
     try {
       const cols = [
         { id: "a", title: "A", cards: [] },
@@ -739,7 +739,7 @@ describe("review fixes", () => {
       await click(byText(el, "nav button", "B(0)"));
       expect(spy.mock.calls.length).toBe(0);
     } finally {
-      HTMLElement.prototype.scrollIntoView = original;
+      Element.prototype.scrollIntoView = original;
     }
   });
 
