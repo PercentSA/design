@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.20.0",
-    date: null,
+    date: "2026-11-19",
     summary: "New Autocomplete: a text input with suggestions.",
     changes: [
       c("new", "[Autocomplete](autocomplete): a text input with suggestions. The typed text is always the value; a suggestion only fills it in. Rows can show a detail, a server search can show loading and unavailable rows, and `token` suggests for one part of the text, such as one item of a comma list."),
