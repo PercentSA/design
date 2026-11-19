@@ -441,113 +441,117 @@ describe("autocomplete-match", () => {
     expect(matchSuggestions(BRANCHES, "")).toEqual(BRANCHES);
     expect(matchSuggestions([{ value: "h", label: "Riyadh" }], "RIY")).toHaveLength(1);
   });
+});
 
-  describe("review fixes", () => {
-    test("I1: an undefined value does not crash and a row can be chosen", async () => {
-      const values: string[] = [];
-      await mount(<Autocomplete aria-label="Branch" suggestions={BRANCHES} value={undefined as unknown as string} onValueChange={(v) => values.push(v)} />);
+describe("Autocomplete edge cases", () => {
+  test("an undefined value does not crash and a row can be chosen", async () => {
+    const values: string[] = [];
+    await mount(<Autocomplete aria-label="Branch" suggestions={BRANCHES} value={undefined as unknown as string} onValueChange={(v) => values.push(v)} />);
+    await press(input(), { key: "ArrowDown" });
+    await press(input(), { key: "Enter" });
+    expect(values).toEqual(["main"]);
+  });
+
+  test("with a text renderer the live region gets plain text", async () => {
+    await mount(
+      <PercentProvider lang="en" text={(s) => <span>{s}</span>}>
+        <Box />
+      </PercentProvider>,
+    );
+    await type(input(), "ma");
+    await wait(450);
+    expect(document.querySelector('[role="status"]')!.textContent).toBe("1 suggestion");
+    expect(document.querySelector('[role="status"]')!.innerHTML).not.toContain("<span");
+  });
+
+  test("rows arriving after Down are not highlighted; Enter fills nothing", async () => {
+    const values: string[] = [];
+    let setRows: (r: AutocompleteSuggestion[]) => void = () => {};
+    const App = () => {
+      const [rows, set] = useState<AutocompleteSuggestion[]>([]);
+      setRows = set;
+      return <Box values={values} suggestions={rows} loading={rows.length === 0} onQueryChange={() => {}} />;
+    };
+    await mount(<App />);
+    await type(input(), "m");
+    await press(input(), { key: "Escape" });
+    await press(input(), { key: "ArrowDown" });
+    expect(input().getAttribute("aria-expanded")).toBe("true");
+    await act(async () => setRows(BRANCHES));
+    expect(input().getAttribute("aria-activedescendant")).toBeNull();
+    const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    await act(async () => void input().dispatchEvent(e));
+    expect(e.defaultPrevented).toBe(false);
+    expect(values).toEqual(["m"]);
+  });
+
+  test("Down during composition does not open the list", async () => {
+    await mount(<Box />);
+    const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true, isComposing: true });
+    await act(async () => void input().dispatchEvent(e));
+    expect(e.defaultPrevented).toBe(false);
+    expect(input().getAttribute("aria-expanded")).toBe("false");
+    expect(input().getAttribute("aria-activedescendant")).toBeNull();
+  });
+
+  test("a readOnly input does not open or fill", async () => {
+    const values: string[] = [];
+    await mount(<Box readOnly values={values} />);
+    await press(input(), { key: "ArrowDown" });
+    await press(input(), { key: "Enter" });
+    expect(input().getAttribute("aria-expanded")).toBe("false");
+    expect(values).toEqual([]);
+  });
+
+  test("rows with the same value give no duplicate key warning", async () => {
+    const errors: unknown[][] = [];
+    const orig = console.error;
+    console.error = (...a: unknown[]) => void errors.push(a);
+    try {
+      await mount(<Box suggestions={[{ value: "nginx", detail: "app A" }, { value: "nginx", detail: "app B" }]} />);
       await press(input(), { key: "ArrowDown" });
-      await press(input(), { key: "Enter" });
-      expect(values).toEqual(["main"]);
-    });
+    } finally {
+      console.error = orig;
+    }
+    expect(errors.filter((a) => String(a[0]).includes("same key"))).toEqual([]);
+    expect(optionTexts()).toHaveLength(2);
+  });
 
-    test("I2: a text renderer does not make the live region loop", async () => {
-      let renders = 0;
-      const Counted = () => {
-        renders++;
-        return <Box />;
-      };
-      await mount(
-        <PercentProvider lang="en" text={(s) => <span>{s}</span>}>
-          <Counted />
-        </PercentProvider>,
-      );
-      await type(input(), "ma");
-      await wait(500);
-      const settled = renders;
-      await wait(1500);
-      expect(renders).toBe(settled);
-      expect(document.querySelector('[role="status"]')!.innerHTML).not.toContain("<span");
+  test("a refused fill leaves no pending caret", async () => {
+    const long = "a-very-long-branch-name";
+    function Refuse() {
+      const [v, setV] = useState("");
+      return <Autocomplete aria-label="Branch" suggestions={[{ value: long }]} value={v} onValueChange={(n) => n.length <= 10 && setV(n)} />;
+    }
+    await mount(<Refuse />);
+    await press(input(), { key: "ArrowDown" });
+    await press(input(), { key: "Enter" });
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input(), "abc");
+      input().setSelectionRange(1, 1);
+      input().dispatchEvent(new Event("input", { bubbles: true }));
     });
+    expect(input().selectionStart).toBe(1);
+  });
 
-    test("M1: rows arriving after Down are not highlighted; Enter fills nothing", async () => {
-      const values: string[] = [];
-      let setRows: (r: AutocompleteSuggestion[]) => void = () => {};
-      const App = () => {
-        const [rows, set] = useState<AutocompleteSuggestion[]>([]);
-        setRows = set;
-        return <Box values={values} suggestions={rows} loading={rows.length === 0} onQueryChange={() => {}} />;
-      };
-      await mount(<App />);
-      await type(input(), "m");
-      await press(input(), { key: "Escape" });
-      await press(input(), { key: "ArrowDown" });
-      expect(input().getAttribute("aria-expanded")).toBe("true");
-      await act(async () => setRows(BRANCHES));
-      expect(input().getAttribute("aria-activedescendant")).toBeNull();
-      const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
-      await act(async () => void input().dispatchEvent(e));
-      expect(e.defaultPrevented).toBe(false);
-      expect(values).toEqual(["m"]);
-    });
+  test("Enter with no highlight closes the list and is not prevented", async () => {
+    await mount(<Box />);
+    await type(input(), "fe");
+    expect(input().getAttribute("aria-expanded")).toBe("true");
+    const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
+    await act(async () => void input().dispatchEvent(e));
+    expect(e.defaultPrevented).toBe(false);
+    expect(input().getAttribute("aria-expanded")).toBe("false");
+  });
 
-    test("M3: Down during composition does not open the list", async () => {
-      await mount(<Box />);
-      const e = new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true, cancelable: true, isComposing: true });
-      await act(async () => void input().dispatchEvent(e));
-      expect(e.defaultPrevented).toBe(false);
-      expect(input().getAttribute("aria-expanded")).toBe("false");
-      expect(input().getAttribute("aria-activedescendant")).toBeNull();
+  test("a readOnly input with openOnFocus does not open or announce on Tab", async () => {
+    await mount(<Box readOnly openOnFocus />);
+    await act(async () => {
+      document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "Tab", bubbles: true }));
+      input().focus();
     });
-
-    test("M4: a readOnly input does not open or fill", async () => {
-      const values: string[] = [];
-      await mount(<Box readOnly values={values} />);
-      await press(input(), { key: "ArrowDown" });
-      await press(input(), { key: "Enter" });
-      expect(input().getAttribute("aria-expanded")).toBe("false");
-      expect(values).toEqual([]);
-    });
-
-    test("M5: rows with the same value give no duplicate key warning", async () => {
-      const errors: unknown[][] = [];
-      const orig = console.error;
-      console.error = (...a: unknown[]) => void errors.push(a);
-      try {
-        await mount(<Box suggestions={[{ value: "nginx", detail: "app A" }, { value: "nginx", detail: "app B" }]} />);
-        await press(input(), { key: "ArrowDown" });
-      } finally {
-        console.error = orig;
-      }
-      expect(errors.filter((a) => String(a[0]).includes("same key"))).toEqual([]);
-      expect(optionTexts()).toHaveLength(2);
-    });
-
-    test("M6: a refused fill leaves no pending caret", async () => {
-      const long = "a-very-long-branch-name";
-      function Refuse() {
-        const [v, setV] = useState("");
-        return <Autocomplete aria-label="Branch" suggestions={[{ value: long }]} value={v} onValueChange={(n) => n.length <= 10 && setV(n)} />;
-      }
-      await mount(<Refuse />);
-      await press(input(), { key: "ArrowDown" });
-      await press(input(), { key: "Enter" });
-      await act(async () => {
-        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input(), "abc");
-        input().setSelectionRange(1, 1);
-        input().dispatchEvent(new Event("input", { bubbles: true }));
-      });
-      expect(input().selectionStart).toBe(1);
-    });
-
-    test("M8: Enter with no highlight closes the list and is not prevented", async () => {
-      await mount(<Box />);
-      await type(input(), "fe");
-      expect(input().getAttribute("aria-expanded")).toBe("true");
-      const e = new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true });
-      await act(async () => void input().dispatchEvent(e));
-      expect(e.defaultPrevented).toBe(false);
-      expect(input().getAttribute("aria-expanded")).toBe("false");
-    });
+    await wait(450);
+    expect(input().getAttribute("aria-expanded")).toBe("false");
+    expect(document.querySelector('[role="status"]')!.textContent).toBe("");
   });
 });

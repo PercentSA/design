@@ -185,7 +185,7 @@ export function Autocomplete({
               props.onKeyUp?.(e);
             }}
             onFocus={(e) => {
-              if (openOnFocus && userFocus.current) {
+              if (openOnFocus && userFocus.current && !props.readOnly) {
                 setCursor(e.currentTarget.selectionStart);
                 setActive(-1);
                 setOpen(true);
