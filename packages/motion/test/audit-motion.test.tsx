@@ -18,7 +18,7 @@ const saved = {
   io: globalThis.IntersectionObserver,
   ro: globalThis.ResizeObserver,
   matchMedia: globalThis.matchMedia,
-  getAnimations: HTMLElement.prototype.getAnimations,
+  getAnimations: Element.prototype.getAnimations,
 };
 beforeEach(() => {
   observed = [];
@@ -39,13 +39,13 @@ beforeEach(() => {
     disconnect() {}
   } as unknown as typeof ResizeObserver;
   globalThis.matchMedia = ((q: string) => ({ matches: media[q] ?? false, media: q, addEventListener() {}, removeEventListener() {} })) as unknown as typeof matchMedia;
-  HTMLElement.prototype.getAnimations = () => [];
+  Element.prototype.getAnimations = () => [];
 });
 afterEach(() => {
   globalThis.IntersectionObserver = saved.io;
   globalThis.ResizeObserver = saved.ro;
   globalThis.matchMedia = saved.matchMedia;
-  HTMLElement.prototype.getAnimations = saved.getAnimations;
+  Element.prototype.getAnimations = saved.getAnimations;
 });
 const onScreen = (isIntersecting: boolean) => act(async () => observed.forEach((cb) => cb([{ isIntersecting }])));
 

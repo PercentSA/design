@@ -6,3 +6,6 @@ export const TEXT_BOX = cn(FIELD_BOX, "h-(--p-control-h) px-(--p-control-px) pla
 
 export const MENU_ITEM =
   "relative flex min-h-(--p-control-h-xs) cursor-default items-center gap-2 rounded-lg py-2 ps-3 pe-8 text-sm text-fg-2 outline-none select-none data-disabled:opacity-50 data-highlighted:bg-fg/10 data-highlighted:text-fg";
+
+// The highlighted option of a long list stays in view (runs when the highlight lands on an option).
+export const inView = (el: HTMLElement | null) => el?.scrollIntoView?.({ block: "nearest" });

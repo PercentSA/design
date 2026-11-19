@@ -62,6 +62,8 @@ export { normalizeAmount, normalizeDigits, normalizeIban, normalizeSignedAmount,
 export { phoneIssueMessage, saudiError, type SaudiField } from "./saudi/errors";
 export { CrInput, DigitsInput, IbanInput, MoneyInput, NationalIdInput, NumberInput, OtpInput, PasswordInput, PhoneInput, SearchInput, VatInput } from "./components/special-inputs";
 export { Combobox, type ComboboxOption } from "./components/combobox";
+export { Autocomplete, type AutocompleteProps } from "./components/autocomplete";
+export type { AutocompleteSuggestion } from "./components/autocomplete-match";
 export { FileDrop } from "./components/file-drop";
 export { ImageField } from "./components/image-field";
 export { acceptsFile, formatFileSize } from "./lib/files";

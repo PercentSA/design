@@ -1,7 +1,8 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AtSign } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {
+  Autocomplete,
   Button,
   Checkbox,
   ChipGroup,
@@ -21,6 +22,7 @@ import {
   Stack,
   Switch,
   Textarea,
+  type AutocompleteSuggestion,
   type ComboboxOption,
 } from "@percentsa/ui";
 import { FormField } from "@percentsa/ui/react-hook-form";
@@ -179,6 +181,90 @@ export function ComboboxAsyncExample() {
         }}
         name="city"
       />
+    </Field>
+  );
+}
+
+const CITY_DETAILS = [
+  ["Riyadh", "الرياض", "Riyadh Province", "منطقة الرياض"],
+  ["Jeddah", "جدة", "Makkah Province", "منطقة مكة المكرمة"],
+  ["Dammam", "الدمام", "Eastern Province", "المنطقة الشرقية"],
+  ["Khobar", "الخبر", "Eastern Province", "المنطقة الشرقية"],
+  ["Abha", "أبها", "Asir Province", "منطقة عسير"],
+  ["Tabuk", "تبوك", "Tabuk Province", "منطقة تبوك"],
+] as const;
+
+const useCitySuggestions = (): AutocompleteSuggestion[] => {
+  const t = useT();
+  return CITY_DETAILS.map(([en, ar, detailEn, detailAr]) => ({ value: t(en, ar), detail: t(detailEn, detailAr) }));
+};
+
+export function AutocompleteExample() {
+  const t = useT();
+  const [city, setCity] = useState("");
+  const cities = useCitySuggestions();
+  return (
+    <Field label={t("City", "المدينة")} hint={t("Type any text; suggestions open on focus", "اكتب أي نص؛ تظهر الاقتراحات عند التركيز على الحقل")} className="w-full max-w-xs">
+      <Autocomplete value={city} onValueChange={setCity} suggestions={cities} openOnFocus name="city" />
+    </Field>
+  );
+}
+
+export function AutocompleteAsyncExample() {
+  const t = useT();
+  const [value, setValue] = useState("");
+  const [results, setResults] = useState<AutocompleteSuggestion[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [unavailable, setUnavailable] = useState(false);
+  const cities = useCitySuggestions();
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  useEffect(() => () => clearTimeout(timer.current), []);
+  // Stands in for a server search. A real app debounces the query in its data hook.
+  const search = (query: string) => {
+    clearTimeout(timer.current);
+    setLoading(true);
+    timer.current = setTimeout(() => {
+      setResults(cities.filter((o) => searchKey(o.value).includes(searchKey(query))));
+      setLoading(false);
+    }, 600);
+  };
+  return (
+    <Stack gap={4} className="w-full max-w-xs">
+      <Field label={t("City", "المدينة")}>
+        <Autocomplete
+          value={value}
+          onValueChange={setValue}
+          suggestions={unavailable ? [] : results}
+          onQueryChange={search}
+          loading={loading}
+          unavailable={unavailable}
+          emptyText={t("No city with this name. Your text stays as typed.", "لا توجد مدينة بهذا الاسم. يبقى نصك كما كتبته.")}
+          name="city-search"
+        />
+      </Field>
+      <Switch label={t("Search is unavailable", "البحث غير متاح")} checked={unavailable} onCheckedChange={setUnavailable} />
+    </Stack>
+  );
+}
+
+const TAGS: AutocompleteSuggestion[] = [{ value: "alpha" }, { value: "beta" }, { value: "stable" }, { value: "staging" }, { value: "release" }];
+
+/** The range of the comma-separated item at the cursor, without the spaces around it. */
+const tagAt = (text: string, cursor: number) => {
+  let start = text.lastIndexOf(",", cursor - 1) + 1;
+  while (text[start] === " ") start++;
+  let end = text.indexOf(",", cursor);
+  if (end === -1) end = text.length;
+  while (end > start && text[end - 1] === " ") end--;
+  return { start: Math.min(start, cursor), end: Math.max(end, cursor) };
+};
+
+export function AutocompleteTokenExample() {
+  const t = useT();
+  const [tags, setTags] = useState("alpha, st");
+  return (
+    <Field label={t("Tags", "الوسوم")} hint={t("Separate with commas; each item gets suggestions", "افصل بفواصل؛ يحصل كل عنصر على اقتراحات")} className="w-full max-w-xs">
+      <Autocomplete value={tags} onValueChange={setTags} suggestions={TAGS} token={tagAt} mono name="tags" />
     </Field>
   );
 }

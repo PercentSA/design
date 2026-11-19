@@ -162,6 +162,56 @@
       }
     },
     {
+      "name": "autocomplete-match",
+      "type": "registry:lib",
+      "title": "matchSuggestions, boldRange",
+      "description": "@percentsa/ui: matchSuggestions, boldRange",
+      "registryDependencies": [
+        "@percentsa/saudi-normalize"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/autocomplete-match.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/autocomplete-match.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "matchSuggestions",
+          "boldRange"
+        ]
+      }
+    },
+    {
+      "name": "autocomplete",
+      "type": "registry:ui",
+      "title": "Autocomplete",
+      "description": "@percentsa/ui: Autocomplete",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/autocomplete-match",
+        "@percentsa/cn",
+        "@percentsa/input-classes",
+        "@percentsa/inputs",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/autocomplete.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/autocomplete.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "Autocomplete"
+        ]
+      }
+    },
+    {
       "name": "avatar",
       "type": "registry:ui",
       "title": "Avatar, AvatarGroup",
@@ -952,7 +1002,7 @@
       "name": "input-classes",
       "type": "registry:lib",
       "title": "FIELD_BOX, TEXT_BOX, MENU_ITEM",
-      "description": "@percentsa/ui: FIELD_BOX, TEXT_BOX, MENU_ITEM",
+      "description": "@percentsa/ui: FIELD_BOX, TEXT_BOX, MENU_ITEM, inView",
       "registryDependencies": [
         "@percentsa/cn"
       ],
@@ -967,7 +1017,8 @@
         "exports": [
           "FIELD_BOX",
           "TEXT_BOX",
-          "MENU_ITEM"
+          "MENU_ITEM",
+          "inView"
         ]
       }
     },
