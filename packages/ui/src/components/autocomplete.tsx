@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ComponentProps, type ReactNode, type Ref } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ComponentProps, type Ref } from "react";
 import { Popover } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
@@ -67,23 +67,23 @@ export function Autocomplete({
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
   const [cursor, setCursor] = useState<number | null>(null);
-  const [announced, setAnnounced] = useState<ReactNode>("");
+  const [announced, setAnnounced] = useState("");
 
-  const range = token ? token(value, cursor ?? value.length) : { start: 0, end: value.length };
-  const query = range ? value.slice(range.start, range.end) : "";
+  const text = value ?? "";
+  const range = token ? token(text, cursor ?? text.length) : { start: 0, end: text.length };
+  const query = range ? text.slice(range.start, range.end) : "";
   const matches = range ? (onQueryChange ? suggestions : matchSuggestions(suggestions, query)) : [];
   const shown = matches.slice(0, limit);
   const status = loading ? "loading" : unavailable ? "unavailable" : null;
   const emptyRow = !status && range && matches.length === 0 ? emptyText : undefined;
-  const hasContent = !!range && (shown.length > 0 || !!status || emptyRow !== undefined);
+  const hasContent = !props.readOnly && !!range && (shown.length > 0 || !!status || emptyRow !== undefined);
   const expanded = open && hasContent;
-  const unavailableText = typeof unavailable === "string" ? unavailable : t(s.suggestionsUnavailable);
 
   useLayoutEffect(() => {
     if (pendingCursor.current === null) return;
     inputEl.current?.setSelectionRange(pendingCursor.current, pendingCursor.current);
     pendingCursor.current = null;
-  }, [value]);
+  }, [text]);
 
   // Moving in with a pointer or Tab opens the list; a programmatic focus (a dialog opening) does not. The flag is set by a Tab key, or by a press on the field or its label while the field has no focus. A focus change, a cancelled press or a window blur clears it.
   useEffect(() => {
@@ -110,7 +110,7 @@ export function Autocomplete({
   }, [openOnFocus]);
 
   // The live region says the result once typing settles.
-  const message = !open || loading || !range ? "" : unavailable ? unavailableText : matches.length ? t(s.suggestionCount(matches.length)) : (emptyText ?? t(s.noSuggestions));
+  const message = !open || loading || !range ? "" : unavailable ? (typeof unavailable === "string" ? unavailable : s.suggestionsUnavailable) : matches.length ? s.suggestionCount(matches.length) : (emptyText ?? s.noSuggestions);
   useEffect(() => {
     const id = setTimeout(() => setAnnounced(message), LIVE_DELAY_MS);
     return () => clearTimeout(id);
@@ -122,11 +122,11 @@ export function Autocomplete({
   };
   const choose = (row: AutocompleteSuggestion | undefined) => {
     if (!row || !range) return;
-    const next = value.slice(0, range.start) + row.value + value.slice(range.end);
+    const next = text.slice(0, range.start) + row.value + text.slice(range.end);
     const at = range.start + row.value.length;
     setCursor(at);
     // The layout effect runs only when the text changes; otherwise set the caret now.
-    if (next === value) inputEl.current?.setSelectionRange(at, at);
+    if (next === text) inputEl.current?.setSelectionRange(at, at);
     else pendingCursor.current = at;
     onValueChange(next);
     onSuggestionSelect?.(row);
@@ -134,7 +134,7 @@ export function Autocomplete({
   };
   const move = (by: number) => setActive((i) => ((i < 0 && by < 0 ? 0 : i) + by + shown.length) % shown.length);
 
-  const text = (str: string) => {
+  const bold = (str: string) => {
     const r = boldRange(str, query);
     if (!r) return str;
     return (
@@ -165,8 +165,9 @@ export function Autocomplete({
             aria-autocomplete="list"
             aria-activedescendant={expanded && active >= 0 && active < shown.length ? `${listId}-${active}` : undefined}
             autoComplete="off"
-            value={value}
+            value={text}
             onChange={(e) => {
+              pendingCursor.current = null;
               const at = e.target.selectionStart ?? e.target.value.length;
               const r = token ? token(e.target.value, at) : { start: 0, end: e.target.value.length };
               setCursor(at);
@@ -196,13 +197,19 @@ export function Autocomplete({
               props.onBlur?.(e);
             }}
             onKeyDown={(e) => {
+              if (e.nativeEvent.isComposing || e.keyCode === 229) return props.onKeyDown?.(e);
               const down = e.key === "ArrowDown";
               if ((down || e.key === "ArrowUp") && hasContent) {
                 if (!expanded) {
                   setOpen(true);
-                  setActive(e.altKey ? -1 : down ? 0 : shown.length - 1);
+                  setActive(e.altKey || !shown.length ? -1 : down ? 0 : shown.length - 1);
                 } else if (shown.length) move(down ? 1 : -1);
-              } else if (e.key === "Enter" && expanded && shown[active] && !e.nativeEvent.isComposing && e.keyCode !== 229) choose(shown[active]);
+              } else if (e.key === "Enter" && expanded && shown[active]) choose(shown[active]);
+              else if (e.key === "Enter" && expanded) {
+                // No highlight: the text stays and the form submits.
+                close();
+                return props.onKeyDown?.(e);
+              }
               else if (e.key === "Escape" && expanded) close();
               else {
                 if (e.key === "Tab") close();
@@ -229,11 +236,11 @@ export function Autocomplete({
             className="z-(--p-z-overlay) max-h-[min(18rem,var(--radix-popover-content-available-height))] w-(--radix-popover-trigger-width) overflow-auto rounded-field border border-line bg-surface-2 p-1.5 shadow-overlay"
           >
             {loading && <div className="px-3 py-2 text-sm text-fg-3">{t(s.searching)}</div>}
-            {!loading && unavailable && <div className="px-3 py-2 text-sm text-fg-3">{unavailableText}</div>}
+            {!loading && unavailable && <div className="px-3 py-2 text-sm text-fg-3">{typeof unavailable === "string" ? unavailable : t(s.suggestionsUnavailable)}</div>}
             {emptyRow !== undefined && <div className="px-3 py-2 text-sm text-fg-3">{emptyRow}</div>}
             {shown.map((row, i) => (
               <div
-                key={row.value}
+                key={i}
                 id={`${listId}-${i}`}
                 role="option"
                 aria-selected={i === active}
@@ -244,7 +251,7 @@ export function Autocomplete({
                 onClick={() => choose(row)}
               >
                 <span className={cn("min-w-0 flex-1 truncate", mono && "font-mono")} dir={mono ? "ltr" : undefined}>
-                  {text(row.label ?? row.value)}
+                  {bold(row.label ?? row.value)}
                 </span>
                 {row.detail && <span className="shrink-0 text-fg-3">{row.detail}</span>}
               </div>

@@ -234,7 +234,7 @@ export function AutocompleteAsyncExample() {
         <Autocomplete
           value={value}
           onValueChange={setValue}
-          suggestions={results}
+          suggestions={unavailable ? [] : results}
           onQueryChange={search}
           loading={loading}
           unavailable={unavailable}
