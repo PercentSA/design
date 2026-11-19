@@ -17,6 +17,15 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.20.0",
+    date: null,
+    summary: "New Autocomplete: a text input with suggestions.",
+    changes: [
+      c("new", "[Autocomplete](autocomplete): a text input with suggestions. The typed text is always the value; a suggestion only fills it in. Rows can show a detail, a server search can show loading and unavailable rows, and `token` suggests for one part of the text, such as one item of a comma list."),
+      c("new", "Strings noSuggestions, suggestionsUnavailable and suggestionCount, in English and Arabic."),
+    ],
+  },
+  {
     version: "0.19.1",
     date: "2026-11-16",
     summary: "The hidden data table of a chart no longer makes the page longer.",

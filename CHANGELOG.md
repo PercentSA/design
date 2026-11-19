@@ -2,6 +2,11 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.20.0
+
+- [Autocomplete](https://design.percent.sa/en/components/autocomplete): a text input with suggestions. The typed text is always the value; rows can show a detail; `token` suggests for one part of the text.
+- Strings: `noSuggestions`, `suggestionsUnavailable`, `suggestionCount` (English and Arabic).
+
 ## 0.19.1
 
 - Charts (LineChart, AreaChart, BarChart, DonutChart): the hidden data table for screen readers no longer makes the page longer. The `sr-only` class was on the `<table>`, and a table ignores `height: 1px` and `overflow: hidden`: a chart with many points (for example 24 hours of metrics) kept its full table height, invisible, and the page scrolled far below its content. The class is now on a wrapper `<div>` around the table. Screen readers read the same table as before; nothing changes on screen.
