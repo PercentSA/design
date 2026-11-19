@@ -43,9 +43,10 @@ const theme = EditorView.theme(
     "&.cm-focused .cm-nonmatchingBracket, .cm-nonmatchingBracket": { backgroundColor: "transparent", outline: "1px solid var(--p-danger)" },
     // An outline, so the text keeps its contrast and a match differs from the selection (a fill).
     ".cm-searchMatch": { backgroundColor: "transparent", outline: "1px solid var(--p-fg-3)", outlineOffset: "-1px" },
-    ".cm-searchMatch-selected": { backgroundColor: "color-mix(in srgb, var(--p-fg) 10%, transparent)", outline: "2px solid var(--p-fg)", outlineOffset: "-2px" },
+    ".cm-searchMatch-selected": { backgroundColor: "transparent", outline: "2px solid var(--p-fg)", outlineOffset: "-2px" },
     ".cm-panels": { backgroundColor: "var(--p-surface-2)", color: "var(--p-fg)" },
     ".cm-panels-top": { borderBottom: "1px solid var(--p-line)" },
+    ".cm-panels [name=close], .cm-dialog-close": { color: "inherit" },
     ".cm-panels input, .cm-panels button:not([name=close]):not(.cm-dialog-close)": { color: "var(--p-fg)", backgroundColor: "var(--p-bg)", backgroundImage: "none", border: "1px solid var(--p-line-strong)", borderRadius: "4px", padding: "2px 6px" },
     ".cm-tooltip": { color: "var(--p-fg)", backgroundColor: "var(--p-surface-2)", border: "1px solid var(--p-line-strong)" },
     ".cm-tooltip .cm-tooltip-arrow:before, .cm-tooltip .cm-tooltip-arrow:after": { borderTopColor: "var(--p-line-strong)", borderBottomColor: "var(--p-line-strong)" },
