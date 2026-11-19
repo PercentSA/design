@@ -150,10 +150,10 @@ export function UnitInput({
   const selectId = useId();
   return (
     <div
-      dir="ltr"
       className={cn(
-        "flex h-(--p-control-h) w-full min-w-0 items-center rounded-field border border-line-strong bg-surface transition-colors hover:border-fg-3 has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-3 has-[input:focus-visible]:outline-fg",
-        disabled && "cursor-not-allowed opacity-50",
+        "flex h-(--p-control-h) w-full min-w-0 items-center rounded-field border border-line-strong bg-surface transition-colors hover:border-fg-3 has-[[aria-invalid=true]]:border-danger has-[input:focus-visible]:outline-2 has-[input:focus-visible]:outline-offset-3 has-[input:focus-visible]:outline-fg",
+        // The number box and the unit menu dim themselves when disabled: no dimming here.
+        disabled && "cursor-not-allowed",
         className,
       )}
     >
@@ -167,7 +167,7 @@ export function UnitInput({
         id={selectId}
         aria-label={unitLabel}
         value={unit}
-        disabled={disabled}
+        disabled={disabled || props.readOnly}
         onValueChange={(u) => onValueChange(props.value, u)}
         options={units}
         className="h-full w-auto shrink-0 rounded-s-none border-0 border-s border-line-strong bg-transparent hover:border-line-strong"

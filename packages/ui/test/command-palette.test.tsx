@@ -49,6 +49,12 @@ describe("CommandPalette fields", () => {
     expect(log).toEqual(["c"]);
   });
 
+  test("the description of a disabled command is not shown, so it is not searched", async () => {
+    await mount(<CommandPalette open onOpenChange={noop} commands={[{ id: "a", label: "Deploy", description: "production", disabled: "Needs a server", onSelect: noop }]} />);
+    await type("production");
+    expect(options()).toEqual([]);
+  });
+
   test("a badge is in its row", async () => {
     await mount(<CommandPalette open onOpenChange={noop} commands={[{ id: "a", label: "Deploy", badge: "New", onSelect: noop }]} />);
     expect(options()[0]!.textContent).toContain("New");

@@ -47,7 +47,7 @@ export function useCommandShortcut(onOpen: () => void) {
 }
 
 const matches = (c: Command, words: string[]) => {
-  const hay = searchKey([c.label, c.description ?? "", ...(c.keywords ?? [])].join(" "));
+  const hay = searchKey([c.label, c.disabled ? "" : (c.description ?? ""), ...(c.keywords ?? [])].join(" "));
   return words.every((w) => hay.includes(w));
 };
 
@@ -87,18 +87,18 @@ function Palette({ commands, placeholder, close }: { commands: Command[]; placeh
         aria-selected={i === active}
         aria-disabled={c.disabled ? true : undefined}
         data-highlighted={i === active ? "" : undefined}
-        className={cn(MENU_ITEM, "pe-3", c.disabled && "opacity-50")}
+        className={cn(MENU_ITEM, "pe-3")}
         // Keep focus in the input.
         onMouseDown={(e) => e.preventDefault()}
         onMouseMove={() => setActive(i)}
         onClick={() => run(c)}
       >
-        {c.icon && <span className="flex shrink-0 text-fg-3 [&_svg]:size-4">{c.icon}</span>}
+        {c.icon && <span className={cn("flex shrink-0 text-fg-3 [&_svg]:size-4", c.disabled && "opacity-50")}>{c.icon}</span>}
         <span className="min-w-0 flex-1">
-          <span className="block truncate">{c.label}</span>
+          <span className={cn("block truncate", c.disabled && "opacity-50")}>{c.label}</span>
           {(c.disabled || c.description) && <span className="block truncate text-xs text-fg-3">{c.disabled || c.description}</span>}
         </span>
-        {c.badge && <span className="shrink-0 rounded-pill border border-line px-2 text-xs text-fg-2">{c.badge}</span>}
+        {c.badge && <span className={cn("shrink-0 rounded-pill border border-line px-2 text-xs text-fg-2", c.disabled && "opacity-50")}>{c.badge}</span>}
         {c.shortcut && <Kbd>{c.shortcut}</Kbd>}
       </li>
     );

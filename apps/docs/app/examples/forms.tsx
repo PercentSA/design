@@ -358,13 +358,13 @@ export function SliderExample() {
 
 export function UnitInputExample() {
   const t = useT();
-  const [timeout, setTimeout] = useState<{ value: number | null; unit: string }>({ value: 30, unit: "s" });
+  const [delay, setDelay] = useState<{ value: number | null; unit: string }>({ value: 30, unit: "s" });
   return (
     <Field label={t("Request timeout", "مهلة الطلب")} className="w-60">
       <UnitInput
-        value={timeout.value}
-        unit={timeout.unit}
-        onValueChange={(value, unit) => setTimeout({ value, unit })}
+        value={delay.value}
+        unit={delay.unit}
+        onValueChange={(value, unit) => setDelay({ value, unit })}
         min={0}
         units={[
           { value: "ms", label: t("milliseconds", "ملّي ثانية") },

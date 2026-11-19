@@ -37,6 +37,15 @@ function Box({ calls }: { calls: [number | null, string][] }) {
 }
 
 describe("UnitInput", () => {
+  test("the box follows the page direction, shows an error border, and read only locks the unit menu", async () => {
+    const el = await mount(<UnitInput aria-label="Timeout" aria-invalid unitLabel="Unit" units={UNITS} value={1} unit="s" readOnly onValueChange={() => {}} />);
+    const box = el.querySelector('[role="combobox"]')!.parentElement!;
+    expect(box.hasAttribute("dir")).toBe(false);
+    expect(box.className).toContain("has-[[aria-invalid=true]]:border-danger");
+    expect(el.querySelector('[role="combobox"]')!.hasAttribute("disabled")).toBe(true);
+  });
+
+
   test("typing a number and choosing a unit reports both; clearing reports null with the unit", async () => {
     const calls: [number | null, string][] = [];
     const el = await mount(<Box calls={calls} />);
