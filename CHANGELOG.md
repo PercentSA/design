@@ -2,6 +2,12 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.21.0
+
+- [CodeEditor](https://design.percent.sa/en/components/code-editor) and [CodeDiff](https://design.percent.sa/en/components/code-diff): an editor for code and settings files, with line numbers, search and errors on their lines, and two versions of a text side by side. They have their own entry, `@percentsa/ui/code-editor`, because CodeMirror is large: the root entry does not load it. Strings for the search and the diff, in English and Arabic.
+- [UnitInput](https://design.percent.sa/en/components/unit-input): a number with its unit (a time, a size) in one box. `onValueChange` gets the number and the unit.
+- [CommandPalette](https://design.percent.sa/en/components/command-palette): a command can have `description` (one line under the label, searched too), `badge` (short text at the end of the row) and `disabled` (the reason it cannot run now; the row stays in the list and cannot be chosen). Commands without these fields work as before.
+
 ## 0.20.0
 
 - [Autocomplete](https://design.percent.sa/en/components/autocomplete): a text input with suggestions. The typed text is always the value; rows can show a detail; `token` suggests for one part of the text.

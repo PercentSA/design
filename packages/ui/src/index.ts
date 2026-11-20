@@ -60,7 +60,7 @@ export { FIELD_BOX, MENU_ITEM, TEXT_BOX } from "./components/input-classes";
 export { Checkbox, ChipGroup, ChoiceCardGroup, RadioGroup, Switch, type ChoiceOption } from "./components/choices";
 export { normalizeAmount, normalizeDigits, normalizeIban, normalizeSignedAmount, parseAmount, searchKey, stepNumber } from "./saudi/normalize";
 export { phoneIssueMessage, saudiError, type SaudiField } from "./saudi/errors";
-export { CrInput, DigitsInput, IbanInput, MoneyInput, NationalIdInput, NumberInput, OtpInput, PasswordInput, PhoneInput, SearchInput, VatInput } from "./components/special-inputs";
+export { CrInput, DigitsInput, IbanInput, MoneyInput, NationalIdInput, NumberInput, OtpInput, PasswordInput, PhoneInput, SearchInput, UnitInput, VatInput } from "./components/special-inputs";
 export { Combobox, type ComboboxOption } from "./components/combobox";
 export { Autocomplete, type AutocompleteProps } from "./components/autocomplete";
 export type { AutocompleteSuggestion } from "./components/autocomplete-match";

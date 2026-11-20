@@ -25,7 +25,7 @@ export type DocPage = {
   group: Group;
   /** Names exported from the package, for the import line. */
   imports: string;
-  pkg?: "ui" | "motion" | "ui/react-hook-form";
+  pkg?: "ui" | "motion" | "ui/react-hook-form" | "ui/code-editor";
   examples: string[];
   desc: Localized;
 };

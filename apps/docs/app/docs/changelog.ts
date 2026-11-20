@@ -17,6 +17,17 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.21.0",
+    date: "2026-11-20",
+    summary: "New CodeEditor, CodeDiff and UnitInput; CommandPalette rows can have a description, a badge and a disabled reason.",
+    changes: [
+      c("new", "[CodeEditor](code-editor) and [CodeDiff](code-diff): an editor for code and settings files, with line numbers, search and errors on their lines, and two versions of a text side by side. They have their own entry, `@percentsa/ui/code-editor`, because CodeMirror is large: the root entry does not load it."),
+      c("new", "Strings for the search and the diff of CodeEditor and CodeDiff, in English and Arabic."),
+      c("new", "[UnitInput](unit-input): a number with its unit (a time, a size) in one box. `onValueChange` gets the number and the unit."),
+      c("better", "[CommandPalette](command-palette): a command can have `description` (one line under the label, searched too), `badge` (short text at the end of the row) and `disabled` (the reason it cannot run now; the row stays in the list and cannot be chosen). Commands without these fields work as before."),
+    ],
+  },
+  {
     version: "0.20.0",
     date: "2026-11-19",
     summary: "New Autocomplete: a text input with suggestions.",

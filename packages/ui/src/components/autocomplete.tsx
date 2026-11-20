@@ -253,7 +253,7 @@ export function Autocomplete({
                 <span className={cn("min-w-0 flex-1 truncate", mono && "font-mono")} dir={mono ? "ltr" : undefined}>
                   {bold(row.label ?? row.value)}
                 </span>
-                {row.detail && <span className="shrink-0 text-fg-3">{row.detail}</span>}
+                {row.detail && <span className="shrink-0 text-fg-3 [[data-highlighted]_&]:text-fg-2">{row.detail}</span>}
               </div>
             ))}
             {matches.length > shown.length && <div className="px-3 py-2 text-sm text-fg-3">{t(s.typeToNarrow(matches.length - shown.length))}</div>}
