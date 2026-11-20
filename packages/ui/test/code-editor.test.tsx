@@ -97,9 +97,44 @@ describe("CodeEditor", () => {
     expect(calls).toBe(0);
   });
 
-  test("a line outside the text is ignored", async () => {
-    await mount(<CodeEditor label="Compose file" value="a: 1" diagnostics={[{ line: 9, message: "far" }, { line: 0, message: "zero" }]} />);
+  test("every diagnostic is listed; a line outside the text gets no mark, and no line word when it is not a line", async () => {
+    await mount(<CodeEditor label="Compose file" value="a: 1" diagnostics={[{ line: 9, message: "far" }, { line: 0, message: "whole file" }, { line: 1.5, message: "half" }]} />);
     expect(document.querySelector(".pc-line-error")).toBeNull();
+    expect([...document.querySelectorAll("[data-diagnostics] li")].map((li) => li.textContent)).toEqual(["Line 9: far", "whole file", "half"]);
+  });
+
+  test("undo after a value from outside cannot bring back old text", async () => {
+    let set: (v: string) => void = () => {};
+    const seen: string[] = [];
+    function Host() {
+      const [value, setValue] = useState("abc\n");
+      set = setValue;
+      return <CodeEditor label="x" value={value} onValueChange={(v) => (seen.push(v), setValue(v))} />;
+    }
+    await mount(<Host />);
+    await act(async () => view().dispatch({ changes: { from: 0, to: 1 }, userEvent: "delete" }));
+    await act(async () => set("saved: 1\n"));
+    expect(undo(view())).toBe(false);
+    expect(view().state.doc.toString()).toBe("saved: 1\n");
+    expect(seen).toEqual(["bc\n"]);
+  });
+
+  test("the error list and the hint follow the page direction; the empty list stays in the page", async () => {
+    await mount(
+      <PercentProvider lang="ar">
+        <CodeEditor label="ملف" value="a: 1" diagnostics={[]} />
+      </PercentProvider>,
+    );
+    const list = document.querySelector("[data-diagnostics]")!;
+    expect(list.getAttribute("dir")).toBe("rtl");
+    expect(list.className).not.toMatch(/hidden/);
+    expect(document.getElementById(content().getAttribute("aria-describedby")!)!.getAttribute("dir")).toBe("rtl");
+  });
+
+  test("the way-out hint exists for an editable editor only", async () => {
+    await mount(<CodeEditor label="x" value="a: 1" readOnly />);
+    expect(content().hasAttribute("aria-describedby")).toBe(false);
+    expect(document.body.textContent).not.toContain("Press Escape");
   });
 
   test("readOnly blocks edits", async () => {

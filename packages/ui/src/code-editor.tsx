@@ -11,7 +11,7 @@ import { highlightSelectionMatches, search, searchKeymap } from "@codemirror/sea
 import { Annotation, Compartment, EditorSelection, EditorState, StateEffect, StateField, Transaction, type Extension } from "@codemirror/state";
 import { Decoration, EditorView, drawSelection, highlightActiveLine, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
-import { useStrings } from "./provider";
+import { useDir, useStrings } from "./provider";
 import type { Strings } from "./i18n/strings";
 import { cn } from "./lib/cn";
 
@@ -158,9 +158,11 @@ export function CodeEditor({
   change.current = onValueChange;
   const strings = useStrings();
   const hintId = useId();
+  const dir = useDir();
+  const historyBox = useRef(new Compartment());
   const words = JSON.stringify(phrases(strings)); // a provider may pass a new strings object each render
   const config = useRef(new Compartment());
-  const first = useRef({ value, base: config.current.of(settings(label, readOnly, lang, strings, hintId)) });
+  const first = useRef({ value, base: config.current.of(settings(label, readOnly, lang, strings, readOnly ? undefined : hintId)) });
 
   // The view lives as long as the component; the settings below reach it through effects.
   useEffect(() => {
@@ -170,7 +172,7 @@ export function CodeEditor({
       state: EditorState.create({
         doc: init.value,
         extensions: [
-          history(),
+          historyBox.current.of(history()),
           drawSelection(),
           indentOnInput(),
           bracketMatching(),
@@ -199,7 +201,7 @@ export function CodeEditor({
   }, []);
 
   useEffect(() => {
-    view.current!.dispatch({ effects: config.current.reconfigure(settings(label, readOnly, lang, strings, hintId)) });
+    view.current!.dispatch({ effects: config.current.reconfigure(settings(label, readOnly, lang, strings, readOnly ? undefined : hintId)) });
   }, [label, readOnly, lang, words]);
 
   useEffect(() => {
@@ -207,7 +209,10 @@ export function CodeEditor({
     const text = v.state.doc.toString();
     if (value === text) return;
     const head = Math.min(v.state.selection.main.head, value.length);
+    // The old history would be mapped through the replacement and undo would mix old text into the new: start it empty.
+    v.dispatch({ effects: historyBox.current.reconfigure([]) });
     v.dispatch({ changes: { from: 0, to: text.length, insert: value }, selection: EditorSelection.cursor(head), annotations: [fromOutside.of(true), Transaction.addToHistory.of(false)] });
+    v.dispatch({ effects: historyBox.current.reconfigure(history()) });
   }, [value]);
 
   // Inline arrays are new objects on every render; a dispatch would close an open lint tooltip.
@@ -215,24 +220,26 @@ export function CodeEditor({
   useEffect(() => {
     const v = view.current!;
     const doc = v.state.doc;
-    const ok = diagnostics.filter((d) => d.line >= 1 && d.line <= doc.lines);
+    const ok = diagnostics.filter((d) => Number.isInteger(d.line) && d.line >= 1 && d.line <= doc.lines);
     v.dispatch({ effects: setErrorLines.of(ok) });
     // The lint package adds the gutter marker and the tooltip.
     v.dispatch(setDiagnostics(v.state, ok.map((d) => ({ from: doc.line(d.line).from, to: doc.line(d.line).to, severity: "error" as const, message: d.message }))));
   }, [diagKey, value]);
 
   return (
-    <div dir="ltr" className={cn("overflow-hidden rounded-field border border-line bg-surface", className)} style={{ "--pc-min": `${minLines * 1.6}em` } as React.CSSProperties}>
-      <div ref={host} />
-      <span id={hintId} className="sr-only">
-        {strings.codeEditorLeave}
-      </span>
-      <ul data-diagnostics aria-live="polite" className="m-0 list-none border-t border-line px-3 py-2 text-xs text-danger empty:hidden">
-        {diagnostics
-          .filter((d) => Number.isInteger(d.line) && d.line >= 1)
-          .map((d, i) => (
-            <li key={i}>{`${strings.codeEditorLine(d.line)}: ${d.message}`}</li>
-          ))}
+    <div className={cn("group overflow-hidden rounded-field border border-line bg-surface", className)} style={{ "--pc-min": `${minLines * 1.6}em` } as React.CSSProperties}>
+      <div dir="ltr" ref={host} />
+      {!readOnly && (
+        // Visible while the editor has focus, so keyboard users learn the way out; the text is always the editor's description.
+        <p id={hintId} dir={dir} className="sr-only group-focus-within:not-sr-only">
+          <span className="block px-3 py-1 text-xs text-fg-3">{strings.codeEditorLeave}</span>
+        </p>
+      )}
+      <ul data-diagnostics dir={dir} aria-live="polite" className="m-0 list-none border-t border-line px-3 py-2 text-xs text-danger empty:border-0 empty:p-0">
+        {/* A diagnostic is never hidden: a line outside the text only gets no mark. */}
+        {diagnostics.map((d, i) => (
+          <li key={i}>{Number.isInteger(d.line) && d.line >= 1 ? `${strings.codeEditorLine(d.line)}: ${d.message}` : d.message}</li>
+        ))}
       </ul>
     </div>
   );
