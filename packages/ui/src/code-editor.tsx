@@ -1,14 +1,14 @@
 "use client";
 
 // The entry @percentsa/ui/code-editor. CodeMirror 6 is heavy: only this file imports it, never the root index.
-import { useEffect, useRef } from "react";
+import { useEffect, useId, useRef } from "react";
 import { defaultKeymap, history, historyKeymap, indentWithTab } from "@codemirror/commands";
 import { yaml } from "@codemirror/lang-yaml";
 import { HighlightStyle, bracketMatching, indentOnInput, syntaxHighlighting } from "@codemirror/language";
 import { lintGutter, setDiagnostics } from "@codemirror/lint";
 import { MergeView } from "@codemirror/merge";
 import { highlightSelectionMatches, search, searchKeymap } from "@codemirror/search";
-import { Annotation, Compartment, EditorSelection, EditorState, StateEffect, StateField, type Extension } from "@codemirror/state";
+import { Annotation, Compartment, EditorSelection, EditorState, StateEffect, StateField, Transaction, type Extension } from "@codemirror/state";
 import { Decoration, EditorView, drawSelection, highlightActiveLine, keymap, lineNumbers } from "@codemirror/view";
 import { tags } from "@lezer/highlight";
 import { useStrings } from "./provider";
@@ -35,7 +35,7 @@ const theme = EditorView.theme(
     ".cm-selectionBackground, &.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground, ::selection": { background: "var(--p-line-strong)" },
     ".cm-selectionMatch": { backgroundColor: "var(--p-line)" },
     // Translucent: the selection layer is drawn behind the text, an opaque line would hide it.
-    ".cm-activeLine": { backgroundColor: "color-mix(in srgb, var(--p-fg) 5%, transparent)" },
+    ".cm-activeLine": { backgroundColor: "color-mix(in srgb, var(--p-fg) 3%, transparent)" },
     ".cm-specialChar": { color: "var(--p-fg-3)" },
     ".cm-gutters": { color: "var(--p-fg-3)", backgroundColor: "var(--p-surface)", border: "none", borderInlineEnd: "1px solid var(--p-line)" },
     ".cm-activeLineGutter": { backgroundColor: "var(--p-surface-2)", color: "var(--p-fg)" },
@@ -50,7 +50,8 @@ const theme = EditorView.theme(
     ".cm-panels input, .cm-panels button:not([name=close]):not(.cm-dialog-close)": { color: "var(--p-fg)", backgroundColor: "var(--p-bg)", backgroundImage: "none", border: "1px solid var(--p-line-strong)", borderRadius: "4px", padding: "2px 6px" },
     ".cm-tooltip": { color: "var(--p-fg)", backgroundColor: "var(--p-surface-2)", border: "1px solid var(--p-line-strong)" },
     ".cm-tooltip .cm-tooltip-arrow:before, .cm-tooltip .cm-tooltip-arrow:after": { borderTopColor: "var(--p-line-strong)", borderBottomColor: "var(--p-line-strong)" },
-    ".pc-line-error": { backgroundColor: "color-mix(in srgb, var(--p-danger) 14%, transparent)", boxShadow: "inset 2px 0 0 var(--p-danger)" },
+    // No tint: grey comments (fg-3) must keep 4.5:1 on an error line that is also the active line.
+    ".pc-line-error": { boxShadow: "inset 2px 0 0 var(--p-danger)" },
     // The merge view: changed lines, changed text and the change gutter.
     "&.cm-merge-a .cm-changedLine, &.cm-merge-b .cm-changedLine, .cm-deletedChunk, .cm-inlineChangedLine, .cm-insertedLine, .cm-deletedLine": { backgroundColor: "var(--p-surface-2)" },
     "&.cm-merge-a .cm-changedText, &.cm-merge-b .cm-changedText, .cm-deletedChunk .cm-deletedText": { background: underline("var(--p-fg-3)") },
@@ -119,11 +120,11 @@ const phrases = (s: Strings): Record<string, string> => ({
 });
 
 /** Settings that can change while the editor lives; the search panel words come from the page language. */
-const settings = (label: string, readOnly: boolean, lang: CodeLanguage, s: Strings): Extension[] => [
+const settings = (label: string, readOnly: boolean, lang: CodeLanguage, s: Strings, hintId?: string): Extension[] => [
   EditorState.phrases.of(phrases(s)),
   // Read only, not "not editable": the content stays focusable, so keyboard users can select, copy and search.
   EditorState.readOnly.of(readOnly),
-  EditorView.contentAttributes.of({ "aria-label": label }),
+  EditorView.contentAttributes.of({ "aria-label": label, ...(hintId && { "aria-describedby": hintId }) }),
   language(lang),
 ];
 
@@ -156,9 +157,10 @@ export function CodeEditor({
   const change = useRef(onValueChange);
   change.current = onValueChange;
   const strings = useStrings();
+  const hintId = useId();
   const words = JSON.stringify(phrases(strings)); // a provider may pass a new strings object each render
   const config = useRef(new Compartment());
-  const first = useRef({ value, base: config.current.of(settings(label, readOnly, lang, strings)) });
+  const first = useRef({ value, base: config.current.of(settings(label, readOnly, lang, strings, hintId)) });
 
   // The view lives as long as the component; the settings below reach it through effects.
   useEffect(() => {
@@ -197,7 +199,7 @@ export function CodeEditor({
   }, []);
 
   useEffect(() => {
-    view.current!.dispatch({ effects: config.current.reconfigure(settings(label, readOnly, lang, strings)) });
+    view.current!.dispatch({ effects: config.current.reconfigure(settings(label, readOnly, lang, strings, hintId)) });
   }, [label, readOnly, lang, words]);
 
   useEffect(() => {
@@ -205,9 +207,11 @@ export function CodeEditor({
     const text = v.state.doc.toString();
     if (value === text) return;
     const head = Math.min(v.state.selection.main.head, value.length);
-    v.dispatch({ changes: { from: 0, to: text.length, insert: value }, selection: EditorSelection.cursor(head), annotations: fromOutside.of(true) });
+    v.dispatch({ changes: { from: 0, to: text.length, insert: value }, selection: EditorSelection.cursor(head), annotations: [fromOutside.of(true), Transaction.addToHistory.of(false)] });
   }, [value]);
 
+  // Inline arrays are new objects on every render; a dispatch would close an open lint tooltip.
+  const diagKey = JSON.stringify(diagnostics);
   useEffect(() => {
     const v = view.current!;
     const doc = v.state.doc;
@@ -215,15 +219,20 @@ export function CodeEditor({
     v.dispatch({ effects: setErrorLines.of(ok) });
     // The lint package adds the gutter marker and the tooltip.
     v.dispatch(setDiagnostics(v.state, ok.map((d) => ({ from: doc.line(d.line).from, to: doc.line(d.line).to, severity: "error" as const, message: d.message }))));
-  }, [diagnostics, value]);
+  }, [diagKey, value]);
 
   return (
     <div dir="ltr" className={cn("overflow-hidden rounded-field border border-line bg-surface", className)} style={{ "--pc-min": `${minLines * 1.6}em` } as React.CSSProperties}>
       <div ref={host} />
-      <ul data-diagnostics aria-live="polite" className="sr-only">
-        {diagnostics.map((d, i) => (
-          <li key={i}>{`${d.line}: ${d.message}`}</li>
-        ))}
+      <span id={hintId} className="sr-only">
+        {strings.codeEditorLeave}
+      </span>
+      <ul data-diagnostics aria-live="polite" className="m-0 list-none border-t border-line px-3 py-2 text-xs text-danger empty:hidden">
+        {diagnostics
+          .filter((d) => Number.isInteger(d.line) && d.line >= 1)
+          .map((d, i) => (
+            <li key={i}>{`${strings.codeEditorLine(d.line)}: ${d.message}`}</li>
+          ))}
       </ul>
     </div>
   );

@@ -54,15 +54,15 @@ const CONFIG = `services:
 `;
 
 // A sample the app checks itself: the editor only marks the lines it is given.
-const checkConfig = (text: string): CodeDiagnostic[] =>
-  text.split("\n").flatMap((line, i) => (/:latest\s*$/.test(line) ? [{ line: i + 1, message: "Name a version, not latest" }] : []));
+const checkConfig = (text: string, message: string): CodeDiagnostic[] =>
+  text.split("\n").flatMap((line, i) => (/:latest\s*$/.test(line) ? [{ line: i + 1, message }] : []));
 
 export function CodeEditorExample() {
   const t = useT();
   const [value, setValue] = useState(CONFIG);
   return (
     <div className="w-full max-w-xl">
-      <CodeEditor value={value} onValueChange={setValue} diagnostics={checkConfig(value)} label={t("Service settings", "إعدادات الخدمات")} minLines={10} />
+      <CodeEditor value={value} onValueChange={setValue} diagnostics={checkConfig(value, t("Name a version, not latest", "حدّد إصدارًا بدل latest"))} label={t("Service settings", "إعدادات الخدمات")} minLines={10} />
       <p className="mt-2 text-sm text-fg-3">{t("Change an image version to “latest” to see an error on its line.", "غيّر إصدار صورة إلى «latest» لترى الخطأ على سطرها.")}</p>
     </div>
   );

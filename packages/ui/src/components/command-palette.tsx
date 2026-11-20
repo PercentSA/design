@@ -96,7 +96,7 @@ function Palette({ commands, placeholder, close }: { commands: Command[]; placeh
         {c.icon && <span className={cn("flex shrink-0 text-fg-3 [&_svg]:size-4", c.disabled && "opacity-50")}>{c.icon}</span>}
         <span className="min-w-0 flex-1">
           <span className={cn("block truncate", c.disabled && "opacity-50")}>{c.label}</span>
-          {(c.disabled || c.description) && <span className="block truncate text-xs text-fg-3">{c.disabled || c.description}</span>}
+          {(c.disabled || c.description) && <span className="block truncate text-xs text-fg-3 [[data-highlighted]_&]:text-fg-2">{c.disabled || c.description}</span>}
         </span>
         {c.badge && <span className={cn("shrink-0 rounded-pill border border-line px-2 text-xs text-fg-2", c.disabled && "opacity-50")}>{c.badge}</span>}
         {c.shortcut && <Kbd>{c.shortcut}</Kbd>}

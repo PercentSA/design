@@ -1,6 +1,7 @@
 // CodeEditor and CodeDiff (0.21.0): the entry @percentsa/ui/code-editor.
 import { describe, expect, test } from "bun:test";
 import { act, useState } from "react";
+import { undo } from "@codemirror/commands";
 import { EditorView } from "@codemirror/view";
 import { CodeDiff, CodeEditor } from "../src/code-editor";
 import { PercentProvider } from "../src";
@@ -47,6 +48,53 @@ describe("CodeEditor", () => {
     expect(lines[0]!.classList.contains("pc-line-error")).toBe(false);
     expect(lines[1]!.classList.contains("pc-line-error")).toBe(true);
     expect(document.querySelector('[data-diagnostics]')!.textContent).toContain("bad");
+  });
+
+  test("the errors are a visible list under the editor, with a line word, and the editor points to a way out", async () => {
+    await mount(<CodeEditor label="Compose file" value={"a: 1\nb: [\n"} diagnostics={[{ line: 2, message: "bad" }]} />);
+    const list = document.querySelector("[data-diagnostics]")!;
+    expect(list.className).not.toContain("sr-only");
+    expect(list.textContent).toBe("Line 2: bad");
+    const hint = document.getElementById(content().getAttribute("aria-describedby")!)!;
+    expect(hint.textContent).toBe("Press Escape, then Tab, to leave the editor.");
+  });
+
+  test("Arabic: the line word and the way out", async () => {
+    await mount(
+      <PercentProvider lang="ar">
+        <CodeEditor label="ملف" value={"a: 1\nb: [\n"} diagnostics={[{ line: 2, message: "خطأ" }]} />
+      </PercentProvider>,
+    );
+    expect(document.querySelector("[data-diagnostics]")!.textContent).toBe("السطر 2: خطأ");
+  });
+
+  test("a value set from outside does not enter the undo history", async () => {
+    let set: (v: string) => void = () => {};
+    function Host() {
+      const [value, setValue] = useState("a: 1\n");
+      set = setValue;
+      return <CodeEditor label="Compose file" value={value} onValueChange={setValue} />;
+    }
+    await mount(<Host />);
+    await act(async () => set("c"));
+    expect(undo(view())).toBe(false);
+    expect(view().state.doc.toString()).toBe("c");
+  });
+
+  test("the same diagnostics in a new array do not touch the editor again", async () => {
+    let bump: () => void = () => {};
+    function Host() {
+      const [n, setN] = useState(0);
+      bump = () => setN(n + 1);
+      return <CodeEditor label="Compose file" value={"a: 1\nb: [\n"} diagnostics={[{ line: 2, message: "bad" }]} />;
+    }
+    await mount(<Host />);
+    let calls = 0;
+    const v = view();
+    const dispatch = v.dispatch.bind(v);
+    v.dispatch = ((...a: unknown[]) => (calls++, (dispatch as (...x: unknown[]) => void)(...a))) as typeof v.dispatch;
+    await act(async () => bump());
+    expect(calls).toBe(0);
   });
 
   test("a line outside the text is ignored", async () => {

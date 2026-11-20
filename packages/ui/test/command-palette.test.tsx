@@ -55,6 +55,11 @@ describe("CommandPalette fields", () => {
     expect(options()).toEqual([]);
   });
 
+  test("the second line stays readable on the highlighted row", async () => {
+    await mount(<CommandPalette open onOpenChange={noop} commands={[{ id: "a", label: "Deploy", description: "to production", onSelect: noop }]} />);
+    expect(options()[0]!.querySelector(".text-xs")!.className).toContain("[[data-highlighted]_&]:text-fg-2");
+  });
+
   test("a badge is in its row", async () => {
     await mount(<CommandPalette open onOpenChange={noop} commands={[{ id: "a", label: "Deploy", badge: "New", onSelect: noop }]} />);
     expect(options()[0]!.textContent).toContain("New");
