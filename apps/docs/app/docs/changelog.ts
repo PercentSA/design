@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.21.0",
-    date: null,
+    date: "2026-11-20",
     summary: "New CodeEditor, CodeDiff and UnitInput; CommandPalette rows can have a description, a badge and a disabled reason.",
     changes: [
       c("new", "[CodeEditor](code-editor) and [CodeDiff](code-diff): an editor for code and settings files, with line numbers, search and errors on their lines, and two versions of a text side by side. They have their own entry, `@percentsa/ui/code-editor`, because CodeMirror is large: the root entry does not load it."),
