@@ -131,7 +131,7 @@ const settings = (label: string, readOnly: boolean, lang: CodeLanguage, s: Strin
 /**
  * A text editor for configuration files (CodeMirror 6): line numbers, YAML highlighting, search, undo,
  * Tab to indent (Escape, then Tab, leaves the editor) and per-line diagnostics (1-based lines).
- * Always left to right, also in an Arabic page. Controlled: `value` and `onValueChange`.
+ * The code is always left to right; the error list and the hint follow the page direction. Controlled: `value` and `onValueChange`.
  */
 export function CodeEditor({
   value,
@@ -227,11 +227,11 @@ export function CodeEditor({
   }, [diagKey, value]);
 
   return (
-    <div className={cn("group overflow-hidden rounded-field border border-line bg-surface", className)} style={{ "--pc-min": `${minLines * 1.6}em` } as React.CSSProperties}>
+    <div className={cn("group/code-editor overflow-hidden rounded-field border border-line bg-surface", className)} style={{ "--pc-min": `${minLines * 1.6}em` } as React.CSSProperties}>
       <div dir="ltr" ref={host} />
       {!readOnly && (
         // Visible while the editor has focus, so keyboard users learn the way out; the text is always the editor's description.
-        <p id={hintId} dir={dir} className="sr-only group-focus-within:not-sr-only">
+        <p id={hintId} dir={dir} className="sr-only group-focus-within/code-editor:not-sr-only">
           <span className="block px-3 py-1 text-xs text-fg-3">{strings.codeEditorLeave}</span>
         </p>
       )}
