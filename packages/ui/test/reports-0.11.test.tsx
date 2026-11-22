@@ -153,7 +153,7 @@ describe('DataTable density="print"', () => {
 
   test("no cards and no sticky header even when asked", () => {
     const el = print();
-    expect(el.innerHTML).not.toContain("max-md:");
+    expect(el.innerHTML).not.toContain("p-cards:");
     expect(el.querySelector("thead")!.className).not.toContain("sticky");
   });
 

@@ -115,22 +115,22 @@ describe("DataTable rows", () => {
   test("cards: other cells carry their header for phones; hideOnCard cells hide below md; the head is sr-only below md", async () => {
     const columns = COLUMNS.map((c) => (c.key === "note" ? { ...c, hideOnCard: true } : c));
     const el = await mount(<DataTable columns={columns} rows={ROWS} getRowId={(r) => r.id} caption="Invoices" cards selectable rowActions={() => [{ label: "Delete" }]} />);
-    expect(el.querySelector("thead")!.classList.contains("max-md:sr-only")).toBe(true);
+    expect(el.querySelector("thead")!.classList.contains("p-cards:sr-only")).toBe(true);
     const tr = el.querySelector("tbody tr")!;
-    expect(tr.classList.contains("max-md:flex")).toBe(true);
+    expect(tr.classList.contains("p-cards:flex")).toBe(true);
     const [, first, amount, note] = [...tr.querySelectorAll("td")];
     // The first cell is the card's title: no header label.
-    expect(first!.querySelector('[class~="md:hidden"]')).toBeNull();
-    const label = amount!.querySelector('[class~="md:hidden"]')!;
+    expect(first!.querySelector('[class~="p-cards:inline"]')).toBeNull();
+    const label = amount!.querySelector('[class~="p-cards:inline"]')!;
     expect(label.textContent).toBe("Amount");
     expect(amount!.firstElementChild).toBe(label);
-    expect(note!.classList.contains("max-md:hidden")).toBe(true);
+    expect(note!.classList.contains("p-cards:hidden")).toBe(true);
     // One copy of the rows: no second markup for phones.
     expect(el.querySelectorAll("tbody tr")).toHaveLength(3);
     expect(el.textContent!.split("INV-1")).toHaveLength(2);
     // Without cards, no phone labels.
     const plain = html(table());
-    expect(plain).not.toContain("md:hidden");
-    expect(plain).not.toContain("max-md:");
+    expect(plain).not.toContain("p-cards:inline");
+    expect(plain).not.toContain("p-cards:");
   });
 });

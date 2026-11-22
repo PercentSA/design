@@ -66,7 +66,7 @@ describe("DataTable description", () => {
   test("a description works in the other columns, and in the card field line (value and line in one span)", async () => {
     const el = await render(table({ cards: true, columns: [COLUMNS[0]!, { key: "total", header: "Total", description: () => "Simplified tax invoice" }] }));
     const td = cells(el, 0)[1]!;
-    expect(td.querySelectorAll("span")[0]!.className).toContain("md:hidden");
+    expect(td.querySelectorAll("span")[0]!.className).toContain("p-cards:inline");
     expect(td.querySelectorAll("span")[1]!.textContent).toBe("5Simplified tax invoice");
   });
 });
@@ -75,18 +75,18 @@ describe("DataTable cardSlot", () => {
   test("end, meta and block cells: no header on the card, the slot classes", async () => {
     const el = await render(table({ cards: true, columns: [...COLUMNS, { key: "id", header: "Id", cardSlot: "meta" }] }));
     const [name, total, note] = cells(el, 0);
-    expect(total!.className).toContain("max-md:shrink-0");
-    expect(total!.className).not.toContain("max-md:order-1");
+    expect(total!.className).toContain("p-cards:shrink-0");
+    expect(total!.className).not.toContain("p-cards:order-1");
     expect(total!.querySelector(".md\\:hidden")).toBeNull();
-    expect(note!.className).toMatch(/max-md:order-2.*max-md:basis-full/);
+    expect(note!.className).toMatch(/p-cards:order-2.*p-cards:basis-full/);
     expect(note!.querySelector(".md\\:hidden")).toBeNull();
     // The title cell is not a slot, even with a cardSlot on it.
-    expect(name!.className).toContain("max-md:flex-1");
-    expect(name!.className).not.toContain("max-md:text-fg-2");
+    expect(name!.className).toContain("p-cards:flex-1");
+    expect(name!.className).not.toContain("p-cards:text-fg-2");
     // The row breaks the title line when a meta cell exists, and uses margins in place of the row gap.
     const tr = el.querySelector("tbody tr")!;
-    expect(tr.className).toContain("max-md:before:basis-full");
-    expect(tr.className).toContain("max-md:gap-y-0");
+    expect(tr.className).toContain("p-cards:before:basis-full");
+    expect(tr.className).toContain("p-cards:gap-y-0");
   });
 
   test("meta cells sit in a wrapped line under the title; fields come after them", async () => {
@@ -94,27 +94,27 @@ describe("DataTable cardSlot", () => {
       table({ cards: true, columns: [{ key: "name", header: "Customer" }, { key: "total", header: "Total", cardSlot: "meta" }, { key: "note", header: "Comment", cardSlot: "meta" }] }),
     );
     const [, a, b] = cells(el, 0);
-    for (const td of [a!, b!]) expect(td.className).toMatch(/max-md:order-1.*max-md:text-fg-2/);
+    for (const td of [a!, b!]) expect(td.className).toMatch(/p-cards:order-1.*p-cards:text-fg-2/);
     const mixed = await render(table({ cards: true, columns: [{ key: "name", header: "Customer" }, { key: "total", header: "Total" }, { key: "note", header: "Comment", cardSlot: "meta" }] }));
-    expect(cells(mixed, 0)[1]!.className).toContain("max-md:order-3");
+    expect(cells(mixed, 0)[1]!.className).toContain("p-cards:order-3");
   });
 
   test("a slot cell with no value is hidden on the card, and a slot with a value is not", async () => {
     const el = await render(table({ cards: true }));
-    expect(cells(el, 0)[2]!.className).not.toContain("max-md:hidden");
-    expect(cells(el, 1)[2]!.className).toContain("max-md:hidden");
-    expect(cells(el, 2)[2]!.className).toContain("max-md:hidden");
+    expect(cells(el, 0)[2]!.className).not.toContain("p-cards:hidden");
+    expect(cells(el, 1)[2]!.className).toContain("p-cards:hidden");
+    expect(cells(el, 2)[2]!.className).toContain("p-cards:hidden");
     // A column without a slot keeps its line, as today.
     const plain = await render(table({ cards: true, columns: [COLUMNS[0]!, { key: "note", header: "Comment" }] }));
-    expect(cells(plain, 1)[1]!.className).not.toContain("max-md:hidden");
+    expect(cells(plain, 1)[1]!.className).not.toContain("p-cards:hidden");
   });
 
   test("without cards a cardSlot changes nothing; without a slot the card row keeps today's classes", () => {
-    expect(html(table({ cards: false }))).not.toContain("max-md:");
+    expect(html(table({ cards: false }))).not.toContain("p-cards:");
     expect(html(table({ cards: false }))).toBe(html(table({ cards: false, columns: COLUMNS.map((c) => ({ ...c, cardSlot: undefined })) })));
     const plain = html(table({ cards: true, columns: COLUMNS.map((c) => ({ ...c, cardSlot: undefined })) }));
-    expect(plain).toContain("max-md:gap-y-1.5");
-    expect(plain).not.toContain("max-md:before:");
+    expect(plain).toContain("p-cards:gap-y-1.5");
+    expect(plain).not.toContain("p-cards:before:");
     expect(plain).not.toContain("max-md:order-3");
   });
 
@@ -133,11 +133,11 @@ describe("DataTable density", () => {
     expect(el.querySelector("thead th")!.className).not.toContain("h-10");
     expect(cells(el, 0)[1]!.className).toContain("py-2");
     expect(cells(el, 0)[1]!.className).not.toContain("py-3");
-    expect(el.querySelector("tbody tr")!.className).toContain("max-md:p-3");
-    expect(el.querySelector("tbody tr")!.className).toContain("max-md:gap-y-1");
-    expect(el.querySelector("tbody tr")!.className).not.toContain("max-md:p-4");
+    expect(el.querySelector("tbody tr")!.className).toContain("p-cards:p-3");
+    expect(el.querySelector("tbody tr")!.className).toContain("p-cards:gap-y-1");
+    expect(el.querySelector("tbody tr")!.className).not.toContain("p-cards:p-4");
     const loading = await render(table({ density: "compact", cards: true, loading: true }));
-    expect(loading.querySelector("tbody tr")!.className).toContain("max-md:p-3");
+    expect(loading.querySelector("tbody tr")!.className).toContain("p-cards:p-3");
     expect(loading.querySelector("tbody td")!.className).toContain("py-2");
   });
 

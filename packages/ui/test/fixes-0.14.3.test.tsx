@@ -15,8 +15,8 @@ describe("0.14.3", () => {
 
   test("phone cards: the card grid has one column of at most the box width", () => {
     const html = renderToStaticMarkup(<DataTable columns={columns} rows={[{ id: "1", name: "A" }]} getRowId={(r) => r.id} caption="Rows" cards />);
-    expect(html).toMatch(/<tbody class="[^"]*max-md:grid max-md:grid-cols-1/);
+    expect(html).toMatch(/<tbody class="[^"]*p-cards:grid p-cards:grid-cols-1/);
     const plain = renderToStaticMarkup(<DataTable columns={columns} rows={[{ id: "1", name: "A" }]} getRowId={(r) => r.id} caption="Rows" />);
-    expect(plain).not.toContain("max-md:grid-cols-1");
+    expect(plain).not.toContain("p-cards:grid-cols-1");
   });
 });
