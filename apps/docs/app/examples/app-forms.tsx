@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, Download, Ellipsis, Printer, RefreshCw } from "lucide-react";
-import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, NumberInput, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SettingsRow, SettingsSection, Stack, Switch, Textarea, toast } from "@percentsa/ui";
+import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, FieldsSheet, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, NumberInput, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SettingsRow, SettingsSection, ValueRow, Stack, Switch, Textarea, toast } from "@percentsa/ui";
 import { Card, FormBar, Money, PinPad, Text } from "@percentsa/ui";
 import { useForm } from "react-hook-form";
 import { FormSettingsRow } from "@percentsa/ui/react-hook-form";
@@ -616,5 +616,66 @@ export function FormSheetLargeExample() {
         <Textarea />
       </Field>
     </FormSheet>
+  );
+}
+
+export function SettingsActionExample() {
+  const t = useT();
+  return (
+    <SettingsSection
+      className="w-full"
+      title={t("Limits", "الحدود")}
+      description={t("The most your team can use each month.", "أقصى ما يستخدمه فريقك كل شهر.")}
+      action={<Button variant="secondary" size="sm">{t("Edit", "تعديل")}</Button>}
+    >
+      <SettingsRow label={t("Storage", "التخزين")} control={<span className="text-sm">{t("50 GB", "50 جيجابايت")}</span>} />
+      <SettingsRow label={t("Members", "الأعضاء")} control={<span className="text-sm">{t("10", "10")}</span>} />
+    </SettingsSection>
+  );
+}
+
+export function ValueRowExample() {
+  const t = useT();
+  return (
+    <SettingsSection title={t("Start and health", "التشغيل والفحص")}>
+      <ValueRow label={t("Start command", "أمر التشغيل")} value="bun run start" mono action={<Button variant="ghost" size="sm">{t("Edit", "تعديل")}</Button>} />
+      <ValueRow label={t("Address", "العنوان")} value="shop.example.com" copy="shop.example.com" />
+      <ValueRow label={t("Monthly plan", "الخطة الشهرية")} value={<Money amount={49} />} />
+      <ValueRow label={t("Health check path", "مسار فحص الصحة")} value="" />
+    </SettingsSection>
+  );
+}
+
+export function FieldsSheetExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const [saved, setSaved] = useState({ port: "8080", path: "/health" });
+  return (
+    <>
+      <Button variant="secondary" onClick={() => setOpen(true)}>
+        {t("Edit start and health", "تعديل التشغيل والفحص")}
+      </Button>
+      <FieldsSheet
+        title={t("Edit start and health", "تعديل التشغيل والفحص")}
+        open={open}
+        onOpenChange={setOpen}
+        fields={[
+          {
+            key: "port",
+            label: t("Port", "المنفذ"),
+            value: saved.port,
+            check: (x) => (/^\d+$/.test(x) && +x >= 1 && +x <= 65535 ? undefined : t("Enter a port from 1 to 65535.", "أدخل منفذًا من 1 إلى 65535.")),
+          },
+          {
+            key: "path",
+            label: t("Health check path", "مسار فحص الصحة"),
+            value: saved.path,
+            mono: true,
+            suggestions: [{ value: "/health" }, { value: "/ready" }, { value: "/status" }],
+          },
+        ]}
+        onSubmit={(v) => new Promise((r) => setTimeout(() => (setSaved({ port: v.port!, path: v.path! }), r(null)), 600))}
+      />
+    </>
   );
 }

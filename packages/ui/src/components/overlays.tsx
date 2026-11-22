@@ -7,13 +7,12 @@ import { cn } from "../lib/cn";
 import { useDir, useStrings } from "../provider";
 import { Button } from "./actions";
 import { buttonClass } from "./button-class";
+import { useFocusReturn } from "./dialog-parts";
+import { BACKDROP, CLOSE, PANEL, TOOLTIP } from "./overlay-classes";
 
 type OpenState = { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void };
 
-const BACKDROP = "p-overlay fixed inset-0 z-(--p-z-overlay) bg-bg/70 backdrop-blur-sm";
-const PANEL = "border border-line bg-surface-2 text-fg shadow-overlay";
 const FLOAT = cn("p-float z-(--p-z-overlay) rounded-field p-4 text-sm", PANEL);
-const CLOSE = "absolute end-4 top-4 grid size-9 place-items-center rounded-pill text-fg-3 transition-colors hover:bg-surface hover:text-fg [&_svg]:size-4";
 const WIDTH = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" } as const;
 
 function DialogHead({ title, description, Title, Description }: { title: ReactNode; description?: ReactNode; Title: typeof RadixDialog.Title; Description: typeof RadixDialog.Description }) {
@@ -93,8 +92,7 @@ export function AlertDialog({
   const s = useStrings();
   const [inner, setInner] = useState(defaultOpen ?? false);
   const [pending, setPending] = useState(false);
-  // Without a trigger (opened from a menu or a sheet), focus goes back to where it was, not to the page.
-  const back = useRef<Element | null>(null);
+  const focus = useFocusReturn(!!trigger);
   const setOpen = (o: boolean) => {
     if (open === undefined) setInner(o);
     onOpenChange?.(o);
@@ -121,12 +119,7 @@ export function AlertDialog({
         <RadixAlert.Overlay className={BACKDROP} />
         <RadixAlert.Content
           {...(description ? {} : { "aria-describedby": undefined })}
-          onOpenAutoFocus={() => (back.current = document.activeElement)}
-          onCloseAutoFocus={(e) => {
-            if (trigger || !(back.current instanceof HTMLElement) || !back.current.isConnected) return;
-            e.preventDefault();
-            back.current.focus();
-          }}
+          {...focus}
           className={cn(
             "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid w-[calc(100%-2rem)] max-w-md -translate-y-1/2 gap-6 rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2",
             PANEL,
@@ -345,7 +338,7 @@ export function Tooltip({ content, children, side = "top", ...state }: OpenState
       <RadixTooltip.Root {...state}>
         <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
         <RadixTooltip.Portal>
-          <RadixTooltip.Content side={physical} sideOffset={6} className="p-float z-(--p-z-overlay) rounded-lg bg-fg px-2.5 py-1.5 text-xs font-medium text-bg">
+          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP}>
             {content}
           </RadixTooltip.Content>
         </RadixTooltip.Portal>

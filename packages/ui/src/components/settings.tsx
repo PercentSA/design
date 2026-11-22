@@ -3,6 +3,7 @@
 import { useId, type ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
+import { CopyButton } from "./actions";
 import { fieldContext } from "./field";
 
 /**
@@ -16,6 +17,7 @@ export function SettingsSection({
   children,
   footer,
   status,
+  action,
   className,
 }: {
   title: ReactNode;
@@ -23,16 +25,32 @@ export function SettingsSection({
   children: ReactNode;
   footer?: ReactNode;
   status?: ReactNode;
+  /** A button at the end of the heading row, for example Edit. */
+  action?: ReactNode;
   className?: string;
 }) {
   const id = useId();
   return (
     <section aria-labelledby={id} className={cn("grid gap-6", className)}>
-      <div className="grid gap-1.5">
-        <h2 id={id} className="heading text-xl">
-          {title}
-        </h2>
-        {description && <p className="text-sm text-fg-2">{description}</p>}
+      <div className={cn(action ? "flex flex-wrap items-start justify-between gap-x-4 gap-y-2" : "grid gap-1.5")}>
+        {action ? (
+          <>
+            <div className="grid min-w-0 gap-1.5">
+              <h2 id={id} className="heading text-xl">
+                {title}
+              </h2>
+              {description && <p className="text-sm text-fg-2">{description}</p>}
+            </div>
+            <div className="shrink-0">{action}</div>
+          </>
+        ) : (
+          <>
+            <h2 id={id} className="heading text-xl">
+              {title}
+            </h2>
+            {description && <p className="text-sm text-fg-2">{description}</p>}
+          </>
+        )}
       </div>
       <div className="divide-y divide-line border-y border-line">{children}</div>
       {footer &&
@@ -116,5 +134,47 @@ export function SettingsRow({
         )}
       </div>
     </div>
+  );
+}
+
+/**
+ * A setting shown as text: the value (`mono` for a technical value), a copy button when `copy` is set, then `action` (for example Edit).
+ * An empty value shows "Not set". Also for a person who may not change the value: leave `action` out.
+ */
+export function ValueRow({
+  label,
+  description,
+  value,
+  mono,
+  copy,
+  action,
+  className,
+}: {
+  label: ReactNode;
+  description?: ReactNode;
+  value: ReactNode;
+  mono?: boolean;
+  /** The text the copy button copies. Without it there is no copy button. */
+  copy?: string;
+  action?: ReactNode;
+  className?: string;
+}) {
+  const s = useStrings();
+  const empty = value == null || value === "";
+  return (
+    <SettingsRow
+      label={label}
+      description={description}
+      className={className}
+      control={
+        <div className="flex min-w-0 items-center gap-1 md:justify-end">
+          <span className={cn("min-w-0 break-all text-sm", mono && "font-mono", empty && "text-fg-3")} dir={mono ? "ltr" : undefined}>
+            {empty ? s.notSet : value}
+          </span>
+          {copy != null && <CopyButton value={copy} iconOnly />}
+          {action}
+        </div>
+      }
+    />
   );
 }

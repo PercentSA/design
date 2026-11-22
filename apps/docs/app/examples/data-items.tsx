@@ -1,5 +1,5 @@
 import { FileText, Folder } from "lucide-react";
-import { Accordion, Avatar, AvatarGroup, FormattedNumber, Inline, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree } from "@percentsa/ui";
+import { Accordion, Avatar, AvatarGroup, ConnectionCard, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function StatExample() {
@@ -196,5 +196,46 @@ export function ThumbnailExample() {
       <Thumbnail src={null} alt={t("Brake pad set", "طقم فحمات")} size="md" />
       <Thumbnail alt="supplier-invoice.pdf" fallback={<FileText />} caption="supplier-invoice.pdf" href="#file" size="md" />
     </Inline>
+  );
+}
+
+/** A state at value size: a dot and a word. */
+export function RecordSummaryStatusExample() {
+  const t = useT();
+  return (
+    <RecordSummary
+      className="w-full"
+      items={[
+        { id: "production", label: t("Production now", "الإنتاج الآن"), status: { tone: "live", label: t("Live", "يعمل") } },
+        { id: "backup", label: t("Backup", "النسخ الاحتياطي"), status: { tone: "danger", label: t("Down", "متوقف") }, hint: t("Since 09:40", "منذ 09:40") },
+      ]}
+    />
+  );
+}
+
+export function MaskedValueExample() {
+  const t = useT();
+  return (
+    <MaskedValue
+      label={t("Password", "كلمة المرور")}
+      canReveal
+      confirm={{ title: t("Show the password?", "عرض كلمة المرور؟"), description: t("The reveal is recorded.", "يُسجَّل الإظهار.") }}
+      onReveal={() => new Promise((r) => setTimeout(() => r("p4ss-example-only"), 600))}
+    />
+  );
+}
+
+export function ConnectionCardExample() {
+  const t = useT();
+  return (
+    <ConnectionCard
+      title={t("Connect", "الاتصال")}
+      rows={[
+        { term: t("Host and port", "المضيف والمنفذ"), copy: "203.0.113.10:5432" },
+        { term: t("User", "المستخدم"), copy: "app_user" },
+        { term: t("Password", "كلمة المرور"), masked: { label: t("Password", "كلمة المرور"), canReveal: true, onReveal: async () => "p4ss-example-only" } },
+        { term: t("Command", "الأمر"), copy: "psql -h 203.0.113.10 -p 5432 -U app_user -d shop_example" },
+      ]}
+    />
   );
 }
