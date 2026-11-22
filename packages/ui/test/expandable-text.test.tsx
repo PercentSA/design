@@ -32,6 +32,7 @@ describe("ExpandableText", () => {
     await click(button);
     expect(button.getAttribute("aria-expanded")).toBe("true");
     expect(el.innerHTML).not.toContain("overflow: hidden");
+    expect(button.querySelector("span")!.className).toContain("whitespace-pre-wrap");
     expect(button.textContent).toContain(LONG);
     await click(button);
     expect(button.getAttribute("aria-expanded")).toBe("false");
@@ -83,7 +84,55 @@ describe("ExpandableText", () => {
     );
     const button = el.querySelector("tbody button")!;
     expect(button.closest("a")).toBeNull();
-    expect(button.closest("tr")!.className).toContain("z-1");
+    expect(button.closest("tr")!.className).toContain(":is(a,button,");
+  });
+
+  test("the button is at least 24 px high, also in a table", async () => {
+    stub(40, 20);
+    const el = await mount(<ExpandableText text={LONG} />);
+    expect(el.querySelector("button")!.className).toContain("min-h-6");
+  });
+
+  test("a long word without spaces wraps inside the clamp, so a path or hash gets the button", () => {
+    const html = renderToStaticMarkup(<ExpandableText text={"/srv/apps/" + "a".repeat(200)} />);
+    expect(html).toMatch(/class="[^"]*break-words[^"]*" style="display:-webkit-box/);
+  });
+
+  test("a text that fits at first becomes a button when it is cut later (resize)", async () => {
+    const observers: { cb: () => void; els: Element[] }[] = [];
+    const Original = globalThis.ResizeObserver;
+    globalThis.ResizeObserver = class {
+      o: { cb: () => void; els: Element[] };
+      constructor(cb: () => void) { this.o = { cb, els: [] }; observers.push(this.o); }
+      observe(el: Element) { this.o.els.push(el); }
+      unobserve() {}
+      disconnect() { this.o.els = []; }
+    } as never;
+    try {
+      stub(20, 20);
+      const el = await mount(<ExpandableText text={LONG} />);
+      expect(el.querySelector("button")).toBeNull();
+      const live = observers.filter((o) => o.els.some((e) => e.isConnected));
+      expect(live.length).toBe(1);
+      stub(40, 20);
+      const { act } = await import("react");
+      await act(async () => live[0]!.cb());
+      expect(el.querySelector("button")).not.toBeNull();
+    } finally {
+      globalThis.ResizeObserver = Original;
+    }
+  });
+
+  test("it works without ResizeObserver", async () => {
+    stub(40, 20);
+    const Original = globalThis.ResizeObserver;
+    delete (globalThis as { ResizeObserver?: unknown }).ResizeObserver;
+    try {
+      const el = await mount(<ExpandableText text={LONG} />);
+      expect(el.querySelector("button")).not.toBeNull();
+    } finally {
+      globalThis.ResizeObserver = Original;
+    }
   });
 
   test("it stops observing on unmount", async () => {
