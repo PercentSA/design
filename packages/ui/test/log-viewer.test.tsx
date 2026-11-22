@@ -89,8 +89,10 @@ describe("LogViewer", () => {
   });
 
   test("new rows do not move a reader who scrolled up", async () => {
-    const el = await open();
+    const calls: string[] = [];
+    const el = await open({ onLiveChange: (l) => calls.push(l) });
     top = 100;
+    await act(async () => void box(el).dispatchEvent(new Event("scroll")));
     height = 1200;
     await update({ rows: rows(8) });
     expect(top).toBe(100);
@@ -99,20 +101,20 @@ describe("LogViewer", () => {
     await click(jump);
     expect(top).toBe(1200);
     expect(byName(el, "Jump to newest")).toBeUndefined();
+    expect(document.activeElement).toBe(box(el));
+    expect(calls).toEqual([]);
   });
 
-  test("paused and off do not follow", async () => {
-    for (const mode of ["paused", "off"] as const) {
+  for (const mode of ["paused", "off"] as const) {
+    test(`paused and off do not follow (${mode})`, async () => {
       const el = await open({ live: mode });
       expect(top).toBe(1000); // the first render still shows the end
       height = 1500;
       await update({ rows: rows(8) });
       expect(top).toBe(1000);
       expect(byName(el, "Jump to newest")).toBeDefined();
-      height = 1000;
-      document.body.innerHTML = "";
-    }
-  });
+    });
+  }
 
   test("Pause calls onLiveChange(\"paused\"); Resume calls onLiveChange(\"on\"); off shows neither", async () => {
     const calls: string[] = [];
@@ -210,6 +212,33 @@ describe("LogViewer", () => {
     const item = [...document.querySelectorAll('[role="menuitem"]')].find((i) => i.textContent === "Copy line")!;
     await click(item);
     expect(copied).toEqual(["line 1"]);
+  });
+
+  test("typing a search scrolls the first match to the center", async () => {
+    const data = [{ key: "a", text: "boot" }, { key: "b", text: "x one" }, { key: "c", text: "x two" }, { key: "d", text: "x three" }];
+    const el = await open({ rows: data, search: "", onSearchChange: (t) => set({ search: t }) });
+    into = [];
+    await type(field(el), "x");
+    expect(into.at(-1)).toBe(lis(el)[1]!);
+    expect(live(el)).toContain("1 of 3");
+  });
+
+  test("a long press on touch copies the row under the pointer", async () => {
+    const el = await open({ rows: rows(3) });
+    await act(async () => {
+      lis(el)[2]!.dispatchEvent(new Event("pointerdown", { bubbles: true }));
+      // iOS sends no contextmenu event on the row; the menu opens from the long press on the list.
+      el.querySelector("ol")!.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: 5, clientY: 5 }));
+    });
+    await click([...document.querySelectorAll('[role="menuitem"]')].find((i) => i.textContent === "Copy line")!);
+    expect(copied).toEqual(["line 2"]);
+  });
+
+  test("rows share one grid so the columns line up", async () => {
+    const el = await open({ rows: [{ key: "a", at: "1", text: "x" }, { key: "b", text: "y" }] });
+    expect(el.querySelector("ol")!.className).toContain("grid");
+    expect(lis(el).every((li) => li.className.includes("grid-cols-subgrid"))).toBe(true);
+    expect(lis(el)[1]!.querySelectorAll(":scope > span").length).toBe(lis(el)[0]!.querySelectorAll(":scope > span").length);
   });
 
   test("the buttons have Arabic names", async () => {

@@ -35,6 +35,7 @@ export type LogViewerProps = {
 };
 
 const atEndOf = (b: HTMLElement) => b.scrollHeight - b.scrollTop - b.clientHeight < 24;
+const rowKey = (t: EventTarget) => (t as HTMLElement).closest<HTMLElement>("[data-key]")?.dataset.key;
 const escapeRe = (t: string) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 /** Log lines with time, source and text. While `live` is on, it follows new lines only when the reader is at the end. */
@@ -43,26 +44,22 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
   const box = useRef<HTMLDivElement>(null);
   const items = useRef(new Map<string, HTMLLIElement>());
   const copyKey = useRef<string>(undefined);
-  const prevRows = useRef(rows);
-  const wasAtEnd = useRef(true);
+  const atEnd = useRef(true); // set by the box scroll event, before new rows change the height
+  const prevQ = useRef("");
   const started = useRef(false);
   const [away, setAway] = useState(false);
   const [cur, setCur] = useState<string>();
 
-  // Measure before the new rows reach the DOM: after it, the box is already taller.
-  if (prevRows.current !== rows) {
-    prevRows.current = rows;
-    if (box.current) wasAtEnd.current = atEndOf(box.current);
-  }
-
   const toEnd = () => {
-    if (box.current) box.current.scrollTop = box.current.scrollHeight;
+    if (!box.current) return;
+    box.current.scrollTop = box.current.scrollHeight;
+    atEnd.current = true;
   };
 
   useLayoutEffect(() => {
     const first = !started.current && rows.length > 0;
     if (first) started.current = true;
-    if ((first && jumpTo === undefined) || (!first && live === "on" && wasAtEnd.current)) toEnd();
+    if ((first && jumpTo === undefined) || (!first && live === "on" && atEnd.current)) toEnd();
     if (box.current) setAway(!atEndOf(box.current));
     // Follows new rows only; `live` and `jumpTo` are read when the rows change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -73,8 +70,8 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
     if (jumpFound) items.current.get(jumpTo)?.scrollIntoView?.({ block: "start" });
   }, [jumpTo, jumpFound]);
 
-  const q = (search ?? "").toLowerCase();
-  const matches = q ? rows.filter((r) => r.text.toLowerCase().includes(q)).map((r) => r.key) : [];
+  const re = search ? new RegExp(`(${escapeRe(search)})`, "gi") : undefined;
+  const matches = re ? rows.filter((r) => r.text.split(re).length > 1).map((r) => r.key) : [];
   const idx = Math.max(0, matches.indexOf(cur ?? ""));
   const current = matches[idx];
   const go = (delta: number) => {
@@ -85,18 +82,28 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
     items.current.get(key)?.scrollIntoView?.({ block: "center" });
   };
 
-  const parts = (text: string, isCurrent: boolean) => {
-    if (!q) return text;
-    return text.split(new RegExp(`(${escapeRe(search!)})`, "gi")).map((t, i) =>
-      i % 2 ? (
-        <mark key={i} className={cn("rounded-sm text-inherit", isCurrent ? "bg-primary text-primary-fg" : "bg-fg/20")}>
-          {t}
-        </mark>
-      ) : (
-        t
-      ),
-    );
-  };
+  // A new search starts at its first match.
+  useLayoutEffect(() => {
+    const q = search ?? "";
+    if (q === prevQ.current) return;
+    prevQ.current = q;
+    setCur(undefined);
+    if (matches[0]) items.current.get(matches[0])?.scrollIntoView?.({ block: "center" });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [search]);
+
+  const parts = (text: string, isCurrent: boolean) =>
+    re
+      ? text.split(re).map((t, i) =>
+          i % 2 ? (
+            <mark key={i} className={cn("rounded-sm text-inherit", isCurrent ? "bg-primary text-primary-fg" : "bg-fg/20")}>
+              {t}
+            </mark>
+          ) : (
+            t
+          ),
+        )
+      : text;
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
@@ -120,9 +127,9 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
           />
         )}
         <span aria-live="polite" className="text-xs text-fg-2 tabular-nums">
-          {q && (matches.length ? s.logMatch(idx + 1, matches.length) : s.logNoMatch)}
+          {re && (matches.length ? s.logMatch(idx + 1, matches.length) : s.logNoMatch)}
         </span>
-        {q && (
+        {re && (
           <>
             <Button variant="ghost" size="sm" iconOnly aria-label={s.logPreviousMatch} disabled={!matches.length} onClick={() => go(-1)}>
               <ChevronUp aria-hidden="true" />
@@ -144,6 +151,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
             onClick={() => {
               toEnd();
               setAway(false);
+              box.current?.focus(); // the button removes itself; keep focus in the log
             }}
           >
             {s.logJumpToNewest}
@@ -157,7 +165,10 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
         aria-busy={loading || undefined}
         tabIndex={0}
         style={{ height }}
-        onScroll={(e) => setAway(!atEndOf(e.currentTarget))}
+        onScroll={(e) => {
+          atEnd.current = atEndOf(e.currentTarget);
+          setAway(!atEnd.current);
+        }}
         className="overflow-y-auto rounded-card border border-line bg-surface py-2 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-fg"
       >
         {loading ? (
@@ -167,7 +178,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
             ))}
           </div>
         ) : rows.length === 0 ? (
-          empty
+          <div className="px-3">{empty}</div>
         ) : (
           <ContextMenu
             items={[
@@ -175,12 +186,17 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
                 label: s.logCopyLine,
                 onSelect: () => {
                   const r = rows.find((x) => x.key === copyKey.current);
-                  if (r) void navigator.clipboard?.writeText(r.text);
+                  if (r) navigator.clipboard?.writeText(r.text).catch(() => {}); // no clipboard on http pages or without permission
                 },
               },
             ]}
           >
-            <ol onContextMenu={(e) => (copyKey.current = (e.target as HTMLElement).closest<HTMLElement>("[data-key]")?.dataset.key)}>
+            <ol
+              className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]"
+              // iOS opens the menu from a long press and sends no contextmenu event, so the row is also read at pointer down.
+              onPointerDown={(e) => (copyKey.current = rowKey(e.target))}
+              onContextMenu={(e) => (copyKey.current = rowKey(e.target) ?? copyKey.current)}
+            >
               {rows.map((r) => (
                 <li
                   key={r.key}
@@ -192,7 +208,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
                   data-jumped={r.key === jumpTo ? "" : undefined}
                   aria-current={r.key === current ? "true" : undefined}
                   className={cn(
-                    "grid grid-cols-[auto_1fr] gap-x-3 border-s-2 border-transparent px-3 py-0.5 font-mono text-[13px] leading-6 md:grid-cols-[auto_9rem_1fr]",
+                    "col-span-full grid grid-cols-subgrid gap-x-3 border-s-2 border-transparent px-3 py-0.5 font-mono text-[13px] leading-6",
                     "data-jumped:bg-surface-2",
                     r.error && "border-danger",
                   )}

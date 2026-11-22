@@ -79,7 +79,7 @@ export function CodeDiffExample() {
 }
 
 const clock = (i: number) => `10:${String(Math.floor(i / 60)).padStart(2, "0")}:${String(i % 60).padStart(2, "0")}`;
-const buildRows = (): LogRow[] =>
+const BUILD_ROWS: LogRow[] =
   Array.from({ length: 40 }, (_, i) => ({
     key: `b${i}`,
     at: clock(i),
@@ -94,7 +94,7 @@ export function LogViewerExample() {
   return (
     <LogViewer
       label={t("Build log", "سجل البناء")}
-      rows={buildRows()}
+      rows={BUILD_ROWS}
       live="off"
       onLiveChange={() => {}}
       search={search}
@@ -110,11 +110,14 @@ export function LogViewerExample() {
 export function LogViewerLiveExample() {
   const t = useT();
   const [live, setLive] = useState<LogLive>("on");
-  const [rows, setRows] = useState<LogRow[]>(() => buildRows().slice(0, 12));
+  const [rows, setRows] = useState<LogRow[]>(() => BUILD_ROWS.slice(0, 12));
   useEffect(() => {
     if (live !== "on") return;
     const id = setInterval(
-      () => setRows((r) => [...r, { key: `l${r.length}`, at: clock(r.length), source: "server", text: `request ${r.length + 1} handled` }]),
+      () => setRows((r) => {
+          const n = (r.at(-1) ? Number(r.at(-1)!.key.slice(1)) : 0) + 1; // keys keep counting after old rows drop
+          return [...r, { key: `l${n}`, at: clock(n), source: "server", text: `request ${n} handled` }].slice(-200);
+        }),
       2000,
     );
     return () => clearInterval(id);
