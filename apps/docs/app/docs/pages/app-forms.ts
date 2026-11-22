@@ -20,6 +20,15 @@ export const pages: DocPage[] = [
     "صفحات الإعدادات: أقسام بعنوان وزر حفظ. في كل صف يكون العنوان في جهة البداية والحقل في جهة النهاية من 768 بكسل. تعرض الخاصية `status` في القسم حالة قصيرة في بداية التذييل («تغييرات غير محفوظة»، «حُفظت التغييرات.»)؛ تُقرأ بهدوء، وتظهر مع `footer`، وتنتقل فوق الأزرار تحت 640 بكسل. مرّر `null` ما دام لا شيء يُقال، فيُعلن أول تغيير. في الصف تعرض `error` الخطأ تحت الحقل؛ ومع `controlId` يأخذ الحقل `aria-invalid` والخطأ في `aria-describedby`، ويذكر الصف الذي بلا `controlId` الخطأ في وصف المجموعة. وتضيف `required` العلامة و`optional` الكلمة بعد العنوان، كما في Field. تضع `action` زرًا، مثل «تعديل»، في نهاية عنوان القسم.",
   ),
   p(
+    "value-row",
+    "ValueRow",
+    "app",
+    "ValueRow",
+    ["ValueRowExample"],
+    "A setting shown as text, with an optional copy button and an action such as Edit. Use it also for a person who may not change the value.",
+    "إعداد يظهر نصًا، مع زر نسخ اختياري وإجراء مثل «تعديل». استخدمه أيضًا لمن لا يحق له تغيير القيمة.",
+  ),
+  p(
     "form-settings-row",
     "FormSettingsRow",
     "app",
@@ -37,6 +46,15 @@ export const pages: DocPage[] = [
     ["FormSheetExample", "FormSheetBlockedExample", "FormSheetLargeExample"],
     "An edit form in a sheet. Cancel and Save stay at the bottom while the form scrolls, and Enter in a text field saves. `pending` shows Save loading and keeps the sheet open. With `dirty`, every way to close it (Escape, a click outside, the close button, a drag, Cancel) asks “Discard your changes?” first, and the browser asks before the page is left. The sheet does not close itself after a submit: close it when the save succeeds. `blocked` says why the submit is refused now: the reason shows above the buttons (announced to screen readers), the submit stays visible but disabled, and `pending` wins over it. `danger` makes the submit a danger button, `cancelLabel` renames the close button, `size=\"lg\"` makes the sheet 56rem wide (a document made from another document), and `side=\"bottom\"` puts the two large buttons in two equal columns.",
     "نموذج تعديل في لوحة جانبية. يبقى زرا «إلغاء» و«حفظ» في الأسفل أثناء تمرير النموذج، ويحفظ الضغط على Enter في حقل نصي. تعرض `pending` زر الحفظ قيد التحميل وتُبقي اللوحة مفتوحة. ومع `dirty` تسأل كل طرق الإغلاق (Escape، والنقر خارج اللوحة، وزر الإغلاق، والسحب، و«إلغاء») «تجاهل التغييرات؟» أولًا، ويسأل المتصفح قبل مغادرة الصفحة. لا تُغلق اللوحة نفسها بعد الإرسال: أغلقها عند نجاح الحفظ. تذكر `blocked` سبب رفض الإرسال الآن: يظهر السبب فوق الأزرار (ويُعلن لقارئات الشاشة)، ويبقى زر الإرسال ظاهرًا لكنه معطّل، وتتقدّم `pending` عليه. تجعل `danger` زر الإرسال زر خطر، وتغيّر `cancelLabel` نص زر الإغلاق، وتجعل `size=\"lg\"` اللوحة بعرض 56rem (مستند منشأ من مستند آخر)، وتضع `side=\"bottom\"` الزرين الكبيرين في عمودين متساويين.",
+  ),
+  p(
+    "fields-sheet",
+    "FieldsSheet",
+    "app",
+    "FieldsSheet, type SheetField",
+    ["FieldsSheetExample"],
+    "An edit sheet for one to three text fields. Errors show only after Save, then follow the input. It closes when `onSubmit` succeeds, stays open when its Promise is rejected, and opens from the bottom below 768 px.",
+    "لوحة تعديل لحقل إلى ثلاثة حقول نصية. لا تظهر الأخطاء إلا بعد الحفظ، ثم تتبع الكتابة. تُغلق إذا نجح `onSubmit`، وتبقى مفتوحة إذا رُفض الوعد (Promise)، وتُفتح من الأسفل تحت 768 بكسل.",
   ),
   p(
     "record-section",
