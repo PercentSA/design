@@ -9,6 +9,7 @@ import {
   LangSwitch,
   MobileMenu,
   Pagination,
+  RouteTabs,
   SiteFooter,
   SiteHeader,
   SkipLink,
@@ -69,6 +70,31 @@ export function TabsExample() {
           { value: "scope", label: t("Scope", "النطاق"), content: <Text tone="muted">{t("What we build.", "ما نبنيه.")}</Text> },
           { value: "timeline", label: t("Timeline", "الجدول الزمني"), content: <Text tone="muted">{t("When it ships.", "متى يُطلق.")}</Text> },
         ]}
+      />
+    </div>
+  );
+}
+
+export function RouteTabsExample() {
+  const t = useT();
+  const tabs = [
+    ["overview", "Overview", "نظرة عامة"],
+    ["compose", "Compose", "التركيب"],
+    ["environment", "Environment", "البيئة"],
+    ["domains", "Domains", "النطاقات"],
+    ["deployments", "Deployments", "عمليات النشر"],
+    ["logs", "Logs", "السجلات"],
+    ["metrics", "Metrics", "المقاييس"],
+    ["backups", "Backups", "النسخ الاحتياطية"],
+    ["access", "Access", "الوصول"],
+    ["settings", "Settings", "الإعدادات"],
+  ] as const;
+  return (
+    <div className="w-full max-w-2xl">
+      <RouteTabs
+        label={t("App sections", "أقسام التطبيق")}
+        current="logs"
+        items={tabs.map(([value, en, ar]) => ({ value, label: t(en, ar), href: `#${value}`, count: value === "deployments" ? 12 : undefined }))}
       />
     </div>
   );
