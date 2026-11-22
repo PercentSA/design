@@ -4,9 +4,12 @@ import {
   Breadcrumbs,
   Button,
   CodeBlock,
+  DataTable,
+  type DataTableColumn,
   LangSwitch,
   MobileMenu,
   Pagination,
+  RouteTabs,
   SiteFooter,
   SiteHeader,
   SkipLink,
@@ -49,18 +52,51 @@ export function MobileMenuExample() {
   );
 }
 
+type TabRow = { id: string; c: string[] };
+const TAB_ROWS: TabRow[] = Array.from({ length: 4 }, (_, i) => ({ id: `INV-${1040 + i}`, c: Array.from({ length: 7 }, (_, k) => `Value ${i + 1}.${k + 1}`) }));
+
 export function TabsExample() {
   const t = useT();
+  const columns: DataTableColumn<TabRow>[] = [
+    { key: "id", header: t("Invoice", "الفاتورة"), cell: (r) => r.id },
+    ...Array.from({ length: 7 }, (_, k): DataTableColumn<TabRow> => ({ key: `c${k}`, header: `${t("Field", "الحقل")} ${k + 1}`, cell: (r) => r.c[k], width: "9rem" })),
+  ];
   return (
-    <Tabs
-      className="w-full max-w-lg"
-      defaultValue="overview"
-      items={[
-        { value: "overview", label: t("Overview", "نظرة عامة"), content: <Text tone="muted">{t("What the project is.", "ما هو المشروع.")}</Text> },
-        { value: "scope", label: t("Scope", "النطاق"), content: <Text tone="muted">{t("What we build.", "ما نبنيه.")}</Text> },
-        { value: "timeline", label: t("Timeline", "الجدول الزمني"), content: <Text tone="muted">{t("When it ships.", "متى يُطلق.")}</Text> },
-      ]}
-    />
+    <div className="grid w-full max-w-lg grid-cols-1 gap-3">
+      <Tabs
+        defaultValue="overview"
+        items={[
+          { value: "overview", label: t("Overview", "نظرة عامة"), content: <DataTable columns={columns} rows={TAB_ROWS} getRowId={(r) => r.id} caption={t("Invoices", "الفواتير")} hideCaption /> },
+          { value: "scope", label: t("Scope", "النطاق"), content: <Text tone="muted">{t("What we build.", "ما نبنيه.")}</Text> },
+          { value: "timeline", label: t("Timeline", "الجدول الزمني"), content: <Text tone="muted">{t("When it ships.", "متى يُطلق.")}</Text> },
+        ]}
+      />
+    </div>
+  );
+}
+
+export function RouteTabsExample() {
+  const t = useT();
+  const tabs = [
+    ["overview", "Overview", "نظرة عامة"],
+    ["compose", "Compose", "التركيب"],
+    ["environment", "Environment", "البيئة"],
+    ["domains", "Domains", "النطاقات"],
+    ["deployments", "Deployments", "عمليات النشر"],
+    ["logs", "Logs", "السجلات"],
+    ["metrics", "Metrics", "المقاييس"],
+    ["backups", "Backups", "النسخ الاحتياطية"],
+    ["access", "Access", "الوصول"],
+    ["settings", "Settings", "الإعدادات"],
+  ] as const;
+  return (
+    <div className="w-full max-w-2xl">
+      <RouteTabs
+        label={t("App sections", "أقسام التطبيق")}
+        current="logs"
+        items={tabs.map(([value, en, ar]) => ({ value, label: t(en, ar), href: `#${value}`, count: value === "deployments" ? 12 : undefined }))}
+      />
+    </div>
   );
 }
 

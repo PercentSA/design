@@ -148,7 +148,7 @@ export function AlertDialog({
 }
 
 // Side sheets leave only vertical panning (scroll, zoom) to the browser, so a horizontal drag reaches the sheet.
-const SIDE = {
+export const SIDE = {
   end: "inset-y-0 end-0 h-dvh w-[min(100%,28rem)] border-s touch-pan-y touch-pinch-zoom",
   start: "inset-y-0 start-0 h-dvh w-[min(100%,28rem)] border-e touch-pan-y touch-pinch-zoom",
   bottom: "inset-x-0 bottom-0 max-h-[85dvh] rounded-t-panel border-t",
