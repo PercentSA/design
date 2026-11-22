@@ -91,6 +91,41 @@
       }
     },
     {
+      "name": "action-dialog",
+      "type": "registry:ui",
+      "title": "ActionDialog",
+      "description": "@percentsa/ui: ActionDialog",
+      "dependencies": [
+        "lucide-react",
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/button-class",
+        "@percentsa/cn",
+        "@percentsa/dialog-parts",
+        "@percentsa/field",
+        "@percentsa/focusable",
+        "@percentsa/inputs",
+        "@percentsa/list",
+        "@percentsa/overlay-classes",
+        "@percentsa/provider",
+        "@percentsa/saudi-digits"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/action-dialog.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/action-dialog.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ActionDialog"
+        ]
+      }
+    },
+    {
       "name": "actions",
       "type": "registry:ui",
       "title": "Button, ButtonGroup, Toggle, SegmentedControl",
@@ -102,6 +137,7 @@
       "registryDependencies": [
         "@percentsa/button-class",
         "@percentsa/cn",
+        "@percentsa/overlay-classes",
         "@percentsa/provider",
         "@percentsa/sliding-indicator",
         "@percentsa/spinner"
@@ -170,6 +206,36 @@
       "meta": {
         "exports": [
           "FLAG_SA"
+        ]
+      }
+    },
+    {
+      "name": "attention-list",
+      "type": "registry:ui",
+      "title": "AttentionList",
+      "description": "@percentsa/ui: AttentionList",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/button-class",
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/saudi-date-time",
+        "@percentsa/time-text"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/attention-list.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/attention-list.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "AttentionList"
         ]
       }
     },
@@ -326,8 +392,8 @@
     {
       "name": "button-class",
       "type": "registry:lib",
-      "title": "buttonClass",
-      "description": "@percentsa/ui: buttonClass",
+      "title": "buttonClass, blockedProps",
+      "description": "@percentsa/ui: buttonClass, blockedProps",
       "registryDependencies": [
         "@percentsa/cn"
       ],
@@ -340,7 +406,8 @@
       ],
       "meta": {
         "exports": [
-          "buttonClass"
+          "buttonClass",
+          "blockedProps"
         ]
       }
     },
@@ -461,7 +528,7 @@
       "name": "cartesian",
       "type": "registry:ui",
       "title": "Axes",
-      "description": "@percentsa/ui: cartesian, Axes",
+      "description": "@percentsa/ui: cartesian, isolate, Axes",
       "registryDependencies": [
         "@percentsa/scale"
       ],
@@ -475,6 +542,7 @@
       "meta": {
         "exports": [
           "cartesian",
+          "isolate",
           "Axes"
         ]
       }
@@ -753,8 +821,10 @@
       "registryDependencies": [
         "@percentsa/cn",
         "@percentsa/input-classes",
+        "@percentsa/overlays",
         "@percentsa/provider",
         "@percentsa/saudi-normalize",
+        "@percentsa/spinner",
         "@percentsa/text",
         "@percentsa/utility"
       ],
@@ -769,6 +839,31 @@
         "exports": [
           "useCommandShortcut",
           "CommandPalette"
+        ]
+      }
+    },
+    {
+      "name": "connection-card",
+      "type": "registry:ui",
+      "title": "ConnectionCard",
+      "description": "@percentsa/ui: ConnectionCard",
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/card",
+        "@percentsa/cn",
+        "@percentsa/list",
+        "@percentsa/masked-value"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/connection-card.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/connection-card.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ConnectionCard"
         ]
       }
     },
@@ -805,6 +900,7 @@
         "lucide-react"
       ],
       "registryDependencies": [
+        "@percentsa/actions",
         "@percentsa/button-class",
         "@percentsa/card",
         "@percentsa/choices",
@@ -828,6 +924,52 @@
       "meta": {
         "exports": [
           "DataTable"
+        ]
+      }
+    },
+    {
+      "name": "dialog-parts",
+      "type": "registry:ui",
+      "title": "BlockedStatus",
+      "description": "@percentsa/ui: BlockedStatus, useFocusReturn",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/dialog-parts.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/dialog-parts.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "BlockedStatus",
+          "useFocusReturn"
+        ]
+      }
+    },
+    {
+      "name": "expandable-text",
+      "type": "registry:ui",
+      "title": "ExpandableText",
+      "description": "@percentsa/ui: ExpandableText",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/expandable-text.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/expandable-text.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ExpandableText"
         ]
       }
     },
@@ -900,6 +1042,34 @@
       }
     },
     {
+      "name": "fields-sheet",
+      "type": "registry:ui",
+      "title": "FieldsSheet",
+      "description": "@percentsa/ui: FieldsSheet",
+      "registryDependencies": [
+        "@percentsa/autocomplete",
+        "@percentsa/autocomplete-match",
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/form-sheet",
+        "@percentsa/input-classes",
+        "@percentsa/inputs",
+        "@percentsa/utility"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/fields-sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/fields-sheet.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FieldsSheet"
+        ]
+      }
+    },
+    {
       "name": "file-drop",
       "type": "registry:ui",
       "title": "FileDrop",
@@ -961,6 +1131,24 @@
       }
     },
     {
+      "name": "focusable",
+      "type": "registry:lib",
+      "title": "FOCUSABLE",
+      "description": "@percentsa/ui: FOCUSABLE",
+      "files": [
+        {
+          "path": "packages/ui/src/components/focusable.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/focusable.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "FOCUSABLE"
+        ]
+      }
+    },
+    {
       "name": "form-bar",
       "type": "registry:ui",
       "title": "FormBar",
@@ -986,12 +1174,11 @@
       "type": "registry:ui",
       "title": "FormSheet",
       "description": "@percentsa/ui: FormSheet",
-      "dependencies": [
-        "lucide-react"
-      ],
       "registryDependencies": [
         "@percentsa/actions",
+        "@percentsa/button-class",
         "@percentsa/cn",
+        "@percentsa/dialog-parts",
         "@percentsa/overlays",
         "@percentsa/provider"
       ],
@@ -1036,8 +1223,8 @@
     {
       "name": "input-classes",
       "type": "registry:lib",
-      "title": "FIELD_BOX, TEXT_BOX, MENU_ITEM",
-      "description": "@percentsa/ui: FIELD_BOX, TEXT_BOX, MENU_ITEM, inView",
+      "title": "FIELD_BOX, TEXT_BOX, MENU_ITEM, MONO_INPUT",
+      "description": "@percentsa/ui: FIELD_BOX, TEXT_BOX, MENU_ITEM, inView, MONO_INPUT",
       "registryDependencies": [
         "@percentsa/cn"
       ],
@@ -1053,7 +1240,8 @@
           "FIELD_BOX",
           "TEXT_BOX",
           "MENU_ITEM",
-          "inView"
+          "inView",
+          "MONO_INPUT"
         ]
       }
     },
@@ -1253,6 +1441,7 @@
         "@percentsa/cn",
         "@percentsa/feedback",
         "@percentsa/field",
+        "@percentsa/focusable",
         "@percentsa/layout",
         "@percentsa/menus",
         "@percentsa/provider",
@@ -1331,6 +1520,61 @@
           "List",
           "ListItem",
           "DescriptionList"
+        ]
+      }
+    },
+    {
+      "name": "log-viewer",
+      "type": "registry:ui",
+      "title": "LogViewer",
+      "description": "@percentsa/ui: LogViewer",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/inputs",
+        "@percentsa/menus",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/log-viewer.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/log-viewer.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "LogViewer"
+        ]
+      }
+    },
+    {
+      "name": "masked-value",
+      "type": "registry:ui",
+      "title": "MaskedValue",
+      "description": "@percentsa/ui: MaskedValue",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/overlays",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/masked-value.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/masked-value.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "MaskedValue"
         ]
       }
     },
@@ -1422,7 +1666,8 @@
         "@percentsa/cn",
         "@percentsa/pagination",
         "@percentsa/provider",
-        "@percentsa/sliding-indicator"
+        "@percentsa/sliding-indicator",
+        "@percentsa/tab-classes"
       ],
       "files": [
         {
@@ -1442,10 +1687,54 @@
       }
     },
     {
+      "name": "not-set",
+      "type": "registry:ui",
+      "title": "NotSet",
+      "description": "@percentsa/ui: isEmptyValue, NotSet",
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/not-set.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/not-set.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "isEmptyValue",
+          "NotSet"
+        ]
+      }
+    },
+    {
+      "name": "overlay-classes",
+      "type": "registry:lib",
+      "title": "BACKDROP, PANEL, CLOSE, TOOLTIP",
+      "description": "@percentsa/ui: BACKDROP, PANEL, CLOSE, TOOLTIP",
+      "files": [
+        {
+          "path": "packages/ui/src/components/overlay-classes.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/overlay-classes.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "BACKDROP",
+          "PANEL",
+          "CLOSE",
+          "TOOLTIP"
+        ]
+      }
+    },
+    {
       "name": "overlays",
       "type": "registry:ui",
-      "title": "Dialog, DialogClose, AlertDialog, Sheet",
-      "description": "@percentsa/ui: Dialog, DialogClose, AlertDialog, Sheet, Popover, HoverCard, Tooltip",
+      "title": "Dialog, DialogClose, AlertDialog, SIDE",
+      "description": "@percentsa/ui: Dialog, DialogClose, AlertDialog, SIDE, Sheet, Popover, HoverCard, Tooltip",
       "dependencies": [
         "lucide-react",
         "radix-ui"
@@ -1454,6 +1743,8 @@
         "@percentsa/actions",
         "@percentsa/button-class",
         "@percentsa/cn",
+        "@percentsa/dialog-parts",
+        "@percentsa/overlay-classes",
         "@percentsa/provider"
       ],
       "files": [
@@ -1468,6 +1759,7 @@
           "Dialog",
           "DialogClose",
           "AlertDialog",
+          "SIDE",
           "Sheet",
           "Popover",
           "HoverCard",
@@ -1656,7 +1948,7 @@
       "registryDependencies": [
         "@percentsa/card",
         "@percentsa/list",
-        "@percentsa/provider"
+        "@percentsa/not-set"
       ],
       "files": [
         {
@@ -1680,6 +1972,7 @@
         "@percentsa/cn",
         "@percentsa/feedback",
         "@percentsa/layout",
+        "@percentsa/not-set",
         "@percentsa/provider"
       ],
       "files": [
@@ -1692,6 +1985,35 @@
       "meta": {
         "exports": [
           "RecordSummary"
+        ]
+      }
+    },
+    {
+      "name": "route-tabs",
+      "type": "registry:ui",
+      "title": "RouteTabs",
+      "description": "@percentsa/ui: RouteTabs",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/feedback",
+        "@percentsa/menus",
+        "@percentsa/provider",
+        "@percentsa/sliding-indicator",
+        "@percentsa/tab-classes"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/route-tabs.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/route-tabs.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "RouteTabs"
         ]
       }
     },
@@ -1723,11 +2045,13 @@
     {
       "name": "settings",
       "type": "registry:ui",
-      "title": "SettingsSection, SettingsRow",
-      "description": "@percentsa/ui: SettingsSection, SettingsRow",
+      "title": "SettingsSection, SettingsRow, ValueRow",
+      "description": "@percentsa/ui: SettingsSection, SettingsRow, ValueRow",
       "registryDependencies": [
+        "@percentsa/actions",
         "@percentsa/cn",
         "@percentsa/field",
+        "@percentsa/not-set",
         "@percentsa/provider"
       ],
       "files": [
@@ -1740,7 +2064,8 @@
       "meta": {
         "exports": [
           "SettingsSection",
-          "SettingsRow"
+          "SettingsRow",
+          "ValueRow"
         ]
       }
     },
@@ -1921,6 +2246,24 @@
       "meta": {
         "exports": [
           "Stat"
+        ]
+      }
+    },
+    {
+      "name": "tab-classes",
+      "type": "registry:lib",
+      "title": "TAB_BASE",
+      "description": "@percentsa/ui: TAB_BASE",
+      "files": [
+        {
+          "path": "packages/ui/src/components/tab-classes.ts",
+          "type": "registry:lib",
+          "target": "components/percent/ui/components/tab-classes.ts"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "TAB_BASE"
         ]
       }
     },
@@ -3303,16 +3646,6 @@
       "files": []
     },
     {
-      "name": "flag_sa",
-      "type": "registry:ui",
-      "title": "FLAG_SA",
-      "description": "FLAG_SA: adds @percentsa/flag-sa.",
-      "registryDependencies": [
-        "@percentsa/flag-sa"
-      ],
-      "files": []
-    },
-    {
       "name": "avatar-group",
       "type": "registry:ui",
       "title": "AvatarGroup",
@@ -3409,56 +3742,6 @@
       "description": "DateRangePicker: adds @percentsa/calendar.",
       "registryDependencies": [
         "@percentsa/calendar"
-      ],
-      "files": []
-    },
-    {
-      "name": "stretched_link",
-      "type": "registry:ui",
-      "title": "STRETCHED_LINK",
-      "description": "STRETCHED_LINK: adds @percentsa/card.",
-      "registryDependencies": [
-        "@percentsa/card"
-      ],
-      "files": []
-    },
-    {
-      "name": "above_stretched_link",
-      "type": "registry:ui",
-      "title": "ABOVE_STRETCHED_LINK",
-      "description": "ABOVE_STRETCHED_LINK: adds @percentsa/card.",
-      "registryDependencies": [
-        "@percentsa/card"
-      ],
-      "files": []
-    },
-    {
-      "name": "axes",
-      "type": "registry:ui",
-      "title": "Axes",
-      "description": "Axes: adds @percentsa/cartesian.",
-      "registryDependencies": [
-        "@percentsa/cartesian"
-      ],
-      "files": []
-    },
-    {
-      "name": "marker",
-      "type": "registry:ui",
-      "title": "Marker",
-      "description": "Marker: adds @percentsa/legend.",
-      "registryDependencies": [
-        "@percentsa/legend"
-      ],
-      "files": []
-    },
-    {
-      "name": "swatch",
-      "type": "registry:ui",
-      "title": "Swatch",
-      "description": "Swatch: adds @percentsa/legend.",
-      "registryDependencies": [
-        "@percentsa/legend"
       ],
       "files": []
     },
@@ -3743,16 +4026,6 @@
       "files": []
     },
     {
-      "name": "key-grid",
-      "type": "registry:ui",
-      "title": "KeyGrid",
-      "description": "KeyGrid: adds @percentsa/keypad.",
-      "registryDependencies": [
-        "@percentsa/keypad"
-      ],
-      "files": []
-    },
-    {
       "name": "container",
       "type": "registry:ui",
       "title": "Container",
@@ -4023,16 +4296,6 @@
       "files": []
     },
     {
-      "name": "print_paper",
-      "type": "registry:ui",
-      "title": "PRINT_PAPER",
-      "description": "PRINT_PAPER: adds @percentsa/print-paper.",
-      "registryDependencies": [
-        "@percentsa/print-paper"
-      ],
-      "files": []
-    },
-    {
       "name": "zatca-qr",
       "type": "registry:ui",
       "title": "ZatcaQr",
@@ -4073,12 +4336,12 @@
       "files": []
     },
     {
-      "name": "sidebar-in-sheet",
+      "name": "value-row",
       "type": "registry:ui",
-      "title": "SidebarInSheet",
-      "description": "SidebarInSheet: adds @percentsa/sidebar.",
+      "title": "ValueRow",
+      "description": "ValueRow: adds @percentsa/settings.",
       "registryDependencies": [
-        "@percentsa/sidebar"
+        "@percentsa/settings"
       ],
       "files": []
     },
@@ -4393,16 +4656,6 @@
       "files": []
     },
     {
-      "name": "theme_key",
-      "type": "registry:ui",
-      "title": "THEME_KEY",
-      "description": "THEME_KEY: adds @percentsa/theme-script.",
-      "registryDependencies": [
-        "@percentsa/theme-script"
-      ],
-      "files": []
-    },
-    {
       "name": "theme_script",
       "type": "registry:ui",
       "title": "THEME_SCRIPT",
@@ -4469,16 +4722,6 @@
       "description": "LANGS: adds @percentsa/localized.",
       "registryDependencies": [
         "@percentsa/localized"
-      ],
-      "files": []
-    },
-    {
-      "name": "consent_cookie",
-      "type": "registry:ui",
-      "title": "CONSENT_COOKIE",
-      "description": "CONSENT_COOKIE: adds @percentsa/consent-cookie.",
-      "registryDependencies": [
-        "@percentsa/consent-cookie"
       ],
       "files": []
     },
