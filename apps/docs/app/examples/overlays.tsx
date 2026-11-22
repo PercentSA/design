@@ -13,6 +13,7 @@ import {
   HoverCard,
   Inline,
   Input,
+  Money,
   Popover,
   RadioGroup,
   Sheet,
@@ -221,7 +222,7 @@ export function ActionDialogExample() {
         onOpenChange={setOpen}
         title={t("Redeploy Caddy edge?", "إعادة نشر Caddy edge؟")}
         subject={{ title: "Caddy edge", meta: "203.0.113.10", facts: [{ term: t("Status", "الحالة"), value: t("Live", "يعمل") }] }}
-        effects={[t("The service restarts and is down for about 10 seconds.", "تُعاد الخدمة وتتوقف نحو 10 ثوانٍ."), t("Open connections end.", "تنتهي الاتصالات المفتوحة.")]}
+        effects={[t("The service restarts and is down for about 10 seconds.", "يُعاد تشغيل الخدمة وتتوقف نحو 10 ثوانٍ."), t("Open connections end.", "تنتهي الاتصالات المفتوحة.")]}
         action={t("Redeploy", "إعادة النشر")}
         onAction={() => setOpen(false)}
       />
@@ -240,20 +241,27 @@ export function ActionDialogChoiceExample() {
         open={open}
         onOpenChange={setOpen}
         title={t("Refund this payment?", "استرداد هذه الدفعة؟")}
-        subject={{ title: "Al Noor", value: "40.00", meta: t("Paid by card", "مدفوعة بالبطاقة") }}
-        effects={kind === "full" ? [t("The full amount goes back to the card.", "يعود المبلغ كاملًا إلى البطاقة.")] : kind === "part" ? [t("Half of the amount goes back to the card.", "يعود نصف المبلغ إلى البطاقة.")] : null}
-        effectsEmpty={t("Choose a refund first.", "اختر نوع الاسترداد أولًا.")}
-        reason={{ label: t("Reason", "السبب"), required: true }}
+        subject={{ title: "Al Noor", value: <Money amount={40} />, meta: t("Paid by card", "مدفوعة بالبطاقة") }}
+        effects={
+          kind === "twice"
+            ? [t("The second payment goes back to the card.", "تعود الدفعة الثانية إلى البطاقة.")]
+            : kind === "request"
+              ? [t("The full amount goes back to the card.", "يعود المبلغ كاملًا إلى البطاقة.")]
+              : null
+        }
+        effectsEmpty={t("Choose a reason first.", "اختر السبب أولًا.")}
+        reason={{ label: t("Note for the record", "ملاحظة للسجل"), required: true }}
         action={t("Refund", "استرداد")}
         destructive
         onAction={() => setOpen(false)}
       >
         <RadioGroup
+          aria-label={t("Refund reason", "سبب الاسترداد")}
           value={kind}
           onValueChange={setKind}
           options={[
-            { value: "full", label: t("Refund all", "استرداد الكل") },
-            { value: "part", label: t("Refund half", "استرداد النصف") },
+            { value: "twice", label: t("Paid twice", "دُفعت مرتين") },
+            { value: "request", label: t("Customer asked", "طلب العميل") },
           ]}
         />
       </ActionDialog>

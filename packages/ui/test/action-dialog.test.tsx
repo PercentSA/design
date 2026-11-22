@@ -57,6 +57,27 @@ describe("ActionDialog", () => {
     expect(document.activeElement).toBe(dialog().querySelector('[role="radio"]'));
   });
 
+  test("first focus skips a disabled first radio", async () => {
+    await mount(
+      <Host>
+        <RadioGroup options={[{ value: "a", label: "A", disabled: true }, { value: "b", label: "B" }]} />
+      </Host>,
+    );
+    await tick();
+    expect(document.activeElement).toBe(dialog().querySelectorAll('[role="radio"]')[1]);
+  });
+
+  test("effects null without effectsEmpty shows no empty paragraph", async () => {
+    await mount(<Host effects={null} />);
+    expect(dialog().querySelector('section[aria-live="polite"] p')).toBeNull();
+  });
+
+  test("the typed name accepts Arabic-Indic digits", async () => {
+    await mount(<Host confirmName="web-2" />);
+    await edit(field("input"), "web-٢");
+    expect(named("Do it").getAttribute("aria-disabled")).toBeNull();
+  });
+
   test("without choices or fields the first focus is on Cancel", async () => {
     await mount(<Host subject={{ title: "Main website", meta: <TimeText value="2026-05-01T10:00:00Z" /> }} />);
     await tick();
@@ -121,16 +142,26 @@ describe("ActionDialog", () => {
     expect(calls).toBe(0);
   });
 
-  test("pending: a second press and Escape do nothing", async () => {
+  test("pending: a second press, Enter and Escape do nothing", async () => {
     let calls = 0;
     let closes = 0;
-    await mount(<Host pending onAction={() => calls++} onOpenChange={() => closes++} />);
+    let setPending = (_: boolean) => {};
+    function Wrap() {
+      const [pending, set] = useState(false);
+      setPending = set;
+      return <Host pending={pending} onAction={() => calls++} onOpenChange={() => closes++} />;
+    }
+    await mount(<Wrap />);
+    await click(named("Do it"));
+    expect(calls).toBe(1);
+    await act(async () => setPending(true));
     const action = buttons().find((b) => b.getAttribute("aria-busy") === "true")!;
     await click(action);
+    await act(async () => dialog().querySelector("form")!.requestSubmit());
     await press(dialog(), { key: "Escape" });
     await click(named("Cancel"));
     await click(dialog().querySelector('[aria-label="Close"]')!);
-    expect(calls).toBe(0);
+    expect(calls).toBe(1);
     expect(closes).toBe(0);
   });
 
@@ -170,16 +201,18 @@ describe("ActionDialog", () => {
       return (
         <>
           <button id="t" onClick={() => setOpen((o) => !o)}>t</button>
-          <Host open={open} onOpenChange={setOpen} confirmName="x" />
+          <Host open={open} onOpenChange={setOpen} confirmName="x" reason={{ label: "Why" }} />
         </>
       );
     }
     await mount(<Toggle />);
     await edit(field("input"), "abc");
+    await edit(dialog().querySelector("textarea")!, "because");
     await click(document.getElementById("t")!);
     await tick();
     await click(document.getElementById("t")!);
     expect(field("input").value).toBe("");
+    expect(dialog().querySelector("textarea")!.value).toBe("");
   });
 
   test("focus goes back to the element that had it before the open", async () => {

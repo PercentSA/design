@@ -1,11 +1,11 @@
 "use client";
 
 import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";
-import { TriangleAlert } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
 import { Button } from "./actions";
 import { blockedProps } from "./button-class";
+import { BlockedStatus } from "./dialog-parts";
 import { AlertDialog, Sheet } from "./overlays";
 
 /**
@@ -92,15 +92,7 @@ export function FormSheet({
           {children}
           {/* -bottom-6, not bottom-0: a sticky footer stops at the scroller's padding (p-6), and the content would show under it. */}
           <div className="sticky -bottom-6 -mx-6 -mb-6 mt-auto grid gap-3 border-t border-line bg-surface-2 px-6 py-4">
-            {/* The status element stays in the page, so a reason that appears later is announced. */}
-            <div role="status" className="empty:hidden">
-              {refused && !pending && (
-                <p id={reasonId} className="flex items-start gap-2 text-sm text-fg-2">
-                  <TriangleAlert aria-hidden className="mt-0.5 size-4 shrink-0" />
-                  <span>{blocked}</span>
-                </p>
-              )}
-            </div>
+            <BlockedStatus id={reasonId}>{refused && !pending ? blocked : undefined}</BlockedStatus>
             <div className={cn(bottom ? "flex flex-wrap gap-3 *:grow *:basis-[calc(50%-0.375rem)]" : "flex flex-wrap justify-end gap-2")}>
               <Button variant="secondary" size={bottom ? "lg" : undefined} disabled={pending} onClick={() => request(false)}>
                 {cancelLabel ?? s.cancel}

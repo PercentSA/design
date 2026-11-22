@@ -1,5 +1,6 @@
 "use client";
 
+import { FOCUSABLE } from "./focusable";
 import { Fragment, useEffect, useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { ChevronDown, Ellipsis, Plus, Trash2 } from "lucide-react";
 import { cn } from "../lib/cn";
@@ -46,7 +47,6 @@ const WIDTH = {
 } as const;
 const NUMBER_REM = 2.5;
 const BUTTON_REM = 2.5;
-const FOCUSABLE = 'input:not([type="hidden"]):not([disabled]), select:not([disabled]), textarea:not([disabled]), button:not([disabled]), [tabindex]:not([tabindex="-1"]):not([disabled])';
 const TEXT_INPUT = 'input:not([type="hidden"]):not([disabled]), textarea:not([disabled])';
 /** The control of a cell the editor moves to: its text input first (a NumberInput has its "−" button before it), else the first control. */
 const controlOf = (cell: Element | null | undefined) => cell?.querySelector<HTMLElement>(TEXT_INPUT) ?? cell?.querySelector<HTMLElement>(FOCUSABLE) ?? null;

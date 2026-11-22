@@ -1,13 +1,16 @@
 "use client";
 
 import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { TriangleAlert, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Dialog as RadixDialog } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
+import { toWesternDigits } from "../saudi/digits";
 import { Button } from "./actions";
-import { blockedProps, buttonClass } from "./button-class";
+import { blockedProps } from "./button-class";
+import { BlockedStatus, useFocusReturn } from "./dialog-parts";
 import { Field } from "./field";
+import { FOCUSABLE } from "./focusable";
 import { Input, Textarea } from "./inputs";
 import { DescriptionList } from "./list";
 import { BACKDROP, CLOSE, PANEL } from "./overlay-classes";
@@ -36,7 +39,6 @@ export type ActionDialogProps = {
   onAction: (reason?: string) => void;
 };
 
-const FIRST = 'input, select, textarea, button, [tabindex="0"], [role="radio"]';
 
 /**
  * Asks before an action that has an effect: the record, the choices, then "What happens" (read aloud when it changes).
@@ -47,7 +49,7 @@ const FIRST = 'input, select, textarea, button, [tabindex="0"], [role="radio"]';
 export function ActionDialog(props: ActionDialogProps) {
   const { open, onOpenChange, pending } = props;
   const s = useStrings();
-  const back = useRef<Element | null>(null);
+  const focus = useFocusReturn();
   const content = useRef<HTMLDivElement>(null);
   const request = (o: boolean) => pending && !o ? undefined : onOpenChange(o);
   return (
@@ -59,20 +61,16 @@ export function ActionDialog(props: ActionDialogProps) {
           aria-describedby={undefined}
           onOpenAutoFocus={(e) => {
             e.preventDefault();
-            back.current = document.activeElement;
+            focus.onOpenAutoFocus();
             const el = content.current;
             const target =
-              el?.querySelector<HTMLElement>(`[data-ad-choices] :is(${FIRST})`) ??
+              el?.querySelector<HTMLElement>(`[data-ad-choices] :is(${FOCUSABLE})`) ??
               el?.querySelector<HTMLElement>("[data-ad-reason]") ??
               el?.querySelector<HTMLElement>("[data-ad-name]") ??
               el?.querySelector<HTMLElement>("[data-ad-cancel]");
             target?.focus();
           }}
-          onCloseAutoFocus={(e) => {
-            if (!(back.current instanceof HTMLElement) || !back.current.isConnected) return;
-            e.preventDefault();
-            back.current.focus();
-          }}
+          onCloseAutoFocus={focus.onCloseAutoFocus}
           className={cn(
             "p-pop fixed z-(--p-z-overlay) flex flex-col overflow-auto",
             "max-md:inset-0 max-md:h-dvh",
@@ -97,7 +95,7 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, reason,
   const [typed, setTyped] = useState("");
   const [why, setWhy] = useState("");
   const text = why.trim();
-  const refused = !!blocked || (confirmName != null && typed.trim() !== confirmName) || (!!reason?.required && !text);
+  const refused = !!blocked || (confirmName != null && toWesternDigits(typed).trim() !== confirmName) || (!!reason?.required && !text);
   const shown = effects && effects.length > 0 ? effects : null;
   const submit = (e: FormEvent) => {
     e.preventDefault();
@@ -127,7 +125,7 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, reason,
               ))}
             </ul>
           ) : (
-            <p className="text-sm text-fg-3">{effectsEmpty}</p>
+            effectsEmpty != null && <p className="text-sm text-fg-3">{effectsEmpty}</p>
           )}
         </section>
         {reason && (
@@ -142,18 +140,11 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, reason,
         )}
       </div>
       <div className="sticky bottom-0 grid gap-3 border-t border-line bg-surface-2 px-6 py-4 md:px-8">
-        <div role="status" className="empty:hidden">
-          {blocked && !pending && (
-            <p id={reasonId} className="flex items-start gap-2 text-sm text-fg-2">
-              <TriangleAlert aria-hidden className="mt-0.5 size-4 shrink-0" />
-              <span>{blocked}</span>
-            </p>
-          )}
-        </div>
+        <BlockedStatus id={reasonId}>{blocked && !pending ? blocked : undefined}</BlockedStatus>
         <div className="flex flex-wrap justify-end gap-2 max-md:flex-col-reverse *:max-md:w-full">
-          <button type="button" data-ad-cancel disabled={pending} onClick={() => onOpenChange(false)} className={buttonClass("secondary")}>
+          <Button variant="secondary" data-ad-cancel disabled={pending} onClick={() => onOpenChange(false)}>
             {s.cancel}
-          </button>
+          </Button>
           <Button
             type="submit"
             variant={destructive ? "danger" : "primary"}
