@@ -87,6 +87,7 @@ export function SegmentedControl({
   };
   // A radio group selects with the arrow keys: Radix moves the focus; the choice follows it. Left and right mirror in RTL.
   const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
     const step = { ArrowRight: rtl ? -1 : 1, ArrowDown: 1, ArrowLeft: rtl ? 1 : -1, ArrowUp: -1 }[e.key];
     const from = (e.target as HTMLElement).closest<HTMLElement>('[role="radio"]');
     if (!step || !from) return;

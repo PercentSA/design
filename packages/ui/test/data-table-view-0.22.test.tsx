@@ -145,13 +145,16 @@ describe("DataTable view switch: keys and hidden header", () => {
     expect(root(ar).hasAttribute("data-view")).toBe(false);
   });
 
-  test("the card header row is invisible, so no header control takes focus", async () => {
-    const el = await render(table({ viewKey: "apps", selectable: true, columns: [{ key: "name", header: "Name", sortable: true }] }));
+  test("in the cards view the header controls leave the Tab order; the header stays sr-only", async () => {
+    const props = { viewKey: "apps", selectable: true, columns: [{ key: "name", header: "Name", sortable: true }] };
+    const el = await render(table(props));
+    const controls = () => [...el.querySelectorAll("thead button")];
+    expect(controls().length).toBeGreaterThan(1);
+    expect(controls().every((b) => !b.hasAttribute("tabindex"))).toBe(true);
+    await click(radio(el, "Cards"));
+    expect(controls().every((b) => b.getAttribute("tabindex") === "-1")).toBe(true);
     const cls = el.querySelector("thead")!.className;
-    expect(cls).toContain("p-cards:invisible");
     expect(cls).toContain("p-cards:sr-only");
-    expect(el.querySelector("thead button, thead input")).not.toBeNull();
-    const plain = await render(table({ cards: false, selectable: true }));
-    expect(plain.querySelector("thead")!.className).not.toContain("invisible");
+    expect(cls).not.toContain("invisible");
   });
 });

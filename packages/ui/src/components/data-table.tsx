@@ -226,6 +226,8 @@ export function DataTable<Row>({
   const cards = cardsProp && !print;
   const switchShown = !!viewKey && cards;
   const cardsView = switchShown && view === "cards";
+  // In the cards view the header row is visually hidden: Tab skips its controls, screen readers still reach them.
+  const headTab = cardsView ? -1 : undefined;
   const cellY = compact ? "py-2" : print ? "px-1 py-1 text-xs" : undefined;
   const headH = compact ? "h-9" : print ? "h-8 px-1" : undefined;
   const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k > 0 ? c.cardSlot : undefined);
@@ -412,12 +414,13 @@ export function DataTable<Row>({
         className={cn(cards && "p-cards:[&>table]:block", print ? "overflow-visible" : stickyHeader && "max-h-[70dvh] overflow-auto")}
       >
         {/* z-sticky: above the row controls that sit over a row link (z-1). */}
-        <TableHeader className={cn(stickyHeader && !print && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "p-cards:invisible p-cards:sr-only") || undefined}>
+        <TableHeader className={cn(stickyHeader && !print && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "p-cards:sr-only") || undefined}>
           <TableRow>
             {selectable && (
               <TableHead wrap={print} className={cn("w-10", headH)}>
                 <Checkbox
                   className="gap-0 align-middle"
+                  tabIndex={headTab}
                   label={<span className="sr-only">{s.selectAll}</span>}
                   checked={all}
                   disabled={loading || ids.length === 0}
@@ -439,7 +442,7 @@ export function DataTable<Row>({
                     aria-sort={active === "asc" ? "ascending" : active === "desc" ? "descending" : undefined}
                   >
                     {c.sortable ? (
-                      <button type="button" onClick={() => toggleSort(c.key)} className="-mx-1 inline-flex items-center gap-1 rounded-md px-1 transition-colors hover:text-fg">
+                      <button type="button" tabIndex={headTab} onClick={() => toggleSort(c.key)} className="-mx-1 inline-flex items-center gap-1 rounded-md px-1 transition-colors hover:text-fg">
                         {c.header}
                         <Icon aria-hidden className={cn("size-3.5 shrink-0", !active && "opacity-50")} />
                       </button>

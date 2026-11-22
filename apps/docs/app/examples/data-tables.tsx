@@ -308,9 +308,9 @@ function useAppColumns(): DataTableColumn<AppRow>[] {
   const k = lang === "ar" ? 1 : 0;
   const status = { live: t("Live", "يعمل"), stopped: t("Not running", "متوقف") };
   return [
-    { key: "name", header: t("App", "التطبيق"), cell: (r) => r.name[k] },
+    { key: "name", header: t("App", "التطبيق"), cell: (r) => r.name[k], sortable: true, sortValue: (r) => r.name[k] },
     { key: "domain", header: t("Address", "العنوان"), cell: (r) => <span dir="ltr" className="font-mono text-xs">{r.domain}</span> },
-    { key: "status", header: t("Status", "الحالة"), cell: (r) => <StatusBadge tone={r.status === "live" ? "success" : "neutral"}>{status[r.status]}</StatusBadge> },
+    { key: "status", header: t("Status", "الحالة"), cell: (r) => <StatusBadge tone={r.status === "live" ? "success" : "danger"}>{status[r.status]}</StatusBadge> },
     { key: "owner", header: t("Owner", "المسؤول"), cell: (r) => r.owner[k] },
   ];
 }
