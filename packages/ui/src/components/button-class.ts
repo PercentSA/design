@@ -28,3 +28,17 @@ export const buttonClass = (variant: ButtonVariant = "primary", size: ButtonSize
     VARIANT[variant],
     variant === "link" ? cn("h-auto p-0", LINK_SIZE[size]) : iconOnly ? cn(ICON_SIZE[size], "p-0") : SIZE[size],
   );
+
+/**
+ * The attributes of a button that is blocked now: it stays visible and focusable, refuses the press (`onPress`
+ * runs instead) and names its reason through `aria-describedby`. The element `reasonId` names must stay out of the button's name.
+ */
+export const blockedProps = (reasonId: string, onPress?: () => void) => ({
+  "aria-disabled": true as const,
+  "aria-describedby": reasonId,
+  className: "cursor-not-allowed opacity-50",
+  onClick: (e: { preventDefault(): void }) => {
+    e.preventDefault();
+    onPress?.();
+  },
+});

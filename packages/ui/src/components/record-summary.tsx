@@ -83,13 +83,15 @@ export function RecordSummary({
               <>
                 <dd title={typeof shown === "string" ? shown : undefined} className="min-w-0 text-lg font-semibold text-fg tabular-nums">
                   {item.status ? (
-                    item.href ? (
-                      <L href={item.href} className="rounded-field underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
-                        <StatusDot status={item.status.tone} className="text-lg font-semibold text-fg">{item.status.label}</StatusDot>
-                      </L>
-                    ) : (
-                      <StatusDot status={item.status.tone} className="text-lg font-semibold text-fg">{item.status.label}</StatusDot>
-                    )
+                    <StatusDot status={item.status.tone} className="text-lg font-semibold text-fg">
+                      {item.href ? (
+                        <L href={item.href} className="rounded-field underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
+                          {item.status.label}
+                        </L>
+                      ) : (
+                        item.status.label
+                      )}
+                    </StatusDot>
                   ) : empty(item.value) ? (
                     <span className="text-base font-normal text-fg-3">{s.notSet}</span>
                   ) : item.href ? (

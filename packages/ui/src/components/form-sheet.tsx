@@ -5,6 +5,7 @@ import { TriangleAlert } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
 import { Button } from "./actions";
+import { blockedProps } from "./button-class";
 import { AlertDialog, Sheet } from "./overlays";
 
 /**
@@ -110,10 +111,7 @@ export function FormSheet({
                 size={bottom ? "lg" : undefined}
                 loading={pending}
                 // aria-disabled, not disabled: the button keeps its focus and can be read with the reason.
-                {...(refused && !pending ? { "aria-disabled": true } : {})}
-                className={cn(refused && !pending && "cursor-not-allowed opacity-50")}
-                onClick={refused && !pending ? (e) => e.preventDefault() : undefined}
-                aria-describedby={refused && !pending ? reasonId : undefined}
+                {...(refused && !pending ? blockedProps(reasonId) : {})}
               >
                 {submitLabel ?? s.save}
               </Button>

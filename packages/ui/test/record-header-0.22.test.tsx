@@ -22,7 +22,7 @@ describe("RecordSummary status", () => {
   });
   test("a status item with href is a link", () => {
     const html = renderToStaticMarkup(wrap(<RecordSummary items={[{ id: "a", label: "Site", href: "/s", status: { tone: "live", label: "Up" } }]} />));
-    expect(html).toMatch(/<a [^>]*href="\/s"[^>]*>.*Up/);
+    expect(html).toMatch(/<a [^>]*href="\/s"[^>]*class="[^"]*underline[^"]*"[^>]*>Up<\/a>/);
   });
   test("an item without status renders as before", () => {
     const html = renderToStaticMarkup(wrap(<RecordSummary items={[{ id: "a", label: "Total", value: "12" }, { id: "b", label: "Note" }]} />));
@@ -55,7 +55,11 @@ describe("Button blocked", () => {
     expect(b.className).toContain("cursor-not-allowed");
     expect(b.className).toContain("opacity-50");
     const reason = document.getElementById(b.getAttribute("aria-describedby")!.split(" ")[0]!)!;
-    expect(reason.className).toContain("sr-only");
+    expect(reason.hidden).toBe(true);
+    // The name skips hidden content: the reason must not be part of it.
+    const name = b.cloneNode(true) as HTMLElement;
+    name.querySelectorAll("[hidden]").forEach((n) => n.remove());
+    expect(name.textContent).toBe("Back up now");
     expect(reason.textContent).toBe("A backup runs now.");
     await act(async () => b.click());
     expect(pressed).toBe(0);

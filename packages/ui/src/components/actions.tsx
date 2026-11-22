@@ -7,7 +7,7 @@ import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
 import { useStrings, useText } from "../provider";
 import { Spinner } from "./spinner";
-import { buttonClass } from "./button-class";
+import { blockedProps, buttonClass } from "./button-class";
 import { TOOLTIP } from "./overlay-classes";
 import type { ButtonVariant, ButtonSize } from "./button-class";
 
@@ -34,18 +34,14 @@ export function Button({ variant, size, loading, asChild, blocked, iconOnly, cla
           <RadixTooltip.Trigger asChild>
             <button
               type={type}
-              aria-disabled="true"
-              aria-describedby={reasonId}
-              className={cn(buttonClass(variant, size, iconOnly), "cursor-not-allowed opacity-50", className)}
               {...rest}
-              // preventDefault keeps the tooltip trigger from closing it again; a tap shows the reason.
-              onClick={(e) => {
-                e.preventDefault();
-                setTip(true);
-              }}
+              // preventDefault (in blockedProps) keeps the tooltip trigger from closing it again; a tap shows the reason.
+              {...blockedProps(reasonId, () => setTip(true))}
+              className={cn(buttonClass(variant, size, iconOnly), blockedProps(reasonId).className, className)}
             >
               {children}
-              <span id={reasonId} className="sr-only">{blocked}</span>
+              {/* hidden, not sr-only: aria-describedby reads it, and it stays out of the button's name. */}
+              <span id={reasonId} hidden>{blocked}</span>
             </button>
           </RadixTooltip.Trigger>
           <RadixTooltip.Portal>
