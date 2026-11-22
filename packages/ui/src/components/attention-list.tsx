@@ -86,7 +86,8 @@ export function AttentionList({
               {i.detail && <p className="text-sm text-fg-2">{i.detail}</p>}
               {(i.area || i.context) && <p className="text-xs text-fg-3">{joined([i.area, i.context])}</p>}
             </div>
-            <div className="pt-0.5 text-sm text-fg-3 max-md:col-start-2 max-md:row-start-1 max-md:justify-self-end md:col-start-3">
+            {/* Without a menu the age takes the empty menu column too, so it ends at the row end. */}
+            <div className={cn("pt-0.5 text-sm text-fg-3 max-md:col-start-2 max-md:row-start-1 max-md:justify-self-end md:col-start-3", !i.menu?.length && "max-md:col-span-2")}>
               <TimeText value={i.openedAt} ago />
             </div>
             {i.action && <div className="max-md:col-span-3 max-md:row-start-3 md:col-start-4 md:justify-self-end">{i.action}</div>}
