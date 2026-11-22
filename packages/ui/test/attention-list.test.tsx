@@ -124,4 +124,10 @@ describe("AttentionList", () => {
     );
     expect(rows(el)[1]!.querySelector("p")!.textContent).toContain("مهم");
   });
+  test("on a phone, the age of a row without a menu ends at the row end (no empty menu column)", async () => {
+    const el = await mount(<PercentProvider lang="en"><AttentionList label="Needs attention" items={[{ id: "a", level: "warning", title: "Disk 91 % full", href: "/a", openedAt: new Date(Date.now() - 60_000) }, { id: "b", level: "warning", title: "Backup late", href: "/b", openedAt: new Date(Date.now() - 60_000), menu: [{ label: "Mute", onSelect: () => {} }] }]} /></PercentProvider>);
+    const ages = [...el.querySelectorAll("li")].map((li) => li.querySelector("time")!.closest("div")!.className.split(" "));
+    expect(ages[0]).toContain("max-md:col-span-2");
+    expect(ages[1]).not.toContain("max-md:col-span-2");
+  });
 });
