@@ -29,14 +29,14 @@ export type DataTableColumn<Row> = {
   align?: TableAlign;
   /** CSS width of the column, for example "8rem". */
   width?: string;
-  /** With `cards`: not shown on the cards (below 768 px). */
+  /** With `cards`: not shown on the cards (below 768 px, and in the cards view). */
   hideOnCard?: boolean;
   /** ColumnsMenu can hide the column. Default true. */
   hideable?: boolean;
   /** A muted second line under the cell (the phone under a name, the type under a number). null, undefined and "" show nothing.
    *  In the first column of a row with `rowHref` it comes after the link, outside it (links in it stay clickable). */
   description?: (row: Row) => ReactNode;
-  /** With `cards`, below 768 px (the table rows do not change). "end": at the end of the title line, without the header.
+  /** With `cards`, on the cards: below 768 px and in the cards view (the table rows do not change). "end": at the end of the title line, without the header.
    *  "meta": in one wrapped line under the title, without the header. "block": full width under the meta, without the header
    *  (long text). A cell with no value shows nothing. Default: a "header … value" line. Not for the first column. */
   cardSlot?: "end" | "meta" | "block";
@@ -72,7 +72,7 @@ export type DataTableProps<Row> = {
   rowHref?: (row: Row) => string | undefined;
   /** A "⋯" menu per row, in a last column. An empty array gives no button. */
   rowActions?: (row: Row) => MenuItem[];
-  /** Below 768 px each row is a card: the first cell is its title, and the other cells show their header. Default false. */
+  /** Below 768 px, and in the cards view (`viewKey`), each row is a card: the first cell is its title, and the other cells show their header. Default false. */
   cards?: boolean;
   /** `compact` for dense lists: cell py-2, header row h-9, card rows p-3 with gap-y-1. `print` for a printed report: cells
    *  text-xs px-1 py-1, header row h-8 px-1 with wrapping text, no scroll box (overflow visible), no cards, no sticky header;
@@ -412,7 +412,7 @@ export function DataTable<Row>({
         className={cn(cards && "p-cards:[&>table]:block", print ? "overflow-visible" : stickyHeader && "max-h-[70dvh] overflow-auto")}
       >
         {/* z-sticky: above the row controls that sit over a row link (z-1). */}
-        <TableHeader className={cn(stickyHeader && !print && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "p-cards:sr-only") || undefined}>
+        <TableHeader className={cn(stickyHeader && !print && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "p-cards:invisible p-cards:sr-only") || undefined}>
           <TableRow>
             {selectable && (
               <TableHead wrap={print} className={cn("w-10", headH)}>

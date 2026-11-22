@@ -1,3 +1,4 @@
+import { act } from "react";
 import { afterEach, describe, expect, spyOn, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import type { ReactNode } from "react";
@@ -123,5 +124,34 @@ describe("DataTable view switch", () => {
     expect(el.querySelector('[role="radiogroup"]')!.getAttribute("aria-label")).toBe("طريقة العرض");
     expect(radio(el, "جدول")).toBeDefined();
     expect(radio(el, "بطاقات")).toBeDefined();
+  });
+});
+
+describe("DataTable view switch: keys and hidden header", () => {
+  const arrow = (el: Element, key: string) =>
+    act(async () => {
+      el.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true }));
+    });
+
+  test("ArrowRight selects Cards and sets data-view; in RTL ArrowLeft does", async () => {
+    const el = await render(table({ viewKey: "apps" }));
+    await arrow(radio(el, "Table"), "ArrowRight");
+    expect(root(el).getAttribute("data-view")).toBe("cards");
+    expect(radio(el, "Cards").getAttribute("aria-checked")).toBe("true");
+    const ar = await render(table({ viewKey: "apps" }), "ar");
+    await arrow(radio(ar, "جدول"), "ArrowLeft");
+    expect(root(ar).getAttribute("data-view")).toBe("cards");
+    await arrow(radio(ar, "بطاقات"), "ArrowRight");
+    expect(root(ar).hasAttribute("data-view")).toBe(false);
+  });
+
+  test("the card header row is invisible, so no header control takes focus", async () => {
+    const el = await render(table({ viewKey: "apps", selectable: true, columns: [{ key: "name", header: "Name", sortable: true }] }));
+    const cls = el.querySelector("thead")!.className;
+    expect(cls).toContain("p-cards:invisible");
+    expect(cls).toContain("p-cards:sr-only");
+    expect(el.querySelector("thead button, thead input")).not.toBeNull();
+    const plain = await render(table({ cards: false, selectable: true }));
+    expect(plain.querySelector("thead")!.className).not.toContain("invisible");
   });
 });

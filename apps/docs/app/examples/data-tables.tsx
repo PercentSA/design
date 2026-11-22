@@ -287,34 +287,45 @@ export function DataTableServerExample() {
   );
 }
 
-type AppRow = { id: string; name: string; domain: string; status: "active" | "paused"; owner: string };
-const APPS: AppRow[] = [
-  ["Main website", "shop.example.com", "active", "Sara"],
-  ["Al Noor store", "alnoor.example.com", "active", "Omar"],
-  ["Help center", "help.example.com", "paused", "Lina"],
-  ["Booking portal", "book.example.com", "active", "Sara"],
-  ["Staff directory", "staff.example.com", "paused", "Omar"],
-  ["Event pages", "events.example.com", "active", "Lina"],
-  ["Customer blog", "blog.example.com", "active", "Sara"],
-  ["Partner area", "partners.example.com", "paused", "Omar"],
-].map(([name, domain, status, owner], i) => ({ id: `app-${i}`, name: name!, domain: domain!, status: status as AppRow["status"], owner: owner! }));
+type AppRow = { id: string; name: [string, string]; domain: string; status: "live" | "stopped"; owner: [string, string] };
+const OWNERS = { sara: ["Sara", "سارة"], omar: ["Omar", "عمر"], lina: ["Lina", "لينا"] } as const;
+const APPS: AppRow[] = (
+  [
+    [["Main website", "الموقع الرئيسي"], "shop.example.com", "live", "sara"],
+    [["Al Noor store", "متجر النور"], "alnoor.example.com", "live", "omar"],
+    [["Help center", "مركز المساعدة"], "help.example.com", "stopped", "lina"],
+    [["Booking portal", "بوابة الحجز"], "book.example.com", "live", "sara"],
+    [["Staff directory", "دليل الموظفين"], "staff.example.com", "stopped", "omar"],
+    [["Event pages", "صفحات الفعاليات"], "events.example.com", "live", "lina"],
+    [["Customer blog", "مدونة العملاء"], "blog.example.com", "live", "sara"],
+    [["Partner area", "منطقة الشركاء"], "partners.example.com", "stopped", "omar"],
+  ] as const
+).map(([name, domain, status, owner], i) => ({ id: `app-${i}`, name: [...name], domain, status, owner: [...OWNERS[owner]] }));
+
+function useAppColumns(): DataTableColumn<AppRow>[] {
+  const t = useT();
+  const lang = useLang();
+  const k = lang === "ar" ? 1 : 0;
+  const status = { live: t("Live", "يعمل"), stopped: t("Not running", "متوقف") };
+  return [
+    { key: "name", header: t("App", "التطبيق"), cell: (r) => r.name[k] },
+    { key: "domain", header: t("Address", "العنوان"), cell: (r) => <span dir="ltr" className="font-mono text-xs">{r.domain}</span> },
+    { key: "status", header: t("Status", "الحالة"), cell: (r) => <StatusBadge tone={r.status === "live" ? "success" : "neutral"}>{status[r.status]}</StatusBadge> },
+    { key: "owner", header: t("Owner", "المسؤول"), cell: (r) => r.owner[k] },
+  ];
+}
 
 /** `viewKey` adds a Table and Cards switch at the end of the `toolbar` row; the choice is kept in the browser. */
 export function DataTableViewExample() {
   const t = useT();
+  const k = useLang() === "ar" ? 1 : 0;
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<FilterValue>({});
-  const status = { active: t("Active", "نشط"), paused: t("Paused", "متوقف") };
-  const rows = APPS.filter((r) => r.name.toLowerCase().includes(query.toLowerCase()) && (!filter.status?.length || filter.status.includes(r.status)));
+  const rows = APPS.filter((r) => r.name[k].toLowerCase().includes(query.toLowerCase()) && (!filter.status?.length || filter.status.includes(r.status)));
   return (
     <DataTable
       className="w-full"
-      columns={[
-        { key: "name", header: t("App", "التطبيق"), sortable: true },
-        { key: "domain", header: t("Address", "العنوان"), cell: (r) => <span dir="ltr" className="font-mono text-xs">{r.domain}</span> },
-        { key: "status", header: t("Status", "الحالة"), cell: (r) => <Badge variant={r.status === "active" ? "subtle" : "outline"}>{status[r.status]}</Badge> },
-        { key: "owner", header: t("Owner", "المسؤول") },
-      ]}
+      columns={useAppColumns()}
       rows={rows}
       getRowId={(r) => r.id}
       caption={t("Apps", "التطبيقات")}
@@ -332,8 +343,8 @@ export function DataTableViewExample() {
               label: t("Status", "الحالة"),
               multiple: true,
               options: [
-                { value: "active", label: status.active },
-                { value: "paused", label: status.paused },
+                { value: "live", label: t("Live", "يعمل") },
+                { value: "stopped", label: t("Not running", "متوقف") },
               ],
             },
           ]}
@@ -347,10 +358,7 @@ export function DataTableViewExample() {
 export function DataTableInGridExample() {
   const t = useT();
   const columns: DataTableColumn<AppRow>[] = [
-    { key: "name", header: t("App", "التطبيق") },
-    { key: "domain", header: t("Address", "العنوان"), cell: (r) => <span dir="ltr" className="font-mono text-xs">{r.domain}</span> },
-    { key: "status", header: t("Status", "الحالة") },
-    { key: "owner", header: t("Owner", "المسؤول") },
+    ...useAppColumns(),
     { key: "c5", header: t("Region", "المنطقة"), cell: () => t("Riyadh", "الرياض") },
     { key: "c6", header: t("Plan", "الباقة"), cell: () => t("Standard", "قياسية") },
     { key: "c7", header: t("Created", "أُنشئ"), cell: () => "2026-01-15" },

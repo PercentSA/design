@@ -77,9 +77,9 @@ describe("DataTable cardSlot", () => {
     const [name, total, note] = cells(el, 0);
     expect(total!.className).toContain("p-cards:shrink-0");
     expect(total!.className).not.toContain("p-cards:order-1");
-    expect(total!.querySelector(".md\\:hidden")).toBeNull();
+    expect(total!.querySelector('[class~="p-cards:inline"]')).toBeNull();
     expect(note!.className).toMatch(/p-cards:order-2.*p-cards:basis-full/);
-    expect(note!.querySelector(".md\\:hidden")).toBeNull();
+    expect(note!.querySelector('[class~="p-cards:inline"]')).toBeNull();
     // The title cell is not a slot, even with a cardSlot on it.
     expect(name!.className).toContain("p-cards:flex-1");
     expect(name!.className).not.toContain("p-cards:text-fg-2");
@@ -115,7 +115,7 @@ describe("DataTable cardSlot", () => {
     const plain = html(table({ cards: true, columns: COLUMNS.map((c) => ({ ...c, cardSlot: undefined })) }));
     expect(plain).toContain("p-cards:gap-y-1.5");
     expect(plain).not.toContain("p-cards:before:");
-    expect(plain).not.toContain("max-md:order-3");
+    expect(plain).not.toContain("p-cards:order-3");
   });
 
   test("Arabic: logical classes only", () => {

@@ -5,7 +5,7 @@ import { ArrowUp, Check, Copy } from "lucide-react";
 import { Slot, Toggle as RadixToggle, ToggleGroup as RadixToggleGroup } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
-import { useStrings, useText } from "../provider";
+import { useLang, useStrings, useText } from "../provider";
 import { Spinner } from "./spinner";
 import { buttonClass } from "./button-class";
 import type { ButtonVariant, ButtonSize } from "./button-class";
@@ -80,15 +80,29 @@ export function SegmentedControl({
   const [inner, setInner] = useState(defaultValue);
   // After the first measure one pill slides between the options; before it, the chosen option draws its own.
   const [ref, pill] = useSlidingIndicator<HTMLDivElement>("data-state", "on");
+  const rtl = useLang() === "ar";
+  const choose = (v: string) => {
+    setInner(v);
+    onValueChange?.(v);
+  };
+  // A radio group selects with the arrow keys: Radix moves the focus; the choice follows it. Left and right mirror in RTL.
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    const step = { ArrowRight: rtl ? -1 : 1, ArrowDown: 1, ArrowLeft: rtl ? 1 : -1, ArrowUp: -1 }[e.key];
+    const from = (e.target as HTMLElement).closest<HTMLElement>('[role="radio"]');
+    if (!step || !from) return;
+    const items = options.filter((o) => !o.disabled);
+    const at = items.findIndex((o) => o.value === from.dataset.value);
+    const next = items[(at + step + items.length) % items.length];
+    if (at >= 0 && next) choose(next.value);
+  };
   return (
     <RadixToggleGroup.Root
       ref={ref}
+      onKeyDown={onKeyDown}
       type="single"
       value={value ?? inner ?? ""}
       onValueChange={(v) => {
-        if (!v) return;
-        setInner(v);
-        onValueChange?.(v);
+        if (v) choose(v);
       }}
       className={cn(GROUP, "relative isolate", className)}
       {...rest}
@@ -98,6 +112,7 @@ export function SegmentedControl({
         <RadixToggleGroup.Item
           key={o.value}
           value={o.value}
+          data-value={o.value}
           disabled={o.disabled}
           // The label colour changes with the pill's time and easing: the chosen label does not turn primary-fg before the pill is under it.
           className={cn(
