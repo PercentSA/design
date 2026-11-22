@@ -140,7 +140,7 @@ export { BarChart } from "./components/charts/bar-chart";
 export { DonutChart } from "./components/charts/donut-chart";
 export { Sparkline } from "./components/charts/sparkline";
 export { ChartLegend } from "./components/charts/legend";
-export { type ChartProps, type ChartSeries } from "./components/charts/chart-frame";
+export { type ChartLimit, type ChartProps, type ChartSeries } from "./components/charts/chart-frame";
 export { bandScale, linearScale, linePath, niceTicks, stack } from "./components/charts/scale";
 export { AppShell } from "./components/app-shell";
 export { PageHeader } from "./components/page-header";
