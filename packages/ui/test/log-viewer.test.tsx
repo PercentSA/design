@@ -79,6 +79,11 @@ describe("LogViewer", () => {
     expect(box(el).tabIndex).toBe(0);
   });
 
+  test("the scroll box is the positioned parent of the hidden Error words, so they do not make the page longer", async () => {
+    const el = await open({ rows: [{ key: "b", at: "10:00:02", source: "build", text: "failed", error: true }] });
+    expect(box(el).className.split(" ")).toContain("relative");
+  });
+
   test("with live on, new rows scroll to the end when the reader was at the end", async () => {
     const el = await open();
     expect(top).toBe(1000);
