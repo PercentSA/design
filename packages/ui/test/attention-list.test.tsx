@@ -125,13 +125,13 @@ describe("AttentionList", () => {
     expect(rows(el)[1]!.querySelector("p")!.textContent).toContain("مهم");
   });
   test("on a phone, the age of a row without a menu ends at the row end (no empty menu column)", async () => {
-    const el = await mount(<PercentProvider lang="en"><AttentionList label="Needs attention" items={[{ id: "a", level: "warning", title: "Disk 91 % full", href: "/a", openedAt: new Date(Date.now() - 60_000) }, { id: "b", level: "warning", title: "Backup late", href: "/b", openedAt: new Date(Date.now() - 60_000), menu: [{ label: "Mute", onSelect: () => {} }] }]} /></PercentProvider>);
+    const el = await mount(<PercentProvider lang="en"><AttentionList label="Needs attention" items={[{ id: "a", level: "important", title: "Disk 91 % full", href: "/a", openedAt: new Date(Date.now() - 60_000) }, { id: "b", level: "important", title: "Backup late", href: "/b", openedAt: new Date(Date.now() - 60_000), menu: [{ label: "Mute", onSelect: () => {} }] }]} /></PercentProvider>);
     const ages = [...el.querySelectorAll("li")].map((li) => li.querySelector("time")!.closest("div")!.className.split(" "));
     expect(ages[0]).toContain("max-md:col-span-2");
     expect(ages[1]).not.toContain("max-md:col-span-2");
   });
   test("on a phone, line 1 (level, age, menu) is centred, so a 44 px menu button stays level with the words", async () => {
-    const el = await mount(<PercentProvider lang="en"><AttentionList label="Needs attention" items={[{ id: "b", level: "warning", title: "Backup late", href: "/b", openedAt: new Date(Date.now() - 60_000), menu: [{ label: "Mute", onSelect: () => {} }] }]} /></PercentProvider>);
+    const el = await mount(<PercentProvider lang="en"><AttentionList label="Needs attention" items={[{ id: "b", level: "important", title: "Backup late", href: "/b", openedAt: new Date(Date.now() - 60_000), menu: [{ label: "Mute", onSelect: () => {} }] }]} /></PercentProvider>);
     const li = el.querySelector("li")!;
     const cells = [li.querySelector(".max-md\\:row-start-1")!, li.querySelector("time")!.closest("div")!, li.querySelector("button[aria-labelledby]")!.closest("div.max-md\\:col-start-3")!];
     for (const c of cells) expect(c.className.split(" ")).toContain("max-md:self-center");
