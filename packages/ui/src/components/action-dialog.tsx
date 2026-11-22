@@ -95,7 +95,7 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, reason,
   const [typed, setTyped] = useState("");
   const [why, setWhy] = useState("");
   const text = why.trim();
-  const refused = !!blocked || (confirmName != null && toWesternDigits(typed).trim() !== confirmName) || (!!reason?.required && !text);
+  const refused = !!blocked || (confirmName != null && toWesternDigits(typed).trim() !== toWesternDigits(confirmName)) || (!!reason?.required && !text);
   const shown = effects && effects.length > 0 ? effects : null;
   const submit = (e: FormEvent) => {
     e.preventDefault();

@@ -57,6 +57,17 @@ describe("ActionDialog", () => {
     expect(document.activeElement).toBe(dialog().querySelector('[role="radio"]'));
   });
 
+  test("first focus skips a disabled first control", async () => {
+    await mount(
+      <Host>
+        <input aria-label="Off" disabled />
+        <input aria-label="On" />
+      </Host>,
+    );
+    await tick();
+    expect(document.activeElement).toBe(dialog().querySelector('input[aria-label="On"]'));
+  });
+
   test("first focus skips a disabled first radio", async () => {
     await mount(
       <Host>
@@ -76,6 +87,14 @@ describe("ActionDialog", () => {
     await mount(<Host confirmName="web-2" />);
     await edit(field("input"), "web-٢");
     expect(named("Do it").getAttribute("aria-disabled")).toBeNull();
+  });
+
+  test("a name with Arabic-Indic digits matches either digit set", async () => {
+    for (const typed of ["خادم ٢", "خادم 2"]) {
+      await mount(<Host confirmName="خادم ٢" />);
+      await edit(field("input"), typed);
+      expect(named("Do it").getAttribute("aria-disabled")).toBeNull();
+    }
   });
 
   test("without choices or fields the first focus is on Cancel", async () => {

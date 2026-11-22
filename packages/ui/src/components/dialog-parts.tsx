@@ -22,7 +22,7 @@ export function BlockedStatus({ id, children }: { id: string; children?: ReactNo
 
 /**
  * A dialog without a trigger (opened from a menu or a sheet): focus goes back to where it was, not to the page.
- * Spread `onOpenAutoFocus` and `onCloseAutoFocus` on the Radix content. `onOpenAutoFocus` returns the event so a caller can add its own focus.
+ * Spread `onOpenAutoFocus` and `onCloseAutoFocus` on the Radix content.
  */
 export function useFocusReturn(hasTrigger = false) {
   const back = useRef<Element | null>(null);
