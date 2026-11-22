@@ -5,13 +5,14 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
 import { useLinkComponent, useStrings, useText } from "../provider";
+import { TAB_BASE } from "./navigation";
 import { Badge } from "./feedback";
 import { DropdownMenu } from "./menus";
 
 export type RouteTab = { value: string; label: ReactNode; href: string; count?: number };
 
 const PHONE_TABS = 3;
-const TAB = "inline-flex items-center gap-2 border-b-2 border-transparent pb-3 text-sm font-medium whitespace-nowrap text-fg-3 transition-colors hover:text-fg-2 aria-[current=page]:text-fg";
+const TAB = "inline-flex items-center gap-2 aria-[current=page]:text-fg";
 
 /**
  * Tabs that are links: one page for each tab. The current link has `aria-current="page"`.
@@ -29,7 +30,14 @@ export function RouteTabs({ label, items, current, className }: { label: string;
   if (at >= PHONE_TABS) phone.add(current);
   const rest = items.filter((i) => !phone.has(i.value));
   useEffect(() => {
-    listRef.current?.querySelector('[aria-current="page"]')?.scrollIntoView?.({ block: "nearest", inline: "nearest" });
+    // Scroll only the row: scrollIntoView would also scroll the window.
+    const nav = listRef.current;
+    const a = nav?.querySelector('[aria-current="page"]');
+    if (!nav || !a) return;
+    const n = nav.getBoundingClientRect();
+    const r = a.getBoundingClientRect();
+    // A physical difference is correct in RTL too.
+    nav.scrollLeft += Math.min(0, r.left - n.left) || Math.max(0, r.right - n.right);
   }, [current, listRef]);
   return (
     <nav
@@ -44,7 +52,7 @@ export function RouteTabs({ label, items, current, className }: { label: string;
           key={i.value}
           href={i.href}
           aria-current={i.value === current ? "page" : undefined}
-          className={cn(TAB, !line && "aria-[current=page]:border-primary", !phone.has(i.value) && "max-md:hidden")}
+          className={cn(TAB_BASE, TAB, !line && "aria-[current=page]:border-primary", !phone.has(i.value) && "max-md:hidden")}
         >
           {i.label}
           {i.count !== undefined && (
@@ -57,7 +65,7 @@ export function RouteTabs({ label, items, current, className }: { label: string;
       {rest.length > 0 && (
         <DropdownMenu
           trigger={
-            <button type="button" className={cn(TAB, "md:hidden")}>
+            <button type="button" className={cn(TAB_BASE, TAB, "md:hidden")}>
               {t(s.more)}
               <ChevronDown aria-hidden className="size-4" />
             </button>

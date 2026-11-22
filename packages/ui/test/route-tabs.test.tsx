@@ -44,6 +44,12 @@ describe("RouteTabs", () => {
     expect(shown(el)).toEqual(["overview", "compose", "environment"]);
     const el2 = await mount(<RouteTabs label="x" items={items} current="logs" />);
     expect(shown(el2)).toEqual(["overview", "compose", "logs"]);
+    const more = el2.querySelector<HTMLElement>("button[aria-haspopup]")!;
+    await click(more);
+    await press(more, { key: "Enter" });
+    expect([...document.querySelectorAll('[role="menuitem"]')].map((m) => m.getAttribute("href"))).toEqual(
+      names.filter((n) => !["overview", "compose", "logs"].includes(n)).map((n) => `#${n}`),
+    );
   });
 
   test("no More with three tabs or fewer", async () => {
@@ -68,5 +74,26 @@ describe("RouteTabs", () => {
       </PercentProvider>,
     );
     expect(nav(el).querySelector("button")!.textContent).toBe("المزيد");
+  });
+
+  test("the current tab is scrolled into view inside the row only", async () => {
+    const calls: string[] = [];
+    const proto = HTMLElement.prototype;
+    const rect = proto.getBoundingClientRect;
+    const into = Object.getOwnPropertyDescriptor(proto, "scrollIntoView");
+    proto.scrollIntoView = () => void calls.push("window");
+    proto.getBoundingClientRect = function (this: HTMLElement) {
+      const box = this.tagName === "NAV" ? [0, 100] : this.getAttribute("aria-current") ? [150, 230] : [0, 50];
+      return { left: box[0], right: box[1], top: 0, bottom: 0, width: box[1]! - box[0]!, height: 0, x: box[0]!, y: 0, toJSON() {} } as DOMRect;
+    };
+    try {
+      const el = await mount(<RouteTabs label="x" items={items.slice(0, 3)} current="environment" />);
+      expect(nav(el).scrollLeft).toBe(130);
+      expect(calls).toEqual([]);
+    } finally {
+      proto.getBoundingClientRect = rect;
+      if (into) Object.defineProperty(proto, "scrollIntoView", into);
+      else delete (proto as { scrollIntoView?: unknown }).scrollIntoView;
+    }
   });
 });
