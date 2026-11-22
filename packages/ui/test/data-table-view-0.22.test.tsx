@@ -157,4 +157,19 @@ describe("DataTable view switch: keys and hidden header", () => {
     expect(cls).toContain("p-cards:sr-only");
     expect(cls).not.toContain("invisible");
   });
+  test("below 768 px a cards table takes its header controls out of the Tab order too; a table without cards keeps them", async () => {
+    const original = globalThis.matchMedia;
+    globalThis.matchMedia = ((q: string) => ({ matches: q.includes("48rem"), addEventListener() {}, removeEventListener() {} })) as unknown as typeof matchMedia;
+    try {
+      const columns = [{ key: "name", header: "Name", sortable: true }];
+      const el = await render(table({ selectable: true, columns }));
+      const controls = [...el.querySelectorAll("thead button")];
+      expect(controls.length).toBeGreaterThan(1);
+      expect(controls.every((b) => b.getAttribute("tabindex") === "-1")).toBe(true);
+      const plain = await render(table({ cards: false, columns }));
+      expect([...plain.querySelectorAll("thead button")].every((b) => !b.hasAttribute("tabindex"))).toBe(true);
+    } finally {
+      globalThis.matchMedia = original;
+    }
+  });
 });

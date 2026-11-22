@@ -14,7 +14,7 @@ import { DropdownMenu, type MenuItem } from "./menus";
 import { Pagination } from "./navigation";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow, type TableAlign } from "./table";
 import { Text } from "./text";
-import { LiveRegion } from "./utility";
+import { LiveRegion, useMediaQuery } from "./utility";
 
 export type DataTableColumn<Row> = {
   key: string;
@@ -226,8 +226,9 @@ export function DataTable<Row>({
   const cards = cardsProp && !print;
   const switchShown = !!viewKey && cards;
   const cardsView = switchShown && view === "cards";
-  // In the cards view the header row is visually hidden: Tab skips its controls, screen readers still reach them.
-  const headTab = cardsView ? -1 : undefined;
+  // Where the header row is visually hidden (cards view, or cards below 768 px as p-cards): Tab skips its controls, screen readers still reach them.
+  const phone = useMediaQuery("(width < 48rem)");
+  const headTab = cardsView || (cards && phone) ? -1 : undefined;
   const cellY = compact ? "py-2" : print ? "px-1 py-1 text-xs" : undefined;
   const headH = compact ? "h-9" : print ? "h-8 px-1" : undefined;
   const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k > 0 ? c.cardSlot : undefined);
