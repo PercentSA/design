@@ -27,18 +27,21 @@ export function MaskedValue({ label, canReveal, onReveal, confirm }: MaskedValue
   const [loading, setLoading] = useState(false);
   const reveal = useRef<HTMLButtonElement>(null);
   const hide = useRef<HTMLButtonElement>(null);
-  const first = useRef(true);
+  // Set by the handlers, so the focus moves only after a reveal or a Hide (never at mount, also in StrictMode).
+  const moveFocus = useRef(false);
   useEffect(() => {
-    if (first.current) return void (first.current = false);
-    (value === null ? reveal : hide).current?.focus();
-  }, [value]);
+    if (!moveFocus.current || open) return;
+    moveFocus.current = false;
+    // A timer, so this runs after the dialog gave the focus back (it has no trigger to take it).
+    setTimeout(() => (value === null ? reveal : hide).current?.focus());
+  }, [value, open]);
 
   if (value !== null)
     return (
       <span className="inline-flex min-w-0 items-center gap-1">
         <span className="min-w-0 break-all font-mono text-sm">{value}</span>
         <CopyButton value={value} iconOnly />
-        <Button ref={hide} variant="ghost" size="sm" aria-label={s.hideValue(label)} onClick={() => setValue(null)}>
+        <Button ref={hide} variant="ghost" size="sm" aria-label={s.hideValue(label)} onClick={() => ((moveFocus.current = true), setValue(null))}>
           <EyeOff aria-hidden />
           {s.hide}
         </Button>
@@ -47,7 +50,7 @@ export function MaskedValue({ label, canReveal, onReveal, confirm }: MaskedValue
   if (!canReveal) return <span className="text-fg-3">{s.maskedHidden}</span>;
 
   // The dialog closes itself when its action resolves; a rejection keeps it open.
-  const ask = () => onReveal().then((v) => setValue(v));
+  const ask = () => Promise.resolve().then(onReveal).then((v) => ((moveFocus.current = true), setValue(v)));
   const quiet = () => {
     setLoading(true);
     // The value stays hidden on a failure: the app reports the error itself.

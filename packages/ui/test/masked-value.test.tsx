@@ -1,5 +1,5 @@
 import { describe, expect, test } from "bun:test";
-import { act } from "react";
+import { act, StrictMode } from "react";
 import { ConnectionCard, MaskedValue, PercentProvider } from "../src";
 import { click, mount, useDom } from "./dom";
 
@@ -78,7 +78,7 @@ describe("MaskedValue", () => {
     await new Promise((r) => setTimeout(r, 10));
     process.off("unhandledRejection", on);
     expect(seen).toHaveLength(0);
-    expect(el.textContent).not.toContain("no");
+    expect(el.textContent).toContain("••••••••");
     expect(btn("Reveal Password").getAttribute("aria-busy")).toBeNull();
   });
 
@@ -90,6 +90,35 @@ describe("MaskedValue", () => {
     await click(btn("Hide Password"));
     expect(el.textContent).not.toContain("s3cret");
     expect(document.activeElement).toBe(btn("Reveal Password"));
+  });
+
+  test("with confirm: after Show the focus is on Hide; after Hide on Reveal", async () => {
+    await mount(<MaskedValue label="Password" canReveal confirm={confirm} onReveal={async () => "s3cret"} />);
+    await click(btn("Reveal Password"));
+    await click(btn("Show"));
+    await tick();
+    await act(async () => new Promise((r) => setTimeout(r, 20)));
+    expect(document.activeElement).toBe(btn("Hide Password"));
+    await click(btn("Hide Password"));
+    expect(document.activeElement).toBe(btn("Reveal Password"));
+  });
+
+  test("in StrictMode a mount does not move the focus", async () => {
+    await mount(
+      <StrictMode>
+        <input id="other" />
+        <MaskedValue label="Password" canReveal onReveal={async () => "x"} />
+      </StrictMode>,
+    );
+    expect(document.activeElement).not.toBe(btn("Reveal Password"));
+  });
+
+  test("an onReveal that throws at once leaves the button usable and the value hidden", async () => {
+    const el = await mount(<MaskedValue label="Password" canReveal onReveal={() => { throw new Error("no"); }} />);
+    await click(btn("Reveal Password"));
+    await tick();
+    expect(btn("Reveal Password").getAttribute("aria-busy")).toBeNull();
+    expect(el.textContent).toContain("••••••••");
   });
 
   test("the value is in no attribute", async () => {
