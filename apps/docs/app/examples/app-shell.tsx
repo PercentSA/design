@@ -271,28 +271,31 @@ export function CommandPaletteExample() {
   );
 }
 
-const CUSTOMERS = ["Noura Ali", "Noura Hassan", "Khalid Noura"];
+const CUSTOMERS = [
+  { en: "Noura Ali", ar: "نورة علي" },
+  { en: "Noura Hassan", ar: "نورة حسن" },
+  { en: "Khalid Noura", ar: "خالد نورة" },
+];
 
-/** Type 2 or more letters, for example "noura": after 400 ms the server rows join the list. */
+/** Type 2 or more letters, for example "noura" or "نورة": after 400 ms the server rows join the list. */
 export function CommandPaletteServerExample() {
   const t = useT();
   const [open, setOpen] = useState(false);
   const [text, setText] = useState("");
-  const [rows, setRows] = useState<Command[]>([]);
-  const [loading, setLoading] = useState(false);
+  // The server's answer: the names it found. The rows are built below, where `t` is at hand.
+  const [found, setFound] = useState<typeof CUSTOMERS | null>(null);
+  const q = text.trim().toLowerCase();
+  const loading = q.length >= 2 && found === null;
   useEffect(() => {
-    const q = text.trim().toLowerCase();
-    if (q.length < 2) {
-      setRows([]);
-      setLoading(false);
-      return;
-    }
-    setLoading(true);
-    const timer = setTimeout(() => {
-      // A real app asks its server here. Put the text the server matched in `keywords`.
-      const found = CUSTOMERS.filter((c) => c.toLowerCase().includes(q));
-      setRows([
-        ...found.map((c) => ({ id: `c-${c}`, label: c, group: t("Customers", "العملاء"), keywords: [q], onSelect: () => toast({ title: c }) })),
+    setFound(null);
+    if (q.length < 2) return;
+    // A real app asks its server here.
+    const timer = setTimeout(() => setFound(CUSTOMERS.filter((c) => c.en.toLowerCase().includes(q) || c.ar.includes(q))), 400);
+    return () => clearTimeout(timer);
+  }, [q]);
+  const rows: Command[] = found
+    ? [
+        ...found.map((c) => ({ id: `c-${c.en}`, label: t(c.en, c.ar), group: t("Customers", "العملاء"), keywords: [q], onSelect: () => toast({ title: t(c.en, c.ar) }) })),
         {
           id: "pay",
           label: t("Payment 1042", "الدفعة 1042"),
@@ -305,11 +308,8 @@ export function CommandPaletteServerExample() {
           keywords: [q],
           onSelect: () => toast({ title: t("Payment 1042", "الدفعة 1042") }),
         },
-      ]);
-      setLoading(false);
-    }, 400);
-    return () => clearTimeout(timer);
-  }, [text, t]);
+      ]
+    : [];
   return (
     <>
       <Button variant="secondary" onClick={() => setOpen(true)}>
@@ -333,7 +333,7 @@ export function CommandPaletteAnchorExample() {
   ];
   return (
     <>
-      <Button ref={button} variant="secondary" onClick={() => setOpen(true)}>
+      <Button ref={button} variant="secondary" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>
         <Plus aria-hidden />
         {t("Add option", "إضافة خيار")}
       </Button>

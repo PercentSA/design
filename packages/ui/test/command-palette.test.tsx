@@ -1,4 +1,4 @@
-// CommandPalette: description, disabled and badge (0.21.0).
+// CommandPalette: description, disabled and badge (0.21.0); server results, node descriptions and anchored mode (0.22.0).
 import { afterEach, describe, expect, test } from "bun:test";
 import { act, useState } from "react";
 import { CommandPalette, Money, type Command } from "../src";
@@ -102,7 +102,8 @@ describe("CommandPalette 0.22.0", () => {
     await mount(<CommandPalette open onOpenChange={noop} commands={commands} />);
     await type("noura@");
     expect(options().map((o) => o.textContent)).toEqual([expect.stringContaining("Noura Ali")]);
-    expect(document.body.textContent).toContain("Hosting");
+    const group = options()[0]!.closest('[role="group"]')!;
+    expect(document.getElementById(group.getAttribute("aria-labelledby")!)!.textContent).toBe("Hosting");
   });
 
   test("a node description renders and is never searched", async () => {
@@ -162,4 +163,80 @@ describe("CommandPalette 0.22.0", () => {
       expect(document.activeElement).toBe(btn);
     });
   }
+
+  const wait = () => act(async () => void (await new Promise((r) => setTimeout(r, 20))));
+
+  test("the dialog without anchor does not call matchMedia", async () => {
+    globalThis.matchMedia = (() => {
+      throw new Error("matchMedia called");
+    }) as unknown as typeof matchMedia;
+    await mount(<CommandPalette open onOpenChange={noop} commands={one} />);
+    expect(options()).toHaveLength(1);
+  });
+
+  test("the popover has a height limit", async () => {
+    await withAnchor(true);
+    expect(document.querySelector('[role="dialog"]')!.className).toContain("var(--radix-popover-content-available-height)");
+  });
+
+  test("the bottom sheet uses the Sheet classes", async () => {
+    await withAnchor(false);
+    const c = document.querySelector('[role="dialog"]')!;
+    expect(c.getAttribute("data-side")).toBe("bottom");
+    expect(c.className).toContain("p-sheet");
+    expect(c.className).toContain("border-t");
+  });
+
+  for (const isWide of [true, false]) {
+    const name = isWide ? "popover" : "sheet";
+    test(`anchor (${name}): an outside press closes`, async () => {
+      let open = true;
+      await withAnchor(isWide, (o) => (open = o));
+      await wait();
+      await act(async () => {
+        document.body.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+        document.body.dispatchEvent(new MouseEvent("click", { bubbles: true })); // Radix finishes an outside press on the click
+      });
+      await wait();
+      expect(open).toBe(false);
+    });
+  }
+
+  // A modal dialog traps the focus while it is open, so there a command moves the focus after the close; Radix then finds it moved.
+  const focusCases: [string, boolean, boolean][] = [["popover", true, true], ["sheet", false, true], ["dialog without anchor", false, false]];
+  for (const [name, isWide, anchored] of focusCases) {
+    test(`${name}: a command that focuses a new input keeps the focus there`, async () => {
+      wide(isWide);
+      await wait();
+      const field = document.createElement("input");
+      document.body.append(field);
+      const btn = document.createElement("button");
+      document.body.append(btn);
+      const Host = () => {
+        const [open, setOpen] = useState(true);
+        const commands = [{ id: "f", label: "Add field", onSelect: () => (isWide && anchored ? field.focus() : setTimeout(() => field.focus(), 0)) }];
+        return <CommandPalette open={open} onOpenChange={setOpen} commands={commands} anchor={anchored ? { current: btn } : undefined} />;
+      };
+      await mount(<Host />);
+      await press(input(), { key: "Enter" });
+      await wait();
+      expect(document.activeElement).toBe(field);
+    });
+  }
+
+  test("popover: an outside click on another input keeps the focus on that input", async () => {
+    let open = true;
+    await withAnchor(true, (o) => (open = o));
+    await wait();
+    const other = document.createElement("input");
+    document.body.append(other);
+    await act(async () => {
+      other.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+      other.focus();
+      other.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    await wait();
+    expect(open).toBe(false);
+    expect(document.activeElement).toBe(other);
+  });
 });
