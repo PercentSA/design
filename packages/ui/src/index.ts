@@ -119,6 +119,7 @@ export { Avatar, AvatarGroup } from "./components/avatar";
 export { initials } from "./lib/initials";
 export { CodeBlock } from "./components/code-block";
 export { JsonViewer } from "./components/json-viewer";
+export { LogViewer, type LogLive, type LogRow, type LogViewerProps } from "./components/log-viewer";
 export { FilterBar, type FilterDef, type FilterValue } from "./components/filter-bar";
 export { SettingsRow, SettingsSection } from "./components/settings";
 export { AuthLayout } from "./components/auth-layout";
