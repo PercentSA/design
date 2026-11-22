@@ -146,6 +146,7 @@ export { PageHeader } from "./components/page-header";
 export { Sidebar, useSidebarRail, type SidebarItem, type SidebarSection } from "./components/sidebar";
 export { SideNav, type SideNavGroup, type SideNavItem } from "./components/side-nav";
 export { CommandPalette, useCommandShortcut, type Command } from "./components/command-palette";
+export { AttentionList, type AttentionItem } from "./components/attention-list";
 export { RouteTabs, type RouteTab } from "./components/route-tabs";
 export { invoiceTotals, zatcaTlv, type InvoiceLineAmounts, type ZatcaFields } from "./saudi/invoice";
 export { QrCode, ZatcaQr } from "./components/qr-code";

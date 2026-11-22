@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { Bell, DatabaseBackup, ScrollText, Server, ChartColumn, Loader2, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, Lock, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
 import {
   AppShell,
+  AttentionList,
+  type AttentionItem,
   Button,
   type Command,
   CommandPalette,
@@ -16,6 +18,7 @@ import {
   Mark,
   Money,
   PageHeader,
+  Popover,
   PrintArea,
   Input,
   SettingsRow,
@@ -339,6 +342,57 @@ export function CommandPaletteAnchorExample() {
       </Button>
       <CommandPalette open={open} onOpenChange={setOpen} commands={commands} anchor={button} />
     </>
+  );
+}
+
+function useAttentionItems(): AttentionItem[] {
+  const t = useT();
+  const ago = (minutes: number) => new Date(Date.now() - minutes * 60_000);
+  return [
+    {
+      id: "a",
+      level: "critical",
+      title: t("Site down", "الموقع متوقف"),
+      href: "#a",
+      detail: t("No answer for 5 minutes", "لا توجد استجابة منذ 5 دقائق"),
+      area: t("Main website", "الموقع الرئيسي"),
+      context: <a href="#client">Al Noor</a>,
+      openedAt: ago(6),
+      action: <Button size="sm" variant="secondary">{t("Restart", "إعادة التشغيل")}</Button>,
+    },
+    { id: "b", level: "important", title: t("Deploy failed", "فشل النشر"), href: "#b", area: "shop.example.com", openedAt: ago(95), menu: [{ label: t("Dismiss", "تجاهل") }, { label: t("Open log", "فتح السجل") }] },
+    { id: "c", level: "important", title: t("Disk almost full", "القرص شبه ممتلئ"), href: "#c", area: t("Main website", "الموقع الرئيسي"), openedAt: ago(300) },
+    { id: "d", level: "other", title: t("Update ready", "تحديث جاهز"), href: "#d", area: "203.0.113.10", openedAt: ago(2000) },
+  ];
+}
+
+/** Four items, one for each level; the app sorts them. The second has a "⋯" menu. */
+export function AttentionListExample() {
+  const t = useT();
+  return (
+    <div className="w-full">
+      <AttentionList label={t("Open alerts", "التنبيهات المفتوحة")} items={useAttentionItems()} />
+    </div>
+  );
+}
+
+/** A bell button opens a popover with the short form and a link to the full list. */
+export function AttentionListCompactExample() {
+  const t = useT();
+  return (
+    <Popover
+      trigger={
+        <Button variant="secondary" iconOnly aria-label={t("Open alerts", "التنبيهات المفتوحة")}>
+          <Bell aria-hidden />
+        </Button>
+      }
+      className="w-80"
+    >
+      <AttentionList compact label={t("Open alerts", "التنبيهات المفتوحة")} items={useAttentionItems()} />
+      <a href="#all" className="mt-2 block text-sm font-medium">
+        {t("Show all 7", "عرض الكل (7)")}
+      </a>
+    </Popover>
   );
 }
 
