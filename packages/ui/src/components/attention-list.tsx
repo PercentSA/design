@@ -74,9 +74,9 @@ export function AttentionList({
             <p className="ps-4 text-xs text-fg-3">{joined([levels[i.level], i.area, <TimeText key="t" value={i.openedAt} ago interactive={false} />])}</p>
           </li>
         ) : (
-          // DOM order = tab order = desktop order. The phone places line 1 (level, age, menu), the main block, then the action.
+          // DOM order = tab order = desktop order. The phone places line 1 (level, age, menu; centred for a 44 px menu button), the main block, then the action.
           <li key={i.id} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-start gap-x-4 gap-y-1.5 py-3 md:col-span-full md:grid-cols-subgrid">
-            <div className="max-md:col-start-1 max-md:row-start-1 md:col-start-1">
+            <div className="max-md:col-start-1 max-md:row-start-1 max-md:self-center md:col-start-1">
               <StatusBadge tone={TONE[i.level]}>{levels[i.level]}</StatusBadge>
             </div>
             <div className="grid gap-0.5 max-md:col-span-3 max-md:row-start-2 md:col-start-2">
@@ -87,12 +87,12 @@ export function AttentionList({
               {(i.area || i.context) && <p className="text-xs text-fg-3">{joined([i.area, i.context])}</p>}
             </div>
             {/* Without a menu the age takes the empty menu column too, so it ends at the row end. */}
-            <div className={cn("pt-0.5 text-sm text-fg-3 max-md:col-start-2 max-md:row-start-1 max-md:justify-self-end md:col-start-3", !i.menu?.length && "max-md:col-span-2")}>
+            <div className={cn("text-sm text-fg-3 max-md:col-start-2 max-md:row-start-1 max-md:self-center max-md:justify-self-end md:col-start-3 md:pt-0.5", !i.menu?.length && "max-md:col-span-2")}>
               <TimeText value={i.openedAt} ago />
             </div>
             {i.action && <div className="max-md:col-span-3 max-md:row-start-3 md:col-start-4 md:justify-self-end">{i.action}</div>}
             {i.menu && i.menu.length > 0 && (
-              <div className="max-md:col-start-3 max-md:row-start-1 md:col-start-5">
+              <div className="max-md:col-start-3 max-md:row-start-1 max-md:self-center md:col-start-5">
                 <DropdownMenu
                   align="end"
                   items={i.menu}
