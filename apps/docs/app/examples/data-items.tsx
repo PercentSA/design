@@ -229,6 +229,7 @@ export function ConnectionCardExample() {
   const t = useT();
   return (
     <ConnectionCard
+      className="w-full max-w-lg"
       title={t("Connect", "الاتصال")}
       rows={[
         { term: t("Host and port", "المضيف والمنفذ"), copy: "203.0.113.10:5432" },

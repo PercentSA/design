@@ -637,7 +637,7 @@ export function SettingsActionExample() {
 export function ValueRowExample() {
   const t = useT();
   return (
-    <SettingsSection title={t("Start and health", "التشغيل والفحص")}>
+    <SettingsSection className="w-full max-w-2xl" title={t("Start and health", "التشغيل والفحص")}>
       <ValueRow label={t("Start command", "أمر التشغيل")} value="bun run start" mono action={<Button variant="ghost" size="sm">{t("Edit", "تعديل")}</Button>} />
       <ValueRow label={t("Address", "العنوان")} value="shop.example.com" copy="shop.example.com" />
       <ValueRow label={t("Monthly plan", "الخطة الشهرية")} value={<Money amount={49} />} />
