@@ -36,12 +36,14 @@ export function Dialog({
   ...state
 }: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; children?: ReactNode; className?: string }) {
   const s = useStrings();
+  const focus = useFocusReturn(!!trigger);
   return (
     <RadixDialog.Root {...state}>
       {trigger && <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger>}
       <RadixDialog.Portal>
         <RadixDialog.Overlay className={BACKDROP} />
         <RadixDialog.Content
+          {...focus}
           {...(description ? {} : { "aria-describedby": undefined })}
           className={cn(
             "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-y-1/2 gap-6 overflow-auto rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2",
@@ -262,6 +264,7 @@ export function Sheet({
 }) {
   const s = useStrings();
   const drag = useSheetDrag(side);
+  const focus = useFocusReturn(!!trigger);
   const head = <DialogHead title={title} description={description} Title={RadixDialog.Title} Description={RadixDialog.Description} />;
   return (
     <RadixDialog.Root {...state}>
@@ -270,6 +273,7 @@ export function Sheet({
         <RadixDialog.Overlay className={BACKDROP} />
         <RadixDialog.Content
           data-side={side}
+          {...focus}
           {...drag.content}
           {...(description ? {} : { "aria-describedby": undefined })}
           className={cn("p-sheet fixed z-(--p-z-overlay) flex flex-col gap-6 overflow-auto border-line bg-surface-2 p-6 text-fg shadow-overlay", SIDE[side], size === "lg" && side !== "bottom" && "w-[min(100%,56rem)]", className)}
