@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.22.0",
-    date: null,
+    date: "2026-11-22",
     summary: "New AttentionList, RouteTabs, ActionDialog, MaskedValue, ConnectionCard, LogViewer, ExpandableText, ValueRow and FieldsSheet; DataTable switches between a table and cards; Sidebar sections fold; Tabs and DataTable can shrink in a grid.",
     changes: [
       c("new", "[AttentionList](attention-list): the items that need a person, with level, title link, area, age and one action. `compact` is the form for a popover; it also shows the level as a word, not only as a colour."),
