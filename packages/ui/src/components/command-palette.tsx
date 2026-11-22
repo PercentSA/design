@@ -1,14 +1,15 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ReactNode, type RefObject } from "react";
 import { Search } from "lucide-react";
-import { Dialog as RadixDialog } from "radix-ui";
+import { Dialog as RadixDialog, Popover } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
 import { searchKey } from "../saudi/normalize";
 import { MENU_ITEM } from "./input-classes";
+import { Spinner } from "./spinner";
 import { Kbd } from "./text";
-import { VisuallyHidden } from "./utility";
+import { useMediaQuery, VisuallyHidden } from "./utility";
 
 export type Command = {
   id: string;
@@ -20,8 +21,8 @@ export type Command = {
   shortcut?: string;
   /** Other words that find the command. */
   keywords?: string[];
-  /** One line under the label; searched too. */
-  description?: string;
+  /** One line under the label. A string is searched too; a node (for example an amount) only shows: put its words in `keywords`. */
+  description?: ReactNode;
   /** The reason the command cannot run now. The row shows it and stays in the list, but cannot be chosen. */
   disabled?: string;
   /** Short text at the end of the row, for example "New". */
@@ -47,11 +48,23 @@ export function useCommandShortcut(onOpen: () => void) {
 }
 
 const matches = (c: Command, words: string[]) => {
-  const hay = searchKey([c.label, c.disabled ? "" : (c.description ?? ""), ...(c.keywords ?? [])].join(" "));
+  const hay = searchKey([c.label, !c.disabled && typeof c.description === "string" ? c.description : "", ...(c.keywords ?? [])].join(" "));
   return words.every((w) => hay.includes(w));
 };
 
-function Palette({ commands, placeholder, close }: { commands: Command[]; placeholder?: string; close: () => void }) {
+function Palette({
+  commands,
+  placeholder,
+  close,
+  onSearchChange,
+  loading,
+}: {
+  commands: Command[];
+  placeholder?: string;
+  close: () => void;
+  onSearchChange?: (text: string) => void;
+  loading?: boolean | string;
+}) {
   const s = useStrings();
   const t = useText();
   const id = useId();
@@ -65,6 +78,12 @@ function Palette({ commands, placeholder, close }: { commands: Command[]; placeh
   // `commands` can get shorter while the palette is open.
   const active = Math.min(chosen, Math.max(0, flat.length - 1));
   const optionId = (i: number) => `${id}-${i}`;
+
+  // Once per open: the palette is mounted only while open.
+  const first = useRef(onSearchChange);
+  useEffect(() => {
+    first.current?.("");
+  }, []);
 
   useEffect(() => {
     document.getElementById(optionId(active))?.scrollIntoView?.({ block: "nearest" });
@@ -122,6 +141,7 @@ function Palette({ commands, placeholder, close }: { commands: Command[]; placeh
           value={query}
           onChange={(e) => {
             setQuery(e.target.value);
+            onSearchChange?.(e.target.value);
             setActive(0);
           }}
           onKeyDown={(e) => {
@@ -152,26 +172,72 @@ function Palette({ commands, placeholder, close }: { commands: Command[]; placeh
       </ul>
       {/* Always mounted: a live region announces only changes inside it. */}
       <div role="status" className="px-4 text-sm text-fg-3">
-        {flat.length === 0 && <p className="py-8 text-center">{t(s.noResults)}</p>}
+        {loading ? (
+          <p className="flex items-center gap-2 py-3">
+            <Spinner decorative className="size-4" />
+            {t(loading === true ? s.searching : loading)}
+          </p>
+        ) : (
+          flat.length === 0 && <p className="py-8 text-center">{t(s.noResults)}</p>
+        )}
       </div>
     </>
   );
 }
 
-/** Search and run commands from the keyboard. Open it with `useCommandShortcut`. Matching ignores case, accents and Arabic letter forms. */
+/** Search and run commands from the keyboard. Open it with `useCommandShortcut`. Matching ignores case, accents and Arabic letter forms. With `anchor` it opens next to that element from 768 px, and as a bottom sheet below. */
 export function CommandPalette({
   open,
   onOpenChange,
   commands,
   placeholder,
+  onSearchChange,
+  loading,
+  anchor,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   commands: Command[];
   placeholder?: string;
+  /** Gets each typed text, and "" when the palette opens. Fetch server results there and pass them in `commands`. */
+  onSearchChange?: (text: string) => void;
+  /** A status row while results load: `true` shows "Searching", a string shows that text. */
+  loading?: boolean | string;
+  /** Opens the palette next to this element, and returns the focus to it. */
+  anchor?: RefObject<HTMLElement | null>;
 }) {
   const s = useStrings();
   const back = useRef<Element | null>(null);
+  const wide = useMediaQuery("(min-width: 48rem)");
+  const palette = <Palette commands={commands} placeholder={placeholder} close={() => onOpenChange(false)} onSearchChange={onSearchChange} loading={loading} />;
+  const title = (
+    <VisuallyHidden asChild>
+      <RadixDialog.Title>{s.commandPalette}</RadixDialog.Title>
+    </VisuallyHidden>
+  );
+  const toAnchor = (e: Event) => {
+    if (!anchor?.current) return;
+    e.preventDefault();
+    anchor.current.focus();
+  };
+  if (anchor && wide)
+    return (
+      <Popover.Root open={open} onOpenChange={onOpenChange}>
+        <Popover.Anchor virtualRef={anchor} />
+        <Popover.Portal>
+          <Popover.Content
+            side="bottom"
+            align="start"
+            collisionPadding={16}
+            aria-label={s.commandPalette}
+            onCloseAutoFocus={toAnchor}
+            className="p-pop z-(--p-z-overlay) w-[min(24rem,calc(100vw-2rem))] overflow-hidden rounded-panel border border-line bg-surface-2 text-fg shadow-overlay"
+          >
+            {palette}
+          </Popover.Content>
+        </Popover.Portal>
+      </Popover.Root>
+    );
   return (
     <RadixDialog.Root open={open} onOpenChange={onOpenChange}>
       <RadixDialog.Portal>
@@ -181,17 +247,21 @@ export function CommandPalette({
           // Without a Radix trigger, focus would fall to <body> on close; return it to where it was.
           onOpenAutoFocus={() => (back.current = document.activeElement)}
           onCloseAutoFocus={(e) => {
+            if (anchor) return toAnchor(e);
             if (!(back.current instanceof HTMLElement)) return;
             e.preventDefault();
             back.current.focus();
           }}
-          className="p-pop fixed start-1/2 top-[12dvh] z-(--p-z-overlay) w-[calc(100%-2rem)] max-w-xl overflow-hidden rounded-panel border border-line bg-surface-2 text-fg shadow-overlay ltr:-translate-x-1/2 rtl:translate-x-1/2"
+          className={cn(
+            "p-pop fixed z-(--p-z-overlay) overflow-hidden border border-line bg-surface-2 text-fg shadow-overlay",
+            anchor
+              ? "inset-x-0 bottom-0 max-h-[85dvh] overflow-y-auto rounded-t-panel"
+              : "start-1/2 top-[12dvh] w-[calc(100%-2rem)] max-w-xl rounded-panel ltr:-translate-x-1/2 rtl:translate-x-1/2",
+          )}
         >
-          <VisuallyHidden asChild>
-            <RadixDialog.Title>{s.commandPalette}</RadixDialog.Title>
-          </VisuallyHidden>
+          {title}
           {/* Mounted only while open, so the query starts empty each time. */}
-          <Palette commands={commands} placeholder={placeholder} close={() => onOpenChange(false)} />
+          {palette}
         </RadixDialog.Content>
       </RadixDialog.Portal>
     </RadixDialog.Root>

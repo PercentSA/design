@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Bell, DatabaseBackup, ScrollText, Server, ChartColumn, Loader2, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, Lock, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
 import {
   AppShell,
@@ -267,6 +267,77 @@ export function CommandPaletteExample() {
         <Kbd>Ctrl K</Kbd>
       </Button>
       <CommandPalette open={open} onOpenChange={setOpen} commands={useCommands()} />
+    </>
+  );
+}
+
+const CUSTOMERS = ["Noura Ali", "Noura Hassan", "Khalid Noura"];
+
+/** Type 2 or more letters, for example "noura": after 400 ms the server rows join the list. */
+export function CommandPaletteServerExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  const [rows, setRows] = useState<Command[]>([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    const q = text.trim().toLowerCase();
+    if (q.length < 2) {
+      setRows([]);
+      setLoading(false);
+      return;
+    }
+    setLoading(true);
+    const timer = setTimeout(() => {
+      // A real app asks its server here. Put the text the server matched in `keywords`.
+      const found = CUSTOMERS.filter((c) => c.toLowerCase().includes(q));
+      setRows([
+        ...found.map((c) => ({ id: `c-${c}`, label: c, group: t("Customers", "العملاء"), keywords: [q], onSelect: () => toast({ title: c }) })),
+        {
+          id: "pay",
+          label: t("Payment 1042", "الدفعة 1042"),
+          group: t("Payments", "الدفعات"),
+          description: (
+            <>
+              <Money amount={120} /> · noura@example.com
+            </>
+          ),
+          keywords: [q],
+          onSelect: () => toast({ title: t("Payment 1042", "الدفعة 1042") }),
+        },
+      ]);
+      setLoading(false);
+    }, 400);
+    return () => clearTimeout(timer);
+  }, [text, t]);
+  return (
+    <>
+      <Button variant="secondary" onClick={() => setOpen(true)}>
+        <Search aria-hidden />
+        {t("Search customers", "ابحث في العملاء")}
+      </Button>
+      <CommandPalette open={open} onOpenChange={setOpen} commands={rows} onSearchChange={setText} loading={loading} />
+    </>
+  );
+}
+
+/** The palette opens under the button, and as a bottom sheet below 768 px. */
+export function CommandPaletteAnchorExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const button = useRef<HTMLButtonElement>(null);
+  const commands: Command[] = [
+    { id: "text", label: t("Text field", "حقل نص"), onSelect: () => toast({ title: t("Text field", "حقل نص") }) },
+    { id: "number", label: t("Number field", "حقل رقم"), onSelect: () => toast({ title: t("Number field", "حقل رقم") }) },
+    { id: "file", label: t("File field", "حقل ملف"), disabled: t("Needs a storage plan", "يحتاج إلى خطة تخزين"), onSelect: () => {} },
+  ];
+  return (
+    <>
+      <Button ref={button} variant="secondary" onClick={() => setOpen(true)}>
+        <Plus aria-hidden />
+        {t("Add option", "إضافة خيار")}
+      </Button>
+      <CommandPalette open={open} onOpenChange={setOpen} commands={commands} anchor={button} />
     </>
   );
 }

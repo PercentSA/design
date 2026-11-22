@@ -1,7 +1,7 @@
 // CommandPalette: description, disabled and badge (0.21.0).
-import { describe, expect, test } from "bun:test";
-import { act } from "react";
-import { CommandPalette, type Command } from "../src";
+import { afterEach, describe, expect, test } from "bun:test";
+import { act, useState } from "react";
+import { CommandPalette, Money, type Command } from "../src";
 import { mount, press, useDom } from "./dom";
 
 useDom();
@@ -64,4 +64,102 @@ describe("CommandPalette fields", () => {
     await mount(<CommandPalette open onOpenChange={noop} commands={[{ id: "a", label: "Deploy", badge: "New", onSelect: noop }]} />);
     expect(options()[0]!.textContent).toContain("New");
   });
+});
+
+describe("CommandPalette 0.22.0", () => {
+  const savedMedia = globalThis.matchMedia;
+  afterEach(() => (globalThis.matchMedia = savedMedia));
+  const wide = (on: boolean) =>
+    (globalThis.matchMedia = ((q: string) => ({ matches: on, media: q, addEventListener() {}, removeEventListener() {} })) as unknown as typeof matchMedia);
+  const one: Command[] = [{ id: "a", label: "Deploy", onSelect: noop }];
+
+  test('onSearchChange gets "" on open and each typed text', async () => {
+    const log: string[] = [];
+    await mount(<CommandPalette open onOpenChange={noop} commands={one} onSearchChange={(x) => log.push(x)} />);
+    await type("no");
+    await type("noura");
+    expect(log).toEqual(["", "no", "noura"]);
+  });
+
+  test("loading shows the searching row and hides No results", async () => {
+    await mount(<CommandPalette open onOpenChange={noop} commands={[]} loading />);
+    const status = document.querySelector('[role="status"]')!;
+    expect(status.textContent).toContain("Searching");
+    expect(status.textContent).not.toContain("No results");
+    expect(status.querySelector("svg")).not.toBeNull();
+  });
+
+  test("loading as a string shows that text", async () => {
+    await mount(<CommandPalette open onOpenChange={noop} commands={[]} loading="Searching hosting…" />);
+    expect(document.querySelector('[role="status"]')!.textContent).toContain("Searching hosting…");
+  });
+
+  test("server results join the list through the same filter", async () => {
+    const commands: Command[] = [
+      { id: "a", label: "Deploy", onSelect: noop },
+      { id: "s", label: "Noura Ali", group: "Hosting", keywords: ["noura@"], onSelect: noop },
+    ];
+    await mount(<CommandPalette open onOpenChange={noop} commands={commands} />);
+    await type("noura@");
+    expect(options().map((o) => o.textContent)).toEqual([expect.stringContaining("Noura Ali")]);
+    expect(document.body.textContent).toContain("Hosting");
+  });
+
+  test("a node description renders and is never searched", async () => {
+    const node = <><Money amount={120} /> · noura@example.com</>;
+    await mount(<CommandPalette open onOpenChange={noop} commands={[{ id: "a", label: "Payment", description: node, onSelect: noop }]} />);
+    expect(options()[0]!.textContent).toContain("120");
+    expect(options()[0]!.querySelector("svg")).not.toBeNull();
+    await type("noura");
+    expect(options()).toEqual([]);
+  });
+
+  test("a node description is found through keywords", async () => {
+    const node = <><Money amount={120} /> · noura@example.com</>;
+    await mount(<CommandPalette open onOpenChange={noop} commands={[{ id: "a", label: "Payment", description: node, keywords: ["noura@example.com"], onSelect: noop }]} />);
+    await type("noura");
+    expect(options()).toHaveLength(1);
+  });
+
+  const withAnchor = async (isWide: boolean, onOpenChange: (o: boolean) => void = noop) => {
+    await act(async () => void (await new Promise((r) => setTimeout(r, 20)))); // let the focus return of the previous test finish
+    wide(isWide);
+    const btn = document.createElement("button");
+    document.body.append(btn);
+    const Host = () => {
+      const [open, setOpen] = useState(true);
+      return <CommandPalette open={open} onOpenChange={(o) => (setOpen(o), onOpenChange(o))} commands={one} anchor={{ current: btn }} />;
+    };
+    await mount(<Host />);
+    return btn;
+  };
+
+  test("anchor from 768 px: a popover next to the anchor, with no backdrop", async () => {
+    await withAnchor(true);
+    expect(document.querySelector(".p-overlay")).toBeNull();
+    expect(document.querySelector("[data-radix-popper-content-wrapper] [role=\"combobox\"]")).not.toBeNull();
+  });
+
+  test("anchor below 768 px: a bottom sheet", async () => {
+    await withAnchor(false);
+    expect(document.querySelector('[role="dialog"]')!.className).toContain("bottom-0");
+    expect(document.querySelector("[data-radix-popper-content-wrapper]")).toBeNull();
+  });
+
+  for (const isWide of [true, false]) {
+    test(`anchor (${isWide ? "popover" : "sheet"}): the input has the focus and the first row is highlighted`, async () => {
+      await withAnchor(isWide);
+      expect(document.activeElement).toBe(input());
+      expect(highlighted()).toContain("Deploy");
+    });
+
+    test(`anchor (${isWide ? "popover" : "sheet"}): Escape closes and the focus goes back to the anchor`, async () => {
+      let open = true;
+      const btn = await withAnchor(isWide, (o) => (open = o));
+      await press(input(), { key: "Escape" });
+      expect(open).toBe(false);
+      await act(async () => void (await new Promise((r) => setTimeout(r, 20)))); // Radix returns the focus in a timeout
+      expect(document.activeElement).toBe(btn);
+    });
+  }
 });
