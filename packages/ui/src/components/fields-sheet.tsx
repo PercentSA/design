@@ -1,11 +1,13 @@
 "use client";
 
 import { useId, useState, type FormEvent, type ReactNode } from "react";
+import { flushSync } from "react-dom";
 import { Field } from "./field";
 import { Autocomplete } from "./autocomplete";
 import type { AutocompleteSuggestion } from "./autocomplete-match";
 import { FormSheet } from "./form-sheet";
 import { Input } from "./inputs";
+import { MONO_INPUT } from "./input-classes";
 import { useMediaQuery } from "./utility";
 import { cn } from "../lib/cn";
 
@@ -70,7 +72,8 @@ export function FieldsSheet({
   const submit = (e: FormEvent) => {
     e.preventDefault();
     if (pending) return;
-    setSubmitted(true);
+    // flushSync: the field has its error (aria-invalid, aria-describedby) before it takes the focus
+    flushSync(() => setSubmitted(true));
     const bad = fields.find((f) => f.check?.(value(f)));
     if (bad) return void document.getElementById(idOf(bad))?.focus();
     const result = onSubmit(Object.fromEntries(fields.map((f) => [f.key, value(f)])));
@@ -92,7 +95,7 @@ export function FieldsSheet({
             {f.suggestions ? (
               <Autocomplete value={value(f)} onValueChange={set} suggestions={f.suggestions} mono={f.mono} />
             ) : (
-              <Input value={value(f)} onChange={(e) => set(e.target.value)} className={cn(f.mono && "font-mono")} {...(f.mono ? { dir: "ltr", autoCapitalize: "none", autoCorrect: "off", spellCheck: false } : {})} />
+              <Input value={value(f)} onChange={(e) => set(e.target.value)} className={cn(f.mono && "font-mono")} {...(f.mono ? MONO_INPUT : {})} />
             )}
           </Field>
         );

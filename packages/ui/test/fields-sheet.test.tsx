@@ -31,13 +31,13 @@ const fields: SheetField[] = [
   { key: "path", label: "Health check path", value: "/health", mono: true },
 ];
 
-function Host({ onSubmit, fieldList = fields, strict }: { onSubmit: (v: Record<string, string>) => void | Promise<unknown>; fieldList?: SheetField[]; strict?: boolean }) {
+function Host({ onSubmit, fieldList = fields, strict, fresh }: { onSubmit: (v: Record<string, string>) => void | Promise<unknown>; fieldList?: SheetField[]; strict?: boolean; fresh?: boolean }) {
   const [open, setOpen] = useState(false);
   const body = (
     <>
       <button onClick={() => setOpen(true)}>Open</button>
       <span data-testid="open">{String(open)}</span>
-      <FieldsSheet title="Edit start" fields={fieldList} open={open} onOpenChange={setOpen} onSubmit={onSubmit} />
+      <FieldsSheet title="Edit start" fields={fresh ? fieldList.map((f) => ({ ...f })) : fieldList} open={open} onOpenChange={setOpen} onSubmit={onSubmit} />
     </>
   );
   return strict ? <StrictMode>{body}</StrictMode> : body;
@@ -107,26 +107,30 @@ describe("FieldsSheet", () => {
     const onSubmit = () => new Promise<void>((res, rej) => (n++ === 0 ? (resolve = res) : (reject = rej)));
     const unhandled = mock(() => {});
     process.on("unhandledRejection", unhandled);
-    await mount(<Host onSubmit={onSubmit} />);
-    await openIt();
-    await submit();
-    expect(save().getAttribute("aria-busy")).toBe("true");
-    expect(isOpen()).toBe("true");
-    await act(async () => resolve());
-    await settle();
-    expect(isOpen()).toBe("false");
-    await openIt();
-    await submit();
-    await act(async () => reject(new Error("no")));
-    await settle();
-    expect(isOpen()).toBe("true");
-    expect(save().getAttribute("aria-busy")).toBeNull();
-    expect(unhandled).not.toHaveBeenCalled();
-    process.off("unhandledRejection", unhandled);
+    try {
+      await mount(<Host onSubmit={onSubmit} />);
+      await openIt();
+      await submit();
+      expect(save().getAttribute("aria-busy")).toBe("true");
+      expect(isOpen()).toBe("true");
+      await act(async () => resolve());
+      await settle();
+      expect(isOpen()).toBe("false");
+      await openIt();
+      await submit();
+      await act(async () => reject(new Error("no")));
+      await settle();
+      expect(isOpen()).toBe("true");
+      expect(save().getAttribute("aria-busy")).toBeNull();
+      expect(unhandled).not.toHaveBeenCalled();
+    } finally {
+      process.off("unhandledRejection", unhandled);
+    }
   });
 
   test("values start from the fields each time it opens", async () => {
-    await mount(<Host onSubmit={() => {}} strict />);
+    // a new fields array at each render, as an app that builds it inline
+    await mount(<Host onSubmit={() => {}} strict fresh />);
     await openIt();
     expect(inputs()[0]!.value).toBe("8080");
     await type(inputs()[0]!, "9001");

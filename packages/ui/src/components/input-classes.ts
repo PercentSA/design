@@ -9,3 +9,6 @@ export const MENU_ITEM =
 
 // The highlighted option of a long list stays in view (runs when the highlight lands on an option).
 export const inView = (el: HTMLElement | null) => el?.scrollIntoView?.({ block: "nearest" });
+
+/** Attributes of a field for technical text (paths, keys, names): left to right, no capitals, no correction. */
+export const MONO_INPUT = { dir: "ltr", autoCapitalize: "none", autoCorrect: "off", spellCheck: false } as const;

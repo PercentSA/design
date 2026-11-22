@@ -6,7 +6,7 @@ import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
 import { boldRange, matchSuggestions, type AutocompleteSuggestion } from "./autocomplete-match";
 import { Input } from "./inputs";
-import { MENU_ITEM, inView } from "./input-classes";
+import { MENU_ITEM, MONO_INPUT, inView } from "./input-classes";
 
 export type AutocompleteProps = Omit<ComponentProps<"input">, "value" | "defaultValue" | "onChange" | "ref"> & {
   value: string;
@@ -151,7 +151,7 @@ export function Autocomplete({
       <Popover.Root open={expanded} onOpenChange={(o) => !o && close()}>
         <Popover.Anchor asChild>
           <Input
-            {...(mono ? { dir: "ltr", autoCapitalize: "none", autoCorrect: "off", spellCheck: false } : {})}
+            {...(mono ? MONO_INPUT : {})}
             {...props}
             ref={(el) => {
               inputEl.current = el;
