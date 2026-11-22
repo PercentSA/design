@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { Bell, ChartColumn, Loader2, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, Lock, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
+import { Bell, DatabaseBackup, ScrollText, Server, ChartColumn, Loader2, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, Lock, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
 import {
   AppShell,
   Button,
@@ -206,8 +206,8 @@ export function SidebarNestedExample() {
       id: "docs-hosting",
       badge: "2",
       items: [
-        { href: "#servers", label: t("Servers", "الخوادم"), icon: <Users /> },
-        { href: "#backups", label: t("Backups", "النسخ الاحتياطية"), icon: <Lock /> },
+        { href: "#servers", label: t("Servers", "الخوادم"), icon: <Server /> },
+        { href: "#backups", label: t("Backups", "النسخ الاحتياطية"), icon: <DatabaseBackup /> },
       ],
     },
     {
@@ -215,7 +215,7 @@ export function SidebarNestedExample() {
       collapsible: true,
       id: "docs-system",
       badge: "1",
-      items: [{ href: "#logs", label: t("Logs", "السجلات"), icon: <Lock /> }],
+      items: [{ href: "#logs", label: t("Logs", "السجلات"), icon: <ScrollText /> }],
     },
   ];
   return (

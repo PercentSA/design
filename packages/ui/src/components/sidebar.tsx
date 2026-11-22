@@ -162,42 +162,44 @@ function Section({ section, collapsed, slid, folds, onFold }: { section: Sidebar
   const listId = useId();
   const tipSide = useDir() === "rtl" ? "left" : "right";
   const foldable = !!section.collapsible && !!section.title;
-  const folds_ = foldable && !collapsed;
-  const hasCurrent = section.items.some((i) => i.current || i.children?.some((k) => k.current));
-  const key = section.id ? `p-sidebar-section:${section.id}` : null;
+  const canFold = foldable && !collapsed;
+  // The href of the current page in this section, like Group: a move to another page inside it opens it again.
+  const cur = section.items.flatMap((i) => [i, ...(i.children ?? [])]).find((i) => i.current)?.href;
+  const hasCurrent = cur != null;
+  const storeKey = section.id ? `p-sidebar-section:${section.id}` : null;
   const [open, setOpen] = useState(hasCurrent || !!section.defaultOpen);
-  const [seen, setSeen] = useState(hasCurrent);
+  const [seen, setSeen] = useState(cur);
   // The current page moves into a folded section: open it, without a stored choice. A fold by the user stays until the page changes again.
-  if (hasCurrent !== seen) {
-    setSeen(hasCurrent);
-    if (hasCurrent) setOpen(true);
+  if (cur !== seen) {
+    setSeen(cur);
+    if (cur != null) setOpen(true);
   }
   // The stored choice is read after mount, so the server and the first client render match. The current page inside wins.
   useEffect(() => {
-    if (!foldable || !key || hasCurrent) return;
+    if (!foldable || !storeKey || hasCurrent) return;
     try {
-      const v = localStorage.getItem(key);
+      const v = localStorage.getItem(storeKey);
       if (v === "1" || v === "0") setOpen(v === "1");
     } catch {
       // Storage refused: keep the default fold.
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps -- only at mount (and a new id)
-  }, [key]);
+  }, [storeKey]);
   const press = () => {
     setOpen(!open);
-    if (key)
+    if (storeKey)
       try {
-        localStorage.setItem(key, open ? "0" : "1");
+        localStorage.setItem(storeKey, open ? "0" : "1");
       } catch {
         // Storage refused: the fold still works in memory.
       }
   };
-  const shut = folds_ && !open;
+  const shut = canFold && !open;
   return (
     <div className="grid gap-1">
       {section.title && (
-        <h2 id={id} className={cn("label px-3 pt-2 pb-1", folds_ && "px-1", collapsed && "sr-only")}>
-          {folds_ ? (
+        <h2 id={id} className={cn("label px-3 pt-2 pb-1", canFold && "px-1", collapsed && "sr-only")}>
+          {canFold ? (
             <button
               type="button"
               aria-expanded={open}
@@ -214,7 +216,7 @@ function Section({ section, collapsed, slid, folds, onFold }: { section: Sidebar
           )}
         </h2>
       )}
-      <ul id={folds_ ? listId : undefined} hidden={shut || undefined} aria-labelledby={section.title ? id : undefined} className={cn("grid gap-0.5", shut && "hidden")}>
+      <ul id={canFold ? listId : undefined} hidden={shut || undefined} aria-labelledby={section.title ? id : undefined} className={cn("grid gap-0.5", shut && "hidden")}>
         {section.items.map((item, i) => {
           const key = item.href ?? `plain-${i}`;
           if (!collapsed && item.href != null && item.children?.length) {
@@ -313,7 +315,7 @@ export function Sidebar({
       <nav ref={navRef} aria-label={label ?? s.menu} className="relative isolate -mx-3 grid flex-1 content-start gap-4 overflow-x-hidden overflow-y-auto px-3">
         {mark && <span {...mark} className={cn(mark.className, "rounded-field bg-surface-2")} />}
         {sections.map((section, i) => (
-          <Section key={i} section={section} collapsed={rail} slid={!!mark} folds={folds} onFold={onFold} />
+          <Section key={section.id ?? i} section={section} collapsed={rail} slid={!!mark} folds={folds} onFold={onFold} />
         ))}
       </nav>
       {footer && <div className="shrink-0 overflow-hidden"><SidebarRail.Provider value={rail}>{footer}</SidebarRail.Provider></div>}

@@ -76,6 +76,52 @@ describe("Sidebar section fold", () => {
     expect(localStorage.getItem("p-sidebar-section:hosting")).toBeNull();
   });
 
+  test("a move to another page inside a folded section opens it again", async () => {
+    function App() {
+      const [cur, setCur] = useState("/servers");
+      return (
+        <>
+          <button id="go" onClick={() => setCur("/backups")} />
+          <Sidebar sections={make(cur)} />
+        </>
+      );
+    }
+    const el = await mount(<App />);
+    await click(fold(el));
+    expect(fold(el).getAttribute("aria-expanded")).toBe("false");
+    localStorage.clear();
+    await click(el.querySelector("#go")!);
+    expect(fold(el).getAttribute("aria-expanded")).toBe("true");
+    expect(localStorage.getItem("p-sidebar-section:hosting")).toBeNull();
+  });
+
+  test("a stored 0 with the current page inside gives an open section; an unknown value gives the default", async () => {
+    localStorage.setItem("p-sidebar-section:hosting", "0");
+    const el = await mount(<Sidebar sections={make("/servers")} />);
+    expect(fold(el).getAttribute("aria-expanded")).toBe("true");
+    localStorage.setItem("p-sidebar-section:hosting", "yes");
+    const el2 = await mount(<Sidebar sections={make("/home")} />);
+    expect(fold(el2).getAttribute("aria-expanded")).toBe("false");
+  });
+
+  test("a fold made in the expanded sidebar stays after a switch to the rail and back", async () => {
+    function App() {
+      const [c, setC] = useState(false);
+      return (
+        <>
+          <button id="rail" onClick={() => setC(!c)} />
+          <Sidebar sections={make("/home")} collapsed={c} />
+        </>
+      );
+    }
+    const el = await mount(<App />);
+    await click(fold(el));
+    await click(el.querySelector("#rail")!);
+    expect(el.querySelector("h2 button")).toBeNull();
+    await click(el.querySelector("#rail")!);
+    expect(fold(el).getAttribute("aria-expanded")).toBe("true");
+  });
+
   test("the badge shows on the title only while folded", async () => {
     const el = await mount(<Sidebar sections={make("/home")} />);
     expect(fold(el).textContent).toContain("2");
