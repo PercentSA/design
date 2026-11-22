@@ -44,8 +44,8 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
   const box = useRef<HTMLDivElement>(null);
   const items = useRef(new Map<string, HTMLLIElement>());
   const copyKey = useRef<string>(undefined);
-  const atEnd = useRef(true); // set by the box scroll event, before new rows change the height
-  const prevQ = useRef("");
+  const atEnd = useRef(true); // set by the box scroll event and after each rows change and jump
+  const prevQ = useRef(search ?? ""); // a search given at mount does not scroll
   const started = useRef(false);
   const [away, setAway] = useState(false);
   const [cur, setCur] = useState<string>();
@@ -60,14 +60,19 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
     const first = !started.current && rows.length > 0;
     if (first) started.current = true;
     if ((first && jumpTo === undefined) || (!first && live === "on" && atEnd.current)) toEnd();
-    if (box.current) setAway(!atEndOf(box.current));
+    if (box.current) {
+      atEnd.current = atEndOf(box.current);
+      setAway(!atEnd.current);
+    }
     // Follows new rows only; `live` and `jumpTo` are read when the rows change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows]);
 
   const jumpFound = jumpTo !== undefined && rows.some((r) => r.key === jumpTo);
   useLayoutEffect(() => {
-    if (jumpFound) items.current.get(jumpTo)?.scrollIntoView?.({ block: "start" });
+    if (!jumpFound) return;
+    items.current.get(jumpTo)?.scrollIntoView?.({ block: "start" });
+    if (box.current) atEnd.current = atEndOf(box.current);
   }, [jumpTo, jumpFound]);
 
   const re = search ? new RegExp(`(${escapeRe(search)})`, "gi") : undefined;

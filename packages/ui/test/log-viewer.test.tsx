@@ -249,3 +249,34 @@ describe("LogViewer", () => {
     expect(live(el)).toContain("1 من 5");
   });
 });
+
+describe("LogViewer follow after jumpTo, pause and a first search", () => {
+  test("jumpTo at mount keeps the reader there when new rows come", async () => {
+    for (const jumpTo of ["r0", "zz"]) {
+      await open({ jumpTo });
+      expect(top).toBe(0);
+      height = 1200;
+      await update({ rows: rows(8) });
+      expect(top).toBe(0);
+    }
+  });
+
+  test("Resume does not follow a reader who is not at the end", async () => {
+    await open({ live: "paused" });
+    expect(top).toBe(1000);
+    height = 1500;
+    await update({ rows: rows(8) });
+    await update({ live: "on" });
+    height = 1600;
+    await update({ rows: rows(9) });
+    expect(top).toBe(1000);
+  });
+
+  test("a search given at mount does not scroll; jumpTo wins", async () => {
+    const el = await open({ jumpTo: "r3", search: "line", onSearchChange: () => {} });
+    expect(into.at(-1)).toBe(lis(el)[3]!);
+    into = [];
+    await open({ search: "line", onSearchChange: () => {} });
+    expect(into.length).toBe(0);
+  });
+});
