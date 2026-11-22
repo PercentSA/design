@@ -172,4 +172,31 @@ describe("DataTable view switch: keys and hidden header", () => {
       globalThis.matchMedia = original;
     }
   });
+  test("the cards view puts as many cards in a row as fit; group, total and empty rows take the full row", async () => {
+    type G = Row & { group: string; n: number };
+    const rows: G[] = ROWS.map((r, i) => ({ ...r, group: i < 2 ? "One" : "Two", n: i }));
+    const el = await render(
+      <DataTable<G>
+        columns={[{ key: "name", header: "Name" }, { key: "n", header: "N" }]}
+        rows={rows}
+        getRowId={(r) => r.id}
+        caption="Apps"
+        cards
+        viewKey="apps"
+        defaultView="cards"
+        groupBy={(r) => r.group}
+        groupTotals={() => ({ n: 1 })}
+        totals={{ n: 3 }}
+      />,
+    );
+    const bodies = [...el.querySelectorAll("tbody")];
+    expect(bodies.length).toBe(2);
+    for (const b of bodies) expect(b.className).toContain("p-cards:grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))]");
+    const full = (tr: Element | null | undefined) => expect(tr?.className.split(" ")).toContain("p-cards:col-span-full");
+    for (const th of el.querySelectorAll('tbody th[scope="rowgroup"]')) full(th.closest("tr"));
+    for (const tr of el.querySelectorAll("tbody tr.font-semibold")) full(tr);
+    expect(el.querySelectorAll("tbody tr.font-semibold").length).toBe(2);
+    const empty = await render(table({ rows: [], viewKey: "apps", defaultView: "cards" }));
+    full(empty.querySelector("tbody tr"));
+  });
 });

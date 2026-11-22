@@ -241,8 +241,10 @@ export function DataTable<Row>({
     hasSlots && "p-cards:gap-y-0",
     hasMeta && SLOT_BREAK,
   );
-  // grid-cols-1 (minmax(0, 1fr)): a wide group or total row cannot make the column, and so every card, wider than the box.
-  const bodyClass = cn(cards && "p-cards:grid p-cards:grid-cols-1 p-cards:gap-3 p-cards:[&_tr:last-child]:border");
+  // As many cards in a row as fit, each at least 18rem (one on a phone). The column minimum is a length, so a wide group
+  // or total row cannot make a column, and so every card, wider than the box; those rows take the full row.
+  const bodyClass = cn(cards && "p-cards:grid p-cards:grid-cols-[repeat(auto-fill,minmax(min(100%,18rem),1fr))] p-cards:gap-3 p-cards:[&_tr:last-child]:border");
+  const fullRow = cards ? "p-cards:col-span-full" : undefined;
 
   // The kept choice is read after mount, so the server and the first render use `defaultView`.
   useEffect(() => {
@@ -375,7 +377,7 @@ export function DataTable<Row>({
 
   // The total and subtotal rows: values under their columns (hidden columns hide theirs); the first column shows the label unless it has a value.
   const totalRow = (values: Partial<Record<string, ReactNode>>, label: string) => (
-    <TableRow className="font-semibold">
+    <TableRow className={cn("font-semibold", fullRow)}>
       {selectable && <TableCell className={cellY} />}
       {withActions(
         columns.map((c, k) => (
@@ -464,7 +466,7 @@ export function DataTable<Row>({
         {groups && !loading && visible.length > 0 ? (
           [...groups].map(([key, members], g) => (
             <TableBody key={key} className={bodyClass}>
-              <TableRow>
+              <TableRow className={fullRow}>
                 <TableHead scope="rowgroup" wrap={print} colSpan={colSpan} className={cn("bg-surface text-sm text-fg", print && "text-xs", headH)}>
                   {groupHeader ? groupHeader(key, members) : key}
                 </TableHead>
@@ -490,7 +492,7 @@ export function DataTable<Row>({
                 </TableRow>
               ))
             ) : visible.length === 0 ? (
-              <TableRow className={cn(cards && "p-cards:block")}>
+              <TableRow className={cn(cards && "p-cards:block", fullRow)}>
                 <TableCell colSpan={colSpan} className={cn(cards && "p-cards:block")}>
                   {empty ?? <EmptyState variant="plain" title={t(s.noResults)} />}
                 </TableCell>

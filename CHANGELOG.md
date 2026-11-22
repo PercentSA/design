@@ -17,7 +17,7 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 
 ### Changed
 
-- [DataTable](https://design.percent.sa/en/components/data-table): `viewKey` adds a Table and Cards switch at the end of the `toolbar` row, kept for each list; `defaultView` sets the first view. Phones show cards as before (new variant `p-cards` in `styles.css`). In the cards view on a desktop, the header controls (select all, sort) leave the Tab order; screen readers keep them.
+- [DataTable](https://design.percent.sa/en/components/data-table): `viewKey` adds a Table and Cards switch at the end of the `toolbar` row, kept for each list; `defaultView` sets the first view. The cards view puts as many cards in a row as fit, each at least 18rem wide; group headers and totals take the full row. Phones show one card in a row, as before (new variant `p-cards` in `styles.css`). In the cards view on a desktop, the header controls (select all, sort) leave the Tab order; screen readers keep them.
 - [SegmentedControl](https://design.percent.sa/en/components/segmented-control): the arrow keys select the option they move to, as in a radio group (left and right mirror in Arabic). Keys with Alt, Ctrl, Meta or Shift do not select.
 - [Sidebar](https://design.percent.sa/en/components/sidebar): sections can fold (`collapsible`, `defaultOpen`, `badge`, `id`). Items can show a `status` dot with `statusLabel`.
 - [CommandPalette](https://design.percent.sa/en/components/command-palette): `onSearchChange` and `loading` for server results; `anchor` opens it next to an element; `description` can be a node, which is not searched. When it closes, the focus goes back to the element that opened it only if the focus is lost; a command that moves the focus keeps it there.
