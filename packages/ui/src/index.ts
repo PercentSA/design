@@ -130,6 +130,7 @@ export { ColumnsMenu } from "./components/columns-menu";
 export { LineItemsTable, type LineItem } from "./components/line-items-table";
 export { LineItemsEditor, type LineCellContext, type LineEditorColumn } from "./components/line-items-editor";
 export { DescriptionList, List, ListItem } from "./components/list";
+export { ExpandableText } from "./components/expandable-text";
 export { RecordSection } from "./components/record-section";
 export { RecordSummary, type RecordSummaryItem } from "./components/record-summary";
 export { Thumbnail } from "./components/thumbnail";

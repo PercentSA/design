@@ -50,6 +50,7 @@ export const PAGES: DocPage[] = [
   p("blockquote", "Blockquote", "text", "Blockquote", ["BlockquoteExample"], "A quote with an optional source.", "اقتباس مع مصدر اختياري."),
   p("prose", "Prose", "text", "Prose", ["ProseExample"], "Styles rich text (privacy pages, case studies): headings, lists, links, code.", "ينسّق النص الطويل (صفحات الخصوصية ودراسات الحالة): العناوين والقوائم والروابط والشيفرة."),
   p("highlight", "Highlight", "text", "Highlight", ["HighlightExample"], "Inverted text for search matches.", "نص معكوس الألوان لنتائج البحث."),
+  p("expandable-text", "ExpandableText", "text", "ExpandableText", ["ExpandableTextExample"], "A long text, for example an error, cut at one line (`lines`). A click, a tap, Enter or Space opens the full text and `details`. A text that fits stays plain text.", "نص طويل، مثل رسالة خطأ، مقطوع عند سطر واحد (`lines`). النقر أو اللمس أو Enter أو المسافة يفتح النص كاملًا مع `details`. والنص الذي يتسع في مكانه يبقى نصًا عاديًا."),
   p("formatted-number", "FormattedNumber", "text", "FormattedNumber, formatNumber", ["FormattedNumberExample"], "Numbers with Western digits in both languages; compact units in words in Arabic.", "أرقام بالأرقام الغربية في اللغتين؛ والوحدات المختصرة بالكلمات في العربية."),
 
   p("container", "Container", "layout", "Container", ["ContainerExample"], "Page width and the page gutter (5vw).", "عرض الصفحة والهامش الجانبي (5vw)."),
