@@ -41,6 +41,8 @@ export const RELEASES: Release[] = [
       c("fixed", "[DataTable](data-table): the root can shrink in a grid (`min-w-0`)."),
       c("fixed", "[Tabs](tabs): the tabs and their panels can shrink in a grid (`min-w-0`)."),
       c("fixed", "[LineChart](line-chart), [AreaChart](area-chart) and [BarChart](bar-chart): an axis label that mixes Arabic with numbers or Latin text keeps its word order."),
+      c("fixed", "[Dialog](dialog) and [Sheet](sheet): when one opens without `trigger` (from a menu item, or from a button with `open` state), the focus goes back to the element that opened it after it closes, as in AlertDialog. Before, the focus went to the page."),
+      c("fixed", "[DataTable](data-table): below 768 px a table with `cards` takes the controls of its hidden header row (select all, sort) out of the Tab order, as the cards view does at every width. Screen readers keep them."),
     ],
   },
   {

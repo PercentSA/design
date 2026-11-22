@@ -32,6 +32,8 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 - [DataTable](https://design.percent.sa/en/components/data-table): the root can shrink in a grid (`min-w-0`).
 - [Tabs](https://design.percent.sa/en/components/tabs): the tabs and their panels can shrink in a grid (`min-w-0`).
 - [LineChart](https://design.percent.sa/en/components/line-chart), [AreaChart](https://design.percent.sa/en/components/area-chart) and [BarChart](https://design.percent.sa/en/components/bar-chart): an axis label that mixes Arabic with numbers or Latin text keeps its word order.
+- [Dialog](https://design.percent.sa/en/components/dialog) and [Sheet](https://design.percent.sa/en/components/sheet): when one opens without `trigger` (from a menu item, or from a button with `open` state), the focus goes back to the element that opened it after it closes, as in AlertDialog. Before, the focus went to the page.
+- [DataTable](https://design.percent.sa/en/components/data-table): below 768 px a table with `cards` takes the controls of its hidden header row (select all, sort) out of the Tab order, as the cards view does at every width. Screen readers keep them.
 
 ## 0.21.0
 
