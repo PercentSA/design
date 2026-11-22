@@ -202,6 +202,18 @@ describe("CommandPalette 0.22.0", () => {
     });
   }
 
+  test("anchor (popover): a press on the anchor is not an outside press, so the app can toggle", async () => {
+    const changes: boolean[] = [];
+    const btn = await withAnchor(true, (o) => changes.push(o));
+    await wait();
+    await act(async () => {
+      btn.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true }));
+      btn.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    await wait();
+    expect(changes).toEqual([]);
+  });
+
   // A modal dialog traps the focus while it is open, so there a command moves the focus after the close; Radix then finds it moved.
   const focusCases: [string, boolean, boolean][] = [["popover", true, true], ["sheet", false, true], ["dialog without anchor", false, false]];
   for (const [name, isWide, anchored] of focusCases) {

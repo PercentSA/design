@@ -209,7 +209,13 @@ const palette = ({ commands, placeholder, onOpenChange, onSearchChange, loading 
 );
 
 /** Search and run commands from the keyboard. Open it with `useCommandShortcut`. Matching ignores case, accents and Arabic letter forms. With `anchor` it opens next to that element from 768 px, and as a bottom sheet below. */
-export function CommandPalette({ anchor, ...props }: PaletteProps & { anchor?: RefObject<HTMLElement | null> }) {
+export function CommandPalette({
+  anchor,
+  ...props
+}: PaletteProps & {
+  /** Opens the palette next to this element (a bottom sheet below 768 px), and gives the focus back to it when the focus is lost. A press on it is not an outside press, so the app can toggle `open`. */
+  anchor?: RefObject<HTMLElement | null>;
+}) {
   return anchor ? <AnchoredPalette {...props} anchor={anchor} /> : <PaletteDialog {...props} />;
 }
 
@@ -257,6 +263,8 @@ function AnchoredPalette({ anchor, ...props }: PaletteProps & { anchor: RefObjec
           collisionPadding={16}
           aria-label={s.commandPalette}
           onCloseAutoFocus={(e) => returnFocus(e, anchor.current)}
+          // The anchor is not a Radix trigger: without this, a press on it closes the popover and its click opens it again.
+          onInteractOutside={(e) => anchor.current?.contains(e.target as Node) && e.preventDefault()}
           // The list scrolls inside the room that is left (a phone keyboard, a short window).
           className="p-pop z-(--p-z-overlay) flex max-h-[min(30rem,var(--radix-popover-content-available-height))] w-[min(24rem,calc(100vw-2rem))] flex-col overflow-hidden rounded-panel border border-line bg-surface-2 text-fg shadow-overlay"
         >

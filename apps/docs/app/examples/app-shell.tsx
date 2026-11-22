@@ -333,7 +333,7 @@ export function CommandPaletteAnchorExample() {
   ];
   return (
     <>
-      <Button ref={button} variant="secondary" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen(true)}>
+      <Button ref={button} variant="secondary" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
         <Plus aria-hidden />
         {t("Add option", "إضافة خيار")}
       </Button>
