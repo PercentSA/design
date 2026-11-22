@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentProps, type HTMLAttributes } from "react";
+import { useEffect, useId, useRef, useState, type ComponentProps, type HTMLAttributes, type ReactNode } from "react";
 import { ArrowUp, Check, Copy } from "lucide-react";
-import { Slot, Toggle as RadixToggle, ToggleGroup as RadixToggleGroup } from "radix-ui";
+import { Slot, Tooltip as RadixTooltip, Toggle as RadixToggle, ToggleGroup as RadixToggleGroup } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
-import { useStrings, useText } from "../provider";
+import { useLang, useStrings, useText } from "../provider";
 import { Spinner } from "./spinner";
-import { buttonClass } from "./button-class";
+import { blockedProps, buttonClass } from "./button-class";
+import { TOOLTIP } from "./overlay-classes";
 import type { ButtonVariant, ButtonSize } from "./button-class";
 
 type ButtonProps = Omit<ComponentProps<"button">, "aria-label"> & {
@@ -17,11 +18,41 @@ type ButtonProps = Omit<ComponentProps<"button">, "aria-label"> & {
   loading?: boolean;
   /** Renders the child element (a link) with button styles. */
   asChild?: boolean;
+  /** Why the button does nothing now. The button stays visible and focusable and refuses the press; the reason shows on hover, focus and tap. Ignored with `asChild`. */
+  blocked?: ReactNode;
 } & ({ iconOnly?: false; "aria-label"?: string } | { iconOnly: true; "aria-label": string });
 
-export function Button({ variant, size, loading, asChild, iconOnly, className, children, disabled, type = "button", ...rest }: ButtonProps) {
+export function Button({ variant, size, loading, asChild, blocked, iconOnly, className, children, disabled, type = "button", ...rest }: ButtonProps) {
   const s = useStrings();
+  const reasonId = useId();
+  const [tip, setTip] = useState(false);
   if (asChild) return <Slot.Root className={cn(buttonClass(variant, size, iconOnly), className)} {...rest}>{children}</Slot.Root>;
+  if (blocked) {
+    return (
+      <RadixTooltip.Provider delayDuration={300}>
+        <RadixTooltip.Root open={tip} onOpenChange={setTip}>
+          <RadixTooltip.Trigger asChild>
+            <button
+              type={type}
+              {...rest}
+              // preventDefault (in blockedProps) keeps the tooltip trigger from closing it again; a tap shows the reason.
+              {...blockedProps(reasonId, () => setTip(true))}
+              className={cn(buttonClass(variant, size, iconOnly), blockedProps(reasonId).className, className)}
+            >
+              {children}
+              {/* hidden, not sr-only: aria-describedby reads it, and it stays out of the button's name. */}
+              <span id={reasonId} hidden>{blocked}</span>
+            </button>
+          </RadixTooltip.Trigger>
+          <RadixTooltip.Portal>
+            <RadixTooltip.Content side="top" sideOffset={6} className={TOOLTIP}>
+              {blocked}
+            </RadixTooltip.Content>
+          </RadixTooltip.Portal>
+        </RadixTooltip.Root>
+      </RadixTooltip.Provider>
+    );
+  }
   return (
     <button
       type={type}
@@ -80,15 +111,30 @@ export function SegmentedControl({
   const [inner, setInner] = useState(defaultValue);
   // After the first measure one pill slides between the options; before it, the chosen option draws its own.
   const [ref, pill] = useSlidingIndicator<HTMLDivElement>("data-state", "on");
+  const rtl = useLang() === "ar";
+  const choose = (v: string) => {
+    setInner(v);
+    onValueChange?.(v);
+  };
+  // A radio group selects with the arrow keys: Radix moves the focus; the choice follows it. Left and right mirror in RTL.
+  const onKeyDown = (e: React.KeyboardEvent) => {
+    if (e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+    const step = { ArrowRight: rtl ? -1 : 1, ArrowDown: 1, ArrowLeft: rtl ? 1 : -1, ArrowUp: -1 }[e.key];
+    const from = (e.target as HTMLElement).closest<HTMLElement>('[role="radio"]');
+    if (!step || !from) return;
+    const items = options.filter((o) => !o.disabled);
+    const at = items.findIndex((o) => o.value === from.dataset.value);
+    const next = items[(at + step + items.length) % items.length];
+    if (at >= 0 && next) choose(next.value);
+  };
   return (
     <RadixToggleGroup.Root
       ref={ref}
+      onKeyDown={onKeyDown}
       type="single"
       value={value ?? inner ?? ""}
       onValueChange={(v) => {
-        if (!v) return;
-        setInner(v);
-        onValueChange?.(v);
+        if (v) choose(v);
       }}
       className={cn(GROUP, "relative isolate", className)}
       {...rest}
@@ -98,6 +144,7 @@ export function SegmentedControl({
         <RadixToggleGroup.Item
           key={o.value}
           value={o.value}
+          data-value={o.value}
           disabled={o.disabled}
           // The label colour changes with the pill's time and easing: the chosen label does not turn primary-fg before the pill is under it.
           className={cn(

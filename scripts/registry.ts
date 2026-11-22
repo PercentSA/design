@@ -95,10 +95,26 @@ for (const pkg of PKGS)
 // Friendly names: `shadcn add @percentsa/button` adds the file that holds Button.
 const taken = new Set(items.map((i) => i.name));
 const kebab = (s: string) => s.replace(/([a-z0-9])([A-Z])/g, "$1-$2").replace(/([A-Z])([A-Z][a-z])/g, "$1-$2").toLowerCase();
+// Only the public names of each package get a short name: the exports of its entry points (package.json
+// "exports", read from src). Internal constants and parts get none.
+const entrySources = (pkg: Pkg) =>
+  Object.values(JSON.parse(readFileSync(join(ROOT, `packages/${pkg}/package.json`), "utf8")).exports ?? {}).flatMap((v) => {
+    const out = typeof v === "string" ? v : (v as { default?: string }).default;
+    if (!out?.endsWith(".js")) return [];
+    const base = join(ROOT, `packages/${pkg}`, out.replace(/^\.\/dist\//, "src/").replace(/\.js$/, ""));
+    return [`${base}.ts`, `${base}.tsx`].filter(existsSync);
+  });
+const exportedNames = (code: string) => [
+  ...[...code.replace(/\/\/.*$/gm, "").matchAll(/export\s*(type\s*)?\{([^}]*)\}/g)]
+    .filter((m) => !m[1])
+    .flatMap((m) => m[2]!.split(",").map((n) => n.trim()).filter((n) => n && !n.startsWith("type ")).map((n) => n.split(/\s+as\s+/).pop()!)),
+  ...[...code.matchAll(/^export\s+(?:async\s+)?(?:function|const|class)\s+(\w+)/gm)].map((m) => m[1]!),
+];
+const publicNames = new Set(PKGS.flatMap((pkg) => entrySources(pkg).flatMap((f) => exportedNames(readFileSync(f, "utf8")))));
 for (const item of [...items])
   for (const e of item.meta?.exports ?? []) {
     const alias = kebab(e);
-    if (!/^[A-Z]/.test(e) || taken.has(alias)) continue;
+    if (!/^[A-Z]/.test(e) || !publicNames.has(e) || taken.has(alias)) continue;
     taken.add(alias);
     items.push({ name: alias, type: "registry:ui", title: e, description: `${e}: adds @percentsa/${item.name}.`, registryDependencies: [`@percentsa/${item.name}`], files: [] });
   }

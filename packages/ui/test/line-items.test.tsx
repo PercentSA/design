@@ -77,7 +77,7 @@ describe("LineItemsTable", () => {
 
   test("lines are card rows on phones, and rowActions adds the row menu", async () => {
     const el = await render("en", { rowActions: () => [{ label: "Return", onSelect: () => {} }] });
-    expect(el.querySelector("thead")!.className).toContain("max-md:sr-only");
+    expect(el.querySelector("thead")!.className).toContain("p-cards:sr-only");
     expect(el.querySelectorAll("tbody button[aria-haspopup]").length).toBe(3);
   });
 });

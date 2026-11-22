@@ -7,6 +7,7 @@ import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
 import { useLinkComponent, useStrings, useText } from "../provider";
 import { paginationRange } from "../lib/pagination";
+import { TAB_BASE } from "./tab-classes";
 
 /** First link of the page: jumps over the header for keyboard users. Give the main element id="main". */
 export function SkipLink({ href = "#main" }: { href?: string }) {
@@ -31,7 +32,7 @@ export function Tabs({
   // After the first measure one underline slides between the tabs; before it, the active tab draws its own.
   const [listRef, line] = useSlidingIndicator<HTMLDivElement>("data-state", "active");
   return (
-    <RadixTabs.Root className={cn("grid gap-6", className)} {...root}>
+    <RadixTabs.Root className={cn("grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6", className)} {...root}>
       {/* The line is an inset shadow, so the active tab's border covers it without reaching outside the scrolling list. */}
       <RadixTabs.List ref={listRef} aria-label={label} className="relative isolate flex gap-6 overflow-x-auto shadow-[inset_0_-1px_0_var(--p-line)]">
         {line && <span {...line} className={cn(line.className, "border-b-2 border-primary")} />}
@@ -41,7 +42,8 @@ export function Tabs({
             value={t.value}
             disabled={t.disabled}
             className={cn(
-              "border-b-2 border-transparent pb-3 text-sm font-medium whitespace-nowrap text-fg-3 transition-colors hover:text-fg-2 disabled:opacity-50 data-[state=active]:text-fg",
+              TAB_BASE,
+              "disabled:opacity-50 data-[state=active]:text-fg",
               !line && "data-[state=active]:border-primary",
             )}
           >
@@ -50,7 +52,7 @@ export function Tabs({
         ))}
       </RadixTabs.List>
       {items.map((t) => (
-        <RadixTabs.Content key={t.value} value={t.value}>
+        <RadixTabs.Content key={t.value} value={t.value} className="min-w-0">
           {t.content}
         </RadixTabs.Content>
       ))}

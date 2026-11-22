@@ -2,6 +2,39 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.22.0
+
+### New
+
+- [AttentionList](https://design.percent.sa/en/components/attention-list): the items that need a person, with level, title link, area, age and one action. `compact` is the form for a popover; it also shows the level as a word, not only as a colour.
+- [RouteTabs](https://design.percent.sa/en/components/route-tabs): tabs that are links, with `count`. Phones show three tabs and More.
+- [ActionDialog](https://design.percent.sa/en/components/action-dialog): asks before an action with an effect. It shows the record, "What happens", an optional reason and an optional typed name. It is full screen on phones.
+- [MaskedValue](https://design.percent.sa/en/components/masked-value): a secret shown as dots, with Reveal, Copy and Hide. [ConnectionCard](https://design.percent.sa/en/components/connection-card): how to reach a service, in rows ready to copy.
+- [LogViewer](https://design.percent.sa/en/components/log-viewer): log lines with time, source and text. It follows new lines only when the reader is at the end. Search with next and previous, `jumpTo`, and copy a line from the context menu.
+- [ExpandableText](https://design.percent.sa/en/components/expandable-text): a long text cut at `lines` lines. A click, tap, Enter or Space opens it with its `details`. A text that fits stays plain text.
+- [ValueRow](https://design.percent.sa/en/components/value-row): a setting shown as text, with copy and an action. [FieldsSheet](https://design.percent.sa/en/components/fields-sheet): an edit sheet for one to three text fields.
+- New built-in strings, in English and Arabic.
+
+### Changed
+
+- [DataTable](https://design.percent.sa/en/components/data-table): `viewKey` adds a Table and Cards switch at the end of the `toolbar` row, kept for each list; `defaultView` sets the first view. The cards view puts as many cards in a row as fit, each at least 18rem wide; group headers and totals take the full row. Phones show one card in a row, as before (new variant `p-cards` in `styles.css`). In the cards view on a desktop, the header controls (select all, sort) leave the Tab order; screen readers keep them.
+- [SegmentedControl](https://design.percent.sa/en/components/segmented-control): the arrow keys select the option they move to, as in a radio group (left and right mirror in Arabic). Keys with Alt, Ctrl, Meta or Shift do not select.
+- [Sidebar](https://design.percent.sa/en/components/sidebar): sections can fold (`collapsible`, `defaultOpen`, `badge`, `id`). Items can show a `status` dot with `statusLabel`.
+- [CommandPalette](https://design.percent.sa/en/components/command-palette): `onSearchChange` and `loading` for server results; `anchor` opens it next to an element; `description` can be a node, which is not searched. When it closes, the focus goes back to the element that opened it only if the focus is lost; a command that moves the focus keeps it there.
+- [PageHeader](https://design.percent.sa/en/components/page-header): `back` also takes a list of links ("Client / Project").
+- [RecordSummary](https://design.percent.sa/en/components/record-summary): an item can have `status` (dot and word), and `value` is optional (new type `StatusDotStatus`). [SettingsSection](https://design.percent.sa/en/components/settings): `action` at the end of the heading. [Button](https://design.percent.sa/en/components/button): `blocked` refuses the press and shows the reason.
+- [LineChart](https://design.percent.sa/en/components/line-chart) and [AreaChart](https://design.percent.sa/en/components/area-chart): `limit` draws a dashed line with its label, and values at 90 % of it or more show in the warning colour. `onSelectPoint(x, index)` runs on a click or Enter.
+- Parts without the new props render as before.
+- `registry.json`: short names (`shadcn add @percentsa/<name>`) are only for the public exports of each package entry. The short names of 14 internal parts go away: `above_stretched_link`, `axes`, `backdrop`, `close`, `consent_cookie`, `flag_sa`, `key-grid`, `marker`, `panel`, `print_paper`, `sidebar-in-sheet`, `stretched_link`, `swatch`, `theme_key`. Add their files by the file name.
+
+### Fixed
+
+- [DataTable](https://design.percent.sa/en/components/data-table): the root can shrink in a grid (`min-w-0`).
+- [Tabs](https://design.percent.sa/en/components/tabs): the tabs and their panels can shrink in a grid (`min-w-0`).
+- [LineChart](https://design.percent.sa/en/components/line-chart), [AreaChart](https://design.percent.sa/en/components/area-chart) and [BarChart](https://design.percent.sa/en/components/bar-chart): an axis label that mixes Arabic with numbers or Latin text keeps its word order.
+- [Dialog](https://design.percent.sa/en/components/dialog) and [Sheet](https://design.percent.sa/en/components/sheet): when one opens without `trigger` (from a menu item, or from a button with `open` state), the focus goes back to the element that opened it after it closes, as in AlertDialog. Before, the focus went to the page.
+- [DataTable](https://design.percent.sa/en/components/data-table): below 768 px a table with `cards` takes the controls of its hidden header row (select all, sort) out of the Tab order, as the cards view does at every width. Screen readers keep them.
+
 ## 0.21.0
 
 - [CodeEditor](https://design.percent.sa/en/components/code-editor) and [CodeDiff](https://design.percent.sa/en/components/code-diff): an editor for code and settings files, with line numbers, search and errors on their lines, and two versions of a text side by side. They have their own entry, `@percentsa/ui/code-editor`, because CodeMirror is large: the root entry does not load it. Strings for the search and the diff, in English and Arabic.

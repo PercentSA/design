@@ -95,8 +95,10 @@ export function StatusBadge({ tone = "neutral", children, className }: { tone?: 
 
 const DOT = { live: "bg-live", idle: "bg-fg-3", warning: "bg-warning", danger: "bg-danger" } as const;
 
+export type StatusDotStatus = keyof typeof DOT;
+
 /** Small coloured dot: the only place green is allowed. Give it text; colour alone says nothing. */
-export function StatusDot({ status, children, className }: { status: keyof typeof DOT; children?: ReactNode; className?: string }) {
+export function StatusDot({ status, children, className }: { status: StatusDotStatus; children?: ReactNode; className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-2 text-sm text-fg-2", className)}>
       <span aria-hidden="true" className="relative flex size-2">

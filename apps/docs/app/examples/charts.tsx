@@ -1,4 +1,4 @@
-import { AreaChart, BarChart, ChartLegend, DonutChart, formatNumber, LineChart, Sparkline, useLang } from "@percentsa/ui";
+import { AreaChart, BarChart, ChartLegend, DonutChart, formatNumber, LineChart, Sparkline, toast, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 const MONTHS = {
@@ -23,6 +23,40 @@ export function LineChartExample() {
       ]}
       curve="monotone"
       markers
+    />
+  );
+}
+
+export function LineChartLimitExample() {
+  const t = useT();
+  const cpu = [22, 18, 15, 20, 35, 52, 64, 71, 88, 96, 92, 85, 78, 82, 90, 97, 99, 86, 70, 55, 41, 33, 28, 24];
+  return (
+    <LineChart
+      className="w-full"
+      title={t("CPU use by hour", "استخدام المعالج حسب الساعة")}
+      data={cpu.map((v, h) => ({ hour: `${String(h).padStart(2, "0")}:00`, cpu: v }))}
+      x="hour"
+      xLabel={t("Hour", "الساعة")}
+      series={[{ key: "cpu", label: t("CPU (%)", "المعالج (%)") }]}
+      limit={{ value: 100, label: t("Limit 1 CPU", "الحد: معالج واحد") }}
+      onSelectPoint={(hour) => toast({ title: t(`Opened ${hour}`, `تم فتح ${hour}`) })}
+    />
+  );
+}
+
+export function AreaChartLimitExample() {
+  const t = useT();
+  const memory = [0.21, 0.24, 0.3, 0.33, 0.38, 0.41, 0.47, 0.44, 0.36, 0.29];
+  return (
+    <AreaChart
+      className="w-full"
+      title={t("Memory use", "استخدام الذاكرة")}
+      data={memory.map((v, i) => ({ minute: `10:${String(i * 5).padStart(2, "0")}`, memory: v }))}
+      x="minute"
+      xLabel={t("Time", "الوقت")}
+      series={[{ key: "memory", label: t("Memory (GB)", "الذاكرة (GB)") }]}
+      curve="monotone"
+      limit={{ value: 0.5, label: t("Limit 0.5 GB", "الحد: 0.5 GB") }}
     />
   );
 }

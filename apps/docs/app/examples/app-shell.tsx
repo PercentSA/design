@@ -1,7 +1,9 @@
-import { useRef, useState } from "react";
-import { Bell, ChartColumn, Loader2, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, Lock, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { Bell, DatabaseBackup, ScrollText, Server, ChartColumn, Loader2, Copy, CreditCard, KeyRound, Shield, UserRound, Download, FileText, Inbox, LayoutDashboard, Languages, Lock, LogOut, MessageCircle, Moon, Plus, Printer, Search, Send, Settings, Trash2, Upload, Users } from "lucide-react";
 import {
   AppShell,
+  AttentionList,
+  type AttentionItem,
   Button,
   type Command,
   CommandPalette,
@@ -16,6 +18,7 @@ import {
   Mark,
   Money,
   PageHeader,
+  Popover,
   PrintArea,
   Input,
   SettingsRow,
@@ -26,6 +29,8 @@ import {
   Switch,
   type SidebarSection,
   StatusBadge,
+  StatusDot,
+  Badge,
   TableBody,
   TableCell,
   TableHead,
@@ -177,7 +182,7 @@ export function SidebarExample() {
   );
 }
 
-/** Items with `children` fold open to their links; the group with the current page starts open. */
+/** Items with `children` fold open to their links; the group with the current page starts open. Hosting and System fold from their titles. */
 export function SidebarNestedExample() {
   const t = useT();
   const [current, setCurrent] = useState("#al-noor-app");
@@ -193,10 +198,27 @@ export function SidebarNestedExample() {
         { ...group("#al-noor", t("Al Noor", "النور"), [
           { href: "#al-noor-app", label: t("Mobile app", "تطبيق الجوال") },
           { href: "#al-noor-site", label: t("Website", "الموقع") },
-        ]), icon: <Users /> },
-        { ...group("#sahab", t("Sahab", "سحاب"), [{ href: "#sahab-portal", label: t("Portal", "البوابة") }]), icon: <Users /> },
+        ]), icon: <Users />, status: "danger" as const, statusLabel: t("Site down", "الموقع متوقف") },
+        { ...group("#sahab", t("Sahab", "سحاب"), [{ href: "#sahab-portal", label: t("Portal", "البوابة") }]), icon: <Users />, status: "warning" as const, statusLabel: t("Restarting", "قيد إعادة التشغيل") },
         { ...group("#private", t("Private client", "عميل خاص"), [{ href: "#private-erp", label: t("ERP", "نظام ERP") }]), icon: <Lock /> },
       ],
+    },
+    {
+      title: t("Hosting", "الاستضافة"),
+      collapsible: true,
+      id: "docs-hosting",
+      badge: "2",
+      items: [
+        { href: "#servers", label: t("Servers", "الخوادم"), icon: <Server /> },
+        { href: "#backups", label: t("Backups", "النسخ الاحتياطية"), icon: <DatabaseBackup /> },
+      ],
+    },
+    {
+      title: t("System", "النظام"),
+      collapsible: true,
+      id: "docs-system",
+      badge: "1",
+      items: [{ href: "#logs", label: t("Logs", "السجلات"), icon: <ScrollText /> }],
     },
   ];
   return (
@@ -252,6 +274,128 @@ export function CommandPaletteExample() {
   );
 }
 
+const CUSTOMERS = [
+  { en: "Noura Ali", ar: "نورة علي" },
+  { en: "Noura Hassan", ar: "نورة حسن" },
+  { en: "Khalid Noura", ar: "خالد نورة" },
+];
+
+/** Type 2 or more letters, for example "noura" or "نورة": after 400 ms the server rows join the list. */
+export function CommandPaletteServerExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const [text, setText] = useState("");
+  // The server's answer: the names it found. The rows are built below, where `t` is at hand.
+  const [found, setFound] = useState<typeof CUSTOMERS | null>(null);
+  const q = text.trim().toLowerCase();
+  const loading = q.length >= 2 && found === null;
+  useEffect(() => {
+    setFound(null);
+    if (q.length < 2) return;
+    // A real app asks its server here.
+    const timer = setTimeout(() => setFound(CUSTOMERS.filter((c) => c.en.toLowerCase().includes(q) || c.ar.includes(q))), 400);
+    return () => clearTimeout(timer);
+  }, [q]);
+  const rows: Command[] = found
+    ? [
+        ...found.map((c) => ({ id: `c-${c.en}`, label: t(c.en, c.ar), group: t("Customers", "العملاء"), keywords: [q], onSelect: () => toast({ title: t(c.en, c.ar) }) })),
+        {
+          id: "pay",
+          label: t("Payment 1042", "الدفعة 1042"),
+          group: t("Payments", "الدفعات"),
+          description: (
+            <>
+              <Money amount={120} /> · noura@example.com
+            </>
+          ),
+          keywords: [q],
+          onSelect: () => toast({ title: t("Payment 1042", "الدفعة 1042") }),
+        },
+      ]
+    : [];
+  return (
+    <>
+      <Button variant="secondary" onClick={() => setOpen(true)}>
+        <Search aria-hidden />
+        {t("Search customers", "ابحث في العملاء")}
+      </Button>
+      <CommandPalette open={open} onOpenChange={setOpen} commands={rows} onSearchChange={setText} loading={loading} />
+    </>
+  );
+}
+
+/** The palette opens under the button, and as a bottom sheet below 768 px. */
+export function CommandPaletteAnchorExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const button = useRef<HTMLButtonElement>(null);
+  const commands: Command[] = [
+    { id: "text", label: t("Text field", "حقل نص"), onSelect: () => toast({ title: t("Text field", "حقل نص") }) },
+    { id: "number", label: t("Number field", "حقل رقم"), onSelect: () => toast({ title: t("Number field", "حقل رقم") }) },
+    { id: "file", label: t("File field", "حقل ملف"), disabled: t("Needs a storage plan", "يحتاج إلى خطة تخزين"), onSelect: () => {} },
+  ];
+  return (
+    <>
+      <Button ref={button} variant="secondary" aria-haspopup="dialog" aria-expanded={open} onClick={() => setOpen((o) => !o)}>
+        <Plus aria-hidden />
+        {t("Add option", "إضافة خيار")}
+      </Button>
+      <CommandPalette open={open} onOpenChange={setOpen} commands={commands} anchor={button} />
+    </>
+  );
+}
+
+function useAttentionItems(): AttentionItem[] {
+  const t = useT();
+  const ago = (minutes: number) => new Date(Date.now() - minutes * 60_000);
+  return [
+    {
+      id: "a",
+      level: "critical",
+      title: t("Site down", "الموقع متوقف"),
+      href: "#a",
+      detail: t("No answer for 5 minutes", "لا توجد استجابة منذ 5 دقائق"),
+      area: t("Main website", "الموقع الرئيسي"),
+      context: <a href="#client">Al Noor</a>,
+      openedAt: ago(6),
+      action: <Button size="sm" variant="secondary">{t("Restart", "إعادة التشغيل")}</Button>,
+    },
+    { id: "b", level: "important", title: t("Deploy failed", "فشل النشر"), href: "#b", area: "shop.example.com", openedAt: ago(95), menu: [{ label: t("Dismiss", "تجاهل") }, { label: t("Open log", "فتح السجل") }] },
+    { id: "c", level: "important", title: t("Disk almost full", "القرص شبه ممتلئ"), href: "#c", area: t("Main website", "الموقع الرئيسي"), openedAt: ago(300) },
+    { id: "d", level: "other", title: t("Update ready", "تحديث جاهز"), href: "#d", area: "203.0.113.10", openedAt: ago(2000) },
+  ];
+}
+
+/** Four items, one for each level; the app sorts them. The second has a "⋯" menu. */
+export function AttentionListExample() {
+  const t = useT();
+  return (
+    <div className="w-full">
+      <AttentionList label={t("Open alerts", "التنبيهات المفتوحة")} items={useAttentionItems()} />
+    </div>
+  );
+}
+
+/** A bell button opens a popover with the short form: the first 4 of 7 items, then a link to the full list. */
+export function AttentionListCompactExample() {
+  const t = useT();
+  return (
+    <Popover
+      trigger={
+        <Button variant="secondary" iconOnly aria-label={t("Open alerts", "التنبيهات المفتوحة")}>
+          <Bell aria-hidden />
+        </Button>
+      }
+      className="w-80"
+    >
+      <AttentionList compact label={t("Open alerts", "التنبيهات المفتوحة")} items={useAttentionItems()} />
+      <a href="#all" className="mt-2 block text-sm font-medium">
+        {t("Show all 7", "عرض الكل (7)")}
+      </a>
+    </Popover>
+  );
+}
+
 // The docs page has its own h1, so the examples use headingLevel={2}.
 
 /** A list page: the title, a count, one primary action, Export and the "⋯" menu. Below 768 px "More actions" opens the rest. */
@@ -279,6 +423,40 @@ export function PageHeaderListExample() {
       menu={[
         { label: t("Import from a file", "استيراد من ملف"), icon: <Upload />, onSelect: done(t("Import", "استيراد")) },
         { label: t("Print the list", "طباعة القائمة"), icon: <Printer />, onSelect: done(t("Print", "طباعة")) },
+      ]}
+    />
+  );
+}
+
+/** A project page: `back` takes a list of links, shown as a path. */
+export function PageHeaderPathExample() {
+  const t = useT();
+  const done = (title: string) => () => toast({ title });
+  return (
+    <PageHeader
+      className="w-full"
+      headingLevel={2}
+      back={[
+        { href: "#al-noor", label: t("Al Noor", "النور") },
+        { href: "#website", label: t("Website", "الموقع") },
+      ]}
+      title={t("Main website", "الموقع الرئيسي")}
+      badges={
+        <>
+          <StatusDot status="live">{t("Live", "يعمل")}</StatusDot>
+          <Badge>{t("Web app", "تطبيق ويب")}</Badge>
+        </>
+      }
+      meta={<span dir="ltr">owner/main-website · main</span>}
+      primary={<Button onClick={done(t("Redeploy started", "بدأت إعادة النشر"))}>{t("Redeploy", "إعادة النشر")}</Button>}
+      secondary={
+        <Button variant="secondary" onClick={done(t("Opening the site", "جارٍ فتح الموقع"))}>
+          {t("Open site", "فتح الموقع")}
+        </Button>
+      }
+      menu={[
+        { label: t("New deployment…", "نشر جديد…"), onSelect: done(t("New deployment", "نشر جديد")) },
+        { label: t("Delete app…", "حذف التطبيق…"), icon: <Trash2 />, danger: true, onSelect: done(t("Deleted", "حُذف")) },
       ]}
     />
   );

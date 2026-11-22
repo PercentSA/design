@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FileText, Globe, LayoutDashboard, Plus, Receipt, Smartphone } from "lucide-react";
-import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, formatDate, Grid, List, ListItem, Money, PhoneText, RiyalSign, StatusBadge, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, Thumbnail, toast, useLang } from "@percentsa/ui";
+import { Badge, Button, Card, ColumnsMenu, CopyButton, DataTable, type DataTableColumn, type DataTableSort, DescriptionList, EmptyState, FilterBar, type FilterValue, formatDate, Grid, List, ListItem, Money, PhoneText, RiyalSign, StatusBadge, StatusDot, Table, TableBody, TableCell, TableHead, TableHeader, TableRow, Text, Thumbnail, toast, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function CardExample() {
@@ -284,6 +284,93 @@ export function DataTableServerExample() {
       onPageChange={(page) => setQuery({ ...query, page })}
       loading={loading}
     />
+  );
+}
+
+type AppRow = { id: string; name: [string, string]; domain: string; status: "live" | "stopped"; owner: [string, string] };
+const OWNERS = { sara: ["Sara", "سارة"], omar: ["Omar", "عمر"], lina: ["Lina", "لينا"] } as const;
+const APPS: AppRow[] = (
+  [
+    [["Main website", "الموقع الرئيسي"], "shop.example.com", "live", "sara"],
+    [["Al Noor store", "متجر النور"], "alnoor.example.com", "live", "omar"],
+    [["Help center", "مركز المساعدة"], "help.example.com", "stopped", "lina"],
+    [["Booking portal", "بوابة الحجز"], "book.example.com", "live", "sara"],
+    [["Staff directory", "دليل الموظفين"], "staff.example.com", "stopped", "omar"],
+    [["Event pages", "صفحات الفعاليات"], "events.example.com", "live", "lina"],
+    [["Customer blog", "مدونة العملاء"], "blog.example.com", "live", "sara"],
+    [["Partner area", "منطقة الشركاء"], "partners.example.com", "stopped", "omar"],
+  ] as const
+).map(([name, domain, status, owner], i) => ({ id: `app-${i}`, name: [...name], domain, status, owner: [...OWNERS[owner]] }));
+
+function useAppColumns(): DataTableColumn<AppRow>[] {
+  const t = useT();
+  const lang = useLang();
+  const k = lang === "ar" ? 1 : 0;
+  const status = { live: t("Live", "يعمل"), stopped: t("Not running", "متوقف") };
+  return [
+    { key: "name", header: t("App", "التطبيق"), cell: (r) => r.name[k], sortable: true, sortValue: (r) => r.name[k] },
+    { key: "domain", header: t("Address", "العنوان"), cell: (r) => <span dir="ltr" className="font-mono text-xs">{r.domain}</span> },
+    { key: "status", header: t("Status", "الحالة"), cell: (r) => <StatusBadge tone={r.status === "live" ? "success" : "danger"}>{status[r.status]}</StatusBadge> },
+    { key: "owner", header: t("Owner", "المسؤول"), cell: (r) => r.owner[k] },
+  ];
+}
+
+/** `viewKey` adds a Table and Cards switch at the end of the `toolbar` row; the choice is kept in the browser. */
+export function DataTableViewExample() {
+  const t = useT();
+  const k = useLang() === "ar" ? 1 : 0;
+  const [query, setQuery] = useState("");
+  const [filter, setFilter] = useState<FilterValue>({});
+  const rows = APPS.filter((r) => r.name[k].toLowerCase().includes(query.toLowerCase()) && (!filter.status?.length || filter.status.includes(r.status)));
+  return (
+    <DataTable
+      className="w-full"
+      columns={useAppColumns()}
+      rows={rows}
+      getRowId={(r) => r.id}
+      caption={t("Apps", "التطبيقات")}
+      hideCaption
+      cards
+      viewKey="docs-apps"
+      toolbar={
+        <FilterBar
+          search={{ value: query, onValueChange: setQuery, placeholder: t("Search apps", "ابحث في التطبيقات") }}
+          value={filter}
+          onValueChange={setFilter}
+          filters={[
+            {
+              key: "status",
+              label: t("Status", "الحالة"),
+              multiple: true,
+              options: [
+                { value: "live", label: t("Live", "يعمل") },
+                { value: "stopped", label: t("Not running", "متوقف") },
+              ],
+            },
+          ]}
+        />
+      }
+    />
+  );
+}
+
+/** The table can shrink inside a grid box: below 768 px only the table scrolls, not the page. */
+export function DataTableInGridExample() {
+  const t = useT();
+  const columns: DataTableColumn<AppRow>[] = [
+    ...useAppColumns(),
+    { key: "c5", header: t("Region", "المنطقة"), cell: () => t("Riyadh", "الرياض") },
+    { key: "c6", header: t("Plan", "الباقة"), cell: () => t("Standard", "قياسية") },
+    { key: "c7", header: t("Created", "أُنشئ"), cell: () => "2026-01-15" },
+    { key: "c8", header: t("Notes", "ملاحظات"), cell: () => t("No notes", "لا ملاحظات") },
+  ];
+  return (
+    <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-[1fr_12rem]">
+      <DataTable columns={columns} rows={APPS.slice(0, 4)} getRowId={(r) => r.id} caption={t("Apps", "التطبيقات")} hideCaption />
+      <Card className="p-4">
+        <Text size="sm">{t("A side box in the same grid.", "صندوق جانبي في الشبكة نفسها.")}</Text>
+      </Card>
+    </div>
   );
 }
 

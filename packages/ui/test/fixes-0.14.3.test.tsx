@@ -13,10 +13,10 @@ describe("0.14.3", () => {
     expect(buttonClass("secondary")).not.toContain("aria-pressed:");
   });
 
-  test("phone cards: the card grid has one column of at most the box width", () => {
+  test("cards: the card grid columns are never wider than the box (a phone keeps one column)", () => {
     const html = renderToStaticMarkup(<DataTable columns={columns} rows={[{ id: "1", name: "A" }]} getRowId={(r) => r.id} caption="Rows" cards />);
-    expect(html).toMatch(/<tbody class="[^"]*max-md:grid max-md:grid-cols-1/);
+    expect(html).toMatch(/<tbody class="[^"]*p-cards:grid p-cards:grid-cols-\[repeat\(auto-fill,minmax\(min\(100%,18rem\),1fr\)\)\]/);
     const plain = renderToStaticMarkup(<DataTable columns={columns} rows={[{ id: "1", name: "A" }]} getRowId={(r) => r.id} caption="Rows" />);
-    expect(plain).not.toContain("max-md:grid-cols-1");
+    expect(plain).not.toContain("p-cards:grid");
   });
 });

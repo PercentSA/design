@@ -7,13 +7,12 @@ import { cn } from "../lib/cn";
 import { useDir, useStrings } from "../provider";
 import { Button } from "./actions";
 import { buttonClass } from "./button-class";
+import { useFocusReturn } from "./dialog-parts";
+import { BACKDROP, CLOSE, PANEL, TOOLTIP } from "./overlay-classes";
 
 type OpenState = { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void };
 
-const BACKDROP = "p-overlay fixed inset-0 z-(--p-z-overlay) bg-bg/70 backdrop-blur-sm";
-const PANEL = "border border-line bg-surface-2 text-fg shadow-overlay";
 const FLOAT = cn("p-float z-(--p-z-overlay) rounded-field p-4 text-sm", PANEL);
-const CLOSE = "absolute end-4 top-4 grid size-9 place-items-center rounded-pill text-fg-3 transition-colors hover:bg-surface hover:text-fg [&_svg]:size-4";
 const WIDTH = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" } as const;
 
 function DialogHead({ title, description, Title, Description }: { title: ReactNode; description?: ReactNode; Title: typeof RadixDialog.Title; Description: typeof RadixDialog.Description }) {
@@ -37,12 +36,14 @@ export function Dialog({
   ...state
 }: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; children?: ReactNode; className?: string }) {
   const s = useStrings();
+  const focus = useFocusReturn(!!trigger);
   return (
     <RadixDialog.Root {...state}>
       {trigger && <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger>}
       <RadixDialog.Portal>
         <RadixDialog.Overlay className={BACKDROP} />
         <RadixDialog.Content
+          {...focus}
           {...(description ? {} : { "aria-describedby": undefined })}
           className={cn(
             "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-y-1/2 gap-6 overflow-auto rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2",
@@ -93,8 +94,7 @@ export function AlertDialog({
   const s = useStrings();
   const [inner, setInner] = useState(defaultOpen ?? false);
   const [pending, setPending] = useState(false);
-  // Without a trigger (opened from a menu or a sheet), focus goes back to where it was, not to the page.
-  const back = useRef<Element | null>(null);
+  const focus = useFocusReturn(!!trigger);
   const setOpen = (o: boolean) => {
     if (open === undefined) setInner(o);
     onOpenChange?.(o);
@@ -121,12 +121,7 @@ export function AlertDialog({
         <RadixAlert.Overlay className={BACKDROP} />
         <RadixAlert.Content
           {...(description ? {} : { "aria-describedby": undefined })}
-          onOpenAutoFocus={() => (back.current = document.activeElement)}
-          onCloseAutoFocus={(e) => {
-            if (trigger || !(back.current instanceof HTMLElement) || !back.current.isConnected) return;
-            e.preventDefault();
-            back.current.focus();
-          }}
+          {...focus}
           className={cn(
             "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid w-[calc(100%-2rem)] max-w-md -translate-y-1/2 gap-6 rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2",
             PANEL,
@@ -148,7 +143,7 @@ export function AlertDialog({
 }
 
 // Side sheets leave only vertical panning (scroll, zoom) to the browser, so a horizontal drag reaches the sheet.
-const SIDE = {
+export const SIDE = {
   end: "inset-y-0 end-0 h-dvh w-[min(100%,28rem)] border-s touch-pan-y touch-pinch-zoom",
   start: "inset-y-0 start-0 h-dvh w-[min(100%,28rem)] border-e touch-pan-y touch-pinch-zoom",
   bottom: "inset-x-0 bottom-0 max-h-[85dvh] rounded-t-panel border-t",
@@ -269,6 +264,7 @@ export function Sheet({
 }) {
   const s = useStrings();
   const drag = useSheetDrag(side);
+  const focus = useFocusReturn(!!trigger);
   const head = <DialogHead title={title} description={description} Title={RadixDialog.Title} Description={RadixDialog.Description} />;
   return (
     <RadixDialog.Root {...state}>
@@ -277,6 +273,7 @@ export function Sheet({
         <RadixDialog.Overlay className={BACKDROP} />
         <RadixDialog.Content
           data-side={side}
+          {...focus}
           {...drag.content}
           {...(description ? {} : { "aria-describedby": undefined })}
           className={cn("p-sheet fixed z-(--p-z-overlay) flex flex-col gap-6 overflow-auto border-line bg-surface-2 p-6 text-fg shadow-overlay", SIDE[side], size === "lg" && side !== "bottom" && "w-[min(100%,56rem)]", className)}
@@ -345,7 +342,7 @@ export function Tooltip({ content, children, side = "top", ...state }: OpenState
       <RadixTooltip.Root {...state}>
         <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
         <RadixTooltip.Portal>
-          <RadixTooltip.Content side={physical} sideOffset={6} className="p-float z-(--p-z-overlay) rounded-lg bg-fg px-2.5 py-1.5 text-xs font-medium text-bg">
+          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP}>
             {content}
           </RadixTooltip.Content>
         </RadixTooltip.Portal>

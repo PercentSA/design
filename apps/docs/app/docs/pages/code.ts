@@ -20,6 +20,15 @@ export const pages: DocPage[] = [
     "يعرض بيانات JSON في شجرة تُفتح وتُطوى. تبدأ المستويات العميقة مطويّة وتعرض عدد عناصرها.",
   ),
   p(
+    "log-viewer",
+    "LogViewer",
+    "data",
+    "LogViewer, type LogRow",
+    ["LogViewerExample", "LogViewerLiveExample"],
+    "Log lines with time, source and text. While live, it follows new lines only when the reader is at the end; else “Jump to newest” shows. Search marks the matches, and right click or a long press copies a line.",
+    "أسطر السجل مع الوقت والمصدر والنص. أثناء البث المباشر يتبع الأسطر الجديدة فقط إذا كان القارئ في النهاية، وإلا يظهر «الانتقال إلى الأحدث». يميّز البحث النتائج، والنقر بالزر الأيمن أو الضغط المطوّل ينسخ السطر.",
+  ),
+  p(
     "code-editor",
     "CodeEditor",
     "data",

@@ -155,3 +155,8 @@ export function BackToTopExample() {
     </Stack>
   );
 }
+
+export function ButtonBlockedExample() {
+  const t = useT();
+  return <Button blocked={t("A backup runs now.", "نسخة احتياطية قيد التشغيل الآن.")}>{t("Back up now", "انسخ احتياطيًا الآن")}</Button>;
+}

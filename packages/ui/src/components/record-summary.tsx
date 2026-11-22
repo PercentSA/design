@@ -3,14 +3,17 @@
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useLinkComponent, useStrings } from "../provider";
-import { Skeleton } from "./feedback";
+import { Skeleton, StatusDot, type StatusDotStatus } from "./feedback";
 import { Surface } from "./layout";
+import { isEmptyValue, NotSet } from "./not-set";
 
 export type RecordSummaryItem = {
   id: string;
   label: ReactNode;
   /** null or "" shows the "Not set" word. */
-  value: ReactNode;
+  value?: ReactNode;
+  /** A dot and a word at value size, for a state (Live, Down). It wins over `value`. */
+  status?: { tone: StatusDotStatus; label: ReactNode };
   hint?: ReactNode;
   /** The value is a link (customer, supplier, parent document). */
   href?: string;
@@ -28,7 +31,6 @@ declare const process: { env: { NODE_ENV?: string } } | undefined;
 // 2 lines, then cut. On an inner element, so the focus ring of a link around it is not clipped.
 const CLAMP = "line-clamp-2 break-words";
 
-const empty = (v: ReactNode) => v == null || v === "";
 
 /**
  * The key facts of a record in one dense strip, for example under a record's header: 1 to 6 items (label, value, hint).
@@ -67,7 +69,9 @@ export function RecordSummary({
       {media != null && <div className="flex items-center border-b border-line p-4 @xl:border-b-0 @xl:border-e">{media}</div>}
       {/* The trailing border of the last cells is pushed out of the Surface (-mb-px -me-px) and clipped. */}
       <dl className={cn("-mb-px -me-px grid min-w-0 flex-1", BASE[n], MID[n], WIDE[n])}>
-        {items.map((item) => (
+        {items.map((item) => {
+          const shown = item.status ? item.status.label : item.value;
+          return (
           <div key={item.id} className="grid min-w-0 content-start gap-1 border-b border-e border-line px-4 py-3">
             <dt className="text-xs text-fg-3">{item.label}</dt>
             {loading ? (
@@ -77,9 +81,19 @@ export function RecordSummary({
               </dd>
             ) : (
               <>
-                <dd title={typeof item.value === "string" ? item.value : undefined} className="min-w-0 text-lg font-semibold text-fg tabular-nums">
-                  {empty(item.value) ? (
-                    <span className="text-base font-normal text-fg-3">{s.notSet}</span>
+                <dd title={typeof shown === "string" ? shown : undefined} className="min-w-0 text-lg font-semibold text-fg tabular-nums">
+                  {item.status ? (
+                    <StatusDot status={item.status.tone} className="text-lg font-semibold text-fg">
+                      {item.href ? (
+                        <L href={item.href} className="rounded-field underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
+                          {item.status.label}
+                        </L>
+                      ) : (
+                        item.status.label
+                      )}
+                    </StatusDot>
+                  ) : isEmptyValue(item.value) ? (
+                    <NotSet className="text-base font-normal" />
                   ) : item.href ? (
                     <L href={item.href} className="rounded-field underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
                       <bdi className={CLAMP}>{item.value}</bdi>
@@ -92,7 +106,8 @@ export function RecordSummary({
               </>
             )}
           </div>
-        ))}
+          );
+        })}
       </dl>
       </div>
     </Surface>
