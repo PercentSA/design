@@ -132,6 +132,8 @@ export { LineItemsEditor, type LineCellContext, type LineEditorColumn } from "./
 export { DescriptionList, List, ListItem } from "./components/list";
 export { RecordSection } from "./components/record-section";
 export { RecordSummary, type RecordSummaryItem } from "./components/record-summary";
+export { MaskedValue, type MaskedValueProps } from "./components/masked-value";
+export { ConnectionCard, type ConnectionRow } from "./components/connection-card";
 export { Thumbnail } from "./components/thumbnail";
 export { Kanban, type KanbanColumn } from "./components/kanban";
 export { CalendarView, type CalendarEvent } from "./components/calendar-view";
