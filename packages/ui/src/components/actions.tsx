@@ -1,13 +1,14 @@
 "use client";
 
-import { useEffect, useRef, useState, type ComponentProps, type HTMLAttributes } from "react";
+import { useEffect, useId, useRef, useState, type ComponentProps, type HTMLAttributes, type ReactNode } from "react";
 import { ArrowUp, Check, Copy } from "lucide-react";
-import { Slot, Toggle as RadixToggle, ToggleGroup as RadixToggleGroup } from "radix-ui";
+import { Slot, Tooltip as RadixTooltip, Toggle as RadixToggle, ToggleGroup as RadixToggleGroup } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
 import { useStrings, useText } from "../provider";
 import { Spinner } from "./spinner";
 import { buttonClass } from "./button-class";
+import { TOOLTIP } from "./overlay-classes";
 import type { ButtonVariant, ButtonSize } from "./button-class";
 
 type ButtonProps = Omit<ComponentProps<"button">, "aria-label"> & {
@@ -17,11 +18,45 @@ type ButtonProps = Omit<ComponentProps<"button">, "aria-label"> & {
   loading?: boolean;
   /** Renders the child element (a link) with button styles. */
   asChild?: boolean;
+  /** Why the button does nothing now. The button stays visible and focusable and refuses the press; the reason shows on hover, focus and tap. Ignored with `asChild`. */
+  blocked?: ReactNode;
 } & ({ iconOnly?: false; "aria-label"?: string } | { iconOnly: true; "aria-label": string });
 
-export function Button({ variant, size, loading, asChild, iconOnly, className, children, disabled, type = "button", ...rest }: ButtonProps) {
+export function Button({ variant, size, loading, asChild, blocked, iconOnly, className, children, disabled, type = "button", ...rest }: ButtonProps) {
   const s = useStrings();
+  const reasonId = useId();
+  const [tip, setTip] = useState(false);
   if (asChild) return <Slot.Root className={cn(buttonClass(variant, size, iconOnly), className)} {...rest}>{children}</Slot.Root>;
+  if (blocked) {
+    return (
+      <RadixTooltip.Provider delayDuration={300}>
+        <RadixTooltip.Root open={tip} onOpenChange={setTip}>
+          <RadixTooltip.Trigger asChild>
+            <button
+              type={type}
+              aria-disabled="true"
+              aria-describedby={reasonId}
+              className={cn(buttonClass(variant, size, iconOnly), "cursor-not-allowed opacity-50", className)}
+              {...rest}
+              // preventDefault keeps the tooltip trigger from closing it again; a tap shows the reason.
+              onClick={(e) => {
+                e.preventDefault();
+                setTip(true);
+              }}
+            >
+              {children}
+              <span id={reasonId} className="sr-only">{blocked}</span>
+            </button>
+          </RadixTooltip.Trigger>
+          <RadixTooltip.Portal>
+            <RadixTooltip.Content side="top" sideOffset={6} className={TOOLTIP}>
+              {blocked}
+            </RadixTooltip.Content>
+          </RadixTooltip.Portal>
+        </RadixTooltip.Root>
+      </RadixTooltip.Provider>
+    );
+  }
   return (
     <button
       type={type}

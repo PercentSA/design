@@ -618,3 +618,18 @@ export function FormSheetLargeExample() {
     </FormSheet>
   );
 }
+
+export function SettingsActionExample() {
+  const t = useT();
+  return (
+    <SettingsSection
+      className="w-full"
+      title={t("Limits", "الحدود")}
+      description={t("The most your team can use each month.", "أقصى ما يستخدمه فريقك كل شهر.")}
+      action={<Button variant="secondary" size="sm">{t("Edit", "تعديل")}</Button>}
+    >
+      <SettingsRow label={t("Storage", "التخزين")} control={<span className="text-sm">{t("50 GB", "50 جيجابايت")}</span>} />
+      <SettingsRow label={t("Members", "الأعضاء")} control={<span className="text-sm">{t("10", "10")}</span>} />
+    </SettingsSection>
+  );
+}

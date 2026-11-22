@@ -3,14 +3,16 @@
 import type { ReactNode } from "react";
 import { cn } from "../lib/cn";
 import { useLinkComponent, useStrings } from "../provider";
-import { Skeleton } from "./feedback";
+import { Skeleton, StatusDot, type StatusDotStatus } from "./feedback";
 import { Surface } from "./layout";
 
 export type RecordSummaryItem = {
   id: string;
   label: ReactNode;
   /** null or "" shows the "Not set" word. */
-  value: ReactNode;
+  value?: ReactNode;
+  /** A dot and a word at value size, for a state (Live, Down). It wins over `value`. */
+  status?: { tone: StatusDotStatus; label: ReactNode };
   hint?: ReactNode;
   /** The value is a link (customer, supplier, parent document). */
   href?: string;
@@ -67,7 +69,9 @@ export function RecordSummary({
       {media != null && <div className="flex items-center border-b border-line p-4 @xl:border-b-0 @xl:border-e">{media}</div>}
       {/* The trailing border of the last cells is pushed out of the Surface (-mb-px -me-px) and clipped. */}
       <dl className={cn("-mb-px -me-px grid min-w-0 flex-1", BASE[n], MID[n], WIDE[n])}>
-        {items.map((item) => (
+        {items.map((item) => {
+          const shown = item.status ? item.status.label : item.value;
+          return (
           <div key={item.id} className="grid min-w-0 content-start gap-1 border-b border-e border-line px-4 py-3">
             <dt className="text-xs text-fg-3">{item.label}</dt>
             {loading ? (
@@ -77,8 +81,16 @@ export function RecordSummary({
               </dd>
             ) : (
               <>
-                <dd title={typeof item.value === "string" ? item.value : undefined} className="min-w-0 text-lg font-semibold text-fg tabular-nums">
-                  {empty(item.value) ? (
+                <dd title={typeof shown === "string" ? shown : undefined} className="min-w-0 text-lg font-semibold text-fg tabular-nums">
+                  {item.status ? (
+                    item.href ? (
+                      <L href={item.href} className="rounded-field underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
+                        <StatusDot status={item.status.tone} className="text-lg font-semibold text-fg">{item.status.label}</StatusDot>
+                      </L>
+                    ) : (
+                      <StatusDot status={item.status.tone} className="text-lg font-semibold text-fg">{item.status.label}</StatusDot>
+                    )
+                  ) : empty(item.value) ? (
                     <span className="text-base font-normal text-fg-3">{s.notSet}</span>
                   ) : item.href ? (
                     <L href={item.href} className="rounded-field underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
@@ -92,7 +104,8 @@ export function RecordSummary({
               </>
             )}
           </div>
-        ))}
+          );
+        })}
       </dl>
       </div>
     </Surface>

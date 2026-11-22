@@ -198,3 +198,17 @@ export function ThumbnailExample() {
     </Inline>
   );
 }
+
+/** A state at value size: a dot and a word. */
+export function RecordSummaryStatusExample() {
+  const t = useT();
+  return (
+    <RecordSummary
+      className="w-full"
+      items={[
+        { id: "production", label: t("Production now", "الإنتاج الآن"), status: { tone: "live", label: t("Live", "يعمل") } },
+        { id: "backup", label: t("Backup", "النسخ الاحتياطي"), status: { tone: "danger", label: t("Down", "متوقف") }, hint: t("Since 09:40", "منذ 09:40") },
+      ]}
+    />
+  );
+}
