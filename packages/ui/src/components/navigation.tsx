@@ -7,6 +7,7 @@ import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
 import { useLinkComponent, useStrings, useText } from "../provider";
 import { paginationRange } from "../lib/pagination";
+import { TAB_BASE } from "./tab-classes";
 
 /** First link of the page: jumps over the header for keyboard users. Give the main element id="main". */
 export function SkipLink({ href = "#main" }: { href?: string }) {
@@ -19,9 +20,6 @@ export function SkipLink({ href = "#main" }: { href?: string }) {
     </a>
   );
 }
-
-/** Look shared by the triggers of Tabs and RouteTabs. */
-export const TAB_BASE = "border-b-2 border-transparent pb-3 text-sm font-medium whitespace-nowrap text-fg-3 transition-colors hover:text-fg-2";
 
 export type TabItem = { value: string; label: ReactNode; content: ReactNode; disabled?: boolean };
 

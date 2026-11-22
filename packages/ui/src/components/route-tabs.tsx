@@ -5,7 +5,7 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
 import { useLinkComponent, useStrings, useText } from "../provider";
-import { TAB_BASE } from "./navigation";
+import { TAB_BASE } from "./tab-classes";
 import { Badge } from "./feedback";
 import { DropdownMenu } from "./menus";
 
