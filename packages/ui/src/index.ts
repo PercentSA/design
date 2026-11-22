@@ -97,6 +97,7 @@ export { TimeText } from "./components/time-text";
 export { PhoneText } from "./components/phone-text";
 export { AlertDialog, Dialog, DialogClose, HoverCard, Popover, Sheet, Tooltip } from "./components/overlays";
 export { FormSheet } from "./components/form-sheet";
+export { ActionDialog, type ActionDialogProps } from "./components/action-dialog";
 export { FormBar } from "./components/form-bar";
 export { PinPad } from "./components/pin-pad";
 export { Keypad } from "./components/keypad";

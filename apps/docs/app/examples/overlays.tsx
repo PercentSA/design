@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Copy, Info, Pencil, Trash2 } from "lucide-react";
 import {
+  ActionDialog,
   AlertDialog,
   Button,
   ConsentBanner,
@@ -13,6 +14,7 @@ import {
   Inline,
   Input,
   Popover,
+  RadioGroup,
   Sheet,
   Slider,
   Stack,
@@ -205,5 +207,77 @@ export function ConsentBannerExample() {
       </Button>
       <ConsentBanner key={key} policyHref="#privacy" onChange={(c) => toast({ title: `consent=${c}` })} />
     </Stack>
+  );
+}
+
+export function ActionDialogExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button variant="secondary" onClick={() => setOpen(true)}>{t("Redeploy", "إعادة النشر")}</Button>
+      <ActionDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={t("Redeploy Caddy edge?", "إعادة نشر Caddy edge؟")}
+        subject={{ title: "Caddy edge", meta: "203.0.113.10", facts: [{ term: t("Status", "الحالة"), value: t("Live", "يعمل") }] }}
+        effects={[t("The service restarts and is down for about 10 seconds.", "تُعاد الخدمة وتتوقف نحو 10 ثوانٍ."), t("Open connections end.", "تنتهي الاتصالات المفتوحة.")]}
+        action={t("Redeploy", "إعادة النشر")}
+        onAction={() => setOpen(false)}
+      />
+    </>
+  );
+}
+
+export function ActionDialogChoiceExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const [kind, setKind] = useState<string>();
+  return (
+    <>
+      <Button variant="secondary" onClick={() => setOpen(true)}>{t("Refund", "استرداد")}</Button>
+      <ActionDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={t("Refund this payment?", "استرداد هذه الدفعة؟")}
+        subject={{ title: "Al Noor", value: "40.00", meta: t("Paid by card", "مدفوعة بالبطاقة") }}
+        effects={kind === "full" ? [t("The full amount goes back to the card.", "يعود المبلغ كاملًا إلى البطاقة.")] : kind === "part" ? [t("Half of the amount goes back to the card.", "يعود نصف المبلغ إلى البطاقة.")] : null}
+        effectsEmpty={t("Choose a refund first.", "اختر نوع الاسترداد أولًا.")}
+        reason={{ label: t("Reason", "السبب"), required: true }}
+        action={t("Refund", "استرداد")}
+        destructive
+        onAction={() => setOpen(false)}
+      >
+        <RadioGroup
+          value={kind}
+          onValueChange={setKind}
+          options={[
+            { value: "full", label: t("Refund all", "استرداد الكل") },
+            { value: "part", label: t("Refund half", "استرداد النصف") },
+          ]}
+        />
+      </ActionDialog>
+    </>
+  );
+}
+
+export function ActionDialogDeleteExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  return (
+    <>
+      <Button variant="danger" onClick={() => setOpen(true)}>{t("Delete site", "حذف الموقع")}</Button>
+      <ActionDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={t("Delete Main website?", "حذف Main website؟")}
+        subject={{ title: "Main website", meta: "shop.example.com" }}
+        effects={[t("The site and its files are deleted.", "يُحذف الموقع وملفاته."), t("This cannot be undone.", "لا يمكن التراجع.")]}
+        confirmName="Main website"
+        action={t("Delete", "حذف")}
+        destructive
+        onAction={() => setOpen(false)}
+      />
+    </>
   );
 }
