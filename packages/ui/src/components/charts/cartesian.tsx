@@ -36,6 +36,9 @@ export function cartesian(o: { width: number; height: number; labels: string[]; 
 
 export type Cartesian = ReturnType<typeof cartesian>;
 
+/** The plot is dir="ltr": an isolate keeps the word order of a label that mixes Arabic with numbers or Latin text. */
+export const isolate = (t: string) => `\u2068${t}\u2069`;
+
 /** Gridlines (`line`, the zero line `line-strong`), value labels and category labels (`fg-3`, tabular digits). */
 export function Axes({ c }: { c: Cartesian }) {
   const { box, ticks, tickText, value, band, labels, swap, mirror } = c;
@@ -55,14 +58,14 @@ export function Axes({ c }: { c: Cartesian }) {
       })}
       {side.map(([p, t], i) => (
         <text key={i} x={mirror ? box.right + 8 : box.left - 8} y={p} textAnchor={mirror ? "start" : "end"} dominantBaseline="middle">
-          {t}
+          {isolate(t)}
         </text>
       ))}
       {bottom.map(
         ([p, t], i) =>
           i % every === 0 && (
             <text key={i} x={p} y={box.bottom + 16} textAnchor="middle">
-              {t}
+              {isolate(t)}
             </text>
           ),
       )}

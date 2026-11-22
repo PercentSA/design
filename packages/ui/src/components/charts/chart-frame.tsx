@@ -1,12 +1,15 @@
 "use client";
 
-import { Fragment, useCallback, useEffect, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode, type Ref } from "react";
+import { Fragment, useCallback, useEffect, useId, useMemo, useRef, useState, type KeyboardEvent, type PointerEvent, type ReactNode, type Ref } from "react";
 import { cn } from "../../lib/cn";
 import { useDir, useLang, useStrings } from "../../provider";
 import { formatNumber } from "../../lib/format-number";
 import { LiveRegion } from "../utility";
 import { Swatch } from "./legend";
 import type { Point } from "./scale";
+
+/** A limit line: a dashed line across the plot with its label. */
+export type ChartLimit = { value: number; label: string };
 
 export type ChartSeries = { key: string; label: ReactNode; color?: string };
 
@@ -92,6 +95,9 @@ export function ChartFrame({
   vertical,
   legend,
   overlay,
+  onSelect,
+  warn,
+  note,
   className,
   children,
 }: {
@@ -117,10 +123,17 @@ export function ChartFrame({
   legend?: ReactNode;
   /** Readable content over the middle of the plot (donut centre). */
   overlay?: ReactNode;
+  /** Makes the plot and the focused chart open a row: a click, or Enter or Space. */
+  onSelect?: (i: number) => void;
+  /** true: the value of row i in column j shows in the warning colour in the tooltip. */
+  warn?: (i: number, j: number) => boolean;
+  /** Extra text after the hidden data table. */
+  note?: ReactNode;
   className?: string;
   children: (active: number | null) => ReactNode;
 }) {
   const s = useStrings();
+  const hint = useId();
   const svg = useRef<SVGSVGElement>(null);
   const [active, setActive] = useState<{ i: number; key: boolean } | null>(null);
   const n = rows.length;
@@ -151,6 +164,11 @@ export function ChartFrame({
 
   const onKeyDown = (e: KeyboardEvent) => {
     const steps: Record<string, number> = { ArrowRight: mirror ? -1 : 1, ArrowLeft: mirror ? 1 : -1, ...(vertical ? { ArrowDown: 1, ArrowUp: -1 } : {}) };
+    if (onSelect && (e.key === "Enter" || e.key === " ")) {
+      e.preventDefault();
+      if (active && active.i < n) onSelect(active.i);
+      return;
+    }
     const step = steps[e.key];
     let i: number;
     if (step) i = active ? Math.min(n - 1, Math.max(0, active.i + step)) : step > 0 ? 0 : n - 1;
@@ -163,10 +181,13 @@ export function ChartFrame({
   };
 
   // Move (mouse, pen) and down (a tap on touch, which has no hover).
-  const onPointer = (e: PointerEvent) => {
+  const rowAt = (e: { clientX: number; clientY: number }) => {
     const r = svg.current?.getBoundingClientRect();
-    if (!r?.width) return;
-    const i = hit(((e.clientX - r.left) * width) / r.width, ((e.clientY - r.top) * height) / r.height);
+    return r?.width ? hit(((e.clientX - r.left) * width) / r.width, ((e.clientY - r.top) * height) / r.height) : undefined;
+  };
+  const onPointer = (e: PointerEvent) => {
+    const i = rowAt(e);
+    if (i === undefined) return;
     // Same row: keep the same state, so a move inside a row does not render again.
     setActive((a) => (i === null ? null : a && a.i === i && !a.key ? a : { i, key: false }));
   };
@@ -180,6 +201,7 @@ export function ChartFrame({
       aria-label={title}
       tabIndex={n ? 0 : undefined}
       onKeyDown={n ? onKeyDown : undefined}
+      aria-describedby={onSelect && n ? hint : undefined}
       onBlur={() => setActive(null)}
       className={cn("grid gap-3 rounded-field", className)}
     >
@@ -191,7 +213,14 @@ export function ChartFrame({
         <>
           <div
             ref={measure}
-            className="relative"
+            className={cn("relative", onSelect && "cursor-pointer")}
+            onClick={
+              onSelect &&
+              ((e) => {
+                const i = rowAt(e);
+                if (i != null) onSelect(i);
+              })
+            }
             onPointerMove={onPointer}
             onPointerDown={onPointer}
             // A lifted finger also "leaves": keep the tapped values until the next tap or the focus goes.
@@ -211,7 +240,7 @@ export function ChartFrame({
                   <p key={j} className="flex items-center gap-2 text-fg-2">
                     <Swatch i={look(j)} color={colors[look(j)]} kind={kind} patterns={patterns} />
                     <span className="flex-1">{c}</span>
-                    <span className="text-fg tabular-nums">{cur.row.values[j]}</span>
+                    <span className={cn("tabular-nums", warn?.(cur.i, j) ? "text-warning" : "text-fg")}>{cur.row.values[j]}</span>
                   </p>
                 ))}
               </Tooltip>
@@ -255,6 +284,8 @@ export function ChartFrame({
                 ))}
               </tbody>
             </table>
+            {note}
+            {onSelect && <p id={hint}>{s.chartOpenPoint}</p>}
           </div>
         </>
       )}

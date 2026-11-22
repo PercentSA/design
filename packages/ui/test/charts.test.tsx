@@ -135,7 +135,7 @@ describe("cartesian charts (server render)", () => {
   test("custom format is used in the axis and the table", () => {
     const out = en(<LineChart {...props} format={(n) => `${n} u`} />);
     expect(out).toContain("<td>1200 u</td>");
-    expect(out).toMatch(/<text[^>]*>1500 u<\/text>/);
+    expect(out).toMatch(/<text[^>]*>\u20681500 u\u2069<\/text>/);
   });
   test("AreaChart stacked: areas close, the top line of the last series sits at the stacked total", () => {
     const out = en(<AreaChart {...props} stacked />);

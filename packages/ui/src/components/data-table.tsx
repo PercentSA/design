@@ -1,9 +1,10 @@
 "use client";
 
-import { useId, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useLang, useLinkComponent, useStrings, useText } from "../provider";
+import { SegmentedControl } from "./actions";
 import { buttonClass } from "./button-class";
 import { ABOVE_STRETCHED_LINK, STRETCHED_LINK } from "./card";
 import { Checkbox } from "./choices";
@@ -28,14 +29,14 @@ export type DataTableColumn<Row> = {
   align?: TableAlign;
   /** CSS width of the column, for example "8rem". */
   width?: string;
-  /** With `cards`: not shown on the cards (below 768 px). */
+  /** With `cards`: not shown on the cards (below 768 px, and in the cards view). */
   hideOnCard?: boolean;
   /** ColumnsMenu can hide the column. Default true. */
   hideable?: boolean;
   /** A muted second line under the cell (the phone under a name, the type under a number). null, undefined and "" show nothing.
    *  In the first column of a row with `rowHref` it comes after the link, outside it (links in it stay clickable). */
   description?: (row: Row) => ReactNode;
-  /** With `cards`, below 768 px (the table rows do not change). "end": at the end of the title line, without the header.
+  /** With `cards`, on the cards: below 768 px and in the cards view (the table rows do not change). "end": at the end of the title line, without the header.
    *  "meta": in one wrapped line under the title, without the header. "block": full width under the meta, without the header
    *  (long text). A cell with no value shows nothing. Default: a "header … value" line. Not for the first column. */
   cardSlot?: "end" | "meta" | "block";
@@ -71,7 +72,7 @@ export type DataTableProps<Row> = {
   rowHref?: (row: Row) => string | undefined;
   /** A "⋯" menu per row, in a last column. An empty array gives no button. */
   rowActions?: (row: Row) => MenuItem[];
-  /** Below 768 px each row is a card: the first cell is its title, and the other cells show their header. Default false. */
+  /** Below 768 px, and in the cards view (`viewKey`), each row is a card: the first cell is its title, and the other cells show their header. Default false. */
   cards?: boolean;
   /** `compact` for dense lists: cell py-2, header row h-9, card rows p-3 with gap-y-1. `print` for a printed report: cells
    *  text-xs px-1 py-1, header row h-8 px-1 with wrapping text, no scroll box (overflow visible), no cards, no sticky header;
@@ -92,22 +93,28 @@ export type DataTableProps<Row> = {
   groupHeader?: (key: string, rows: Row[]) => ReactNode;
   /** A subtotal row after each group: values by column key, as `totals`. */
   groupTotals?: (key: string, rows: Row[]) => Partial<Record<string, ReactNode>>;
+  /** Shows a Table | Cards switch (needs `cards`). The choice is kept in the browser under this key. */
+  viewKey?: string;
+  /** The view before a kept choice. Default `table`. */
+  defaultView?: "table" | "cards";
+  /** One row above the table: the toolbar (it grows), then the view switch. */
+  toolbar?: ReactNode;
   className?: string;
 };
 
 const field = (row: unknown, key: string) => (row as Record<string, unknown>)[key];
 
-// Cards: below 768 px the rows are cards, by CSS only, so there is one copy of the rows.
-const CARD_ROW = "max-md:flex max-md:flex-wrap max-md:items-start max-md:gap-x-3 max-md:gap-y-1.5 max-md:rounded-card max-md:border max-md:border-line max-md:p-4";
+// Cards: below 768 px (and in the cards view) the rows are cards, by CSS only (variant p-cards, styles.css), so there is one copy of the rows.
+const CARD_ROW = "p-cards:flex p-cards:flex-wrap p-cards:items-start p-cards:gap-x-3 p-cards:gap-y-1.5 p-cards:rounded-card p-cards:border p-cards:border-line p-cards:p-4";
 // The cells after the title: one line each, the header at the start and the value at the end. order-1 puts them
 // under the first line, so the checkbox, the title and "⋯" share it.
-const CARD_FIELD = "max-md:order-1 max-md:flex max-md:basis-full max-md:items-center max-md:justify-between max-md:gap-3 max-md:p-0";
+const CARD_FIELD = "p-cards:order-1 p-cards:flex p-cards:basis-full p-cards:items-center p-cards:justify-between p-cards:gap-3 p-cards:p-0";
 // Card slots (a column's `cardSlot`). With a slot the cards use margins in place of the row gap, so the empty line that
 // breaks the title line (::before, only with "meta") adds no space. Order: title line 0, meta 1, block 2, fields 3.
-const SLOT_BREAK = "max-md:before:order-1 max-md:before:h-0 max-md:before:basis-full max-md:before:content-['']";
-const SLOT_END = "max-md:shrink-0 max-md:p-0";
-const SLOT_META = "max-md:order-1 max-md:p-0 max-md:text-start max-md:text-sm max-md:text-fg-2";
-const SLOT_BLOCK = "max-md:order-2 max-md:basis-full max-md:p-0 max-md:text-start";
+const SLOT_BREAK = "p-cards:before:order-1 p-cards:before:h-0 p-cards:before:basis-full p-cards:before:content-['']";
+const SLOT_END = "p-cards:shrink-0 p-cards:p-0";
+const SLOT_META = "p-cards:order-1 p-cards:p-0 p-cards:text-start p-cards:text-sm p-cards:text-fg-2";
+const SLOT_BLOCK = "p-cards:order-2 p-cards:basis-full p-cards:p-0 p-cards:text-start";
 const hasValue = (v: ReactNode) => v !== null && v !== undefined && v !== false && v !== "";
 const ACTIONS_KEY = "p-row-actions";
 
@@ -143,6 +150,9 @@ export function DataTable<Row>({
   groupBy,
   groupHeader,
   groupTotals,
+  viewKey,
+  defaultView = "table",
+  toolbar,
   className,
 }: DataTableProps<Row>) {
   const columns = hiddenColumns ? allColumns.filter((c) => !hiddenColumns.includes(c.key)) : allColumns;
@@ -154,6 +164,7 @@ export function DataTable<Row>({
   const [innerSort, setInnerSort] = useState(defaultSort ?? null);
   const [innerSelected, setInnerSelected] = useState(defaultSelected ?? []);
   const [innerPage, setInnerPage] = useState(1);
+  const [view, setView] = useState<"table" | "cards">(defaultView);
   const server = pageCount !== undefined;
   const order = sort === undefined ? innerSort : sort;
   // Client side, `rows` holds every row: forget ids of rows that are gone. Server side, other pages keep theirs.
@@ -213,20 +224,44 @@ export function DataTable<Row>({
   const compact = density === "compact";
   // A printed table is one block of rows: no cards.
   const cards = cardsProp && !print;
+  const switchShown = !!viewKey && cards;
+  const cardsView = switchShown && view === "cards";
+  // In the cards view the header row is visually hidden: Tab skips its controls, screen readers still reach them.
+  const headTab = cardsView ? -1 : undefined;
   const cellY = compact ? "py-2" : print ? "px-1 py-1 text-xs" : undefined;
   const headH = compact ? "h-9" : print ? "h-8 px-1" : undefined;
   const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k > 0 ? c.cardSlot : undefined);
   const hasSlots = columns.some((c, k) => slotted(k, c));
   const hasMeta = columns.some((c, k) => slotted(k, c) === "meta");
-  const slotGap = compact ? "max-md:mt-1" : "max-md:mt-1.5";
+  const slotGap = compact ? "p-cards:mt-1" : "p-cards:mt-1.5";
   const rowClass = cn(
     cards && CARD_ROW,
-    cards && compact && "max-md:gap-y-1 max-md:p-3",
-    hasSlots && "max-md:gap-y-0",
+    cards && compact && "p-cards:gap-y-1 p-cards:p-3",
+    hasSlots && "p-cards:gap-y-0",
     hasMeta && SLOT_BREAK,
   );
   // grid-cols-1 (minmax(0, 1fr)): a wide group or total row cannot make the column, and so every card, wider than the box.
-  const bodyClass = cn(cards && "max-md:grid max-md:grid-cols-1 max-md:gap-3 max-md:[&_tr:last-child]:border");
+  const bodyClass = cn(cards && "p-cards:grid p-cards:grid-cols-1 p-cards:gap-3 p-cards:[&_tr:last-child]:border");
+
+  // The kept choice is read after mount, so the server and the first render use `defaultView`.
+  useEffect(() => {
+    if (!viewKey) return;
+    try {
+      const v = localStorage.getItem(`p-view:${viewKey}`);
+      if (v === "table" || v === "cards") setView(v);
+    } catch {
+      // Storage is blocked: keep the default.
+    }
+  }, [viewKey]);
+  const changeView = (v: string) => {
+    if (v !== "table" && v !== "cards") return;
+    setView(v);
+    try {
+      localStorage.setItem(`p-view:${viewKey}`, v);
+    } catch {
+      // Storage is blocked: the choice lasts until the page closes.
+    }
+  };
 
   // `i` makes the row's ids (for the checkbox and "⋯" names) unique in the table.
   const renderRow = (row: Row, i: number | string) => {
@@ -242,7 +277,7 @@ export function DataTable<Row>({
         className={cn(href && cn("relative hover:bg-surface-2", ABOVE_STRETCHED_LINK), rowClass)}
       >
         {selectable && (
-          <TableCell className={cn(cellY, cards && "max-md:p-0")}>
+          <TableCell className={cn(cellY, cards && "p-cards:p-0")}>
             <Checkbox
               className="gap-0 align-middle"
               // Named "Select row" + the first cell, so each checkbox says which row it selects.
@@ -267,7 +302,7 @@ export function DataTable<Row>({
               </Text>
             ) : null;
             const slot = slotted(k, c);
-            const fieldClass = slot === "end" ? SLOT_END : slot === "meta" ? cn(SLOT_META, slotGap) : slot === "block" ? cn(SLOT_BLOCK, slotGap) : cn(CARD_FIELD, hasSlots && "max-md:order-3", hasSlots && slotGap);
+            const fieldClass = slot === "end" ? SLOT_END : slot === "meta" ? cn(SLOT_META, slotGap) : slot === "block" ? cn(SLOT_BLOCK, slotGap) : cn(CARD_FIELD, hasSlots && "p-cards:order-3", hasSlots && slotGap);
             return (
               <TableCell
                 key={c.key}
@@ -276,14 +311,14 @@ export function DataTable<Row>({
                 className={cn(
                   cellY,
                   k === 0 && href && "font-medium",
-                  cards && (k === 0 ? "max-md:min-w-0 max-md:flex-1 max-md:p-0 max-md:font-medium" : fieldClass),
-                  cards && (c.hideOnCard || (slot && !hasValue(value) && !note)) && "max-md:hidden",
+                  cards && (k === 0 ? "p-cards:min-w-0 p-cards:flex-1 p-cards:p-0 p-cards:font-medium" : fieldClass),
+                  cards && (c.hideOnCard || (slot && !hasValue(value) && !note)) && "p-cards:hidden",
                 )}
               >
                 {k === 0 && href ? (
                   // -outline-offset keeps the row's focus ring inside the table's scroll box.
                   <>
-                    <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "max-md:after:rounded-card")}>
+                    <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "p-cards:after:rounded-card")}>
                       {value}
                     </L>
                     {note}
@@ -296,7 +331,7 @@ export function DataTable<Row>({
                   </>
                 ) : cards && k > 0 ? (
                   <>
-                    <span className="text-xs text-fg-3 md:hidden">{c.header}</span>
+                    <span className="hidden text-xs text-fg-3 p-cards:inline">{c.header}</span>
                     <span>
                       {value}
                       {note}
@@ -314,7 +349,7 @@ export function DataTable<Row>({
             );
           }),
           () => (
-            <TableCell key={ACTIONS_KEY} className={cn("w-10 py-1.5", cards && "max-md:p-0")}>
+            <TableCell key={ACTIONS_KEY} className={cn("w-10 py-1.5", cards && "p-cards:p-0")}>
               {actions.length > 0 && (
                 <DropdownMenu
                   align="end"
@@ -353,20 +388,39 @@ export function DataTable<Row>({
   );
 
   return (
-    <div className={className}>
+    <div className={cn("min-w-0", className)} data-view={cardsView ? "cards" : undefined}>
+      {(toolbar || switchShown) && (
+        <div className="flex flex-wrap items-center gap-2 pb-4">
+          <div className="min-w-0 flex-1">{toolbar}</div>
+          {switchShown && (
+            <div className="max-md:hidden">
+              <SegmentedControl
+                aria-label={s.viewSwitch}
+                value={view}
+                onValueChange={changeView}
+                options={[
+                  { value: "table", label: s.viewTable },
+                  { value: "cards", label: s.viewCards },
+                ]}
+              />
+            </div>
+          )}
+        </div>
+      )}
       <Table
         caption={caption}
         hideCaption={hideCaption}
         aria-busy={loading || undefined}
-        className={cn(cards && "max-md:[&>table]:block", print ? "overflow-visible" : stickyHeader && "max-h-[70dvh] overflow-auto")}
+        className={cn(cards && "p-cards:[&>table]:block", print ? "overflow-visible" : stickyHeader && "max-h-[70dvh] overflow-auto")}
       >
         {/* z-sticky: above the row controls that sit over a row link (z-1). */}
-        <TableHeader className={cn(stickyHeader && !print && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "max-md:sr-only") || undefined}>
+        <TableHeader className={cn(stickyHeader && !print && "sticky top-0 z-(--p-z-sticky) bg-bg", cards && "p-cards:sr-only") || undefined}>
           <TableRow>
             {selectable && (
               <TableHead wrap={print} className={cn("w-10", headH)}>
                 <Checkbox
                   className="gap-0 align-middle"
+                  tabIndex={headTab}
                   label={<span className="sr-only">{s.selectAll}</span>}
                   checked={all}
                   disabled={loading || ids.length === 0}
@@ -388,7 +442,7 @@ export function DataTable<Row>({
                     aria-sort={active === "asc" ? "ascending" : active === "desc" ? "descending" : undefined}
                   >
                     {c.sortable ? (
-                      <button type="button" onClick={() => toggleSort(c.key)} className="-mx-1 inline-flex items-center gap-1 rounded-md px-1 transition-colors hover:text-fg">
+                      <button type="button" tabIndex={headTab} onClick={() => toggleSort(c.key)} className="-mx-1 inline-flex items-center gap-1 rounded-md px-1 transition-colors hover:text-fg">
                         {c.header}
                         <Icon aria-hidden className={cn("size-3.5 shrink-0", !active && "opacity-50")} />
                       </button>
@@ -422,21 +476,21 @@ export function DataTable<Row>({
           <TableBody className={bodyClass}>
             {loading ? (
               Array.from({ length: pageSize ?? (rows.length || 5) }, (_, i) => (
-                <TableRow key={i} className={cn(cards && CARD_ROW, cards && compact && "max-md:gap-y-1 max-md:p-3")}>
-                  {selectable && <TableCell className={cn(cellY, cards && "max-md:hidden")} />}
+                <TableRow key={i} className={cn(cards && CARD_ROW, cards && compact && "p-cards:gap-y-1 p-cards:p-3")}>
+                  {selectable && <TableCell className={cn(cellY, cards && "p-cards:hidden")} />}
                   {withActions(
                     columns.map((c) => (
-                      <TableCell key={c.key} className={cn(cellY, cards && "max-md:basis-full max-md:p-0")}>
+                      <TableCell key={c.key} className={cn(cellY, cards && "p-cards:basis-full p-cards:p-0")}>
                         <Skeleton className="h-4" />
                       </TableCell>
                     )),
-                    () => <TableCell key={ACTIONS_KEY} className={cn(cellY, cards && "max-md:hidden")} />,
+                    () => <TableCell key={ACTIONS_KEY} className={cn(cellY, cards && "p-cards:hidden")} />,
                   )}
                 </TableRow>
               ))
             ) : visible.length === 0 ? (
-              <TableRow className={cn(cards && "max-md:block")}>
-                <TableCell colSpan={colSpan} className={cn(cards && "max-md:block")}>
+              <TableRow className={cn(cards && "p-cards:block")}>
+                <TableCell colSpan={colSpan} className={cn(cards && "p-cards:block")}>
                   {empty ?? <EmptyState variant="plain" title={t(s.noResults)} />}
                 </TableCell>
               </TableRow>

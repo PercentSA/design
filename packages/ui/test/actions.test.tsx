@@ -1,7 +1,10 @@
 import { describe, expect, test } from "bun:test";
+import { act } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
+import { mount, useDom } from "./dom";
 import { BackToTop, Button, ButtonGroup, CopyButton, PercentProvider, SegmentedControl, Spinner, Toggle, ToggleGroup } from "../src";
 
+useDom();
 const html = (node: React.ReactNode) => renderToStaticMarkup(node);
 const ar = (node: React.ReactNode) => html(<PercentProvider lang="ar">{node}</PercentProvider>);
 
@@ -80,5 +83,43 @@ describe("helpers", () => {
   test("Spinner announces loading, in the page language", () => {
     expect(html(<Spinner />)).toContain('role="status"');
     expect(ar(<Spinner />)).toContain("جارٍ التحميل");
+  });
+});
+
+describe("SegmentedControl arrow keys", () => {
+  const OPTIONS = [{ value: "a", label: "A" }, { value: "b", label: "B", disabled: true }, { value: "c", label: "C" }, { value: "d", label: "D" }];
+  const three = [{ value: "a", label: "A" }, { value: "b", label: "B" }, { value: "c", label: "C" }];
+  const key = (el: Element, key: string, init: KeyboardEventInit = {}) =>
+    act(async () => {
+      el.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true, cancelable: true, ...init }));
+    });
+  const radio = (el: Element, n: string) => [...el.querySelectorAll('[role="radio"]')].find((r) => r.textContent === n)!;
+  const chosen = (el: Element) => [...el.querySelectorAll('[role="radio"]')].find((r) => r.getAttribute("aria-checked") === "true")!.textContent;
+
+  test("in Arabic ArrowLeft selects the next option and ArrowRight the previous; Up and Down select too", async () => {
+    const el = await mount(<PercentProvider lang="ar"><SegmentedControl defaultValue="a" options={three} /></PercentProvider>);
+    await key(radio(el, "A"), "ArrowLeft");
+    expect(chosen(el)).toBe("B");
+    await key(radio(el, "B"), "ArrowRight");
+    expect(chosen(el)).toBe("A");
+    await key(radio(el, "A"), "ArrowDown");
+    expect(chosen(el)).toBe("B");
+    await key(radio(el, "B"), "ArrowUp");
+    expect(chosen(el)).toBe("A");
+    const en = await mount(<PercentProvider lang="en"><SegmentedControl defaultValue="a" options={three} /></PercentProvider>);
+    await key(radio(en, "A"), "ArrowRight");
+    expect(chosen(en)).toBe("B");
+  });
+
+  test("a disabled option is skipped", async () => {
+    const el = await mount(<PercentProvider lang="en"><SegmentedControl defaultValue="a" options={OPTIONS} /></PercentProvider>);
+    await key(radio(el, "A"), "ArrowRight");
+    expect(chosen(el)).toBe("C");
+  });
+
+  test("a key with Alt, Ctrl, Meta or Shift does not select", async () => {
+    const el = await mount(<PercentProvider lang="en"><SegmentedControl defaultValue="a" options={three} /></PercentProvider>);
+    for (const mod of ["altKey", "ctrlKey", "metaKey", "shiftKey"]) await key(radio(el, "A"), "ArrowRight", { [mod]: true });
+    expect(chosen(el)).toBe("A");
   });
 });

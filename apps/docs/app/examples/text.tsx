@@ -1,4 +1,4 @@
-import { Blockquote, Code, Display, FormattedNumber, Heading, Highlight, Kbd, Label, Link, Prose, Stack, Text } from "@percentsa/ui";
+import { Blockquote, Code, Display, ExpandableText, FormattedNumber, Heading, Highlight, Kbd, Label, Link, Prose, Stack, Text } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function DisplayExample() {
@@ -112,6 +112,19 @@ export function FormattedNumberExample() {
       <FormattedNumber value={1250000} className="text-2xl" />
       <FormattedNumber value={1250000} options={{ notation: "compact" }} className="text-2xl" />
       <FormattedNumber value={0.42} options={{ style: "percent" }} className="text-2xl" />
+    </Stack>
+  );
+}
+
+export function ExpandableTextExample() {
+  const t = useT();
+  return (
+    <Stack gap={4}>
+      <ExpandableText
+        text={t("Build failed: the step could not read the file because the path is longer than the limit of the file system.", "فشل البناء: تعذّرت على الخطوة قراءة الملف لأن المسار أطول من حد نظام الملفات.")}
+        details={<Code>job 4f2a</Code>}
+      />
+      <ExpandableText text={t("Build finished.", "اكتمل البناء.")} />
     </Stack>
   );
 }

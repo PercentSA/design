@@ -1,6 +1,16 @@
 /* @percentsa/ui styles. Import after tailwindcss and @percentsa/tokens/theme.css. */
 @source "./src";
 
+/* DataTable cards: below 768 px, and in the cards view (DataTable viewKey) at every width. */
+@custom-variant p-cards {
+  @media (width < 48rem) {
+    @slot;
+  }
+  &:where([data-view="cards"] *) {
+    @slot;
+  }
+}
+
 @layer base {
   html {
     background: var(--p-bg);

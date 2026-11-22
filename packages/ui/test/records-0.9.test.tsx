@@ -358,11 +358,11 @@ describe("LineItemsTable record details", () => {
 
   test("phones: the same name cell is the card title, so the details show in card rows", async () => {
     const el = await table("en");
-    expect(el.querySelector("thead")!.className).toContain("max-md:sr-only");
+    expect(el.querySelector("thead")!.className).toContain("p-cards:sr-only");
     const first = el.querySelector("tbody tr td")!;
-    expect(first.className).toContain("max-md:flex-1");
+    expect(first.className).toContain("p-cards:flex-1");
     expect(first.querySelector("ul")).not.toBeNull();
-    expect(first.className).not.toContain("max-md:hidden");
+    expect(first.className).not.toContain("p-cards:hidden");
   });
 
   test("totals: a TotalsList under the table at the end side, full width on narrow tables", async () => {
