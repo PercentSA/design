@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type ReactNode } from "react";
+import { Fragment, useId, useState, type ReactNode } from "react";
 import { ArrowLeft, ChevronDown, Ellipsis } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useLinkComponent, useStrings, useText } from "../provider";
@@ -105,8 +105,8 @@ export function PageHeader({
   description?: ReactNode;
   badges?: ReactNode;
   meta?: ReactNode;
-  /** A link above the title, back to the list. */
-  back?: Crumb;
+  /** A link above the title, back to the list; a list of links shows a path ("Client / Project"). */
+  back?: Crumb | Crumb[];
   /** The one primary action of the view. */
   primary?: ReactNode;
   /** Secondary buttons; they may hold their own dialogs. */
@@ -133,11 +133,36 @@ export function PageHeader({
       )}
     >
       <div className="grid min-w-0 gap-1.5">
-        {back?.href && (
-          <L href={back.href} className="inline-flex w-fit items-center gap-1.5 text-sm text-fg-3 transition-colors hover:text-fg">
-            <ArrowLeft aria-hidden className="size-4 rtl:-scale-x-100" />
-            {back.label}
-          </L>
+        {Array.isArray(back) ? (
+          <nav aria-label={s.breadcrumb}>
+            <ol className="flex flex-wrap items-center gap-x-1.5 text-sm text-fg-3">
+              {back.map((c, i) => (
+                <Fragment key={i}>
+                  {i > 0 && (
+                    <li aria-hidden="true" role="presentation">
+                      /
+                    </li>
+                  )}
+                  <li>
+                    {c.href ? (
+                      <L href={c.href} className="transition-colors hover:text-fg">
+                        {c.label}
+                      </L>
+                    ) : (
+                      c.label
+                    )}
+                  </li>
+                </Fragment>
+              ))}
+            </ol>
+          </nav>
+        ) : (
+          back?.href && (
+            <L href={back.href} className="inline-flex w-fit items-center gap-1.5 text-sm text-fg-3 transition-colors hover:text-fg">
+              <ArrowLeft aria-hidden className="size-4 rtl:-scale-x-100" />
+              {back.label}
+            </L>
+          )
         )}
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
           <H className="heading text-2xl">{title}</H>

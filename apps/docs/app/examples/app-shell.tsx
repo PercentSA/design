@@ -26,6 +26,8 @@ import {
   Switch,
   type SidebarSection,
   StatusBadge,
+  StatusDot,
+  Badge,
   TableBody,
   TableCell,
   TableHead,
@@ -279,6 +281,40 @@ export function PageHeaderListExample() {
       menu={[
         { label: t("Import from a file", "استيراد من ملف"), icon: <Upload />, onSelect: done(t("Import", "استيراد")) },
         { label: t("Print the list", "طباعة القائمة"), icon: <Printer />, onSelect: done(t("Print", "طباعة")) },
+      ]}
+    />
+  );
+}
+
+/** A project page: `back` takes a list of links, shown as a path. */
+export function PageHeaderPathExample() {
+  const t = useT();
+  const done = (title: string) => () => toast({ title });
+  return (
+    <PageHeader
+      className="w-full"
+      headingLevel={2}
+      back={[
+        { href: "#al-noor", label: t("Al Noor", "النور") },
+        { href: "#website", label: t("Website", "الموقع") },
+      ]}
+      title={t("Main website", "الموقع الرئيسي")}
+      badges={
+        <>
+          <StatusDot status="live">{t("Live", "يعمل")}</StatusDot>
+          <Badge>{t("Web app", "تطبيق ويب")}</Badge>
+        </>
+      }
+      meta={<span dir="ltr">owner/main-website · main</span>}
+      primary={<Button onClick={done(t("Redeploy started", "بدأت إعادة النشر"))}>{t("Redeploy", "إعادة النشر")}</Button>}
+      secondary={
+        <Button variant="secondary" onClick={done(t("Opening the site", "جارٍ فتح الموقع"))}>
+          {t("Open site", "فتح الموقع")}
+        </Button>
+      }
+      menu={[
+        { label: t("New deployment…", "نشر جديد…"), onSelect: done(t("New deployment", "نشر جديد")) },
+        { label: t("Delete app…", "حذف التطبيق…"), icon: <Trash2 />, danger: true, onSelect: done(t("Deleted", "حُذف")) },
       ]}
     />
   );

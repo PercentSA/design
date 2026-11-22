@@ -15,9 +15,9 @@ export const pages: DocPage[] = [
     "PageHeader",
     "app",
     "PageHeader",
-    ["PageHeaderListExample", "PageHeaderDocumentExample"],
-    "The top of a list or record page: the title with status badges, a meta line, a back link to the list, one primary action, secondary actions and a “⋯” menu. Below 768 px the primary action is full width and “More actions” opens the rest; secondary buttons stay mounted, so their dialogs keep working. Danger items go last. `sticky` keeps it under the AppShell header from 768 px. Menu items take a `description`, for example why an item is disabled.",
-    "أعلى صفحة قائمة أو سجل: العنوان مع شارات الحالة، وسطر معلومات، ورابط رجوع إلى القائمة، وإجراء رئيسي واحد، وإجراءات ثانوية، وقائمة «⋯». تحت 768 بكسل يملأ الإجراء الرئيسي العرض ويفتح زر «إجراءات أخرى» الباقي؛ وتبقى الأزرار الثانوية محمّلة فتستمر نوافذها في العمل. عناصر الخطر في الآخر. الخاصية sticky تُبقيه تحت رأس AppShell من 768 بكسل. تقبل عناصر القوائم description، مثل سبب تعطيل العنصر.",
+    ["PageHeaderListExample", "PageHeaderDocumentExample", "PageHeaderPathExample"],
+    "The top of a list or record page: the title with status badges, a meta line, a back link to the list, one primary action, secondary actions and a “⋯” menu. Below 768 px the primary action is full width and “More actions” opens the rest; secondary buttons stay mounted, so their dialogs keep working. Danger items go last. `sticky` keeps it under the AppShell header from 768 px. Menu items take a `description`, for example why an item is disabled. `back` also takes several links, for example “Client / Project”.",
+    "أعلى صفحة قائمة أو سجل: العنوان مع شارات الحالة، وسطر معلومات، ورابط رجوع إلى القائمة، وإجراء رئيسي واحد، وإجراءات ثانوية، وقائمة «⋯». تحت 768 بكسل يملأ الإجراء الرئيسي العرض ويفتح زر «إجراءات أخرى» الباقي؛ وتبقى الأزرار الثانوية محمّلة فتستمر نوافذها في العمل. عناصر الخطر في الآخر. الخاصية sticky تُبقيه تحت رأس AppShell من 768 بكسل. تقبل عناصر القوائم description، مثل سبب تعطيل العنصر. وتقبل `back` أيضًا عدة روابط، مثل «العميل / المشروع».",
   ),
   p(
     "print-area",

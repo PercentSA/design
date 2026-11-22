@@ -43,6 +43,28 @@ describe("PageHeader", () => {
     expect(html.indexOf("/ar/invoices")).toBeLessThan(html.indexOf("<h1"));
   });
 
+  test("back with several crumbs is a breadcrumb nav with a link for each crumb", () => {
+    const html = renderToStaticMarkup(
+      <PageHeader title="Main website" back={[{ href: "/clients/al-noor", label: "Al Noor" }, { href: "/clients/al-noor/sites", label: "Website" }]} />,
+    );
+    const el = document.createElement("div");
+    el.innerHTML = html;
+    const nav = el.querySelector("nav")!;
+    expect(nav.getAttribute("aria-label")).toBe("Breadcrumb");
+    expect([...nav.querySelectorAll("a")].map((a) => a.textContent)).toEqual(["Al Noor", "Website"]);
+    expect(nav.querySelectorAll('[aria-hidden="true"]')).toHaveLength(1);
+    expect(nav.querySelector('[aria-hidden="true"]')!.textContent).toBe("/");
+    expect(nav.querySelector("svg")).toBeNull();
+  });
+
+  test("a crumb without href is plain text", () => {
+    const html = renderToStaticMarkup(<PageHeader title="Main website" back={[{ href: "/clients", label: "Clients" }, { label: "Al Noor" }]} />);
+    const el = document.createElement("div");
+    el.innerHTML = html;
+    expect(el.querySelectorAll("nav a")).toHaveLength(1);
+    expect(el.querySelector("nav")!.textContent).toContain("Al Noor");
+  });
+
   test("secondary renders once and stays mounted on phones", async () => {
     const el = await mount(<PageHeader title="Orders" primary={<Button>New order</Button>} secondary={<Button data-secondary="">Export</Button>} />);
     expect(el.querySelectorAll("[data-secondary]")).toHaveLength(1);
