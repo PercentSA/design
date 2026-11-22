@@ -5,6 +5,7 @@ import { cn } from "../lib/cn";
 import { useLinkComponent, useStrings } from "../provider";
 import { Skeleton, StatusDot, type StatusDotStatus } from "./feedback";
 import { Surface } from "./layout";
+import { isEmptyValue, NotSet } from "./not-set";
 
 export type RecordSummaryItem = {
   id: string;
@@ -30,7 +31,6 @@ declare const process: { env: { NODE_ENV?: string } } | undefined;
 // 2 lines, then cut. On an inner element, so the focus ring of a link around it is not clipped.
 const CLAMP = "line-clamp-2 break-words";
 
-const empty = (v: ReactNode) => v == null || v === "";
 
 /**
  * The key facts of a record in one dense strip, for example under a record's header: 1 to 6 items (label, value, hint).
@@ -92,8 +92,8 @@ export function RecordSummary({
                         item.status.label
                       )}
                     </StatusDot>
-                  ) : empty(item.value) ? (
-                    <span className="text-base font-normal text-fg-3">{s.notSet}</span>
+                  ) : isEmptyValue(item.value) ? (
+                    <NotSet className="text-base font-normal" />
                   ) : item.href ? (
                     <L href={item.href} className="rounded-field underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
                       <bdi className={CLAMP}>{item.value}</bdi>

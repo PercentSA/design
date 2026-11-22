@@ -5,6 +5,7 @@ import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
 import { CopyButton } from "./actions";
 import { fieldContext } from "./field";
+import { isEmptyValue, NotSet } from "./not-set";
 
 /**
  * A group of settings: h2 title, description, rows divided by lines, and an optional footer (a Save button) at the end.
@@ -159,8 +160,6 @@ export function ValueRow({
   action?: ReactNode;
   className?: string;
 }) {
-  const s = useStrings();
-  const empty = value == null || value === "";
   return (
     <SettingsRow
       label={label}
@@ -168,9 +167,13 @@ export function ValueRow({
       className={className}
       control={
         <div className="flex min-w-0 items-center gap-1 md:justify-end">
-          <span className={cn("min-w-0 break-all text-sm", mono && "font-mono", empty && "text-fg-3")} dir={mono ? "ltr" : undefined}>
-            {empty ? s.notSet : value}
-          </span>
+          {isEmptyValue(value) ? (
+            <NotSet className="text-sm" />
+          ) : (
+            <span className={cn("min-w-0 break-all text-sm", mono && "font-mono")} dir={mono ? "ltr" : undefined}>
+              {value}
+            </span>
+          )}
           {copy != null && <CopyButton value={copy} iconOnly />}
           {action}
         </div>

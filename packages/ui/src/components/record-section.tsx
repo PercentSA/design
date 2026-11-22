@@ -1,11 +1,7 @@
-"use client";
-
 import type { ReactNode } from "react";
-import { useStrings } from "../provider";
 import { Card } from "./card";
 import { DescriptionList } from "./list";
-
-const empty = (v: ReactNode) => v == null || v === "";
+import { isEmptyValue, NotSet } from "./not-set";
 
 /** A record's facts as text in a Card, with its edit action in the header. Empty details show "Not set". */
 export function RecordSection({
@@ -33,14 +29,13 @@ export function RecordSection({
   cols?: 1 | 2 | 3;
   className?: string;
 }) {
-  const s = useStrings();
   return (
     <Card title={title} description={description} action={action} headingLevel={headingLevel} density={density} className={className}>
       <DescriptionList
         layout={layout}
         density={density}
         cols={cols}
-        items={items.map((i) => ({ term: i.term, details: empty(i.details) ? <span className="text-fg-3">{s.notSet}</span> : i.details }))}
+        items={items.map((i) => ({ term: i.term, details: isEmptyValue(i.details) ? <NotSet /> : i.details }))}
       />
     </Card>
   );
