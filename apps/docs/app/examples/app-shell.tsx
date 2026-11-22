@@ -179,7 +179,7 @@ export function SidebarExample() {
   );
 }
 
-/** Items with `children` fold open to their links; the group with the current page starts open. */
+/** Items with `children` fold open to their links; the group with the current page starts open. Hosting and System fold from their titles. */
 export function SidebarNestedExample() {
   const t = useT();
   const [current, setCurrent] = useState("#al-noor-app");
@@ -195,10 +195,27 @@ export function SidebarNestedExample() {
         { ...group("#al-noor", t("Al Noor", "النور"), [
           { href: "#al-noor-app", label: t("Mobile app", "تطبيق الجوال") },
           { href: "#al-noor-site", label: t("Website", "الموقع") },
-        ]), icon: <Users /> },
-        { ...group("#sahab", t("Sahab", "سحاب"), [{ href: "#sahab-portal", label: t("Portal", "البوابة") }]), icon: <Users /> },
+        ]), icon: <Users />, status: "danger" as const, statusLabel: t("Site down", "الموقع متوقف") },
+        { ...group("#sahab", t("Sahab", "سحاب"), [{ href: "#sahab-portal", label: t("Portal", "البوابة") }]), icon: <Users />, status: "warning" as const, statusLabel: t("Restarting", "قيد إعادة التشغيل") },
         { ...group("#private", t("Private client", "عميل خاص"), [{ href: "#private-erp", label: t("ERP", "نظام ERP") }]), icon: <Lock /> },
       ],
+    },
+    {
+      title: t("Hosting", "الاستضافة"),
+      collapsible: true,
+      id: "docs-hosting",
+      badge: "2",
+      items: [
+        { href: "#servers", label: t("Servers", "الخوادم"), icon: <Users /> },
+        { href: "#backups", label: t("Backups", "النسخ الاحتياطية"), icon: <Lock /> },
+      ],
+    },
+    {
+      title: t("System", "النظام"),
+      collapsible: true,
+      id: "docs-system",
+      badge: "1",
+      items: [{ href: "#logs", label: t("Logs", "السجلات"), icon: <Lock /> }],
     },
   ];
   return (
