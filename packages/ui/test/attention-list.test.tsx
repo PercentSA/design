@@ -53,8 +53,12 @@ describe("AttentionList", () => {
     const el = await mount(<AttentionList label="x" compact items={ITEMS} />);
     const first = rows(el)[0]!;
     expect(first.querySelector('[class*="bg-danger"]')).not.toBeNull();
-    expect(rows(el)[1]!.querySelector(".sr-only")!.textContent).toBe("Important");
-    expect(first.textContent).toContain("Storage · ");
+    const line = rows(el)[1]!.querySelector("p")!;
+    expect(line.textContent).toContain("Important · Main website · ");
+    expect(rows(el)[1]!.querySelector(".sr-only")).toBeNull();
+    expect(first.textContent).toContain("Critical · Storage · ");
+    expect(first.textContent).not.toContain("Al Noor");
+    expect(el.querySelector("time[tabindex]")).toBeNull();
     expect(first.textContent).not.toContain("No space left");
     expect(first.textContent).not.toContain("Fix");
     expect(el.querySelector("button")).toBeNull();
@@ -91,7 +95,33 @@ describe("AttentionList", () => {
     const el = await mount(<AttentionList label="x" items={ITEMS} />);
     const li = rows(el)[0]!;
     expect(li.className).toContain("grid");
-    expect(li.className).toContain("md:grid-cols");
-    expect(li.querySelector(".max-md\\:col-span-2")!.textContent).toBe("Fix");
+    expect(li.querySelector("button")!.parentElement!.className).toContain("max-md:col-span-3");
+  });
+
+  test("from 768 px all rows share one grid, so the columns line up", async () => {
+    const el = await mount(<AttentionList label="x" items={ITEMS} />);
+    expect(el.querySelector("ul")!.className).toContain("md:grid-cols-[");
+    for (const li of rows(el)) expect(li.className).toContain("md:grid-cols-subgrid");
+  });
+
+  test("the tab order is title link, action, menu button", async () => {
+    const item: AttentionItem = { ...ITEMS[0]!, context: undefined, menu: [{ label: "Dismiss" }] };
+    const el = await mount(<AttentionList label="x" items={[item]} />);
+    const order = [...el.querySelectorAll("li a, li button, li time[tabindex]")].map((n) => n.textContent!.trim());
+    expect(order).toEqual(["Disk full", "5 minutes ago", "Fix", "More actions"]);
+  });
+
+  test("className stays when the list is empty", async () => {
+    const el = await mount(<AttentionList label="x" items={[]} className="mt-4" />);
+    expect(el.querySelector(".mt-4")).not.toBeNull();
+  });
+
+  test("compact level word is shown in Arabic", async () => {
+    const el = await mount(
+      <PercentProvider lang="ar">
+        <AttentionList label="x" compact items={ITEMS} />
+      </PercentProvider>,
+    );
+    expect(rows(el)[1]!.querySelector("p")!.textContent).toContain("مهم");
   });
 });

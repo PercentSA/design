@@ -376,7 +376,7 @@ export function AttentionListExample() {
   );
 }
 
-/** A bell button opens a popover with the short form and a link to the full list. */
+/** A bell button opens a popover with the short form: the first 4 of 7 items, then a link to the full list. */
 export function AttentionListCompactExample() {
   const t = useT();
   return (

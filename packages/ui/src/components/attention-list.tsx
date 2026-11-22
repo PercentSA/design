@@ -48,68 +48,65 @@ export function AttentionList({
   const s = useStrings();
   const L = useLinkComponent();
   const uid = useId();
-  if (items.length === 0) return <>{empty ?? <EmptyState variant="plain" title={s.noItems} />}</>;
+  if (items.length === 0) return <div className={className}>{empty ?? <EmptyState variant="plain" title={s.noItems} />}</div>;
   const levels = { critical: s.levelCritical, important: s.levelImportant, other: s.levelOther };
-  const areaLine = (i: AttentionItem, age: ReactNode) => {
-    const parts = [i.area, i.context, age].filter(Boolean);
-    return parts.map((p, n) => (
-      <span key={n}>
-        {n > 0 && " · "}
-        {p}
-      </span>
-    ));
-  };
+  const joined = (parts: ReactNode[]) =>
+    parts
+      .filter(Boolean)
+      .map((p, n) => (
+        <span key={n}>
+          {n > 0 && " · "}
+          {p}
+        </span>
+      ));
   return (
-    <ul aria-label={label} className={cn("divide-y divide-line border-y border-line", className)}>
+    <ul aria-label={label} className={cn("divide-y divide-line border-y border-line", !compact && "md:grid md:grid-cols-[6.5rem_minmax(0,1fr)_7.5rem_auto_auto] md:gap-x-4", className)}>
       {items.map((i, n) =>
         compact ? (
           <li key={i.id} className="grid gap-0.5 py-2">
             <div className="flex items-center gap-2">
-              <StatusDot status={DOT[i.level]}>
-                <span className="sr-only">{levels[i.level]}</span>
-              </StatusDot>
+              <StatusDot status={DOT[i.level]} />
               <L href={i.href} className="min-w-0 font-medium">
                 {i.title}
               </L>
             </div>
-            <p className="ps-4 text-xs text-fg-3">{areaLine({ ...i, context: undefined }, <TimeText value={i.openedAt} ago interactive={false} />)}</p>
+            {/* The level is a word too: the dots differ by colour only. */}
+            <p className="ps-4 text-xs text-fg-3">{joined([levels[i.level], i.area, <TimeText key="t" value={i.openedAt} ago interactive={false} />])}</p>
           </li>
         ) : (
-          <li key={i.id} className="grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-4 gap-y-1.5 py-3 md:grid-cols-[6.5rem_minmax(0,1fr)_7.5rem_auto_auto]">
-            <div className="order-1 md:order-1">
+          // DOM order = tab order = desktop order. The phone places line 1 (level, age, menu), the main block, then the action.
+          <li key={i.id} className="grid grid-cols-[minmax(0,1fr)_auto_auto] items-start gap-x-4 gap-y-1.5 py-3 md:col-span-full md:grid-cols-subgrid">
+            <div className="max-md:col-start-1 max-md:row-start-1 md:col-start-1">
               <StatusBadge tone={TONE[i.level]}>{levels[i.level]}</StatusBadge>
             </div>
-            <div className="order-3 col-span-2 grid gap-0.5 md:order-2 md:col-span-1">
+            <div className="grid gap-0.5 max-md:col-span-3 max-md:row-start-2 md:col-start-2">
               <L id={`${uid}t${n}`} href={i.href} className="w-fit font-medium">
                 {i.title}
               </L>
               {i.detail && <p className="text-sm text-fg-2">{i.detail}</p>}
-              {(i.area || i.context) && <p className="text-xs text-fg-3">{areaLine(i, null)}</p>}
+              {(i.area || i.context) && <p className="text-xs text-fg-3">{joined([i.area, i.context])}</p>}
             </div>
-            {/* On a phone the age and the menu share line 1; from 768 px they are grid cells of the row. */}
-            <div className="order-2 flex items-center justify-self-end md:contents">
-              <div className="pt-0.5 text-sm text-fg-3 md:order-3 md:pt-0.5">
-                <TimeText value={i.openedAt} ago />
+            <div className="pt-0.5 text-sm text-fg-3 max-md:col-start-2 max-md:row-start-1 max-md:justify-self-end md:col-start-3">
+              <TimeText value={i.openedAt} ago />
+            </div>
+            {i.action && <div className="max-md:col-span-3 max-md:row-start-3 md:col-start-4 md:justify-self-end">{i.action}</div>}
+            {i.menu && i.menu.length > 0 && (
+              <div className="max-md:col-start-3 max-md:row-start-1 md:col-start-5">
+                <DropdownMenu
+                  align="end"
+                  items={i.menu}
+                  trigger={
+                    // Named "More actions" + the title, like the DataTable row menu.
+                    <button type="button" aria-labelledby={`${uid}m${n} ${uid}t${n}`} className={buttonClass("ghost", "sm", true)}>
+                      <span id={`${uid}m${n}`} className="sr-only">
+                        {s.moreActions}
+                      </span>
+                      <Ellipsis aria-hidden />
+                    </button>
+                  }
+                />
               </div>
-              {i.menu && i.menu.length > 0 && (
-                <div className="md:order-5">
-                  <DropdownMenu
-                    align="end"
-                    items={i.menu}
-                    trigger={
-                      // Named "More actions" + the title, like the DataTable row menu.
-                      <button type="button" aria-labelledby={`${uid}m${n} ${uid}t${n}`} className={buttonClass("ghost", "sm", true)}>
-                        <span id={`${uid}m${n}`} className="sr-only">
-                          {s.moreActions}
-                        </span>
-                        <Ellipsis aria-hidden />
-                      </button>
-                    }
-                  />
-                </div>
-              )}
-            </div>
-            {i.action && <div className="order-4 max-md:col-span-2 md:order-4 md:justify-self-end">{i.action}</div>}
+            )}
           </li>
         ),
       )}
