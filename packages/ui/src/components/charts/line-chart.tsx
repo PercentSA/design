@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Axes, cartesian } from "./cartesian";
+import { Axes, cartesian, isolate } from "./cartesian";
 import { ChartFrame, useChart, useChartWidth, type ChartLimit, type ChartProps } from "./chart-frame";
 import { ChartLegend, lookOf, Marker } from "./legend";
 import { areaPath, extent, linePath, runs, stack, type Point } from "./scale";
@@ -65,6 +65,7 @@ function PointChart({ curve = "linear", markers, area, stacked, height = 240, li
     );
     return { L, tops, drawn };
   }, [c, width, height, stacked, area, curve, markers, props.patterns, limit?.value]);
+  const limitY = limit ? L.value(limit.value) : 0;
   return (
     <ChartFrame
       title={props.title}
@@ -90,9 +91,16 @@ function PointChart({ curve = "linear", markers, area, stacked, height = 240, li
           <Axes c={L} />
           {limit && (
             <>
-              <line x1={L.box.left} x2={L.box.right} y1={L.value(limit.value)} y2={L.value(limit.value)} className="stroke-fg-3" strokeDasharray="4 4" />
-              <text x={c.mirror ? L.box.left + 4 : L.box.right - 4} y={L.value(limit.value) - 4} textAnchor={c.mirror ? "start" : "end"} className="fill-fg-2 text-xs">
-                {limit.label}
+              <line x1={L.box.left} x2={L.box.right} y1={limitY} y2={limitY} className="stroke-fg-3" strokeDasharray="4 4" />
+              {/* Under the line when there is no room above it (the limit is the top tick). */}
+              <text
+                x={c.mirror ? L.box.left + 4 : L.box.right - 4}
+                y={limitY - 4 < 12 ? limitY + 4 : limitY - 4}
+                dominantBaseline={limitY - 4 < 12 ? "hanging" : undefined}
+                textAnchor={c.mirror ? "start" : "end"}
+                className="fill-fg-2 text-xs"
+              >
+                {isolate(limit.label)}
               </text>
             </>
           )}
