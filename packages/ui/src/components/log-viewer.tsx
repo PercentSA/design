@@ -174,7 +174,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
           atEnd.current = atEndOf(e.currentTarget);
           setAway(!atEnd.current);
         }}
-        className="overflow-y-auto rounded-card border border-line bg-surface py-2 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-fg"
+        className="relative overflow-y-auto rounded-card border border-line bg-surface py-2 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-fg"
       >
         {loading ? (
           <div className="flex flex-col gap-2 px-3">
