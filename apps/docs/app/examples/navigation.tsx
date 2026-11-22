@@ -62,9 +62,6 @@ export function TabsExample() {
   ];
   return (
     <div className="grid w-full max-w-lg grid-cols-1 gap-3">
-      <Text tone="muted" size="sm">
-        {t("Inside a grid the tabs and the panels can shrink, so a wide table scrolls in its own box.", "داخل الشبكة يمكن أن تضيق التبويبات واللوحات، فيُمرَّر الجدول العريض داخل صندوقه.")}
-      </Text>
       <Tabs
         defaultValue="overview"
         items={[
