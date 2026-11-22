@@ -315,7 +315,7 @@ export function Sidebar({
       <nav ref={navRef} aria-label={label ?? s.menu} className="relative isolate -mx-3 grid flex-1 content-start gap-4 overflow-x-hidden overflow-y-auto px-3">
         {mark && <span {...mark} className={cn(mark.className, "rounded-field bg-surface-2")} />}
         {sections.map((section, i) => (
-          <Section key={section.id ?? i} section={section} collapsed={rail} slid={!!mark} folds={folds} onFold={onFold} />
+          <Section key={section.id ?? `i${i}`} section={section} collapsed={rail} slid={!!mark} folds={folds} onFold={onFold} />
         ))}
       </nav>
       {footer && <div className="shrink-0 overflow-hidden"><SidebarRail.Provider value={rail}>{footer}</SidebarRail.Provider></div>}

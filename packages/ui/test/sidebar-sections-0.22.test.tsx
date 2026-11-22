@@ -99,9 +99,10 @@ describe("Sidebar section fold", () => {
     localStorage.setItem("p-sidebar-section:hosting", "0");
     const el = await mount(<Sidebar sections={make("/servers")} />);
     expect(fold(el).getAttribute("aria-expanded")).toBe("true");
+    // An unknown value must give defaultOpen, not "folded".
     localStorage.setItem("p-sidebar-section:hosting", "yes");
-    const el2 = await mount(<Sidebar sections={make("/home")} />);
-    expect(fold(el2).getAttribute("aria-expanded")).toBe("false");
+    const el2 = await mount(<Sidebar sections={make("/home", { defaultOpen: true })} />);
+    expect(fold(el2).getAttribute("aria-expanded")).toBe("true");
   });
 
   test("a fold made in the expanded sidebar stays after a switch to the rail and back", async () => {
@@ -118,6 +119,8 @@ describe("Sidebar section fold", () => {
     await click(fold(el));
     await click(el.querySelector("#rail")!);
     expect(el.querySelector("h2 button")).toBeNull();
+    // Without the stored value only the kept state can open it again.
+    localStorage.clear();
     await click(el.querySelector("#rail")!);
     expect(fold(el).getAttribute("aria-expanded")).toBe("true");
   });
