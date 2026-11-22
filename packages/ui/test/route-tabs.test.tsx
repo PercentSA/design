@@ -79,7 +79,8 @@ describe("RouteTabs", () => {
   test("the current tab is scrolled into view inside the row only", async () => {
     const calls: string[] = [];
     const proto = HTMLElement.prototype;
-    const rect = proto.getBoundingClientRect;
+    // Own descriptors only: both methods live on Element.prototype, so the restore removes the stubs.
+    const rect = Object.getOwnPropertyDescriptor(proto, "getBoundingClientRect");
     const into = Object.getOwnPropertyDescriptor(proto, "scrollIntoView");
     proto.scrollIntoView = () => void calls.push("window");
     proto.getBoundingClientRect = function (this: HTMLElement) {
@@ -91,9 +92,14 @@ describe("RouteTabs", () => {
       expect(nav(el).scrollLeft).toBe(130);
       expect(calls).toEqual([]);
     } finally {
-      proto.getBoundingClientRect = rect;
+      if (rect) Object.defineProperty(proto, "getBoundingClientRect", rect);
+      else delete (proto as { getBoundingClientRect?: unknown }).getBoundingClientRect;
       if (into) Object.defineProperty(proto, "scrollIntoView", into);
       else delete (proto as { scrollIntoView?: unknown }).scrollIntoView;
     }
+  });
+  test("the scroll test leaves no stub behind on HTMLElement.prototype (later files stub Element.prototype)", () => {
+    expect(Object.getOwnPropertyDescriptor(HTMLElement.prototype, "getBoundingClientRect")).toBeUndefined();
+    expect(Object.getOwnPropertyDescriptor(HTMLElement.prototype, "scrollIntoView")).toBeUndefined();
   });
 });
