@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { ChangeList } from "../src/components/change-list";
 import { STRINGS } from "../src/i18n/strings";
+import { PercentProvider } from "../src/provider";
 import { mount, useDom } from "./dom";
 
 useDom();
@@ -12,8 +13,8 @@ describe("ChangeList", () => {
     expect(row.textContent).toContain("Port");
     expect(row.querySelector("[data-before]")!.textContent).toBe("from80");
     expect(row.querySelector("[data-after]")!.textContent).toBe("to8080");
-    expect(row.querySelector("[data-before]")!.className).toContain("text-fg-3");
-    expect(row.querySelector("[data-after]")!.className).toContain("text-fg");
+    expect(row.querySelector("[data-before]")!.className.split(" ")).toContain("text-fg-3");
+    expect(row.querySelector("[data-after]")!.className.split(" ")).toContain("text-fg");
     const sr = [...row.querySelectorAll(".sr-only")].map((n) => n.textContent);
     expect(sr).toEqual(["from", "to"]);
     const arrow = row.querySelector("svg")!;
@@ -74,7 +75,8 @@ describe("ChangeList", () => {
     const el = await mount(<ChangeList items={[{ label: "A", before: "1", after: "2" }]} note="Restart needed" />);
     const note = el.querySelector("[data-note]")!;
     expect(note.textContent).toBe("Restart needed");
-    expect(el.lastElementChild!.contains(note) || el.firstElementChild!.lastElementChild === note).toBe(true);
+    expect(note.previousElementSibling!.querySelector("[data-change]")).not.toBeNull();
+    expect(note.nextElementSibling).toBeNull();
   });
 
   test("on a phone before and after stack under the label", async () => {
@@ -82,9 +84,34 @@ describe("ChangeList", () => {
     expect(el.querySelector("[data-change]")!.className).toContain("max-md:grid");
   });
 
+  test("long values break", async () => {
+    const el = await mount(<ChangeList items={[{ label: "A", before: "x".repeat(80), after: "y".repeat(80) }]} />);
+    for (const k of ["before", "after"]) {
+      const c = el.querySelector(`[data-${k}]`)!.className.split(" ");
+      expect(c).toContain("min-w-0");
+      expect(c).toContain("break-all");
+    }
+  });
+
+  test("the list separator comes from strings", async () => {
+    const items = [{ label: "A", before: "1", after: "2" }, { label: "B", before: "1", after: "2" }];
+    const el = await mount(<ChangeList compact items={items} />);
+    expect(el.textContent).toBe("2 changes: A, B");
+    const ar = await mount(<PercentProvider lang="ar"><ChangeList compact items={items} /></PercentProvider>);
+    expect(ar.textContent).toBe("تغييران: A، B");
+  });
+
+  test("zero items show No changes, full and compact", async () => {
+    const a = await mount(<ChangeList items={[]} />);
+    expect(a.textContent).toBe("No changes");
+    const b = await mount(<ChangeList compact items={[]} />);
+    expect(b.textContent).toBe("No changes");
+    expect(STRINGS.ar.noChanges).toBe("لا تغييرات");
+  });
+
   test("Arabic change count forms", () => {
     const f = STRINGS.ar.changeCount;
-    expect([1, 2, 3, 10, 11, 25].map(f)).toEqual(["تغيير واحد", "تغييران", "3 تغييرات", "10 تغييرات", "11 تغييرًا", "25 تغييرًا"]);
+    expect([1, 2, 3, 10, 11, 25, 100, 102].map(f)).toEqual(["تغيير واحد", "تغييران", "3 تغييرات", "10 تغييرات", "11 تغييرًا", "25 تغييرًا", "100 تغيير", "102 تغيير"]);
     expect(STRINGS.en.changeCount(1)).toBe("1 change");
     expect(STRINGS.en.changeCount(4)).toBe("4 changes");
   });

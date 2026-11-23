@@ -306,6 +306,8 @@ const en = {
   changeFrom: "from",
   changeTo: "to",
   changeCount: (n: number) => (n === 1 ? "1 change" : `${n} changes`),
+  noChanges: "No changes",
+  listSeparator: ", ",
 };
 
 export type Strings = typeof en;
@@ -600,10 +602,26 @@ const ar: Strings = {
   fromLastReport: "من آخر تقرير",
   updated: "آخر تحديث",
   aboveLimit: "فوق الحد",
+  // ChangeList (0.23.0).
   changeHidden: "تغيّرت (القيمة مخفية)",
   changeFrom: "من",
   changeTo: "إلى",
-  changeCount: (n) => (n === 1 ? "تغيير واحد" : n === 2 ? "تغييران" : n <= 10 ? `${n} تغييرات` : `${n} تغييرًا`),
+  changeCount: (n) => {
+    switch (new Intl.PluralRules("ar").select(n)) {
+      case "one":
+        return "تغيير واحد";
+      case "two":
+        return "تغييران";
+      case "few":
+        return `${n} تغييرات`;
+      case "many":
+        return `${n} تغييرًا`;
+      default:
+        return `${n} تغيير`;
+    }
+  },
+  noChanges: "لا تغييرات",
+  listSeparator: "، ",
 };
 
 export const STRINGS: Record<Lang, Strings> = { en, ar };

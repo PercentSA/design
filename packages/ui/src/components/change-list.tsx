@@ -8,8 +8,6 @@ import { isEmptyValue, NotSet } from "./not-set";
 
 export type ChangeItem = { label: ReactNode; before: ReactNode; after: ReactNode; group?: string; hidden?: boolean };
 
-const textOf = (n: ReactNode) => (typeof n === "string" || typeof n === "number" ? String(n) : null);
-
 /**
  * The values before and after a change, one row per item. `group` gives a heading above its items, in the order of the first
  * item of each group. A `hidden` item (a secret) shows only that it changed; its values are not rendered. `compact` shows one
@@ -19,19 +17,26 @@ export function ChangeList({ items, compact, note, className }: { items: ChangeI
   const s = useStrings();
 
   if (compact) {
-    const labels = items.map((i) => textOf(i.label) ?? i.label);
     return (
       <span className={cn("block min-w-0 truncate", className)}>
-        {s.changeCount(items.length)}:{" "}
-        {labels.map((l, i) => (
-          <span key={i}>
-            {i > 0 && ", "}
-            {l}
-          </span>
-        ))}
+        {items.length === 0 ? (
+          s.noChanges
+        ) : (
+          <>
+            {s.changeCount(items.length)}:{" "}
+            {items.map((it, i) => (
+              <span key={i}>
+                {i > 0 && s.listSeparator}
+                {it.label}
+              </span>
+            ))}
+          </>
+        )}
       </span>
     );
   }
+
+  if (items.length === 0) return <p className={cn("text-sm text-fg-3", className)}>{s.noChanges}</p>;
 
   const groups: { name?: string; items: ChangeItem[] }[] = [];
   for (const it of items) {
@@ -59,12 +64,12 @@ export function ChangeList({ items, compact, note, className }: { items: ChangeI
                   <span className="text-fg-3">{s.changeHidden}</span>
                 ) : (
                   <span className="flex min-w-0 flex-wrap items-center gap-2 break-words">
-                    <span data-before className="text-fg-3">
+                    <span data-before className="min-w-0 break-all text-fg-3">
                       <span className="sr-only">{s.changeFrom}</span>
                       {value(it.before)}
                     </span>
                     <ArrowRight aria-hidden className="size-4 shrink-0 text-fg-3 rtl:-scale-x-100" />
-                    <span data-after className="text-fg">
+                    <span data-after className="min-w-0 break-all text-fg">
                       <span className="sr-only">{s.changeTo}</span>
                       {value(it.after)}
                     </span>
