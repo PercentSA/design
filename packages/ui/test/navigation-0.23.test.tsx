@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, jest, spyOn, test } from "bun:test";
+import { afterEach, describe, expect, spyOn, test } from "bun:test";
 import { act, useLayoutEffect, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { RouteTabs, Sidebar, Tabs, Tooltip, type RouteTab, type SidebarSection } from "../src";
@@ -266,12 +266,11 @@ describe("RouteTabs phone measure", () => {
   });
   test("the phone query is the same rule as max-md", async () => {
     stubLayout(342);
+    // The shared stub saves the own descriptor, and useDom() puts it back after the test.
+    stubMatchMedia(true);
     const queries: string[] = [];
-    Object.defineProperty(globalThis, "matchMedia", {
-      configurable: true,
-      writable: true,
-      value: (q: string) => (queries.push(q), { matches: true, media: q, addEventListener() {}, removeEventListener() {} }),
-    });
+    const answer = globalThis.matchMedia;
+    globalThis.matchMedia = ((q: string) => (queries.push(q), answer(q))) as typeof matchMedia;
     await mount(<RouteTabs label="x" items={items} current="Overview" />);
     expect(queries).toEqual(["(width < 48rem)"]);
   });
@@ -292,11 +291,11 @@ describe("RouteTabs phone measure", () => {
 });
 
 describe("Tooltip focus open and scroll", () => {
-  afterEach(() => jest.useRealTimers());
+  // Real timers: fake timers in this runner leave the timer functions changed for the test files that run after this one.
+  const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
   const open = () => !!document.querySelector('[role="tooltip"]');
   const scroll = () => act(async () => void document.dispatchEvent(new Event("scroll")));
   test("a tooltip opened by focus stays open when the page scrolls in the next 300 ms", async () => {
-    jest.useFakeTimers();
     const el = await mount(
       <Tooltip content="Tip">
         <button>t</button>
@@ -307,12 +306,11 @@ describe("Tooltip focus open and scroll", () => {
     expect(open()).toBe(true);
     await scroll();
     expect(open()).toBe(true);
-    await act(async () => void jest.advanceTimersByTime(301));
+    await act(() => wait(320));
     await scroll();
     expect(open()).toBe(false);
   });
   const focusOpen = async () => {
-    jest.useFakeTimers();
     const el = await mount(
       <Tooltip content="Tip">
         <button>t</button>
@@ -349,7 +347,6 @@ describe("Tooltip focus open and scroll", () => {
     expect(open()).toBe(false);
   });
   test("a pointer open closes on scroll as before", async () => {
-    jest.useFakeTimers();
     const el = await mount(
       <Tooltip content="Tip">
         <button>t</button>
@@ -357,10 +354,8 @@ describe("Tooltip focus open and scroll", () => {
     );
     const b = el.querySelector("button")!;
     await act(async () => {
-      b.dispatchEvent(
-        new PointerEvent("pointermove", { bubbles: true, pointerType: "mouse" }),
-      );
-      jest.advanceTimersByTime(400);
+      b.dispatchEvent(new PointerEvent("pointermove", { bubbles: true, pointerType: "mouse" }));
+      await wait(420);
     });
     expect(open()).toBe(true);
     await scroll();
