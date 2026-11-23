@@ -362,11 +362,11 @@ function useAttentionItems(): AttentionItem[] {
     },
     { id: "b", level: "important", title: t("Deploy failed", "فشل النشر"), href: "#b", area: "shop.example.com", openedAt: ago(95), menu: [{ label: t("Dismiss", "تجاهل") }, { label: t("Open log", "فتح السجل") }] },
     { id: "c", level: "important", title: t("Disk almost full", "القرص شبه ممتلئ"), href: "#c", area: t("Main website", "الموقع الرئيسي"), openedAt: ago(300) },
-    { id: "d", level: "other", title: t("Update ready", "تحديث جاهز"), href: "#d", area: "203.0.113.10", openedAt: ago(2000) },
+    { id: "d", level: "other", title: t("Update ready", "تحديث جاهز"), area: "203.0.113.10", openedAt: ago(2000) },
   ];
 }
 
-/** Four items, one for each level; the app sorts them. The second has a "⋯" menu. */
+/** Four items, one for each level; the app sorts them. The second has a "⋯" menu. The last has no `href`: its title is plain text. */
 export function AttentionListExample() {
   const t = useT();
   return (

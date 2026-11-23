@@ -652,3 +652,18 @@ export function DataTableDenseExample() {
   ];
   return <DataTable className="w-full" density="compact" cards columns={columns} rows={rows} getRowId={(r) => r.id} caption={t("Orders", "الطلبات")} hideCaption rowHref={(r) => `#${r.id}`} />;
 }
+
+/** `cardDescription: "block"`: below 768 px, the long description of the title column is a full-width block after the meta line. */
+export function DataTableCardBlockExample() {
+  const t = useT();
+  type Site = { id: string; name: string; plan: string; note: string };
+  const rows: Site[] = [
+    { id: "1", name: t("Main website", "الموقع الرئيسي"), plan: "Pro", note: t("Serves shop.example.com from the Riyadh region and keeps a daily backup.", "يخدم shop.example.com من منطقة الرياض ويحتفظ بنسخة احتياطية يومية.") },
+    { id: "2", name: t("Blog", "المدونة"), plan: "Basic", note: t("Static pages for blog.example.com.", "صفحات ثابتة لـ blog.example.com.") },
+  ];
+  const columns: DataTableColumn<Site>[] = [
+    { key: "name", header: t("Site", "الموقع"), description: (r) => r.note, cardDescription: "block" },
+    { key: "plan", header: t("Plan", "الباقة"), cardSlot: "meta" },
+  ];
+  return <DataTable className="w-full" cards columns={columns} rows={rows} getRowId={(r) => r.id} caption={t("Sites", "المواقع")} hideCaption />;
+}

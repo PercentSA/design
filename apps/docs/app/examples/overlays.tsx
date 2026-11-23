@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Copy, Info, Pencil, Trash2 } from "lucide-react";
 import {
   ActionDialog,
@@ -274,7 +274,7 @@ export function ActionDialogChoiceExample() {
               : null
         }
         effectsEmpty={t("Choose a reason first.", "اختر السبب أولًا.")}
-        reason={{ label: t("Note for the record", "ملاحظة للسجل"), required: true }}
+        reason={{ label: t("Note for the record", "ملاحظة للسجل"), required: true, maxLength: 200 }}
         action={t("Refund", "استرداد")}
         destructive
         onAction={() => setOpen(false)}
@@ -320,10 +320,22 @@ export function ActionDialogDeleteExample() {
 export function OnceValueDialogExample() {
   const t = useT();
   const [value, setValue] = useState<string | null>(null);
+  const [confirm, setConfirm] = useState(false);
+  const rotate = useRef<HTMLButtonElement>(null);
   return (
     <>
-      <Button onClick={() => setValue("pt_example_1234")}>{t("Rotate token", "تدوير الرمز")}</Button>
+      <Button ref={rotate} onClick={() => setConfirm(true)}>{t("Rotate token", "تدوير الرمز")}</Button>
+      {/* The confirm dialog closes when the once dialog opens, so the focus at open is lost: returnFocusTo gives it back to the button. */}
+      <AlertDialog
+        open={confirm}
+        onOpenChange={setConfirm}
+        title={t("Rotate the token?", "تدوير الرمز؟")}
+        description={t("The old token stops working.", "يتوقف الرمز القديم عن العمل.")}
+        action={t("Rotate", "تدوير")}
+        onAction={() => (setConfirm(false), setValue("pt_example_1234"))}
+      />
       <OnceValueDialog
+        returnFocusTo={rotate}
         open={value !== null}
         title={t("Server token", "رمز الخادم")}
         description={t("Copy the new token now.", "انسخ الرمز الجديد الآن.")}

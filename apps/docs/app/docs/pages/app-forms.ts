@@ -34,8 +34,8 @@ export const pages: DocPage[] = [
     "app",
     "SecretRow, type SecretRowProps",
     ["SecretRowExample"],
-    "A secret setting: shows only whether it is set, and when it changed. The new value goes in a sheet; its title is \"Set\" or \"Change\" with the label. `sheetDescription` adds a line under the title and `hint` a line under the field. `file` adds a button that reads a chosen text file (a key or a certificate) into the field. A file of another type, or over 1 MB, is refused with a message. `removeLabel` replaces the word \"Remove\" in the menu and the confirm dialog.",
-    "إعداد سري: يعرض فقط هل هو مُعيّن ومتى تغيّر. القيمة الجديدة تُدخل في لوحة جانبية، وعنوانها «تعيين» أو «تغيير» مع الاسم. تضيف `sheetDescription` سطرًا تحت العنوان، وتضيف `hint` سطرًا تحت الحقل. وتضيف `file` زرًا يقرأ ملفًا نصيًا مختارًا (مفتاحًا أو شهادة) إلى الحقل. ويُرفض ملف من نوع آخر أو أكبر من 1 ميغابايت برسالة. وتستبدل `removeLabel` كلمة «حذف» في القائمة وفي نافذة التأكيد.",
+    "A secret setting: shows only whether it is set, and when it changed. The new value goes in a sheet; its title is \"Set\" or \"Change\" with the label and its button has the same word. `sheetDescription` adds a line under the title and `hint` a line under the field. `file` adds a button that reads a chosen text file (a key or a certificate) into the field. A file of another type, or over 1 MB, is refused with a message. `removeLabel` replaces the word \"Remove\" in the menu and the confirm dialog. `action` adds a second action in the row, for example a \"Test\" button, after the Set button and before the menu; it shows only when the person can edit.",
+    "إعداد سري: يعرض فقط هل هو مُعيّن ومتى تغيّر. القيمة الجديدة تُدخل في لوحة جانبية، وعنوانها «تعيين» أو «تغيير» مع الاسم. ولزرها الكلمة نفسها. تضيف `sheetDescription` سطرًا تحت العنوان، وتضيف `hint` سطرًا تحت الحقل. وتضيف `file` زرًا يقرأ ملفًا نصيًا مختارًا (مفتاحًا أو شهادة) إلى الحقل. ويُرفض ملف من نوع آخر أو أكبر من 1 ميغابايت برسالة. وتستبدل `removeLabel` كلمة «حذف» في القائمة وفي نافذة التأكيد. وتضيف `action` إجراءً ثانيًا في الصف، مثل زر «اختبار»، بعد زر التعيين وقبل القائمة، لمن يحق له التعديل فقط.",
   ),
   p(
     "form-settings-row",
@@ -62,8 +62,8 @@ export const pages: DocPage[] = [
     "app",
     "FieldsSheet, type SheetField",
     ["FieldsSheetExample"],
-    "An edit sheet for one to three text fields. Errors show only after Save, then follow the input. It closes when `onSubmit` succeeds, stays open when its Promise is rejected, and opens from the bottom below 768 px. The content can be a function that gets the draft values, so a note can follow the typing.",
-    "لوحة تعديل لحقل إلى ثلاثة حقول نصية. لا تظهر الأخطاء إلا بعد الحفظ، ثم تتبع الكتابة. تُغلق إذا نجح `onSubmit`، وتبقى مفتوحة إذا رُفض الوعد (Promise)، وتُفتح من الأسفل تحت 768 بكسل. يمكن أن يكون المحتوى دالة تستلم القيم المكتوبة حاليًا، فيتغير النص مع ما يكتبه المستخدم.",
+    "An edit sheet for one to three text fields. Errors show only after Save, then follow the input. It closes when `onSubmit` succeeds, stays open when its Promise is rejected, and opens from the bottom below 768 px. The content can be a function that gets the draft values, so a note can follow the typing. A field `inputMode` sets the keyboard a phone shows, for example `numeric` for a port.",
+    "لوحة تعديل لحقل إلى ثلاثة حقول نصية. لا تظهر الأخطاء إلا بعد الحفظ، ثم تتبع الكتابة. تُغلق إذا نجح `onSubmit`، وتبقى مفتوحة إذا رُفض الوعد (Promise)، وتُفتح من الأسفل تحت 768 بكسل. يمكن أن يكون المحتوى دالة تستلم القيم المكتوبة حاليًا، فيتغير النص مع ما يكتبه المستخدم. ويحدد `inputMode` في الحقل لوحة المفاتيح على الهاتف، مثل `numeric` للمنفذ.",
   ),
   p(
     "record-section",

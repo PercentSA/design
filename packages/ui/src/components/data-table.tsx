@@ -40,6 +40,9 @@ export type DataTableColumn<Row> = {
    *  "meta": in one wrapped line under the title, without the header. "block": full width under the meta, without the header
    *  (long text). A cell with no value shows nothing. Default: a "header … value" line. Not for the title column. "end" columns belong after the title column in `columns`: on the card they show in column order on the title line. */
   cardSlot?: "end" | "meta" | "block";
+  /** The title column only, with `cards`: "block" shows `description` on the cards as a full-width block after the meta line, not under the title. Default "title". The table view does not change.
+   *  The description renders two times (one copy for each view): use no fixed id in it. */
+  cardDescription?: "title" | "block";
 };
 
 export type DataTableSort = { key: string; direction: "asc" | "desc" };
@@ -242,7 +245,8 @@ export function DataTable<Row>({
   // The title column: the row link, the card title and the name of the checkbox and the row menu. A key that is not shown falls back to the first column.
   const titleAt = Math.max(0, columns.findIndex((c) => c.key === titleColumn));
   const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k !== titleAt ? c.cardSlot : undefined);
-  const hasSlots = columns.some((c, k) => slotted(k, c));
+  const blockNote = cards && columns[titleAt]?.cardDescription === "block";
+  const hasSlots = blockNote || columns.some((c, k) => slotted(k, c));
   const hasMeta = columns.some((c, k) => slotted(k, c) === "meta");
   const slotGap = compact ? "p-cards:mt-1" : "p-cards:mt-1.5";
   const rowClass = cn(
@@ -274,6 +278,19 @@ export function DataTable<Row>({
     } catch {
       // Storage is blocked: the choice lasts until the page closes.
     }
+  };
+
+  // A copy of the title column's description for the cards, as its own flex item (the table view hides it). It is the last cell of the row,
+  // so no other cell moves to another column header.
+  const blockCopy = (row: Row) => {
+    const text = columns[titleAt]?.description?.(row);
+    return blockNote && hasValue(text) ? (
+      <TableCell className={cn("hidden p-cards:block", SLOT_BLOCK, slotGap)}>
+        <Text as="span" size="sm" tone="muted" className="block font-normal">
+          {text}
+        </Text>
+      </TableCell>
+    ) : null;
   };
 
   // `i` makes the row's ids (for the checkbox and "⋯" names) unique in the table.
@@ -309,14 +326,15 @@ export function DataTable<Row>({
           columns.map((c, k) => {
             const value = c.cell ? c.cell(row) : (field(row, c.key) as ReactNode);
             const text = c.description?.(row);
+            const toBlock = blockNote && k === titleAt && hasValue(text);
             const note = hasValue(text) ? (
-              <Text as="span" size="sm" tone="muted" className="block font-normal">
+              <Text as="span" size="sm" tone="muted" className={cn("block font-normal", toBlock && "p-cards:hidden")}>
                 {text}
               </Text>
             ) : null;
             const slot = slotted(k, c);
             const fieldClass = slot === "end" ? SLOT_END : slot === "meta" ? cn(SLOT_META, slotGap) : slot === "block" ? cn(SLOT_BLOCK, slotGap) : cn(CARD_FIELD, hasSlots && "p-cards:order-3", hasSlots && slotGap);
-            return (
+            const cell = (
               <TableCell
                 key={c.key}
                 id={k === titleAt ? `${uid}c${i}` : undefined}
@@ -367,6 +385,7 @@ export function DataTable<Row>({
                 )}
               </TableCell>
             );
+            return cell;
           }),
           () => (
             <TableCell key={ACTIONS_KEY} className={cn("w-10 py-1.5", cards && "p-cards:p-0")}>
@@ -388,6 +407,7 @@ export function DataTable<Row>({
             </TableCell>
           ),
         )}
+        {blockCopy(row)}
       </TableRow>
     );
   };

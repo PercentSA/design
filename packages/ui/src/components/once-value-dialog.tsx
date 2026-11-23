@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, type ReactNode } from "react";
+import { useId, useRef, type ReactNode, type RefObject } from "react";
 import { AlertDialog as RadixAlert } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
@@ -19,6 +19,7 @@ export function OnceValueDialog({
   description,
   note,
   onDone,
+  returnFocusTo,
 }: {
   open: boolean;
   title: ReactNode;
@@ -27,9 +28,11 @@ export function OnceValueDialog({
   /** A line under the value, for example "You cannot see this value again." */
   note?: ReactNode;
   onDone: () => void;
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. */
+  returnFocusTo?: RefObject<HTMLElement | null>;
 }) {
   const s = useStrings();
-  const focus = useFocusReturn();
+  const focus = useFocusReturn(false, returnFocusTo);
   const id = useId();
   const copy = useRef<HTMLDivElement>(null);
   return (

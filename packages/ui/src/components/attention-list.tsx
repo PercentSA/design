@@ -14,7 +14,8 @@ export type AttentionItem = {
   id: string;
   level: "critical" | "important" | "other";
   title: ReactNode;
-  href: string;
+  /** The page of the item. Without it the title is plain text. */
+  href?: string;
   detail?: ReactNode;
   area?: ReactNode;
   /** Client or project links, shown after the area. */
@@ -29,7 +30,7 @@ const TONE = { critical: "danger", important: "warning", other: "neutral" } as c
 const DOT = { critical: "danger", important: "warning", other: "idle" } as const;
 
 /**
- * The items that need a person, for example open alerts: level, title link, area, age and one next action.
+ * The items that need a person, for example open alerts: level, title (a link with `href`, else plain text), area, age and one next action.
  * The caller sorts the items and drops the fixed ones. `compact` is the short form for a popover.
  */
 export function AttentionList({
@@ -66,9 +67,13 @@ export function AttentionList({
           <li key={i.id} className="grid gap-0.5 py-2">
             <div className="flex items-center gap-2">
               <StatusDot status={DOT[i.level]} />
-              <L href={i.href} className="min-w-0 font-medium">
-                {i.title}
-              </L>
+              {i.href ? (
+                <L href={i.href} className="min-w-0 font-medium">
+                  {i.title}
+                </L>
+              ) : (
+                <span className="min-w-0 font-medium">{i.title}</span>
+              )}
             </div>
             {/* The level is a word too: the dots differ by colour only. */}
             <p className="ps-4 text-xs text-fg-3">{joined([levels[i.level], i.area, <TimeText key="t" value={i.openedAt} ago interactive={false} />])}</p>
@@ -80,9 +85,15 @@ export function AttentionList({
               <StatusBadge tone={TONE[i.level]}>{levels[i.level]}</StatusBadge>
             </div>
             <div className="grid gap-0.5 max-md:col-span-3 max-md:row-start-2 md:col-start-2">
-              <L id={`${uid}t${n}`} href={i.href} className="w-fit font-medium">
-                {i.title}
-              </L>
+              {i.href ? (
+                <L id={`${uid}t${n}`} href={i.href} className="w-fit font-medium">
+                  {i.title}
+                </L>
+              ) : (
+                <span id={`${uid}t${n}`} className="w-fit font-medium">
+                  {i.title}
+                </span>
+              )}
               {i.detail && <p className="text-sm text-fg-2">{i.detail}</p>}
               {(i.area || i.context) && <p className="text-xs text-fg-3">{joined([i.area, i.context])}</p>}
             </div>

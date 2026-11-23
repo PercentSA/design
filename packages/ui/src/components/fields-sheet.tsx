@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type FormEvent, type ReactNode } from "react";
+import { useId, useState, type FormEvent, type HTMLAttributes, type ReactNode } from "react";
 import { flushSync } from "react-dom";
 import { Field } from "./field";
 import { Autocomplete } from "./autocomplete";
@@ -17,6 +17,8 @@ export type SheetField = {
   value: string;
   hint?: ReactNode;
   mono?: boolean;
+  /** The keyboard a phone shows, for example `"numeric"` for a port. */
+  inputMode?: HTMLAttributes<HTMLInputElement>["inputMode"];
   /** Returns the error text, or nothing when the text is valid. There is no built-in required check. */
   check?: (text: string) => string | undefined;
   /** Shows the field as an Autocomplete. */
@@ -92,9 +94,9 @@ export function FieldsSheet({
         return (
           <Field key={f.key} id={idOf(f)} label={f.label} hint={f.hint} error={error(f)}>
             {f.suggestions ? (
-              <Autocomplete value={value(f)} onValueChange={set} suggestions={f.suggestions} mono={f.mono} />
+              <Autocomplete value={value(f)} onValueChange={set} suggestions={f.suggestions} mono={f.mono} inputMode={f.inputMode} />
             ) : (
-              <Input value={value(f)} onChange={(e) => set(e.target.value)} className={cn(f.mono && "font-mono")} {...(f.mono ? MONO_INPUT : {})} />
+              <Input value={value(f)} inputMode={f.inputMode} onChange={(e) => set(e.target.value)} className={cn(f.mono && "font-mono")} {...(f.mono ? MONO_INPUT : {})} />
             )}
           </Field>
         );

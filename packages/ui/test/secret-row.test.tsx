@@ -74,7 +74,7 @@ describe("SecretRow", () => {
     });
     await click(button("Set", el));
     await type(field(), "bad");
-    await click(button("Save", sheet()!));
+    await click(button("Set", sheet()!));
     await settle();
     expect(sheet()).not.toBeNull();
     expect(sheet()!.textContent).toContain("The key is not valid.");
@@ -87,7 +87,7 @@ describe("SecretRow", () => {
     });
     await click(button("Set", el));
     await type(field(), "bad");
-    await click(button("Save", sheet()!));
+    await click(button("Set", sheet()!));
     await settle();
     expect(sheet()!.textContent).toContain("Bad key.");
     await click(button("Cancel", sheet()!));
@@ -110,7 +110,7 @@ describe("SecretRow", () => {
     await click(button("Set", el));
     expect(field().value).toBe("");
     await type(field(), "abc");
-    await click(button("Save", sheet()!));
+    await click(button("Set", sheet()!));
     await settle();
     expect(sheet()).toBeNull();
     expect(document.body.textContent).not.toContain("Discard your changes?");
@@ -129,7 +129,7 @@ describe("SecretRow", () => {
     expect(field().value).toBe("");
     // after a failed save, then Cancel
     await type(field(), "two");
-    await click(button("Save", sheet()!));
+    await click(button("Set", sheet()!));
     await settle();
     await click(button("Cancel", sheet()!));
     await discard();
@@ -142,7 +142,7 @@ describe("SecretRow", () => {
     const onSave = mock(async (_v: string) => {});
     const el = await save(onSave);
     await click(button("Set", el));
-    await click(button("Save", sheet()!));
+    await click(button("Set", sheet()!));
     expect(sheet()!.textContent).toContain("Enter a value.");
     expect(field().getAttribute("aria-invalid")).toBe("true");
     expect(onSave.mock.calls.length).toBe(0);
@@ -160,7 +160,7 @@ describe("SecretRow", () => {
     const el = await save();
     await click(button("Set", el));
     await type(field(), "first");
-    await click(button("Save", sheet()!));
+    await click(button("Set", sheet()!));
     await settle();
     expect(sheet()).toBeNull();
     await click(button("Set", el));
