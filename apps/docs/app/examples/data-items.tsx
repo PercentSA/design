@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FileText, Folder } from "lucide-react";
-import { Accordion, Avatar, AvatarGroup, ConnectionCard, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree, UsageMeter } from "@percentsa/ui";
+import { Accordion, Avatar, AvatarGroup, Button, ChangeList, ConnectionCard, FormBar, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree, UsageMeter } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function StatExample() {
@@ -293,6 +293,25 @@ export function UsageMeterExample() {
         ]}
       />
       <UsageMeter label={t("Network", "الشبكة")} value={61} at={new Date(Date.now() - 3 * 3600_000)} stale />
+    </div>
+  );
+}
+
+export function ChangeListExample() {
+  const t = useT();
+  const items = [
+    { group: t("Main website", "الموقع الرئيسي"), label: t("Domain", "النطاق"), before: "old.example.com", after: "shop.example.com" },
+    { group: t("Main website", "الموقع الرئيسي"), label: t("Memory", "الذاكرة"), before: "512 MB", after: "1 GB" },
+    { group: t("Shop", "المتجر"), label: t("Port", "المنفذ"), before: null, after: "8080" },
+    { group: t("Shop", "المتجر"), label: t("API key", "مفتاح الواجهة"), before: "", after: "", hidden: true },
+  ];
+  return (
+    <div className="grid w-full max-w-xl gap-6">
+      <ChangeList items={items} note={t("The site restarts after saving.", "يعاد تشغيل الموقع بعد الحفظ.")} />
+      <FormBar sticky={false} summary={<ChangeList compact items={items} />}>
+        <Button variant="ghost">{t("Cancel", "إلغاء")}</Button>
+        <Button>{t("Save", "حفظ")}</Button>
+      </FormBar>
     </div>
   );
 }

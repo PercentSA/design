@@ -30,6 +30,15 @@ export const pages: DocPage[] = [
     "مقدار ما يُستخدم من حدّ معيّن. فوق خط الحد تظهر القيمة بلون التحذير.",
   ),
   p(
+    "change-list",
+    "ChangeList",
+    "data",
+    "ChangeList, type ChangeItem",
+    ["ChangeListExample"],
+    "What a save changes: each value before and after. Secret values show only as changed.",
+    "ما يغيّره الحفظ: كل قيمة قبل التغيير وبعده. القيم السرية تظهر على أنها تغيّرت فقط.",
+  ),
+  p(
     "accordion",
     "Accordion",
     "data",

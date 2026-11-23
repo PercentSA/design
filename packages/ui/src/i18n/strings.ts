@@ -301,6 +301,11 @@ const en = {
   fromLastReport: "From the last report",
   updated: "Updated",
   aboveLimit: "Above limit",
+  // ChangeList (0.23.0).
+  changeHidden: "Changed (value hidden)",
+  changeFrom: "from",
+  changeTo: "to",
+  changeCount: (n: number) => (n === 1 ? "1 change" : `${n} changes`),
 };
 
 export type Strings = typeof en;
@@ -595,6 +600,10 @@ const ar: Strings = {
   fromLastReport: "من آخر تقرير",
   updated: "آخر تحديث",
   aboveLimit: "فوق الحد",
+  changeHidden: "تغيّرت (القيمة مخفية)",
+  changeFrom: "من",
+  changeTo: "إلى",
+  changeCount: (n) => (n === 1 ? "تغيير واحد" : n === 2 ? "تغييران" : n <= 10 ? `${n} تغييرات` : `${n} تغييرًا`),
 };
 
 export const STRINGS: Record<Lang, Strings> = { en, ar };
