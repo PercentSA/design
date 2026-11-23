@@ -105,7 +105,7 @@ function itemLink(L: LinkComponent | "a", item: SidebarItem, collapsed: boolean,
       <StatusText item={item} />
       {statusDot(item, collapsed)}
       {item.badge != null && <Badge className={cn("h-5 px-2", collapsed && "sr-only")}>{item.badge}</Badge>}
-      {item.badge != null && collapsed && !item.status && <span aria-hidden className="absolute end-2.5 top-1.5 size-1.5 rounded-pill bg-fg" />}
+      {item.badge != null && collapsed && !item.status && <span aria-hidden className="absolute end-2 top-1.5 size-2 rounded-pill bg-fg ring-2 ring-surface" />}
     </L>
   );
 }
