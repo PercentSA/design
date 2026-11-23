@@ -6,6 +6,7 @@ import { cn } from "../lib/cn";
 import { useDir, useLinkComponent } from "../provider";
 import { Badge } from "./feedback";
 import { Tooltip } from "./overlays";
+import { RAIL_DOT, RAIL_ITEM_RING } from "./sidebar";
 
 export type SideNavItem = { href: string; label: ReactNode; description?: ReactNode; icon?: ReactNode; current?: boolean; badge?: ReactNode };
 export type SideNavGroup = { label?: ReactNode; items: SideNavItem[] };
@@ -54,12 +55,12 @@ function Group({ group, list, iconOnly }: { group: SideNavGroup; list: boolean; 
                 <L
                   href={item.href}
                   aria-current={item.current ? "page" : undefined}
-                  className={cn(ROW, "relative size-11 justify-center rounded-field text-sm")}
+                  className={cn(ROW, "relative size-11 justify-center rounded-field text-sm", RAIL_ITEM_RING)}
                 >
                   {item.icon != null ? <span aria-hidden className="contents">{item.icon}</span> : letter && <span aria-hidden className="font-medium uppercase">{letter}</span>}
                   <span className="sr-only">{item.label}</span>
                   {item.badge != null && <span className="sr-only">{item.badge}</span>}
-                  {item.badge != null && <span aria-hidden className="absolute end-2 top-2 size-1.5 rounded-pill bg-fg" />}
+                  {item.badge != null && <span aria-hidden className={cn(RAIL_DOT, "end-2.5 top-2.5")} />}
                 </L>
               </Tooltip>
             </li>

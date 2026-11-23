@@ -209,10 +209,16 @@ describe("Sidebar rail badge dot, 0.24", () => {
     const dotEl = el.querySelector("a span[aria-hidden]")!;
     expect(dotEl.className).toContain("size-2");
     expect(dotEl.className).toContain("ring-2");
-    expect(dotEl.className).toContain("ring-surface");
+    expect(dotEl.className).toContain("ring-[color:var(--p-dot-ring,var(--p-bg))]");
     expect(dotEl.className).toContain("absolute");
     expect(dotEl.className).not.toContain("size-1.5");
     // The ring colour is the colour of the sidebar itself.
-    expect(el.querySelector("[data-collapsed]")!.className).toContain("bg-surface");
+    const root = el.querySelector("[data-collapsed]")!.className;
+    expect(root).toContain("bg-surface");
+    expect(root).toContain("[--p-dot-ring:var(--p-surface)]");
+    // The ring follows the current and hover backgrounds of the item.
+    const link = el.querySelector("a")!.className;
+    expect(link).toContain("hover:[--p-dot-ring:var(--p-surface-2)]");
+    expect(link).toContain("aria-[current=page]:[--p-dot-ring:var(--p-surface-2)]");
   });
 });

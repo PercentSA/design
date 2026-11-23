@@ -92,8 +92,8 @@ describe("SideNav iconOnly", () => {
   test("a badge is a dot, its value stays for screen readers", () => {
     const out = html(<SideNav groups={groups} label="Settings" iconOnly />);
     expect(out).toContain('<span class="sr-only">2</span>');
-    expect(out).toContain("size-1.5 rounded-pill bg-fg");
-    expect(out.match(/size-1\.5/g)).toHaveLength(1);
+    expect(out).toContain("size-2 rounded-pill bg-fg ring-2");
+    expect(out.match(/size-2 rounded-pill/g)).toHaveLength(1);
   });
 
   test("no icon: the first letter of a text label; none for a node label", () => {
@@ -130,5 +130,16 @@ describe("SideNav iconOnly", () => {
     expect(out).toContain("break-words");
     expect(out).not.toContain("size-11");
     expect(out).not.toContain("sr-only");
+  });
+});
+
+describe("SideNav iconOnly badge dot, 0.24", () => {
+  test("the badge dot is the same 8 px dot with a ring in the parent colour", async () => {
+    const el = await mount(<SideNav iconOnly groups={[{ items: [{ href: "/a", label: "A", icon: <svg />, badge: 3 }] }]} />);
+    const dot = el.querySelector("a span[aria-hidden]:not(.contents)")!;
+    expect(dot.className).toContain("size-2");
+    expect(dot.className).toContain("ring-2");
+    expect(dot.className).toContain("ring-[color:var(--p-dot-ring,var(--p-bg))]");
+    expect(el.querySelector("a")!.className).toContain("hover:[--p-dot-ring:var(--p-surface-2)]");
   });
 });
