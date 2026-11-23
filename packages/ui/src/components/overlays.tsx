@@ -340,17 +340,24 @@ export function HoverCard({ trigger, children, side, align, className, ...state 
 export function Tooltip({ content, children, side = "top", open, defaultOpen, onOpenChange }: OpenState & { content: ReactNode; children: ReactNode; side?: Placement["side"] }) {
   const physical = usePhysicalSide(side);
   const [own, setOwn] = useState(defaultOpen ?? false);
-  // True for 300 ms after a focus open: a scroll that the focus caused (the page moves the trigger into view) must not close the tooltip.
+  // For 300 ms after a focus open, a close that a scroll caused is ignored: the focus moves the page to the trigger.
+  // Our scroll listener is added at the focus, before Radix adds its own on open, so it runs first and marks the scroll.
   const guard = useRef(false);
+  const scrolled = useRef(false);
   const pointer = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const stop = () => {
+  const mark = useCallback(() => {
+    scrolled.current = true;
+    setTimeout(() => (scrolled.current = false), 0);
+  }, []);
+  const stop = useCallback(() => {
     guard.current = false;
     clearTimeout(timer.current);
-  };
-  useEffect(() => () => clearTimeout(timer.current), []);
+    window.removeEventListener("scroll", mark, true);
+  }, [mark]);
+  useEffect(() => stop, [stop]);
   const change = (next: boolean) => {
-    if (!next && guard.current) return;
+    if (!next && guard.current && scrolled.current) return;
     setOwn(next);
     onOpenChange?.(next);
   };
@@ -365,6 +372,7 @@ export function Tooltip({ content, children, side = "top", open, defaultOpen, on
             if (pointer.current) return;
             stop();
             guard.current = true;
+            window.addEventListener("scroll", mark, true);
             timer.current = setTimeout(stop, 300);
           }}
           onBlur={() => {
@@ -375,7 +383,7 @@ export function Tooltip({ content, children, side = "top", open, defaultOpen, on
           {children}
         </RadixTooltip.Trigger>
         <RadixTooltip.Portal>
-          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP} onEscapeKeyDown={stop}>
+          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP}>
             {content}
           </RadixTooltip.Content>
         </RadixTooltip.Portal>
