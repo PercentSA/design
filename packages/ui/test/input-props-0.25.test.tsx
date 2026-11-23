@@ -21,12 +21,12 @@ describe("ActionDialog reason.maxLength", () => {
   });
 });
 
-function Sheet({ inputMode }: { inputMode?: "numeric" }) {
+function Sheet({ inputMode, suggestions }: { inputMode?: "numeric"; suggestions?: { value: string }[] }) {
   const [open, setOpen] = useState(false);
   return (
     <>
       <button onClick={() => setOpen(true)}>Open</button>
-      <FieldsSheet title="Edit" open={open} onOpenChange={setOpen} onSubmit={() => {}} fields={[{ key: "port", label: "Port", value: "8080", inputMode }]} />
+      <FieldsSheet title="Edit" open={open} onOpenChange={setOpen} onSubmit={() => {}} fields={[{ key: "port", label: "Port", value: "8080", inputMode, suggestions }]} />
     </>
   );
 }
@@ -43,5 +43,11 @@ describe("FieldsSheet field inputMode", () => {
     await mount(<Sheet />);
     await click(document.querySelector("button")!);
     expect(dialog().querySelector("input")!.hasAttribute("inputmode")).toBe(false);
+  });
+  test("a field with suggestions and inputMode", async () => {
+    stubMatchMedia(true);
+    await mount(<Sheet inputMode="numeric" suggestions={[{ value: "8080" }, { value: "3000" }]} />);
+    await click(document.querySelector("button")!);
+    expect(dialog().querySelector("input")!.getAttribute("inputmode")).toBe("numeric");
   });
 });

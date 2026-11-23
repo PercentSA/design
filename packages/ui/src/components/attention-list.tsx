@@ -30,7 +30,7 @@ const TONE = { critical: "danger", important: "warning", other: "neutral" } as c
 const DOT = { critical: "danger", important: "warning", other: "idle" } as const;
 
 /**
- * The items that need a person, for example open alerts: level, title link, area, age and one next action.
+ * The items that need a person, for example open alerts: level, title (a link with `href`, else plain text), area, age and one next action.
  * The caller sorts the items and drops the fixed ones. `compact` is the short form for a popover.
  */
 export function AttentionList({
