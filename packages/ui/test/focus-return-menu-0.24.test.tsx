@@ -33,14 +33,14 @@ describe("focus return, 0.24", () => {
   test("a dialog opened from a menu item gives the focus back to the menu trigger", async () => {
     await mount(<Host fromMenu />);
     const trig = document.getElementById("trig")!;
-    trig.focus();
+    await act(async () => trig.focus());
     await act(async () => {
       trig.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true, cancelable: true }));
     });
     await tick();
     const item = document.querySelector<HTMLElement>('[role="menuitem"]')!;
     expect(item).not.toBeNull();
-    item.focus();
+    await act(async () => item.focus());
     await click(item);
     await tick();
     expect(document.querySelector('[role="dialog"]')).not.toBeNull();
@@ -51,7 +51,7 @@ describe("focus return, 0.24", () => {
   test("a dialog opened from a button gives the focus back to the button", async () => {
     await mount(<Host fromMenu={false} />);
     const trig = document.getElementById("trig")!;
-    trig.focus();
+    await act(async () => trig.focus());
     await click(trig);
     await tick();
     await closeDialog();
@@ -78,14 +78,14 @@ describe("focus return, 0.24 fix round 1", () => {
     }
     await mount(<CtxHost />);
     const inner = document.getElementById("inner")!;
-    inner.focus();
+    await act(async () => inner.focus());
     await act(async () => {
       inner.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: 5, clientY: 5 }));
     });
     await tick();
     const item = document.querySelector<HTMLElement>('[role="menuitem"]')!;
     expect(item).not.toBeNull();
-    item.focus();
+    await act(async () => item.focus());
     await click(item);
     await tick();
     expect(document.querySelector('[role="dialog"]')).not.toBeNull();
@@ -101,7 +101,7 @@ describe("focus return, 0.24 fix round 1", () => {
     });
     await tick();
     const item = document.querySelector<HTMLElement>('[role="menuitem"]')!;
-    item.focus();
+    await act(async () => item.focus());
     await click(item);
     await tick();
     await closeDialog();
@@ -127,7 +127,7 @@ describe("focus return of the command palette, 0.24 fix round 1", () => {
     });
     await tick();
     const item = document.querySelector<HTMLElement>('[role="menuitem"]')!;
-    item.focus();
+    await act(async () => item.focus());
     await click(item);
     await tick();
     const input = document.querySelector<HTMLInputElement>('[role="combobox"]')!;
