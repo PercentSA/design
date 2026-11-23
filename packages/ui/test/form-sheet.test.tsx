@@ -1,8 +1,8 @@
-import { afterEach, describe, expect, mock, test } from "bun:test";
+import { describe, expect, mock, test } from "bun:test";
 import { act, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Button, Field, FormSheet, Input, PercentProvider, RecordSection } from "../src";
-import { click, mount, press, useDom } from "./dom";
+import { click, mount, press, removeMatchMedia, stubMatchMedia, useDom } from "./dom";
 
 useDom();
 
@@ -160,19 +160,13 @@ describe("RecordSection", () => {
 });
 
 describe("FormSheet side auto", () => {
-  const saved = globalThis.matchMedia;
-  const media = (matches: boolean) => {
-    globalThis.matchMedia = ((q: string) => ({ matches, media: q, addEventListener() {}, removeEventListener() {} })) as unknown as typeof matchMedia;
-  };
+  const media = stubMatchMedia;
   const sideOf = () => sheet()!.getAttribute("data-side");
   const form = (side?: "auto") => (
     <FormSheet open title="Edit" side={side} onSubmit={(e) => e.preventDefault()}>
       <Field label="Name"><Input name="name" /></Field>
     </FormSheet>
   );
-  afterEach(() => {
-    globalThis.matchMedia = saved;
-  });
   test("auto, wide: end", async () => {
     media(true);
     await mount(form("auto"));
@@ -183,6 +177,11 @@ describe("FormSheet side auto", () => {
     await mount(form("auto"));
     expect(sideOf()).toBe("bottom");
     expect(submitButton().parentElement!.className).toContain("basis-[calc(50%-0.375rem)]");
+  });
+  test("without side or with side end, matchMedia is never called", async () => {
+    removeMatchMedia();
+    await mount(form());
+    expect(sideOf()).toBe("end");
   });
   test("no side: end, as before", async () => {
     media(false);

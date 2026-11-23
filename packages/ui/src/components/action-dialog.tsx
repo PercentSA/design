@@ -13,7 +13,7 @@ import { Field } from "./field";
 import { FOCUSABLE } from "./focusable";
 import { Input, Textarea } from "./inputs";
 import { DescriptionList } from "./list";
-import { BACKDROP, CLOSE, FULL_ON_PHONE, PANEL } from "./overlay-classes";
+import { BACKDROP, CENTERED_FROM_MD, CLOSE, FULL_ON_PHONE, PANEL } from "./overlay-classes";
 
 export type ActionDialogProps = {
   open: boolean;
@@ -32,7 +32,7 @@ export type ActionDialogProps = {
   reason?: { label: ReactNode; required?: boolean };
   /** The name the person must type before the action runs. End spaces are ignored; case counts. */
   confirmName?: string;
-  /** Replaces the line "Type <name> to confirm." above the name field. */
+  /** Replaces the line "Type <name> to confirm." above the name field. The label must show the exact name to type. */
   confirmLabel?: ReactNode;
   action: ReactNode;
   destructive?: boolean;
@@ -78,7 +78,8 @@ export function ActionDialog(props: ActionDialogProps) {
           className={cn(
             "p-pop fixed z-(--p-z-overlay) flex flex-col overflow-auto",
             FULL_ON_PHONE,
-            "md:start-1/2 md:top-1/2 md:max-h-[calc(100dvh-2rem)] md:w-[calc(100%-2rem)] md:max-w-lg md:-translate-y-1/2 md:rounded-panel ltr:md:-translate-x-1/2 rtl:md:translate-x-1/2",
+            CENTERED_FROM_MD,
+            "md:max-w-lg",
             PANEL,
           )}
         >

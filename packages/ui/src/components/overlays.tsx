@@ -8,12 +8,14 @@ import { useDir, useStrings } from "../provider";
 import { Button } from "./actions";
 import { buttonClass } from "./button-class";
 import { useFocusReturn } from "./dialog-parts";
-import { BACKDROP, CLOSE, FULL_ON_PHONE, PANEL, TOOLTIP } from "./overlay-classes";
+import { BACKDROP, CENTERED_FROM_MD, CLOSE, FULL_ON_PHONE, PANEL, TOOLTIP } from "./overlay-classes";
 
 type OpenState = { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void };
 
 const FLOAT = cn("p-float z-(--p-z-overlay) rounded-field p-4 text-sm", PANEL);
 const WIDTH = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" } as const;
+// Full class names, so Tailwind finds them.
+const WIDTH_MD = { sm: "md:max-w-sm", md: "md:max-w-lg", lg: "md:max-w-2xl" } as const;
 
 function DialogHead({ title, description, Title, Description }: { title: ReactNode; description?: ReactNode; Title: typeof RadixDialog.Title; Description: typeof RadixDialog.Description }) {
   return (
@@ -49,10 +51,9 @@ export function Dialog({
           className={cn(
             "p-pop fixed z-(--p-z-overlay) grid gap-6 overflow-auto p-6 md:p-8",
             fullScreenOnPhone
-              ? [FULL_ON_PHONE, "content-start md:start-1/2 md:top-1/2 md:max-h-[calc(100dvh-2rem)] md:w-[calc(100%-2rem)] md:-translate-y-1/2 md:rounded-panel ltr:md:-translate-x-1/2 rtl:md:translate-x-1/2"]
-              : "start-1/2 top-1/2 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-y-1/2 rounded-panel ltr:-translate-x-1/2 rtl:translate-x-1/2",
+              ? [FULL_ON_PHONE, CENTERED_FROM_MD, "content-start", WIDTH_MD[size]]
+              : ["start-1/2 top-1/2 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-y-1/2 rounded-panel ltr:-translate-x-1/2 rtl:translate-x-1/2", WIDTH[size]],
             PANEL,
-            WIDTH[size],
             className,
           )}
         >

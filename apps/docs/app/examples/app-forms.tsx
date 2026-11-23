@@ -678,7 +678,7 @@ export function FieldsSheetExample() {
       >
         {(draft) => (
           <p className="text-sm text-fg-3">
-            {t("The check opens", "يفتح الفحص")} <span className="font-mono">:{draft.port}{draft.path}</span>
+            {t("The check opens", "يفتح الفحص")} <span dir="ltr" className="font-mono">:{draft.port}{draft.path}</span>
           </p>
         )}
       </FieldsSheet>
