@@ -87,6 +87,7 @@ export function TimeTextExample() {
       <TimeText value="2025-03-02T08:00:00Z" now={NOW} />
       <TimeText value="2026-09-28" kind="date" now={NOW} />
       <TimeText value="2026-09-27T12:40:00Z" ago now={NOW} />
+      <TimeText value="2026-09-26T18:30:00Z" kind="time" now={NOW} />
       <Text size="sm" tone="muted">{formatRelative("2026-07-29T12:45:00Z", { lang, now: NOW })}</Text>
       <Text size="sm" tone="muted">{formatDateTime("2026-09-27 12:45:12", { lang, style: "full" })}</Text>
     </Stack>

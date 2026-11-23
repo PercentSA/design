@@ -9,7 +9,7 @@ import { Tooltip } from "./overlays";
 /**
  * A date or time in the short form (or "5 minutes ago" with `ago`), with the exact value on hover, focus or tap.
  * `interactive={false}` inside a clickable parent: no tab stop, the exact value is the `title`.
- * `kind="date"` for calendar days. `now` fixes the clock (tests, stable snapshots).
+ * `kind="date"` for calendar days. `kind="time"` shows the clock only ("3:45 PM"), for lists grouped by day; the tooltip has the full date and time. With `ago`, `kind="time"` is ignored: the `ago` form wins. `now` fixes the clock (tests, stable snapshots).
  * `hourCycle="h23"` shows 15:05, not 3:05 PM; `agoForm="short"` shows "5 min ago". Both default to the PercentProvider setting.
  */
 export function TimeText({
@@ -23,7 +23,7 @@ export function TimeText({
   className,
 }: {
   value: DateInput;
-  kind?: "instant" | "date";
+  kind?: "instant" | "date" | "time";
   ago?: boolean;
   interactive?: boolean;
   now?: Date;

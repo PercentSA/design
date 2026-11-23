@@ -3,7 +3,7 @@ import { STRINGS, type Strings } from "../i18n/strings";
 
 export type DateInput = Date | string | number | null | undefined;
 export type DateTimeStyle = "short" | "full" | "numeric" | "export";
-type Kind = "instant" | "date";
+type Kind = "instant" | "date" | "time";
 /** The 12-hour clock (3:05 PM) or the 24-hour clock (15:05). */
 export type HourCycle = "h12" | "h23";
 /** "5 minutes ago" or "5 min ago" (English only). */
@@ -65,7 +65,7 @@ function clock(date: Date, lang: Lang, timeZone: string, h23 = false) {
  * A date or time in Riyadh time (or `timeZone`), 12-hour clock (`hourCycle: "h23"`: 24-hour, "15:45", no day-period word), Western digits, Gregorian calendar.
  * `short`: today "3:45 PM", yesterday and tomorrow "Yesterday 3:45 PM", this year "12 September, 3:45 PM",
  * other years "12/09/2025". `full`: "Sunday 27 September 2026, 3:45:12 PM". `numeric`: "27/09/2026".
- * `export`: "2026-09-27 15:45" (24 h, sortable). A calendar day (`kind="date"`, or a "YYYY-MM-DD" string) has no time.
+ * `kind="time"` (short style): the clock only, "3:45 PM". `export`: "2026-09-27 15:45" (24 h, sortable). A calendar day (`kind="date"`, or a "YYYY-MM-DD" string) has no time.
  * A date-time string without a zone is read as UTC. Empty or bad input gives "".
  */
 export function formatDateTime(
@@ -88,6 +88,7 @@ export function formatDateTime(
   if (style === "export") return day ? c.ymd : `${c.ymd} ${c.time24}`;
   if (style === "numeric") return c.numeric;
   if (style === "full") return `${c.weekday} ${c.dayMonth} ${c.year}${day ? "" : `${comma} ${c.seconds}`}`;
+  if (kind === "time" && !day) return c.time;
   const today = clock(now ?? new Date(), lang, timeZone).ymd;
   const distance = Math.round((Date.parse(c.ymd) - Date.parse(today)) / DAY);
   const word = distance === 0 ? strings.today : distance === -1 ? strings.yesterday : distance === 1 ? strings.tomorrow : null;
