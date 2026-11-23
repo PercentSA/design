@@ -116,6 +116,23 @@ describe("hourCycle", () => {
   });
 });
 
+describe("nested provider", () => {
+  test("an inner provider keeps the outer hourCycle and agoForm; an inner prop wins", async () => {
+    const text = async (node: React.ReactNode) => (await mount(node)).querySelector("time")!.textContent;
+    const v = "2026-09-27T12:05:00Z";
+    const t5 = at("2026-09-27T12:40:00Z");
+    const outer = (inner: React.ReactNode) => (
+      <PercentProvider lang="en" hourCycle="h23" agoForm="short">
+        {inner}
+      </PercentProvider>
+    );
+    expect(await text(outer(<PercentProvider lang="ar"><TimeText value={v} now={now} /></PercentProvider>))).toBe("15:05");
+    expect(await text(outer(<PercentProvider lang="en"><TimeText value={t5} ago now={now} /></PercentProvider>))).toBe("5 min ago");
+    expect(await text(outer(<PercentProvider lang="en" hourCycle="h12" agoForm="long"><TimeText value={t5} ago now={now} /></PercentProvider>))).toBe("5 minutes ago");
+    expect(await text(outer(<PercentProvider lang="en" hourCycle="h12"><TimeText value={v} now={now} /></PercentProvider>))).toBe("3:05 PM");
+  });
+});
+
 describe("agoForm", () => {
   const ago = (s: number, lang: "en" | "ar", form?: "long" | "short") => formatRelative(new Date(now.getTime() - s * 1000), { lang, now, form });
   test("formatRelative short: minutes as min; the rest and Arabic do not change", () => {

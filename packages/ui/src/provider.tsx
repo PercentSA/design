@@ -79,8 +79,8 @@ export function PercentProvider({
   text = plain,
   brand,
   location,
-  hourCycle = "h12",
-  agoForm = "long",
+  hourCycle,
+  agoForm,
   children,
 }: {
   lang: Lang;
@@ -100,13 +100,17 @@ export function PercentProvider({
    * (Sidebar, menus, Breadcrumbs, cards, list and table rows) shows a pending state from the click until the location changes.
    */
   location?: string;
-  /** The clock of `TimeText` and `TimeInput`: "h12" (3:05 PM, the default) or "h23" (15:05). A `TimeText` `hourCycle` prop wins. */
+  /** The clock of `TimeText` and `TimeInput`: "h12" (3:05 PM, the default) or "h23" (15:05). A `TimeText` `hourCycle` prop wins. A nested provider without it keeps the outer value. */
   hourCycle?: HourCycle;
-  /** "5 minutes ago" ("long", the default) or "5 min ago" ("short", English only) in `TimeText ago`. A `TimeText` `agoForm` prop wins. */
+  /** "5 minutes ago" ("long", the default) or "5 min ago" ("short", English only) in `TimeText ago`. A `TimeText` `agoForm` prop wins. A nested provider without it keeps the outer value. */
   agoForm?: AgoForm;
   children: ReactNode;
 }) {
-  const outerBrand = useContext(PercentContext).brand;
+  const outer = useContext(PercentContext);
+  const outerBrand = outer.brand;
+  // Without its own value, a nested provider keeps the outer one (the outermost gives the defaults "h12" and "long").
+  const hc = hourCycle ?? outer.hourCycle;
+  const ago = agoForm ?? outer.agoForm;
   const tracked = location !== undefined;
   // Made once per link component, so links keep their DOM node.
   const shownLink = useMemo(() => (tracked ? pendingLink(link) : link), [link, tracked]);
@@ -117,12 +121,12 @@ export function PercentProvider({
       strings: strings ? mergeStrings(STRINGS[lang], strings) : STRINGS[lang],
       link: shownLink,
       text,
-      hourCycle,
-      agoForm,
+      hourCycle: hc,
+      agoForm: ago,
       // A brand with one logo uses it in both places, so Percent's never shows by accident.
       brand: brand ? { ...brand, mark: brand.mark ?? brand.wordmark, wordmark: brand.wordmark ?? brand.mark } : outerBrand,
     }),
-    [lang, strings, shownLink, text, brand, outerBrand, hourCycle, agoForm],
+    [lang, strings, shownLink, text, brand, outerBrand, hc, ago],
   );
   const [click, setClick] = useState<{ href: string; at: string } | null>(null);
   // A new location ends the pending state during render (no effect, so no frame with the old state).
