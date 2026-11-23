@@ -11,7 +11,7 @@ export const STRETCHED_LINK =
   "after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-3 focus-visible:after:outline-fg";
 // On the positioned parent: other controls inside sit above the ::after, so they stay clickable.
 export const ABOVE_STRETCHED_LINK =
-  "[&_:is(a,button,input,select,textarea,label):not([data-stretched],.sr-only,.absolute)]:relative [&_:is(a,button,input,select,textarea,label):not([data-stretched],.sr-only,.absolute)]:z-1";
+  "[&_:is(a,button,input,select,textarea,label,time[tabindex]):not([data-stretched],.sr-only,.absolute)]:relative [&_:is(a,button,input,select,textarea,label,time[tabindex]):not([data-stretched],.sr-only,.absolute)]:z-1";
 
 type CardProps = {
   description?: ReactNode;
