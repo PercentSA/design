@@ -215,7 +215,7 @@ export function ChartFrame({
         <>
           <div
             ref={measure}
-            className={cn("relative", onSelect && "cursor-pointer")}
+            className={cn("relative", onSelect && "cursor-pointer touch-manipulation")}
             onClick={
               onSelect &&
               ((e) => {

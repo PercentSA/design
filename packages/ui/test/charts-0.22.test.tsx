@@ -203,6 +203,11 @@ describe("chart limit and point select", () => {
         expect(calls).toEqual([["10:15", 3]]);
       }));
 
+    test("the plot has touch-manipulation only with onSelectPoint (no double-tap zoom)", () => {
+      expect(en(<LineChart {...base} onSelectPoint={() => {}} />)).toContain("touch-manipulation");
+      expect(en(<LineChart {...base} />)).not.toContain("touch-manipulation");
+    });
+
     test("a mouse click calls onSelectPoint at once, as before", () =>
       run(async (plot, calls) => {
         await tapAt(plot, 215, "mouse");

@@ -3,7 +3,7 @@
 import { useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import { cn } from "../lib/cn";
-import { useStrings } from "../provider";
+import { useDir, useStrings } from "../provider";
 import { Button } from "./actions";
 import { Skeleton } from "./feedback";
 import { Input } from "./inputs";
@@ -52,6 +52,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
   const [act, setAct] = useState<string>(); // the current row of the keyboard
   const list = useRef<HTMLOListElement>(null);
   const uid = useId();
+  const dir = useDir();
 
   const toEnd = () => {
     if (!box.current) return;
@@ -101,7 +102,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
   }, [search]);
 
   const actIdx = rows.findIndex((r) => r.key === act);
-  const rowId = (i: number) => `${uid}-${i}`;
+  const rowId = (key: string) => `${uid}-${key.replace(/[^\w-]/g, (c) => `_${c.charCodeAt(0).toString(16)}_`)}`; // from the key: the id stays when old rows leave
   const moveTo = (i: number) => {
     const r = rows[Math.max(0, Math.min(rows.length - 1, i))];
     if (!r) return;
@@ -123,11 +124,13 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
     else if (k === "End") (e.preventDefault(), moveTo(rows.length - 1));
     else if ((k === "F10" && e.shiftKey) || k === "ContextMenu") {
       // The row menu opens from a contextmenu event on the row, as a right click does.
-      const li = actIdx >= 0 ? items.current.get(rows[actIdx]!.key) : undefined;
-      if (!li) return;
       e.preventDefault();
+      const r = rows[actIdx] ?? rows.at(-1); // no current row: the newest becomes current
+      const li = r && items.current.get(r.key);
+      if (!r || !li) return;
+      setAct(r.key);
       const b = li.getBoundingClientRect();
-      li.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: b.left + 8, clientY: b.top + b.height / 2 }));
+      li.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: dir === "rtl" ? b.right - 8 : b.left + 8, clientY: b.top + b.height / 2 }));
     }
   };
 
@@ -190,6 +193,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
             onClick={() => {
               toEnd();
               setAway(false);
+              if (rows.length) setAct(rows[rows.length - 1]!.key);
               (list.current ?? box.current)?.focus(); // the button removes itself; keep focus in the log
             }}
           >
@@ -231,16 +235,14 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
           >
             <ol
               ref={list}
-              // One tab stop: the list. Arrow keys move the current row (aria-activedescendant), so a screen reader reads that row. New rows are announced politely while live is on.
+              // One tab stop: the list. Arrow keys move the current row (aria-activedescendant), so a screen reader reads that row. The list is not a live region: new lines are not announced.
               role="listbox"
               aria-label={label}
               aria-readonly="true"
               tabIndex={0}
-              aria-activedescendant={actIdx >= 0 ? rowId(actIdx) : undefined}
-              aria-live={live === "on" ? "polite" : "off"}
-              aria-relevant="additions"
+              aria-activedescendant={actIdx >= 0 ? rowId(rows[actIdx]!.key) : undefined}
               onKeyDown={onListKey}
-              className="group/ol grid outline-none grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]"
+              className={cn("group/ol grid outline-none grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]", actIdx < 0 && "focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-fg")}
               // iOS opens the menu from a long press and sends no contextmenu event, so the row is also read at pointer down.
               onPointerDown={(e) => {
                 copyKey.current = rowKey(e.target);
@@ -248,10 +250,10 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
               }}
               onContextMenu={(e) => (copyKey.current = rowKey(e.target) ?? copyKey.current)}
             >
-              {rows.map((r, i) => (
+              {rows.map((r) => (
                 <li
                   key={r.key}
-                  id={rowId(i)}
+                  id={rowId(r.key)}
                   role="option"
                   aria-selected={r.key === act}
                   data-active={r.key === act ? "" : undefined}

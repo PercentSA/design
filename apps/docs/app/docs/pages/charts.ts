@@ -16,8 +16,8 @@ export const pages: DocPage[] = [
     "charts",
     "AreaChart",
     ["AreaChartExample", "AreaChartLimitExample"],
-    "Values over time as filled areas, side by side or stacked to show the total. `limit` draws a dashed line with its label; a value at 90 % of the limit or more shows in the warning colour. With `onSelectPoint`, a click or Enter on the chosen point opens it.",
-    "قيم عبر الزمن على شكل مساحات ملوّنة، متجاورة أو متراكبة لإظهار المجموع. ترسم `limit` خطًا متقطعًا مع اسمه، والقيمة التي تبلغ 90% من الحد أو أكثر تظهر بلون التحذير. ومع `onSelectPoint` يفتح النقر أو مفتاح Enter النقطة المختارة.",
+    "Values over time as filled areas, side by side or stacked to show the total. `limit` draws a dashed line with its label; a value at 90 % of the limit or more shows in the warning colour. With `onSelectPoint`, a click or Enter on the chosen point opens it. On touch, the first tap shows the value and a second tap on the same point opens it. The `limit` label has a halo in `--p-chart-surface` (default the page colour; Card sets it to its own surface), so it stays readable over the area.",
+    "قيم عبر الزمن على شكل مساحات ملوّنة، متجاورة أو متراكبة لإظهار المجموع. ترسم `limit` خطًا متقطعًا مع اسمه، والقيمة التي تبلغ 90% من الحد أو أكثر تظهر بلون التحذير. ومع `onSelectPoint` يفتح النقر أو مفتاح Enter النقطة المختارة. باللمس تعرض أول لمسة القيمة، وتفتح لمسة ثانية على النقطة نفسها. لاسم `limit` هالة بلون ‎--p-chart-surface (الافتراضي لون الصفحة، وتضبطه Card على سطحها)، فيبقى مقروءًا فوق المساحة.",
   ),
   p(
     "bar-chart",
