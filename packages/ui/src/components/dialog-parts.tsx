@@ -20,10 +20,21 @@ export function BlockedStatus({ id, children }: { id: string; children?: ReactNo
   );
 }
 
-/** The focus target to return to: the focused element, or the trigger of its menu when it is a menu item (the menu removes the item when it closes). */
-function returnTarget(el: Element | null) {
+// What had the focus when a context menu opened, by menu id: Radix gives the focus back there when the menu closes.
+const contextFocus = new Map<string, Element | null>();
+export const rememberContextFocus = (id: string, el: Element | null) => void contextFocus.set(id, el);
+export const forgetContextFocus = (id: string) => void contextFocus.delete(id);
+
+/**
+ * The focus target to return to: the focused element, or, when it is an item of a `DropdownMenu` (its trigger) or a `ContextMenu`
+ * (the element that had the focus when the menu opened, else its area), the menu's target: the menu removes the item when it closes.
+ */
+export function returnTarget(el: Element | null) {
   const id = el?.closest("[data-p-menu][role=menu]")?.getAttribute("data-p-menu");
-  return (id && [...document.querySelectorAll("[data-p-menu]")].find((t) => t.getAttribute("data-p-menu") === id && t.getAttribute("role") !== "menu")) || el;
+  if (!id) return el;
+  const trigger = [...document.querySelectorAll("[data-p-menu]")].find((t) => t.getAttribute("data-p-menu") === id && t.getAttribute("role") !== "menu");
+  const before = contextFocus.get(id);
+  return (before && before !== document.body && before.isConnected ? before : trigger) ?? el;
 }
 
 /**

@@ -7,6 +7,7 @@ import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
 import { searchKey } from "../saudi/normalize";
 import { MENU_ITEM } from "./input-classes";
+import { returnTarget } from "./dialog-parts";
 import { SIDE } from "./overlays";
 import { Spinner } from "./spinner";
 import { Kbd } from "./text";
@@ -230,7 +231,7 @@ function PaletteDialog({ anchor, sheet, ...props }: PaletteProps & { anchor?: Re
           aria-describedby={undefined}
           data-side={sheet ? "bottom" : undefined}
           // Without a Radix trigger, focus would fall to <body> on close; return it to where it was (or to the anchor).
-          onOpenAutoFocus={() => (back.current = document.activeElement)}
+          onOpenAutoFocus={() => (back.current = returnTarget(document.activeElement))}
           onCloseAutoFocus={(e) => returnFocus(e, anchor?.current ?? back.current)}
           className={cn(
             "fixed z-(--p-z-overlay) overflow-hidden border-line bg-surface-2 text-fg shadow-overlay",

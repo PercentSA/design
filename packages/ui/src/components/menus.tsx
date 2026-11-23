@@ -1,9 +1,10 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
+import { useEffect, useId, type ReactNode } from "react";
 import { ContextMenu as RadixContextMenu, DropdownMenu as RadixDropdown } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useLinkComponent, useStrings } from "../provider";
+import { forgetContextFocus, rememberContextFocus } from "./dialog-parts";
 import { MENU_ITEM } from "./input-classes";
 
 export type MenuItem =
@@ -116,8 +117,9 @@ export function DropdownMenu({
 /** Right-click (long-press on touch) menu for an area. Offer the same actions elsewhere too. */
 export function ContextMenu({ children, items }: { children: ReactNode; items: MenuItem[] }) {
   const menuId = useId();
+  useEffect(() => () => forgetContextFocus(menuId), [menuId]);
   return (
-    <RadixContextMenu.Root>
+    <RadixContextMenu.Root onOpenChange={(o) => o && rememberContextFocus(menuId, document.activeElement)}>
       <RadixContextMenu.Trigger asChild data-p-menu={menuId}>
         {children}
       </RadixContextMenu.Trigger>
