@@ -71,7 +71,8 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
     if (value === "") return setError(s.enterValue);
     setPending(true);
     setError(undefined);
-    onSave(value).then(
+    // A throw at once acts as a rejected save.
+    Promise.resolve().then(() => onSave(value)).then(
       () => (setPending(false), setOpen(false)),
       (err: unknown) => (setPending(false), setError(err instanceof Error ? err.message : String(err))),
     );

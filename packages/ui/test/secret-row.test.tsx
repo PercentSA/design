@@ -75,6 +75,22 @@ describe("SecretRow", () => {
     expect(field().getAttribute("aria-invalid")).toBe("true");
   });
 
+  test("an onSave that throws at once acts as a rejected save", async () => {
+    const el = await save(() => {
+      throw new Error("Bad key.");
+    });
+    await click(button("Set", el));
+    await type(field(), "bad");
+    await click(button("Save", sheet()!));
+    await settle();
+    expect(sheet()!.textContent).toContain("Bad key.");
+    await click(button("Cancel", sheet()!));
+    await settle();
+    expect(sheet()).toBeNull();
+    await click(button("Set", el));
+    expect(field().value).toBe("");
+  });
+
   test("the typed value is empty after each close", async () => {
     const el = await save(async () => {
       throw new Error("No.");
