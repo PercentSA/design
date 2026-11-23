@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { FileText, Folder } from "lucide-react";
-import { Accordion, Avatar, AvatarGroup, Button, ChangeList, ConnectionCard, FormBar, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree, UsageMeter } from "@percentsa/ui";
+import { Ellipsis, FileText, Folder } from "lucide-react";
+import { Accordion, Avatar, AvatarGroup, Button, ChangeList, ConnectionCard, DropdownMenu, FormBar, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree, UsageMeter } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function StatExample() {
@@ -272,7 +272,11 @@ export function MaskedValueOpenExample() {
         confirm={{ title: t("Show the password?", "عرض كلمة المرور؟"), action: t("Show the password", "اعرض كلمة المرور") }}
         onReveal={async () => "p4ss-example-only"}
       />
-      <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>{t("Show from the menu", "العرض من القائمة")}</Button>
+      <DropdownMenu
+        align="end"
+        trigger={<Button size="sm" variant="ghost" iconOnly aria-label={t("Row actions", "إجراءات الصف")}><Ellipsis aria-hidden /></Button>}
+        items={[{ label: t("Reveal Password", "إظهار كلمة المرور"), onSelect: () => setOpen(true) }]}
+      />
     </Inline>
   );
 }

@@ -9,7 +9,6 @@ import { Button } from "./actions";
 import { Mark } from "./brand";
 import { buttonClass } from "./button-class";
 import type { Crumb } from "./navigation";
-import { useMediaQuery } from "./utility";
 
 const ALERT = {
   info: { icon: Info, color: "text-fg-2", border: "border-line" },
@@ -18,48 +17,32 @@ const ALERT = {
   danger: { icon: CircleAlert, color: "text-danger", border: "border-danger/40" },
 } as const;
 
-type AlertProps = {
+/**
+ * A message in the page. Errors and warnings are announced at once; info and success when the reader is free.
+ * `collapsible`: below 768 px only the icon, the title and a Show button show; the text and the action open on press.
+ * It folds with CSS only, so the server and the browser give the same markup. With no text and no action it has no button.
+ */
+export function Alert({
+  tone = "info",
+  title,
+  children,
+  action,
+  collapsible,
+  className,
+}: {
   tone?: keyof typeof ALERT;
   title: ReactNode;
   children?: ReactNode;
   action?: ReactNode;
-  /** Below 768 px: only the icon, the title and a Show button; the body (text and action) opens on press. From 768 px: the full alert. */
   collapsible?: boolean;
   className?: string;
-};
-
-// A child, so an Alert without `collapsible` never calls matchMedia.
-function CollapsibleAlert({ tone = "info", title, children, action, className }: AlertProps) {
+}) {
   const s = useStrings();
-  const phone = useMediaQuery("(width < 48rem)");
   const [open, setOpen] = useState(false);
   const bodyId = useId();
-  if (!phone) return <Alert tone={tone} title={title} action={action} className={className}>{children}</Alert>;
   const t = ALERT[tone];
-  return (
-    <div role={tone === "danger" || tone === "warning" ? "alert" : "status"} className={cn("grid gap-3 rounded-field border bg-surface p-4 text-sm", t.border, className)}>
-      <div className="flex items-center gap-3">
-        <t.icon aria-hidden className={cn("size-4 shrink-0", t.color)} />
-        <p className="flex-1 font-medium text-fg">{title}</p>
-        <Button variant="ghost" size="sm" aria-expanded={open} aria-controls={open ? bodyId : undefined} onClick={() => setOpen(!open)}>
-          {open ? s.hide : s.show}
-        </Button>
-      </div>
-      {open && (
-        <div id={bodyId} className="grid gap-3 ps-7">
-          {children && <div className="text-fg-2">{children}</div>}
-          {action && <div>{action}</div>}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/** A message in the page. Errors and warnings are announced at once; info and success when the reader is free. */
-export function Alert({ collapsible, ...props }: AlertProps) {
-  if (collapsible) return <CollapsibleAlert {...props} />;
-  const { tone = "info", title, children, action, className } = props;
-  const t = ALERT[tone];
+  const fold = !!collapsible && !!(children || action);
+  const hidden = fold && !open && "max-md:hidden";
   return (
     <div
       role={tone === "danger" || tone === "warning" ? "alert" : "status"}
@@ -68,9 +51,22 @@ export function Alert({ collapsible, ...props }: AlertProps) {
       <t.icon aria-hidden className={cn("mt-0.5 size-4 shrink-0", t.color)} />
       <div className="grid flex-1 gap-1">
         <p className="font-medium text-fg">{title}</p>
-        {children && <div className="text-fg-2">{children}</div>}
+        {children && (
+          <div id={bodyId} className={cn("text-fg-2", hidden)}>
+            {children}
+          </div>
+        )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {fold && (
+        <Button variant="ghost" size="sm" className="-my-1.5 md:hidden" aria-expanded={open} aria-controls={open ? bodyId : undefined} onClick={() => setOpen(!open)}>
+          {open ? s.hide : s.show}
+        </Button>
+      )}
+      {action && (
+        <div id={children ? undefined : bodyId} className={cn("shrink-0", hidden)}>
+          {action}
+        </div>
+      )}
     </div>
   );
 }

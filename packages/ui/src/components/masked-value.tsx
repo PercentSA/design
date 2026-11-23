@@ -58,7 +58,7 @@ export function MaskedValue({ label, canReveal, onReveal, confirm, open: openPro
   if (!canReveal) return <span className="text-fg-3">{s.maskedHidden}</span>;
 
   // The dialog closes itself when its action resolves; a rejection keeps it open.
-  const ask = () => Promise.resolve().then(onReveal).then((v) => ((moveFocus.current = true), setValue(v), confirm && open && setOpen(false)));
+  const ask = () => Promise.resolve().then(onReveal).then((v) => ((moveFocus.current = true), setValue(v)));
   const quiet = () => {
     setLoading(true);
     // The value stays hidden on a failure: the app reports the error itself.

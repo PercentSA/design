@@ -4,6 +4,10 @@ import { STRINGS, type Strings } from "../i18n/strings";
 export type DateInput = Date | string | number | null | undefined;
 export type DateTimeStyle = "short" | "full" | "numeric" | "export";
 type Kind = "instant" | "date";
+/** The 12-hour clock (3:05 PM) or the 24-hour clock (15:05). */
+export type HourCycle = "h12" | "h23";
+/** "5 minutes ago" or "5 min ago" (English only). */
+export type AgoForm = "long" | "short";
 
 const ZONE = "Asia/Riyadh";
 const DAY = 86_400_000;
@@ -74,7 +78,7 @@ export function formatDateTime(
     timeZone = ZONE,
     strings = STRINGS[lang],
     hourCycle = "h12",
-  }: { lang?: Lang; kind?: Kind; style?: DateTimeStyle; now?: Date; timeZone?: string; strings?: Strings; hourCycle?: "h12" | "h23" } = {},
+  }: { lang?: Lang; kind?: Kind; style?: DateTimeStyle; now?: Date; timeZone?: string; strings?: Strings; hourCycle?: HourCycle } = {},
 ): string {
   const r = read(value);
   if (!r) return "";
@@ -104,7 +108,7 @@ export function dateTimeAttribute(value: DateInput, kind?: Kind) {
 const relative = new Map<Lang, Intl.RelativeTimeFormat>();
 
 /** "now", "5 minutes ago", "yesterday", "2 months ago"; "الآن", "قبل 5 دقائق", "أمس", "قبل شهرين". `form: "short"` writes English minutes as "5 min ago"; Arabic does not change. */
-export function formatRelative(value: DateInput, { lang = "en", now = new Date(), form = "long" }: { lang?: Lang; now?: Date; form?: "long" | "short" } = {}): string {
+export function formatRelative(value: DateInput, { lang = "en", now = new Date(), form = "long" }: { lang?: Lang; now?: Date; form?: AgoForm } = {}): string {
   const r = read(value);
   if (!r) return "";
   let f = relative.get(lang);
@@ -127,11 +131,12 @@ export function formatRelative(value: DateInput, { lang = "en", now = new Date()
   return f.format(Math.round(n), unit).replace(MARKS, "");
 }
 
-/** A wall time "HH:mm[:ss]" (opening hours, appointment slots) on the 12-hour clock: "9:00 AM", "9:00 ص". */
-export function formatTimeOfDay(time: string | null | undefined, { lang = "en" }: { lang?: Lang } = {}): string {
+/** A wall time "HH:mm[:ss]" (opening hours, appointment slots) on the 12-hour clock: "9:00 AM", "9:00 ص"; `hourCycle: "h23"` gives "09:00". */
+export function formatTimeOfDay(time: string | null | undefined, { lang = "en", hourCycle = "h12" }: { lang?: Lang; hourCycle?: HourCycle } = {}): string {
   const m = /^(\d{1,2}):(\d{2})/.exec(time ?? "");
   const h = Number(m?.[1]);
   if (!m || h > 23) return "";
+  if (hourCycle === "h23") return `${String(h).padStart(2, "0")}:${m[2]}`;
   return `${h % 12 || 12}:${m[2]} ${period(lang, h >= 12)}`;
 }
 

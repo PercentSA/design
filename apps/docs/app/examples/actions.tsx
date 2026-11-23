@@ -139,11 +139,13 @@ export function ToggleGroupExample() {
 }
 
 export function CopyButtonExample() {
+  const t = useT();
   return (
     <Inline gap={3}>
       <code dir="ltr" className="font-mono text-sm">SA03 8000 0000 6080 1016 7519</code>
       <CopyButton value="SA0380000000608010167519" />
       <CopyButton value="SA0380000000608010167519" iconOnly />
+      <CopyButton value="SA0380000000608010167519" iconOnly label={t("Copy IBAN", "انسخ رقم الآيبان")} />
     </Inline>
   );
 }

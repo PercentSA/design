@@ -4,6 +4,9 @@ import { createContext, useContext, useMemo, useState, type ComponentProps, type
 import { Direction } from "radix-ui";
 import { dirOf, type Dir, type Lang } from "./i18n/localized";
 import { STRINGS, type Strings } from "./i18n/strings";
+import type { AgoForm, HourCycle } from "./saudi/date-time";
+
+export type { AgoForm, HourCycle };
 
 /** The component that renders links (an adapter for the app's router). Gets `href` like an <a>. */
 export type LinkComponent = ComponentType<ComponentProps<"a">>;
@@ -15,9 +18,6 @@ const plain: TextRenderer = (s) => s;
 
 /** A project's own logo and loading indicator. Components use Percent's where a slot is empty. */
 export type BrandSlots = { mark?: ReactNode; wordmark?: ReactNode; spinner?: ReactNode };
-
-export type HourCycle = "h12" | "h23";
-export type AgoForm = "long" | "short";
 
 type Ctx = { lang: Lang; dir: Dir; strings: Strings; link: LinkComponent | "a"; text: TextRenderer; brand?: BrandSlots; hourCycle: HourCycle; agoForm: AgoForm };
 
@@ -100,7 +100,7 @@ export function PercentProvider({
    * (Sidebar, menus, Breadcrumbs, cards, list and table rows) shows a pending state from the click until the location changes.
    */
   location?: string;
-  /** The clock of `TimeText`: "h12" (3:05 PM, the default) or "h23" (15:05). A `TimeText` `hourCycle` prop wins. */
+  /** The clock of `TimeText` and `TimeInput`: "h12" (3:05 PM, the default) or "h23" (15:05). A `TimeText` `hourCycle` prop wins. */
   hourCycle?: HourCycle;
   /** "5 minutes ago" ("long", the default) or "5 min ago" ("short", English only) in `TimeText ago`. A `TimeText` `agoForm` prop wins. */
   agoForm?: AgoForm;

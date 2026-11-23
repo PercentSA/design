@@ -72,7 +72,7 @@ export const pages: DocPage[] = [
     "MaskedValue, type MaskedValueProps",
     ["MaskedValueExample", "MaskedValueOpenExample"],
     "A secret value shown as dots. Reveal can ask first (`confirm`); the app reads the value and writes its audit log in `onReveal`. `confirm.action` sets the confirm button text (default “Show”). `open` and `onOpenChange` control the dialog, for example to open it from a row menu; they work only with `confirm`. After a reveal the value has Copy and Hide. Give each record its own `key`, so a shown value does not stay when the record changes.",
-    "قيمة سرية تظهر نقاطًا. يمكن أن يسأل زر الإظهار أولًا (`confirm`)، ويقرأ التطبيق القيمة ويسجّل ذلك في سجل التدقيق داخل `onReveal`. يضبط `confirm.action` نص زر التأكيد (الافتراضي «إظهار»). ويتحكم `open` و`onOpenChange` في مربع الحوار، مثلًا لفتحه من قائمة الصف، ولا يعملان إلا مع `confirm`. وبعد الإظهار تظهر القيمة مع زرَّي النسخ والإخفاء. أعطِ كل سجل مفتاح `key` خاصًا به، حتى لا تبقى القيمة الظاهرة عند تغيّر السجل.",
+    "قيمة سرية تظهر نقاطًا. يمكن أن يسأل زر الإظهار أولًا (`confirm`)، ويقرأ التطبيق القيمة ويسجّل ذلك في سجل التدقيق داخل `onReveal`. يضبط `confirm.action` نص زر التأكيد (الافتراضي «عرض»). ويتحكم `open` و`onOpenChange` في مربع الحوار، مثلًا لفتحه من قائمة الصف، ولا يعملان إلا مع `confirm`. وبعد الإظهار تظهر القيمة مع زرَّي النسخ والإخفاء. أعطِ كل سجل مفتاح `key` خاصًا به، حتى لا تبقى القيمة الظاهرة عند تغيّر السجل.",
   ),
   p(
     "connection-card",

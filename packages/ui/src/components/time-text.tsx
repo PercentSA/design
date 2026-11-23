@@ -2,9 +2,8 @@
 
 import { useState } from "react";
 import { cn } from "../lib/cn";
-import type { AgoForm, HourCycle } from "../provider";
 import { useAgoForm, useHourCycle, useLang, useStrings } from "../provider";
-import { dateTimeAttribute, formatDateTime, formatRelative, type DateInput } from "../saudi/date-time";
+import { dateTimeAttribute, formatDateTime, formatRelative, type AgoForm, type DateInput, type HourCycle } from "../saudi/date-time";
 import { Tooltip } from "./overlays";
 
 /**

@@ -1,8 +1,9 @@
 import { describe, expect, test } from "bun:test";
 import { act, useState } from "react";
 import { Alert, Button, ConnectionCard, CopyButton, MaskedValue, PercentProvider, TimeText } from "../src";
-import { formatDateTime, formatRelative } from "../src";
-import { click, mount, removeMatchMedia, stubMatchMedia, useDom } from "./dom";
+import { formatDateTime, formatRelative, formatTimeOfDay, TimeInput } from "../src";
+import { renderToStaticMarkup } from "react-dom/server";
+import { click, mount, stubMatchMedia, useDom } from "./dom";
 
 useDom();
 
@@ -77,7 +78,7 @@ describe("MaskedValue controlled open", () => {
     expect(document.body.textContent).toContain("s3cret");
     expect(document.querySelector('[role="alertdialog"]')).toBeNull();
     expect(document.activeElement).toBe(btn("Hide Password"));
-    expect(calls.at(-1)).toBe(false);
+    expect(calls).toEqual([false]);
   });
   test("open={false} keeps the dialog closed; Reveal asks and calls onOpenChange(true)", async () => {
     const calls: boolean[] = [];
@@ -135,53 +136,97 @@ describe("agoForm", () => {
 });
 
 describe("Alert collapsible", () => {
-  const alert = (collapsible?: boolean) => (
-    <Alert tone="warning" title="Backup late" collapsible={collapsible} action={<button>Retry</button>}>
-      The last run failed.
+  const alert = (collapsible?: boolean, extra = true) => (
+    <Alert tone="warning" title="Backup late" collapsible={collapsible} action={extra ? <button>Retry</button> : undefined}>
+      {extra ? "The last run failed." : undefined}
     </Alert>
   );
-  test("on a phone: the body is hidden until Show; Hide closes it", async () => {
-    stubMatchMedia(true);
-    const el = await mount(alert(true));
-    expect(el.textContent).toContain("Backup late");
-    expect(el.textContent).not.toContain("The last run failed.");
-    expect(el.textContent).not.toContain("Retry");
-    const b = btn("Show");
-    expect(b.getAttribute("aria-expanded")).toBe("false");
-    expect(b.hasAttribute("aria-controls")).toBe(false);
-    await click(b);
-    expect(el.textContent).toContain("The last run failed.");
-    expect(btn("Hide").getAttribute("aria-expanded")).toBe("true");
-    expect(el.querySelector("#" + btn("Hide").getAttribute("aria-controls"))!.textContent).toContain("Retry");
-    await click(btn("Hide"));
-    expect(el.textContent).not.toContain("The last run failed.");
-  });
-  test("from 768 px: the full alert, no button", async () => {
-    stubMatchMedia(false);
-    const el = await mount(alert(true));
-    expect(el.textContent).toContain("The last run failed.");
-    expect(el.querySelector("button")!.textContent).toBe("Retry");
-  });
-  test("the phone rule is the max-md width", async () => {
-    let asked = "";
-    stubMatchMedia(false);
-    const stub = globalThis.matchMedia;
-    globalThis.matchMedia = ((q: string) => ((asked = q), stub(q))) as typeof matchMedia;
-    await mount(alert(true));
-    expect(asked).toBe("(width < 48rem)");
-  });
-  test("without matchMedia: the full alert", async () => {
-    removeMatchMedia();
-    const el = await mount(alert(true));
-    expect(el.textContent).toContain("The last run failed.");
-  });
-  test("without collapsible: as before, matchMedia is not called", async () => {
+  const body = (el: Element) => [...el.querySelectorAll("div")].find((d) => d.textContent === "The last run failed.")!;
+  test("CSS fold: no matchMedia; the button is md:hidden, the closed body and action are max-md:hidden", async () => {
     stubMatchMedia(true);
     globalThis.matchMedia = (() => {
       throw new Error("matchMedia called");
     }) as unknown as typeof matchMedia;
-    const el = await mount(alert());
-    expect(el.textContent).toContain("The last run failed.");
-    expect(btn("Show")).toBeUndefined();
+    const el = await mount(alert(true));
+    const b = btn("Show");
+    expect(b.className).toContain("md:hidden");
+    expect(b.getAttribute("aria-expanded")).toBe("false");
+    expect(b.hasAttribute("aria-controls")).toBe(false);
+    expect(body(el).className).toContain("max-md:hidden");
+    expect(btn("Retry").parentElement!.className).toContain("max-md:hidden");
   });
+  test("Show opens the body (the class goes), aria-controls points at it; Hide folds it", async () => {
+    const el = await mount(alert(true));
+    await click(btn("Show"));
+    expect(body(el).className).not.toContain("max-md:hidden");
+    expect(btn("Hide").getAttribute("aria-expanded")).toBe("true");
+    expect(el.querySelector("#" + btn("Hide").getAttribute("aria-controls"))).toBe(body(el));
+    expect(btn("Retry").parentElement!.className).not.toContain("max-md:hidden");
+    await click(btn("Hide"));
+    expect(body(el).className).toContain("max-md:hidden");
+  });
+  test("server HTML equals the first client HTML (no width state)", () => {
+    const html = renderToStaticMarkup(alert(true));
+    expect(html).toContain("Show");
+    expect(html).toContain("max-md:hidden");
+    expect(html).toContain('role="alert"');
+  });
+  test("with no body the button is not shown", async () => {
+    const el = await mount(<Alert title="Note" collapsible />);
+    expect(el.querySelector("button")).toBeNull();
+    const el2 = await mount(alert(true, false));
+    expect(el2.querySelector("button")).toBeNull();
+  });
+  test("without collapsible: as before, no button, no hiding classes", async () => {
+    const el = await mount(alert());
+    expect(btn("Show")).toBeUndefined();
+    expect(el.innerHTML).not.toContain("max-md:hidden");
+    expect(el.textContent).toContain("The last run failed.");
+  });
+});
+
+describe("MaskedValue open without confirm", () => {
+  test("open is ignored without confirm: no dialog; Reveal reveals at once", async () => {
+    const el = await mount(<MaskedValue label="Password" canReveal open onReveal={async () => "s3cret"} />);
+    expect(document.querySelector('[role="alertdialog"]')).toBeNull();
+    await click(btn("Reveal Password"));
+    await tick();
+    expect(el.textContent).toContain("s3cret");
+  });
+});
+
+describe("hourCycle in formatTimeOfDay and TimeInput", () => {
+  test("formatTimeOfDay h23: 15:05 in English and Arabic; default stays 12-hour", () => {
+    expect(formatTimeOfDay("15:05", { hourCycle: "h23" })).toBe("15:05");
+    expect(formatTimeOfDay("15:05:30", { lang: "ar", hourCycle: "h23" })).toBe("15:05");
+    expect(formatTimeOfDay("09:00", { hourCycle: "h23" })).toBe("09:00");
+    expect(formatTimeOfDay("15:05")).toBe("3:05 PM");
+    expect(formatTimeOfDay("15:05", { lang: "ar" })).toBe("3:05 م");
+  });
+  const hour = (el: Element) => el.querySelector<HTMLInputElement>('input[aria-label="Hour"], input[aria-label="الساعة"]')!;
+  for (const lang of ["en", "ar"] as const) {
+    test(`TimeInput h23 (${lang}): provider or prop gives hours 00-23, no AM/PM; the value stays HH:MM`, async () => {
+      const log: string[] = [];
+      const Host = ({ prop }: { prop?: boolean }) => {
+        const [v, setV] = useState<string | null>("15:05");
+        return <TimeInput value={v} hourCycle={prop ? "h23" : undefined} onValueChange={(t) => (log.push(t), setV(t))} />;
+      };
+      const el = await mount(<PercentProvider lang={lang} hourCycle="h23"><Host /></PercentProvider>);
+      expect(hour(el).value).toBe("15");
+      expect(el.querySelector('[role="radio"]')).toBeNull();
+      await act(async () => {
+        Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(hour(el), "7");
+        hour(el).dispatchEvent(new Event("input", { bubbles: true }));
+      });
+      expect(log.at(-1)).toBe("07:05");
+      const el2 = await mount(<PercentProvider lang={lang}><Host prop /></PercentProvider>);
+      expect(el2.querySelector('[role="radio"]')).toBeNull();
+      expect(hour(el2).value).toBe("15");
+    });
+    test(`TimeInput without hourCycle (${lang}): 12-hour with AM/PM, as before`, async () => {
+      const el = await mount(<PercentProvider lang={lang}><TimeInput value="15:05" onValueChange={() => {}} /></PercentProvider>);
+      expect(hour(el).value).toBe("3");
+      expect(el.querySelectorAll('[role="radio"]').length).toBe(2);
+    });
+  }
 });
