@@ -29,7 +29,7 @@ export type ActionDialogProps = {
   effectsEmpty?: ReactNode;
   /** What stays as it is, one line each. Shows "What stays" after "What happens". */
   stays?: ReactNode[];
-  reason?: { label: ReactNode; required?: boolean };
+  reason?: { label: ReactNode; required?: boolean; /** The longest reason, in characters. */ maxLength?: number };
   /** The name the person must type before the action runs. End spaces are ignored; case counts. */
   confirmName?: string;
   /** Replaces the line "Type <name> to confirm." above the name field. The label must show the exact name to type. */
@@ -147,7 +147,7 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, stays, 
         )}
         {reason && (
           <Field label={reason.label} required={reason.required}>
-            <Textarea data-ad-reason value={why} onChange={(e) => setWhy(e.target.value)} />
+            <Textarea data-ad-reason maxLength={reason.maxLength} value={why} onChange={(e) => setWhy(e.target.value)} />
           </Field>
         )}
         {confirmName != null && (

@@ -274,7 +274,7 @@ export function ActionDialogChoiceExample() {
               : null
         }
         effectsEmpty={t("Choose a reason first.", "اختر السبب أولًا.")}
-        reason={{ label: t("Note for the record", "ملاحظة للسجل"), required: true }}
+        reason={{ label: t("Note for the record", "ملاحظة للسجل"), required: true, maxLength: 200 }}
         action={t("Refund", "استرداد")}
         destructive
         onAction={() => setOpen(false)}
