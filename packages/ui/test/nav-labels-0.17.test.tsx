@@ -135,7 +135,7 @@ describe("SideNav iconOnly", () => {
 
 describe("SideNav iconOnly badge dot, 0.24", () => {
   test("the badge dot is the same 8 px dot with a ring in the parent colour", async () => {
-    const el = await mount(<SideNav iconOnly groups={[{ items: [{ href: "/a", label: "A", icon: <svg />, badge: 3 }] }]} />);
+    const el = await mount(<SideNav label="Settings" iconOnly groups={[{ items: [{ href: "/a", label: "A", icon: <svg />, badge: 3 }] }]} />);
     const dot = el.querySelector("a span[aria-hidden]:not(.contents)")!;
     expect(dot.className).toContain("size-2");
     expect(dot.className).toContain("ring-2");
