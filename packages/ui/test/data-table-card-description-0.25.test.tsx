@@ -19,7 +19,7 @@ const withNote = (el: HTMLElement) => cells(el).filter((c) => c.textContent?.inc
 describe("DataTable column cardDescription", () => {
   test("a block description comes after the meta line on a card", async () => {
     const el = await mount(table("block"));
-    const [title, block, meta] = cells(el);
+    const [title, meta, block] = cells(el);
     expect(meta!.className).toContain("p-cards:order-1");
     expect(block!.textContent).toBe(ROWS[0]!.note);
     expect(block!.className).toContain("p-cards:order-2");
@@ -37,5 +37,18 @@ describe("DataTable column cardDescription", () => {
       expect(holders[0]).toBe(cells(el)[0]!);
       expect(holders[0]!.querySelector("span.block")!.className).not.toContain("p-cards:hidden");
     }
+  });
+
+  test("each cell keeps its own column header: the copy is the last cell", async () => {
+    const wide: DataTableColumn<Row & { region?: string }>[] = [...cols("block"), { key: "region", header: "Region" }];
+    const el = await mount(
+      <DataTable columns={wide} rows={[{ ...ROWS[0]!, region: "Jeddah" }]} getRowId={(r) => r.id} caption="Sites" cards selectable rowActions={() => [{ label: "Edit" }]} />,
+    );
+    const head = [...el.querySelectorAll("thead tr th")].map((c) => c.textContent);
+    const row = [...el.querySelectorAll("tbody tr td")].map((c) => c.textContent);
+    expect(row[head.indexOf("Plan")]).toBe("Pro");
+    expect(row[head.indexOf("Region")]).toContain("Jeddah");
+    expect(row[head.indexOf("Row actions")]).toContain("Row actions");
+    expect(row.at(-1)).toBe(ROWS[0]!.note);
   });
 });

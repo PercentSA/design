@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useEffect, useId, useMemo, useState, type ReactNode } from "react";
+import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useLang, useLinkComponent, useStrings, useText } from "../provider";
@@ -40,7 +40,8 @@ export type DataTableColumn<Row> = {
    *  "meta": in one wrapped line under the title, without the header. "block": full width under the meta, without the header
    *  (long text). A cell with no value shows nothing. Default: a "header … value" line. Not for the title column. "end" columns belong after the title column in `columns`: on the card they show in column order on the title line. */
   cardSlot?: "end" | "meta" | "block";
-  /** The title column only, with `cards`: "block" shows `description` on the cards as a full-width block after the meta line, not under the title. Default "title". The table view does not change. */
+  /** The title column only, with `cards`: "block" shows `description` on the cards as a full-width block after the meta line, not under the title. Default "title". The table view does not change.
+   *  The description renders two times (one copy for each view): use no fixed id in it. */
   cardDescription?: "title" | "block";
 };
 
@@ -279,6 +280,19 @@ export function DataTable<Row>({
     }
   };
 
+  // A copy of the title column's description for the cards, as its own flex item (the table view hides it). It is the last cell of the row,
+  // so no other cell moves to another column header.
+  const blockCopy = (row: Row) => {
+    const text = columns[titleAt]?.description?.(row);
+    return blockNote && hasValue(text) ? (
+      <TableCell className={cn("hidden p-cards:block", SLOT_BLOCK, slotGap)}>
+        <Text as="span" size="sm" tone="muted" className="block font-normal">
+          {text}
+        </Text>
+      </TableCell>
+    ) : null;
+  };
+
   // `i` makes the row's ids (for the checkbox and "⋯" names) unique in the table.
   const renderRow = (row: Row, i: number | string) => {
     const id = getRowId(row);
@@ -371,19 +385,7 @@ export function DataTable<Row>({
                 )}
               </TableCell>
             );
-            // A copy of the description for the cards, as its own flex item: the table view hides it.
-            return toBlock ? (
-              <Fragment key={c.key}>
-                {cell}
-                <TableCell className={cn("hidden p-cards:block", SLOT_BLOCK, slotGap)}>
-                  <Text as="span" size="sm" tone="muted" className="block font-normal">
-                    {text}
-                  </Text>
-                </TableCell>
-              </Fragment>
-            ) : (
-              cell
-            );
+            return cell;
           }),
           () => (
             <TableCell key={ACTIONS_KEY} className={cn("w-10 py-1.5", cards && "p-cards:p-0")}>
@@ -405,6 +407,7 @@ export function DataTable<Row>({
             </TableCell>
           ),
         )}
+        {blockCopy(row)}
       </TableRow>
     );
   };
