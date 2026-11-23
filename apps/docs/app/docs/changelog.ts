@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.23.0",
-    date: null,
+    date: "2026-11-23",
     summary: "New UsageMeter, ChangeList, OnceValueDialog and SecretRow; Timeline steps with state; FilterBar toggles and search suggestions; 24-hour times; phone fixes for tabs, dialogs, sheets and notices.",
     changes: [
       c("new", "[UsageMeter](usage-meter): how much of a limit is in use, with a limit line, stacked parts (used and held) and an old-data state. Above the limit the value shows in the warning colour with the words \"Above limit\"."),
