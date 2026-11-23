@@ -21,6 +21,15 @@ export const pages: DocPage[] = [
     "أحداث أو خطوات بالترتيب، والخط على جهة البداية. تعرض الخطوة حالتها ومدتها وتفاصيلها. الخطوة الفاشلة تفتح لتعرض تفاصيلها.",
   ),
   p(
+    "usage-meter",
+    "UsageMeter",
+    "data",
+    "UsageMeter, type UsagePart",
+    ["UsageMeterExample"],
+    "How much of a limit is in use. Above the limit line, the value shows in the warning color.",
+    "مقدار ما يُستخدم من حدّ معيّن. فوق خط الحد تظهر القيمة بلون التحذير.",
+  ),
+  p(
     "accordion",
     "Accordion",
     "data",

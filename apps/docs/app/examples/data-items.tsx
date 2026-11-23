@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { FileText, Folder } from "lucide-react";
-import { Accordion, Avatar, AvatarGroup, ConnectionCard, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree } from "@percentsa/ui";
+import { Accordion, Avatar, AvatarGroup, ConnectionCard, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree, UsageMeter } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function StatExample() {
@@ -272,5 +272,27 @@ export function ConnectionCardExample() {
         { term: t("Command", "الأمر"), copy: "psql -h 203.0.113.10 -p 5432 -U app_user -d shop_example" },
       ]}
     />
+  );
+}
+
+export function UsageMeterExample() {
+  const t = useT();
+  const limit = { value: 90, label: t("Alert at 90 %", "تنبيه عند 90 %") };
+  return (
+    <div className="grid w-full max-w-md gap-5">
+      <UsageMeter label={t("CPU", "المعالج")} value={42} limit={limit} />
+      <UsageMeter label={t("Memory", "الذاكرة")} value={93} limit={limit} />
+      <UsageMeter
+        label={t("Disk", "القرص")}
+        value={null}
+        max={200}
+        format={(n) => `${n} GB`}
+        parts={[
+          { label: t("Used", "مستخدم"), value: 120, tone: "used" },
+          { label: t("Held", "محجوز"), value: 40, tone: "held" },
+        ]}
+      />
+      <UsageMeter label={t("Network", "الشبكة")} value={61} at={new Date(Date.now() - 3 * 3600_000)} stale />
+    </div>
   );
 }

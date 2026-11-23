@@ -115,6 +115,7 @@ export { ThemeSwitch, useTheme, type ThemeMode } from "./components/theme";
 export { THEME_SCRIPT } from "./components/theme-script";
 export { Stat, type StatChange } from "./components/stat";
 export { Timeline, type TimelineItem } from "./components/timeline";
+export { UsageMeter, type UsageMeterProps, type UsagePart } from "./components/usage-meter";
 export { Accordion, type AccordionItem } from "./components/accordion";
 export { Tree, type TreeNode } from "./components/tree";
 export { Avatar, AvatarGroup } from "./components/avatar";

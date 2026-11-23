@@ -296,6 +296,11 @@ const en = {
   stepDone: "Done",
   showDetails: "Show details",
   hideDetails: "Hide details",
+  // UsageMeter (0.23.0).
+  noData: "No data",
+  fromLastReport: "From the last report",
+  updated: "Updated",
+  aboveLimit: "Above limit",
 };
 
 export type Strings = typeof en;
@@ -585,6 +590,10 @@ const ar: Strings = {
   stepDone: "تمت",
   showDetails: "عرض التفاصيل",
   hideDetails: "إخفاء التفاصيل",
+  noData: "لا توجد بيانات",
+  fromLastReport: "من آخر تقرير",
+  updated: "آخر تحديث",
+  aboveLimit: "فوق الحد",
 };
 
 export const STRINGS: Record<Lang, Strings> = { en, ar };
