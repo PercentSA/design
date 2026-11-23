@@ -7,7 +7,7 @@ import { cn } from "../lib/cn";
 import { useSlidingIndicator } from "../lib/sliding-indicator";
 import { useLinkComponent, useStrings, useText } from "../provider";
 import { paginationRange } from "../lib/pagination";
-import { TAB_BASE } from "./tab-classes";
+import { TAB_BASE, TAB_ROW } from "./tab-classes";
 
 /** First link of the page: jumps over the header for keyboard users. Give the main element id="main". */
 export function SkipLink({ href = "#main" }: { href?: string }) {
@@ -33,8 +33,8 @@ export function Tabs({
   const [listRef, line] = useSlidingIndicator<HTMLDivElement>("data-state", "active");
   return (
     <RadixTabs.Root className={cn("grid min-w-0 grid-cols-[minmax(0,1fr)] gap-6", className)} {...root}>
-      {/* The line is an inset shadow, so the active tab's border covers it without reaching outside the scrolling list. */}
-      <RadixTabs.List ref={listRef} aria-label={label} className="relative isolate flex gap-6 overflow-x-auto shadow-[inset_0_-1px_0_var(--p-line)]">
+      {/* The line is a background, so the active tab's border covers it without reaching outside the scrolling list. */}
+      <RadixTabs.List ref={listRef} aria-label={label} className={TAB_ROW}>
         {line && <span {...line} className={cn(line.className, "border-b-2 border-primary")} />}
         {items.map((t) => (
           <RadixTabs.Trigger

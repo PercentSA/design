@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { AlertDialog as RadixAlert, Dialog as RadixDialog, HoverCard as RadixHoverCard, Popover as RadixPopover, Tooltip as RadixTooltip } from "radix-ui";
 import { cn } from "../lib/cn";
@@ -337,14 +337,45 @@ export function HoverCard({ trigger, children, side, align, className, ...state 
 }
 
 /** A short label for an icon button. Works without <PercentProvider>. */
-export function Tooltip({ content, children, side = "top", ...state }: OpenState & { content: ReactNode; children: ReactNode; side?: Placement["side"] }) {
+export function Tooltip({ content, children, side = "top", open, defaultOpen, onOpenChange }: OpenState & { content: ReactNode; children: ReactNode; side?: Placement["side"] }) {
   const physical = usePhysicalSide(side);
+  const [own, setOwn] = useState(defaultOpen ?? false);
+  // True for 300 ms after a focus open: a scroll that the focus caused (the page moves the trigger into view) must not close the tooltip.
+  const guard = useRef(false);
+  const pointer = useRef(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const stop = () => {
+    guard.current = false;
+    clearTimeout(timer.current);
+  };
+  useEffect(() => () => clearTimeout(timer.current), []);
+  const change = (next: boolean) => {
+    if (!next && guard.current) return;
+    setOwn(next);
+    onOpenChange?.(next);
+  };
   return (
     <RadixTooltip.Provider delayDuration={300}>
-      <RadixTooltip.Root {...state}>
-        <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
+      <RadixTooltip.Root open={open ?? own} onOpenChange={change}>
+        <RadixTooltip.Trigger
+          asChild
+          onPointerDown={() => (pointer.current = true)}
+          onPointerUp={() => (pointer.current = false)}
+          onFocus={() => {
+            if (pointer.current) return;
+            stop();
+            guard.current = true;
+            timer.current = setTimeout(stop, 300);
+          }}
+          onBlur={() => {
+            pointer.current = false;
+            stop();
+          }}
+        >
+          {children}
+        </RadixTooltip.Trigger>
         <RadixTooltip.Portal>
-          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP}>
+          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP} onEscapeKeyDown={stop}>
             {content}
           </RadixTooltip.Content>
         </RadixTooltip.Portal>

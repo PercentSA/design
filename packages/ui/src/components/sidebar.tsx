@@ -156,6 +156,9 @@ function Group({ L, item, slid, folds, onFold }: { L: LinkComponent | "a"; item:
   );
 }
 
+// Section titles, plain and folding. A button resets its font, so the folding title needs the classes too.
+const SECTION_TITLE = "label";
+
 function Section({ section, collapsed, slid, folds, onFold }: { section: SidebarSection; collapsed: boolean; slid: boolean; folds: Folds; onFold: OnFold }) {
   const L = useLinkComponent();
   const id = useId();
@@ -198,14 +201,14 @@ function Section({ section, collapsed, slid, folds, onFold }: { section: Sidebar
   return (
     <div className="grid gap-1">
       {section.title && (
-        <h2 id={id} className={cn("label px-3 pt-2 pb-1", canFold && "px-1", collapsed && "sr-only")}>
+        <h2 id={id} className={cn(SECTION_TITLE, "px-3 pt-2 pb-1", canFold && "px-1", collapsed && "sr-only")}>
           {canFold ? (
             <button
               type="button"
               aria-expanded={open}
               aria-controls={listId}
               onClick={press}
-              className="flex min-h-6 w-full items-center gap-2 rounded-field px-2 text-start transition-colors hover:text-fg [&_svg]:size-4 [&_svg]:shrink-0"
+              className={cn(SECTION_TITLE, "flex min-h-6 w-full items-center gap-2 rounded-field px-2 text-start transition-colors hover:text-fg [&_svg]:size-4 [&_svg]:shrink-0")}
             >
               <span className="min-w-0 flex-1 truncate">{section.title}</span>
               {shut && section.badge != null && <Badge className="h-5 px-2">{section.badge}</Badge>}
