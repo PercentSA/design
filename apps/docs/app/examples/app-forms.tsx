@@ -675,7 +675,13 @@ export function FieldsSheetExample() {
           },
         ]}
         onSubmit={(v) => new Promise((r) => setTimeout(() => (setSaved({ port: v.port!, path: v.path! }), r(null)), 600))}
-      />
+      >
+        {(draft) => (
+          <p className="text-sm text-fg-3">
+            {t("The check opens", "يفتح الفحص")} <span className="font-mono">:{draft.port}{draft.path}</span>
+          </p>
+        )}
+      </FieldsSheet>
     </>
   );
 }

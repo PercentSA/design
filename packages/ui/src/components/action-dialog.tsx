@@ -13,7 +13,7 @@ import { Field } from "./field";
 import { FOCUSABLE } from "./focusable";
 import { Input, Textarea } from "./inputs";
 import { DescriptionList } from "./list";
-import { BACKDROP, CLOSE, PANEL } from "./overlay-classes";
+import { BACKDROP, CLOSE, FULL_ON_PHONE, PANEL } from "./overlay-classes";
 
 export type ActionDialogProps = {
   open: boolean;
@@ -27,9 +27,13 @@ export type ActionDialogProps = {
   /** What the action will do, one line each. `null`: the choice is not made yet, `effectsEmpty` shows. */
   effects: ReactNode[] | null;
   effectsEmpty?: ReactNode;
+  /** What stays as it is, one line each. Shows "What stays" after "What happens". */
+  stays?: ReactNode[];
   reason?: { label: ReactNode; required?: boolean };
   /** The name the person must type before the action runs. End spaces are ignored; case counts. */
   confirmName?: string;
+  /** Replaces the line "Type <name> to confirm." above the name field. */
+  confirmLabel?: ReactNode;
   action: ReactNode;
   destructive?: boolean;
   /** Why the action is refused now. It shows above the buttons (announced). */
@@ -73,7 +77,7 @@ export function ActionDialog(props: ActionDialogProps) {
           onCloseAutoFocus={focus.onCloseAutoFocus}
           className={cn(
             "p-pop fixed z-(--p-z-overlay) flex flex-col overflow-auto",
-            "max-md:inset-0 max-md:h-dvh",
+            FULL_ON_PHONE,
             "md:start-1/2 md:top-1/2 md:max-h-[calc(100dvh-2rem)] md:w-[calc(100%-2rem)] md:max-w-lg md:-translate-y-1/2 md:rounded-panel ltr:md:-translate-x-1/2 rtl:md:translate-x-1/2",
             PANEL,
           )}
@@ -89,7 +93,7 @@ export function ActionDialog(props: ActionDialogProps) {
   );
 }
 
-function Body({ title, subject, notice, children, effects, effectsEmpty, reason, confirmName, action, destructive, blocked, pending, onAction, onOpenChange }: ActionDialogProps) {
+function Body({ title, subject, notice, children, effects, effectsEmpty, stays, reason, confirmName, confirmLabel, action, destructive, blocked, pending, onAction, onOpenChange }: ActionDialogProps) {
   const s = useStrings();
   const reasonId = useId();
   const [typed, setTyped] = useState("");
@@ -128,13 +132,23 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, reason,
             effectsEmpty != null && <p className="text-sm text-fg-3">{effectsEmpty}</p>
           )}
         </section>
+        {stays && stays.length > 0 && (
+          <section className="grid gap-2">
+            <h3 className="label text-fg-3">{s.whatStays}</h3>
+            <ul className="grid list-disc gap-1 ps-5 text-sm text-fg-2">
+              {stays.map((x, i) => (
+                <li key={i}>{x}</li>
+              ))}
+            </ul>
+          </section>
+        )}
         {reason && (
           <Field label={reason.label} required={reason.required}>
             <Textarea data-ad-reason value={why} onChange={(e) => setWhy(e.target.value)} />
           </Field>
         )}
         {confirmName != null && (
-          <Field label={s.typeToConfirm(confirmName)}>
+          <Field label={confirmLabel ?? s.typeToConfirm(confirmName)}>
             <Input data-ad-name value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} />
           </Field>
         )}

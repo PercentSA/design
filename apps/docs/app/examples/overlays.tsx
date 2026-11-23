@@ -51,6 +51,29 @@ export function DialogExample() {
   );
 }
 
+export function DialogFullScreenExample() {
+  const t = useT();
+  return (
+    <Dialog
+      fullScreenOnPhone
+      trigger={<Button>{t("Edit profile", "تعديل الملف")}</Button>}
+      title={t("Edit profile", "تعديل الملف")}
+      footer={
+        <DialogClose asChild>
+          <Button>{t("Save", "حفظ")}</Button>
+        </DialogClose>
+      }
+    >
+      <Field label={t("Name", "الاسم")}>
+        <Input defaultValue="Sara Al Noor" />
+      </Field>
+      <Field label={t("Job title", "المسمى الوظيفي")}>
+        <Input defaultValue="Designer" />
+      </Field>
+    </Dialog>
+  );
+}
+
 export function AlertDialogExample() {
   const t = useT();
   return (
@@ -97,7 +120,7 @@ export function SheetLargeExample() {
 export function PopoverExample() {
   const t = useT();
   return (
-    <Popover trigger={<Button variant="secondary">{t("Share", "مشاركة")}</Button>}>
+    <Popover label={t("Share options", "خيارات المشاركة")} trigger={<Button variant="secondary">{t("Share", "مشاركة")}</Button>}>
       <Stack gap={3}>
         <Text size="sm">{t("Anyone with the link can view.", "يمكن لمن لديه الرابط العرض.")}</Text>
         <Input readOnly dir="ltr" defaultValue="https://percent.sa/p/masar" aria-label={t("Link", "الرابط")} />
@@ -281,7 +304,9 @@ export function ActionDialogDeleteExample() {
         title={t("Delete Main website?", "حذف Main website؟")}
         subject={{ title: "Main website", meta: "shop.example.com" }}
         effects={[t("The site and its files are deleted.", "يُحذف الموقع وملفاته."), t("This cannot be undone.", "لا يمكن التراجع.")]}
+        stays={[t("The backups stay for 30 days.", "تبقى النسخ الاحتياطية 30 يومًا.")]}
         confirmName="Main website"
+        confirmLabel={t("Type the site name to delete it.", "اكتب اسم الموقع لحذفه.")}
         action={t("Delete", "حذف")}
         destructive
         onAction={() => setOpen(false)}

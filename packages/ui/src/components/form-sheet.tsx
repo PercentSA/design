@@ -7,6 +7,7 @@ import { Button } from "./actions";
 import { blockedProps } from "./button-class";
 import { BlockedStatus } from "./dialog-parts";
 import { AlertDialog, Sheet } from "./overlays";
+import { useMediaQuery } from "./utility";
 
 /**
  * An edit form in a Sheet, with Cancel and Save in a footer that stays at the bottom. `pending` shows Save
@@ -15,7 +16,7 @@ import { AlertDialog, Sheet } from "./overlays";
  * submit: close it (`open`, `onOpenChange`) when the save succeeds.
  * `blocked`: why the submit is refused now. It shows above the buttons (announced), and the submit stays visible but disabled;
  * `pending` wins over it. `danger`: the submit is a danger button. `cancelLabel`: the close button's text (default Cancel).
- * `side="bottom"`: the two buttons fill the footer in two equal columns, large. `size="lg"`: a wider sheet (see Sheet).
+ * `side="auto"`: the end from 768 px, the bottom below. `side="bottom"`: the two buttons fill the footer in two equal columns, large. `size="lg"`: a wider sheet (see Sheet).
  */
 export function FormSheet({
   title,
@@ -30,7 +31,7 @@ export function FormSheet({
   cancelLabel,
   blocked,
   danger,
-  side = "end",
+  side: sideProp = "end",
   size,
   className,
   children,
@@ -50,7 +51,7 @@ export function FormSheet({
   blocked?: ReactNode;
   /** The submit is a danger button (cancel an appointment, delete). */
   danger?: boolean;
-  side?: "end" | "bottom";
+  side?: "end" | "bottom" | "auto";
   size?: "md" | "lg";
   className?: string;
   children: ReactNode;
@@ -60,6 +61,8 @@ export function FormSheet({
   const [asking, setAsking] = useState(false);
   const reasonId = useId();
   const refused = blocked != null && blocked !== false && blocked !== "";
+  const wide = useMediaQuery("(min-width: 48rem)");
+  const side = sideProp === "auto" ? (wide ? "end" : "bottom") : sideProp;
   const bottom = side === "bottom";
   const shown = open ?? inner;
   const setOpen = (o: boolean) => {

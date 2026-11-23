@@ -123,3 +123,26 @@ describe("toast and consent", () => {
     expect(readConsent("")).toBeNull();
   });
 });
+
+describe("Dialog phone and Popover label", () => {
+  const cls = () => document.querySelector('[role="dialog"]')!.getAttribute("class")!;
+  test("fullScreenOnPhone adds the phone classes; without it they are absent", async () => {
+    await mount(<Dialog open title="T" fullScreenOnPhone>x</Dialog>);
+    expect(cls()).toContain("max-md:inset-0");
+    expect(cls()).toContain("max-md:h-dvh");
+  });
+  test("Dialog without fullScreenOnPhone is as before", async () => {
+    await mount(<Dialog open title="T">x</Dialog>);
+    expect(cls()).not.toContain("max-md:inset-0");
+    expect(cls()).toContain("w-[calc(100%-2rem)]");
+  });
+  test("Popover label names the dialog", async () => {
+    await mount(<Popover open label="Filters" trigger={<Button>Open</Button>}>x</Popover>);
+    const d = document.querySelector('[role="dialog"]')!;
+    expect(d.getAttribute("aria-label")).toBe("Filters");
+  });
+  test("Popover without label has no aria-label", async () => {
+    await mount(<Popover open trigger={<Button>Open</Button>}>x</Popover>);
+    expect(document.querySelector('[role="dialog"]')!.hasAttribute("aria-label")).toBe(false);
+  });
+});

@@ -189,3 +189,17 @@ describe("FieldsSheet", () => {
     expect(sheet()!.getAttribute("data-side")).toBe("end");
   });
 });
+
+describe("FieldsSheet function child", () => {
+  test("gets the draft values", async () => {
+    wide(true);
+    await mount(
+      <FieldsSheet title="T" open onOpenChange={() => {}} onSubmit={() => {}} fields={[{ key: "a", label: "A", value: "x" }]}>
+        {(d) => <p data-note>Now: {d.a}</p>}
+      </FieldsSheet>,
+    );
+    expect(sheet()!.querySelector("[data-note]")!.textContent).toBe("Now: x");
+    await type(inputs()[0]!, "hello");
+    expect(sheet()!.querySelector("[data-note]")!.textContent).toBe("Now: hello");
+  });
+});

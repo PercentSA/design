@@ -8,7 +8,7 @@ import { useDir, useStrings } from "../provider";
 import { Button } from "./actions";
 import { buttonClass } from "./button-class";
 import { useFocusReturn } from "./dialog-parts";
-import { BACKDROP, CLOSE, PANEL, TOOLTIP } from "./overlay-classes";
+import { BACKDROP, CLOSE, FULL_ON_PHONE, PANEL, TOOLTIP } from "./overlay-classes";
 
 type OpenState = { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void };
 
@@ -31,10 +31,11 @@ export function Dialog({
   description,
   footer,
   size = "md",
+  fullScreenOnPhone,
   children,
   className,
   ...state
-}: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; children?: ReactNode; className?: string }) {
+}: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; /** Fills the screen below 768 px (a form with many fields). */ fullScreenOnPhone?: boolean; children?: ReactNode; className?: string }) {
   const s = useStrings();
   const focus = useFocusReturn(!!trigger);
   return (
@@ -46,7 +47,10 @@ export function Dialog({
           {...focus}
           {...(description ? {} : { "aria-describedby": undefined })}
           className={cn(
-            "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-y-1/2 gap-6 overflow-auto rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2",
+            "p-pop fixed z-(--p-z-overlay) grid gap-6 overflow-auto p-6 md:p-8",
+            fullScreenOnPhone
+              ? [FULL_ON_PHONE, "content-start md:start-1/2 md:top-1/2 md:max-h-[calc(100dvh-2rem)] md:w-[calc(100%-2rem)] md:-translate-y-1/2 md:rounded-panel ltr:md:-translate-x-1/2 rtl:md:translate-x-1/2"]
+              : "start-1/2 top-1/2 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-y-1/2 rounded-panel ltr:-translate-x-1/2 rtl:translate-x-1/2",
             PANEL,
             WIDTH[size],
             className,
@@ -305,13 +309,13 @@ function usePhysicalSide(side: Placement["side"]) {
   return side === "start" ? (rtl ? "right" : "left") : side === "end" ? (rtl ? "left" : "right") : side;
 }
 
-export function Popover({ trigger, children, side, align = "start", className, ...state }: OpenState & Placement & { trigger: ReactNode; children: ReactNode; className?: string }) {
+export function Popover({ trigger, children, label, side, align = "start", className, ...state }: OpenState & Placement & { trigger: ReactNode; children: ReactNode; /** The accessible name of the popover. */ label?: string; className?: string }) {
   const physical = usePhysicalSide(side);
   return (
     <RadixPopover.Root {...state}>
       <RadixPopover.Trigger asChild>{trigger}</RadixPopover.Trigger>
       <RadixPopover.Portal>
-        <RadixPopover.Content side={physical} align={align} sideOffset={8} collisionPadding={16} className={cn(FLOAT, "w-72", className)}>
+        <RadixPopover.Content aria-label={label} side={physical} align={align} sideOffset={8} collisionPadding={16} className={cn(FLOAT, "w-72", className)}>
           {children}
         </RadixPopover.Content>
       </RadixPopover.Portal>
