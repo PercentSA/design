@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Copy, Info, Pencil, Trash2 } from "lucide-react";
 import {
   ActionDialog,
@@ -320,10 +320,12 @@ export function ActionDialogDeleteExample() {
 export function OnceValueDialogExample() {
   const t = useT();
   const [value, setValue] = useState<string | null>(null);
+  const rotate = useRef<HTMLButtonElement>(null);
   return (
     <>
-      <Button onClick={() => setValue("pt_example_1234")}>{t("Rotate token", "تدوير الرمز")}</Button>
+      <Button ref={rotate} onClick={() => setValue("pt_example_1234")}>{t("Rotate token", "تدوير الرمز")}</Button>
       <OnceValueDialog
+        returnFocusTo={rotate}
         open={value !== null}
         title={t("Server token", "رمز الخادم")}
         description={t("Copy the new token now.", "انسخ الرمز الجديد الآن.")}

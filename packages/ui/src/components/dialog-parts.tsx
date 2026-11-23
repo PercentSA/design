@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
+import { useRef, type ReactNode, type RefObject } from "react";
 import { TriangleAlert } from "lucide-react";
 
 /**
@@ -40,16 +40,18 @@ export function returnTarget(el: Element | null) {
 /**
  * A dialog without a trigger (opened from a menu or a sheet): focus goes back to where it was, not to the page.
  * When it was opened from an item of a `DropdownMenu` or `ContextMenu`, focus goes back to that menu's trigger.
+ * `returnFocusTo`: when it holds an element, focus goes there on close instead (for a dialog that opens after another dialog closed).
  * Spread `onOpenAutoFocus` and `onCloseAutoFocus` on the Radix content.
  */
-export function useFocusReturn(hasTrigger = false) {
+export function useFocusReturn(hasTrigger = false, returnFocusTo?: RefObject<HTMLElement | null>) {
   const back = useRef<Element | null>(null);
   return {
     onOpenAutoFocus: () => void (back.current = returnTarget(document.activeElement)),
     onCloseAutoFocus: (e: Event) => {
-      if (hasTrigger || !(back.current instanceof HTMLElement) || !back.current.isConnected) return;
+      const to = returnFocusTo?.current?.isConnected ? returnFocusTo.current : back.current;
+      if (hasTrigger || !(to instanceof HTMLElement) || !to.isConnected) return;
       e.preventDefault();
-      back.current.focus();
+      to.focus();
     },
   };
 }
