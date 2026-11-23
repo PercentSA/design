@@ -1,6 +1,6 @@
 "use client";
 
-import type { HTMLAttributes, ReactNode } from "react";
+import { useId, useState, type HTMLAttributes, type ReactNode } from "react";
 import { CircleAlert, CircleCheck, Info, TriangleAlert, X } from "lucide-react";
 import { Progress as RadixProgress } from "radix-ui";
 import { cn } from "../lib/cn";
@@ -17,32 +17,57 @@ const ALERT = {
   danger: { icon: CircleAlert, color: "text-danger", border: "border-danger/40" },
 } as const;
 
-/** A message in the page. Errors and warnings are announced at once; info and success when the reader is free. */
+/**
+ * A message in the page. Errors and warnings are announced at once; info and success when the reader is free.
+ * `collapsible`: below 768 px only the icon, the title and a Show button show; the text and the action open on press.
+ * It folds with CSS only, so the server and the browser give the same markup. With no text and no action it has no button.
+ */
 export function Alert({
   tone = "info",
   title,
   children,
   action,
+  collapsible,
   className,
 }: {
   tone?: keyof typeof ALERT;
   title: ReactNode;
   children?: ReactNode;
   action?: ReactNode;
+  collapsible?: boolean;
   className?: string;
 }) {
+  const s = useStrings();
+  const [open, setOpen] = useState(false);
+  const bodyId = useId();
   const t = ALERT[tone];
+  const fold = !!collapsible && !!(children || action);
+  const hidden = fold && !open && "max-md:hidden";
   return (
     <div
       role={tone === "danger" || tone === "warning" ? "alert" : "status"}
-      className={cn("flex items-start gap-3 rounded-field border bg-surface p-4 text-sm", t.border, className)}
+      className={cn("rounded-field border bg-surface p-4 text-sm", fold ? "grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 md:flex md:gap-3" : "flex items-start gap-3", t.border, className)}
     >
       <t.icon aria-hidden className={cn("mt-0.5 size-4 shrink-0", t.color)} />
-      <div className="grid flex-1 gap-1">
+      {/* On a phone the text column dissolves: the title row holds the icon, the title and the button; the opened body and the action take the full width below it. */}
+      <div className={cn("flex-1", fold ? "max-md:contents md:grid md:gap-1" : "grid gap-1")}>
         <p className="font-medium text-fg">{title}</p>
-        {children && <div className="text-fg-2">{children}</div>}
+        {children && (
+          <div id={bodyId} className={cn("text-fg-2", fold && "max-md:col-span-3", hidden)}>
+            {children}
+          </div>
+        )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {fold && (
+        <Button variant="ghost" size="sm" className="-my-1.5 md:hidden max-md:col-start-3 max-md:row-start-1" aria-expanded={open} aria-controls={open ? bodyId : undefined} onClick={() => setOpen(!open)}>
+          {open ? s.hide : s.show}
+        </Button>
+      )}
+      {action && (
+        <div id={children ? undefined : bodyId} className={cn("shrink-0", fold && "max-md:col-span-3", hidden)}>
+          {action}
+        </div>
+      )}
     </div>
   );
 }

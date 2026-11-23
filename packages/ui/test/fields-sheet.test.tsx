@@ -1,17 +1,11 @@
-import { afterEach, describe, expect, mock, test } from "bun:test";
+import { describe, expect, mock, test } from "bun:test";
 import { act, StrictMode, useState } from "react";
 import { FieldsSheet, ValueRow, type SheetField } from "../src";
-import { click, mount, useDom } from "./dom";
+import { click, mount, stubMatchMedia, useDom } from "./dom";
 
 useDom();
 
-const savedMatchMedia = globalThis.matchMedia;
-const wide = (matches: boolean) => {
-  globalThis.matchMedia = ((q: string) => ({ matches, media: q, addEventListener() {}, removeEventListener() {} })) as unknown as typeof matchMedia;
-};
-afterEach(() => {
-  globalThis.matchMedia = savedMatchMedia;
-});
+const wide = stubMatchMedia;
 
 const sheet = () => document.querySelector<HTMLElement>('[role="dialog"]');
 const alert = () => document.querySelector<HTMLElement>('[role="alertdialog"]');
@@ -187,5 +181,31 @@ describe("FieldsSheet", () => {
     await mount(<Host onSubmit={() => {}} />);
     await openIt();
     expect(sheet()!.getAttribute("data-side")).toBe("end");
+  });
+});
+
+describe("FieldsSheet node child", () => {
+  test("a child that is not a function renders as before", async () => {
+    wide(true);
+    await mount(
+      <FieldsSheet title="T" open onOpenChange={() => {}} onSubmit={() => {}} fields={[{ key: "a", label: "A", value: "x" }]}>
+        <p data-note>Plain note</p>
+      </FieldsSheet>,
+    );
+    expect(sheet()!.querySelector("[data-note]")!.textContent).toBe("Plain note");
+  });
+});
+
+describe("FieldsSheet function child", () => {
+  test("gets the draft values", async () => {
+    wide(true);
+    await mount(
+      <FieldsSheet title="T" open onOpenChange={() => {}} onSubmit={() => {}} fields={[{ key: "a", label: "A", value: "x" }]}>
+        {(d) => <p data-note>Now: {d.a}</p>}
+      </FieldsSheet>,
+    );
+    expect(sheet()!.querySelector("[data-note]")!.textContent).toBe("Now: x");
+    await type(inputs()[0]!, "hello");
+    expect(sheet()!.querySelector("[data-note]")!.textContent).toBe("Now: hello");
   });
 });

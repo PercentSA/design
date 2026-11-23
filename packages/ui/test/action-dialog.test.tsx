@@ -274,3 +274,29 @@ describe("ActionDialog", () => {
     expect(dialog().textContent).toContain("اكتب الموقع للتأكيد.");
   });
 });
+
+describe("ActionDialog stays and confirmLabel", () => {
+  test("stays list follows the effects; without it there is no heading", async () => {
+    await mount(<Host stays={["The backups stay for 30 days."]} />);
+    const headings = [...dialog().querySelectorAll("h3")].map((h) => h.textContent);
+    expect(headings).toEqual(["What happens", "What stays"]);
+    expect(dialog().textContent).toContain("The backups stay for 30 days.");
+  });
+  test("without stays: no What stays heading", async () => {
+    await mount(<Host />);
+    expect(dialog().textContent).not.toContain("What stays");
+  });
+  test("confirmLabel replaces the typed-name line", async () => {
+    await mount(<Host confirmName="main" confirmLabel="Type the site name" />);
+    expect(dialog().textContent).toContain("Type the site name");
+    expect(dialog().textContent).not.toContain("to confirm.");
+  });
+  test("without confirmLabel the line is Type <name> to confirm.", async () => {
+    await mount(<Host confirmName="main" />);
+    expect(dialog().textContent).toContain("Type main to confirm.");
+  });
+  test("Arabic What stays", async () => {
+    await mount(<PercentProvider lang="ar"><Host stays={["x"]} /></PercentProvider>);
+    expect(dialog().textContent).toContain("ما يبقى");
+  });
+});

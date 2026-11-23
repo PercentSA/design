@@ -4,6 +4,9 @@ import { createContext, useContext, useMemo, useState, type ComponentProps, type
 import { Direction } from "radix-ui";
 import { dirOf, type Dir, type Lang } from "./i18n/localized";
 import { STRINGS, type Strings } from "./i18n/strings";
+import type { AgoForm, HourCycle } from "./saudi/date-time";
+
+export type { AgoForm, HourCycle };
 
 /** The component that renders links (an adapter for the app's router). Gets `href` like an <a>. */
 export type LinkComponent = ComponentType<ComponentProps<"a">>;
@@ -16,7 +19,7 @@ const plain: TextRenderer = (s) => s;
 /** A project's own logo and loading indicator. Components use Percent's where a slot is empty. */
 export type BrandSlots = { mark?: ReactNode; wordmark?: ReactNode; spinner?: ReactNode };
 
-type Ctx = { lang: Lang; dir: Dir; strings: Strings; link: LinkComponent | "a"; text: TextRenderer; brand?: BrandSlots };
+type Ctx = { lang: Lang; dir: Dir; strings: Strings; link: LinkComponent | "a"; text: TextRenderer; brand?: BrandSlots; hourCycle: HourCycle; agoForm: AgoForm };
 
 /** Strings to replace; groups (errors, address, invoice) may replace single entries. */
 type StringOverrides = {
@@ -29,7 +32,7 @@ const mergeStrings = (base: Strings, over: StringOverrides) => {
   return out as Strings;
 };
 
-const PercentContext = createContext<Ctx>({ lang: "en", dir: "ltr", strings: STRINGS.en, link: "a", text: plain });
+const PercentContext = createContext<Ctx>({ lang: "en", dir: "ltr", strings: STRINGS.en, link: "a", text: plain, hourCycle: "h12", agoForm: "long" });
 
 // Its own context, so a click does not render every component that reads the main one.
 type Pending = { href: string | null; location?: string; start: (href: string) => void };
@@ -76,6 +79,8 @@ export function PercentProvider({
   text = plain,
   brand,
   location,
+  hourCycle,
+  agoForm,
   children,
 }: {
   lang: Lang;
@@ -95,9 +100,17 @@ export function PercentProvider({
    * (Sidebar, menus, Breadcrumbs, cards, list and table rows) shows a pending state from the click until the location changes.
    */
   location?: string;
+  /** The clock of `TimeText` and `TimeInput`: "h12" (3:05 PM, the default) or "h23" (15:05). A `TimeText` `hourCycle` prop wins. A nested provider without it keeps the outer value. */
+  hourCycle?: HourCycle;
+  /** "5 minutes ago" ("long", the default) or "5 min ago" ("short", English only) in `TimeText ago`. A `TimeText` `agoForm` prop wins. A nested provider without it keeps the outer value. */
+  agoForm?: AgoForm;
   children: ReactNode;
 }) {
-  const outerBrand = useContext(PercentContext).brand;
+  const outer = useContext(PercentContext);
+  const outerBrand = outer.brand;
+  // Without its own value, a nested provider keeps the outer one (the outermost gives the defaults "h12" and "long").
+  const hc = hourCycle ?? outer.hourCycle;
+  const ago = agoForm ?? outer.agoForm;
   const tracked = location !== undefined;
   // Made once per link component, so links keep their DOM node.
   const shownLink = useMemo(() => (tracked ? pendingLink(link) : link), [link, tracked]);
@@ -108,10 +121,12 @@ export function PercentProvider({
       strings: strings ? mergeStrings(STRINGS[lang], strings) : STRINGS[lang],
       link: shownLink,
       text,
+      hourCycle: hc,
+      agoForm: ago,
       // A brand with one logo uses it in both places, so Percent's never shows by accident.
       brand: brand ? { ...brand, mark: brand.mark ?? brand.wordmark, wordmark: brand.wordmark ?? brand.mark } : outerBrand,
     }),
-    [lang, strings, shownLink, text, brand, outerBrand],
+    [lang, strings, shownLink, text, brand, outerBrand, hc, ago],
   );
   const [click, setClick] = useState<{ href: string; at: string } | null>(null);
   // A new location ends the pending state during render (no effect, so no frame with the old state).
@@ -132,6 +147,8 @@ export const useDir = () => useContext(PercentContext).dir;
 export const useStrings = () => useContext(PercentContext).strings;
 export const useLinkComponent = () => useContext(PercentContext).link;
 export const useText = () => useContext(PercentContext).text;
+export const useHourCycle = () => useContext(PercentContext).hourCycle;
+export const useAgoForm = () => useContext(PercentContext).agoForm;
 export const useBrand = () => useContext(PercentContext).brand;
 /** The href of the link that was clicked and waits for its page (PercentProvider `location`), else null. */
 export const usePendingHref = () => useContext(PendingContext).href;

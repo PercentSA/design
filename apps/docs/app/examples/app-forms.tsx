@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, Download, Ellipsis, Printer, RefreshCw } from "lucide-react";
-import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, FieldsSheet, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, NumberInput, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SettingsRow, SettingsSection, ValueRow, Stack, Switch, Textarea, toast } from "@percentsa/ui";
+import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, FieldsSheet, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, NumberInput, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SecretRow, SettingsRow, SettingsSection, ValueRow, Stack, Switch, Textarea, toast } from "@percentsa/ui";
 import { Card, FormBar, Money, PinPad, Text } from "@percentsa/ui";
 import { useForm } from "react-hook-form";
 import { FormSettingsRow } from "@percentsa/ui/react-hook-form";
@@ -416,6 +416,35 @@ export function RecordSectionAutoExample() {
   );
 }
 
+/** A log list: an "Errors only" toggle chip, a level menu, and search with suggestions. Enter runs the search. */
+export function FilterBarLogExample() {
+  const t = useT();
+  const [query, setQuery] = useState("");
+  const [submitted, setSubmitted] = useState("");
+  const [value, setValue] = useState<FilterValue>({});
+  return (
+    <div className="grid w-full gap-2">
+      <FilterBar
+        search={{ value: query, onValueChange: setQuery, onSubmit: setSubmitted, suggestions: ["nginx", "postgres", "worker"], maxLength: 100, placeholder: t("Search logs", "ابحث في السجلات") }}
+        value={value}
+        onValueChange={setValue}
+        filters={[
+          { key: "errors", label: t("Errors only", "الأخطاء فقط"), kind: "toggle", options: [] },
+          {
+            key: "level",
+            label: t("Level", "المستوى"),
+            options: [
+              { value: "info", label: t("Info", "معلومات") },
+              { value: "warn", label: t("Warning", "تحذير") },
+            ],
+          },
+        ]}
+      />
+      <p className="text-sm text-fg-3">{t(`Searched for: ${submitted || "nothing yet"}`, `البحث عن: ${submitted || "لا شيء بعد"}`)}</p>
+    </div>
+  );
+}
+
 /** `collapseOnPhone`: below 768 px the two filter menus become one "Filters" button with a count, which opens a bottom sheet. Narrow the window to see it. */
 export function FilterBarCollapseExample() {
   const t = useT();
@@ -619,6 +648,24 @@ export function FormSheetLargeExample() {
   );
 }
 
+/** `side="auto"`: at the end of the screen from 768 px, at the bottom on a phone. */
+export function FormSheetAutoExample() {
+  const t = useT();
+  return (
+    <FormSheet
+      side="auto"
+      trigger={<Button variant="secondary">{t("Opens at the bottom on a phone", "يفتح من الأسفل على الهاتف")}</Button>}
+      title={t("Rename the site", "تغيير اسم الموقع")}
+      submitLabel={t("Save", "حفظ")}
+      onSubmit={noSubmit}
+    >
+      <Field label={t("Name", "الاسم")}>
+        <Input />
+      </Field>
+    </FormSheet>
+  );
+}
+
 export function SettingsActionExample() {
   const t = useT();
   return (
@@ -675,7 +722,25 @@ export function FieldsSheetExample() {
           },
         ]}
         onSubmit={(v) => new Promise((r) => setTimeout(() => (setSaved({ port: v.port!, path: v.path! }), r(null)), 600))}
-      />
+      >
+        {(draft) => (
+          <p className="text-sm text-fg-3">
+            {t("The check opens", "يفتح الفحص")} <span dir="ltr" className="font-mono">:{draft.port}{draft.path}</span>
+          </p>
+        )}
+      </FieldsSheet>
     </>
+  );
+}
+
+export function SecretRowExample() {
+  const t = useT();
+  const save = (_value: string) => new Promise<void>((done) => setTimeout(done, 600));
+  return (
+    <SettingsSection className="w-full max-w-2xl" title={t("Secrets", "الأسرار")}>
+      <SecretRow label={t("Payment key", "مفتاح الدفع")} canEdit secret={{ set: true, changedAt: Date.now() - 3 * 86_400_000, changedBy: "Sara" }} onSave={save} onRemove={async () => {}} />
+      <SecretRow label={t("Mail password", "كلمة مرور البريد")} required stops={t("Order emails", "رسائل الطلبات")} canEdit secret={{ set: false }} onSave={save} />
+      <SecretRow label={t("Signing key", "مفتاح التوقيع")} canEdit={false} owner={t("Only the owner can change it.", "المالك وحده يستطيع تغييره.")} secret={{ set: true }} onSave={save} />
+    </SettingsSection>
   );
 }

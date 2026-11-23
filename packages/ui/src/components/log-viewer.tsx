@@ -1,9 +1,9 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import { cn } from "../lib/cn";
-import { useStrings } from "../provider";
+import { useDir, useStrings } from "../provider";
 import { Button } from "./actions";
 import { Skeleton } from "./feedback";
 import { Input } from "./inputs";
@@ -49,6 +49,10 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
   const started = useRef(false);
   const [away, setAway] = useState(false);
   const [cur, setCur] = useState<string>();
+  const [act, setAct] = useState<string>(); // the current row of the keyboard
+  const list = useRef<HTMLOListElement>(null);
+  const uid = useId();
+  const dir = useDir();
 
   const toEnd = () => {
     if (!box.current) return;
@@ -96,6 +100,39 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
     if (matches[0]) items.current.get(matches[0])?.scrollIntoView?.({ block: "center" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
+
+  const actIdx = rows.findIndex((r) => r.key === act);
+  const rowId = (key: string) => `${uid}-${key.replace(/[^\w-]/g, (c) => `_${c.charCodeAt(0).toString(16)}_`)}`; // from the key: the id stays when old rows leave
+  const moveTo = (i: number) => {
+    const r = rows[Math.max(0, Math.min(rows.length - 1, i))];
+    if (!r) return;
+    setAct(r.key);
+    items.current.get(r.key)?.scrollIntoView?.({ block: "nearest" });
+  };
+  const onListKey = (e: KeyboardEvent<HTMLOListElement>) => {
+    if (e.altKey) return;
+    const k = e.key;
+    if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === "c") {
+      // A text selection keeps the browser's own copy.
+      if (window.getSelection()?.toString() || !rows[actIdx]) return;
+      e.preventDefault();
+      navigator.clipboard?.writeText(rows[actIdx].text).catch(() => {});
+    } else if (e.ctrlKey || e.metaKey) return;
+    else if (k === "ArrowDown") (e.preventDefault(), moveTo(actIdx + 1));
+    else if (k === "ArrowUp") (e.preventDefault(), moveTo(actIdx < 0 ? rows.length - 1 : actIdx - 1));
+    else if (k === "Home") (e.preventDefault(), moveTo(0));
+    else if (k === "End") (e.preventDefault(), moveTo(rows.length - 1));
+    else if ((k === "F10" && e.shiftKey) || k === "ContextMenu") {
+      // The row menu opens from a contextmenu event on the row, as a right click does.
+      e.preventDefault();
+      const r = rows[actIdx] ?? rows.at(-1); // no current row: the newest becomes current
+      const li = r && items.current.get(r.key);
+      if (!r || !li) return;
+      setAct(r.key);
+      const b = li.getBoundingClientRect();
+      li.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: dir === "rtl" ? b.right - 8 : b.left + 8, clientY: b.top + b.height / 2 }));
+    }
+  };
 
   const parts = (text: string, isCurrent: boolean) =>
     re
@@ -156,7 +193,8 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
             onClick={() => {
               toEnd();
               setAway(false);
-              box.current?.focus(); // the button removes itself; keep focus in the log
+              if (rows.length) setAct(rows[rows.length - 1]!.key);
+              (list.current ?? box.current)?.focus(); // the button removes itself; keep focus in the log
             }}
           >
             {s.logJumpToNewest}
@@ -168,13 +206,16 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
         role="region"
         aria-label={label}
         aria-busy={loading || undefined}
-        tabIndex={0}
         style={{ height }}
         onScroll={(e) => {
           atEnd.current = atEndOf(e.currentTarget);
           setAway(!atEnd.current);
         }}
-        className="relative overflow-y-auto rounded-card border border-line bg-surface py-2 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-fg"
+        // The box clips a ring on the list, so the box draws it while the list has focus and no row is current.
+        className={cn(
+          "relative overflow-y-auto rounded-card border border-line bg-surface py-2",
+          actIdx < 0 && "has-[[role=listbox]:focus-visible]:outline-solid has-[[role=listbox]:focus-visible]:outline-2 has-[[role=listbox]:focus-visible]:outline-offset-2 has-[[role=listbox]:focus-visible]:outline-fg",
+        )}
       >
         {loading ? (
           <div className="flex flex-col gap-2 px-3">
@@ -197,14 +238,29 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
             ]}
           >
             <ol
-              className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]"
+              ref={list}
+              // One tab stop: the list. Arrow keys move the current row (aria-activedescendant), so a screen reader reads that row. The list is not a live region: new lines are not announced.
+              role="listbox"
+              aria-label={label}
+              aria-readonly="true"
+              tabIndex={0}
+              aria-activedescendant={actIdx >= 0 ? rowId(rows[actIdx]!.key) : undefined}
+              onKeyDown={onListKey}
+              className="group/ol grid outline-none grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]"
               // iOS opens the menu from a long press and sends no contextmenu event, so the row is also read at pointer down.
-              onPointerDown={(e) => (copyKey.current = rowKey(e.target))}
+              onPointerDown={(e) => {
+                copyKey.current = rowKey(e.target);
+                if (copyKey.current) setAct(copyKey.current);
+              }}
               onContextMenu={(e) => (copyKey.current = rowKey(e.target) ?? copyKey.current)}
             >
               {rows.map((r) => (
                 <li
                   key={r.key}
+                  id={rowId(r.key)}
+                  role="option"
+                  aria-selected={r.key === act}
+                  data-active={r.key === act ? "" : undefined}
                   ref={(el) => {
                     if (el) items.current.set(r.key, el);
                     else items.current.delete(r.key);
@@ -215,6 +271,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
                   className={cn(
                     "col-span-full grid grid-cols-subgrid gap-x-3 border-s-2 border-transparent px-3 py-0.5 font-mono text-[13px] leading-6",
                     "data-jumped:bg-surface-2",
+                    "-outline-offset-2 outline-fg group-focus-visible/ol:data-active:outline-2",
                     r.error && "border-danger",
                   )}
                 >

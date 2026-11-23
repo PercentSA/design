@@ -393,7 +393,8 @@ export function DataTable<Row>({
   return (
     <div className={cn("min-w-0", className)} data-view={cardsView ? "cards" : undefined}>
       {(toolbar || switchShown) && (
-        <div className="flex flex-wrap items-center gap-2 pb-4">
+        // The switch is hidden on a phone: without a toolbar the row would be empty.
+        <div className={cn("flex flex-wrap items-center gap-2 pb-4", !toolbar && "max-md:hidden")}>
           <div className="min-w-0 flex-1">{toolbar}</div>
           {switchShown && (
             <div className="max-md:hidden">

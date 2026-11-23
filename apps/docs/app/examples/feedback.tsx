@@ -17,6 +17,15 @@ export function AlertExample() {
   );
 }
 
+export function AlertCollapsibleExample() {
+  const t = useT();
+  return (
+    <Alert collapsible tone="warning" title={t("Backup is late", "النسخ الاحتياطي متأخر")} action={<Button size="sm" variant="secondary">{t("Run now", "شغّل الآن")}</Button>} className="w-full max-w-xl">
+      {t("The last run failed. Narrow the window to see it fold.", "فشل التشغيل الأخير. ضيّق النافذة لترى الطي.")}
+    </Alert>
+  );
+}
+
 export function BadgeExample() {
   const t = useT();
   return (

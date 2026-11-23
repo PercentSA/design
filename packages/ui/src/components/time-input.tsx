@@ -2,9 +2,9 @@
 
 import { useId, useState } from "react";
 import { cn } from "../lib/cn";
-import { useDir, useStrings } from "../provider";
+import { useDir, useHourCycle, useStrings } from "../provider";
 import type { PlainDate } from "../saudi/calendar";
-import { joinTime, splitTime } from "../saudi/date-time";
+import { joinTime, splitTime, type HourCycle } from "../saudi/date-time";
 import { SegmentedControl } from "./actions";
 import { DatePicker } from "./calendar";
 import { useFieldControl, useFieldLabelId } from "./field";
@@ -16,11 +16,13 @@ const pad = (n: number) => String(n).padStart(2, "0");
  * A time of day on the 12-hour clock: hour 1–12, minute, AM/PM (ص/م in Arabic). Always left to right, hour first.
  * The step buttons of each box follow the page direction, as in every NumberInput.
  * The value is "HH:mm" (24 hours), null while empty; `name` posts it. A step from 11 to 12 crosses noon or midnight.
+ * `hourCycle="h23"` (or the PercentProvider setting) shows hours 00–23 and no AM/PM; the value is the same.
  */
 export function TimeInput({
   value,
   onValueChange,
   minuteStep = 5,
+  hourCycle,
   name,
   disabled,
   id,
@@ -30,6 +32,7 @@ export function TimeInput({
   value: string | null;
   onValueChange: (time: string) => void;
   minuteStep?: number;
+  hourCycle?: HourCycle;
   name?: string;
   disabled?: boolean;
   id?: string;
@@ -38,6 +41,8 @@ export function TimeInput({
 }) {
   const s = useStrings();
   const pageDir = useDir();
+  const providerCycle = useHourCycle();
+  const h23 = (hourCycle ?? providerCycle) === "h23";
   const minuteId = useId();
   const labelledBy = useFieldLabelId();
   // The field label points at the hour box (a click on it starts there); the group carries the name.
@@ -45,6 +50,7 @@ export function TimeInput({
   const time = value ? splitTime(value) : null;
   const { hour12, minute, pm } = time ?? { hour12: 12, minute: 0, pm: false };
   const set = (h: number, m: number, p: boolean) => onValueChange(joinTime(h, m, p));
+  const [hour24, minute24] = value ? value.split(":").map(Number) : [null, 0];
   return (
     <div
       role="group"
@@ -57,12 +63,17 @@ export function TimeInput({
         <NumberInput
           id={field.id}
           aria-label={s.hour}
-          value={time && hour12}
-          min={1}
-          max={12}
+          value={h23 ? hour24 : time && hour12}
+          min={h23 ? 0 : 1}
+          max={h23 ? 23 : 12}
+          format={h23 ? pad : undefined}
           disabled={disabled}
           className="w-30"
           onValueChange={(h) => {
+            if (h23) {
+              if (h != null && Number.isInteger(h) && h >= 0 && h <= 23) onValueChange(`${pad(h)}:${pad(minute24 ?? 0)}`);
+              return;
+            }
             if (h == null || !Number.isInteger(h) || h < 1 || h > 12) return;
             // As on a clock: between 11 and 12 the time crosses noon or midnight.
             const crosses = time != null && ((hour12 === 11 && h === 12) || (hour12 === 12 && h === 11));
@@ -77,7 +88,7 @@ export function TimeInput({
         <NumberInput
           id={minuteId}
           aria-label={s.minute}
-          value={time && minute}
+          value={h23 ? (value ? minute24! : null) : time && minute}
           min={0}
           // The last minute on the step grid, so a step never lands on 59 from 55.
           max={Math.floor(59 / minuteStep) * minuteStep}
@@ -86,19 +97,23 @@ export function TimeInput({
           disabled={disabled}
           className="w-30"
           onValueChange={(m) => {
-            if (m != null && Number.isInteger(m) && m >= 0 && m <= 59) set(hour12, m, pm);
+            if (m == null || !Number.isInteger(m) || m < 0 || m > 59) return;
+            if (h23) onValueChange(`${pad(hour24 ?? 0)}:${pad(m)}`);
+            else set(hour12, m, pm);
           }}
         />
       </div>
-      <SegmentedControl
-        value={time ? (pm ? "pm" : "am") : ""}
-        onValueChange={(v) => set(hour12, minute, v === "pm")}
-        disabled={disabled}
-        options={[
-          { value: "am", label: s.am },
-          { value: "pm", label: s.pm },
-        ]}
-      />
+      {!h23 && (
+        <SegmentedControl
+          value={time ? (pm ? "pm" : "am") : ""}
+          onValueChange={(v) => set(hour12, minute, v === "pm")}
+          disabled={disabled}
+          options={[
+            { value: "am", label: s.am },
+            { value: "pm", label: s.pm },
+          ]}
+        />
+      )}
       {name && <input type="hidden" name={name} value={value ?? ""} disabled={disabled} />}
     </div>
   );

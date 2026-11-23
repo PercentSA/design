@@ -79,13 +79,10 @@ export function RouteTabsExample() {
   const t = useT();
   const tabs = [
     ["overview", "Overview", "نظرة عامة"],
-    ["compose", "Compose", "التركيب"],
-    ["environment", "Environment", "البيئة"],
-    ["domains", "Domains", "النطاقات"],
     ["deployments", "Deployments", "عمليات النشر"],
     ["logs", "Logs", "السجلات"],
     ["metrics", "Metrics", "المقاييس"],
-    ["backups", "Backups", "النسخ الاحتياطية"],
+    ["environment", "Environment variables", "متغيرات البيئة"],
     ["access", "Access", "الوصول"],
     ["settings", "Settings", "الإعدادات"],
   ] as const;
@@ -93,7 +90,7 @@ export function RouteTabsExample() {
     <div className="w-full max-w-2xl">
       <RouteTabs
         label={t("App sections", "أقسام التطبيق")}
-        current="logs"
+        current="environment"
         items={tabs.map(([value, en, ar]) => ({ value, label: t(en, ar), href: `#${value}`, count: value === "deployments" ? 12 : undefined }))}
       />
     </div>

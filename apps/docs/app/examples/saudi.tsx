@@ -93,6 +93,16 @@ export function TimeTextExample() {
   );
 }
 
+export function TimeText24Example() {
+  return (
+    <Stack gap={2}>
+      <TimeText value="2026-09-27T12:05:00Z" now={NOW} hourCycle="h23" />
+      <TimeText value="2026-09-26T18:30:00Z" now={NOW} hourCycle="h23" />
+      <TimeText value="2026-09-27T12:40:00Z" ago now={NOW} agoForm="short" />
+    </Stack>
+  );
+}
+
 export function ValidatorsExample() {
   const t = useT();
   const [value, setValue] = useState("SA0380000000608010167519");

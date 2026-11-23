@@ -555,3 +555,32 @@ describe("Autocomplete edge cases", () => {
     expect(document.querySelector('[role="status"]')!.textContent).toBe("");
   });
 });
+
+describe("Autocomplete start", () => {
+  for (const lang of ["en", "ar"] as const) {
+    test(`with start the list anchors to the field box, not the inner input (${lang})`, async () => {
+      const proto = HTMLElement.prototype;
+      const own = Object.getOwnPropertyDescriptor(proto, "getBoundingClientRect");
+      // The box (div) is 300 wide; the inner input is 200 wide.
+      proto.getBoundingClientRect = function (this: HTMLElement) {
+        const w = this.tagName === "INPUT" ? 200 : this.tagName === "DIV" ? 300 : 0;
+        return { x: 0, y: 0, left: 0, top: 0, right: w, bottom: 30, width: w, height: 30, toJSON() {} } as DOMRect;
+      };
+      try {
+        await mount(
+          <PercentProvider lang={lang}>
+            <Box start={<span>i</span>} />
+          </PercentProvider>,
+        );
+        await act(async () => input().focus());
+        await type(input(), "m");
+        await wait(30);
+        const wrapper = document.querySelector<HTMLElement>("[data-radix-popper-content-wrapper]")!;
+        expect(wrapper.style.getPropertyValue("--radix-popper-anchor-width")).toBe("300px");
+      } finally {
+        if (own) Object.defineProperty(proto, "getBoundingClientRect", own);
+        else delete (proto as { getBoundingClientRect?: unknown }).getBoundingClientRect;
+      }
+    });
+  }
+});

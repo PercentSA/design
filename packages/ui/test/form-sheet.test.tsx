@@ -2,7 +2,7 @@ import { describe, expect, mock, test } from "bun:test";
 import { act, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { Button, Field, FormSheet, Input, PercentProvider, RecordSection } from "../src";
-import { click, mount, press, useDom } from "./dom";
+import { click, mount, press, removeMatchMedia, stubMatchMedia, useDom } from "./dom";
 
 useDom();
 
@@ -156,5 +156,36 @@ describe("RecordSection", () => {
     expect(out).toMatch(/<dd[^>]*>0<\/dd>/);
     expect(out.indexOf("تعديل")).toBeLessThan(out.indexOf("<dl"));
     expect(renderToStaticMarkup(<RecordSection title="Customer" headingLevel={3} items={[]} />)).toContain("<h3");
+  });
+});
+
+describe("FormSheet side auto", () => {
+  const media = stubMatchMedia;
+  const sideOf = () => sheet()!.getAttribute("data-side");
+  const form = (side?: "auto") => (
+    <FormSheet open title="Edit" side={side} onSubmit={(e) => e.preventDefault()}>
+      <Field label="Name"><Input name="name" /></Field>
+    </FormSheet>
+  );
+  test("auto, wide: end", async () => {
+    media(true);
+    await mount(form("auto"));
+    expect(sideOf()).toBe("end");
+  });
+  test("auto, narrow: bottom with the two-column footer", async () => {
+    media(false);
+    await mount(form("auto"));
+    expect(sideOf()).toBe("bottom");
+    expect(submitButton().parentElement!.className).toContain("basis-[calc(50%-0.375rem)]");
+  });
+  test("without side or with side end, matchMedia is never called", async () => {
+    removeMatchMedia();
+    await mount(form());
+    expect(sideOf()).toBe("end");
+  });
+  test("no side: end, as before", async () => {
+    media(false);
+    await mount(form());
+    expect(sideOf()).toBe("end");
   });
 });

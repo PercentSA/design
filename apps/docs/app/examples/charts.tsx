@@ -56,7 +56,7 @@ export function AreaChartLimitExample() {
       xLabel={t("Time", "الوقت")}
       series={[{ key: "memory", label: t("Memory (GB)", "الذاكرة (GB)") }]}
       curve="monotone"
-      limit={{ value: 0.5, label: t("Limit 0.5 GB", "الحد: 0.5 GB") }}
+      limit={{ value: 0.5, label: t("Limit 0.5 GB", "الحد: \u20660.5 GB\u2069") }}
     />
   );
 }

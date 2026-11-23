@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
 import { X } from "lucide-react";
 import { AlertDialog as RadixAlert, Dialog as RadixDialog, HoverCard as RadixHoverCard, Popover as RadixPopover, Tooltip as RadixTooltip } from "radix-ui";
 import { cn } from "../lib/cn";
@@ -8,12 +8,14 @@ import { useDir, useStrings } from "../provider";
 import { Button } from "./actions";
 import { buttonClass } from "./button-class";
 import { useFocusReturn } from "./dialog-parts";
-import { BACKDROP, CLOSE, PANEL, TOOLTIP } from "./overlay-classes";
+import { ALERT_PANEL, BACKDROP, CENTERED_FROM_MD, CLOSE, FULL_ON_PHONE, PANEL, TOOLTIP } from "./overlay-classes";
 
 type OpenState = { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void };
 
 const FLOAT = cn("p-float z-(--p-z-overlay) rounded-field p-4 text-sm", PANEL);
 const WIDTH = { sm: "max-w-sm", md: "max-w-lg", lg: "max-w-2xl" } as const;
+// Full class names, so Tailwind finds them.
+const WIDTH_MD = { sm: "md:max-w-sm", md: "md:max-w-lg", lg: "md:max-w-2xl" } as const;
 
 function DialogHead({ title, description, Title, Description }: { title: ReactNode; description?: ReactNode; Title: typeof RadixDialog.Title; Description: typeof RadixDialog.Description }) {
   return (
@@ -31,10 +33,11 @@ export function Dialog({
   description,
   footer,
   size = "md",
+  fullScreenOnPhone,
   children,
   className,
   ...state
-}: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; children?: ReactNode; className?: string }) {
+}: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; /** Fills the screen below 768 px (a form with many fields). */ fullScreenOnPhone?: boolean; children?: ReactNode; className?: string }) {
   const s = useStrings();
   const focus = useFocusReturn(!!trigger);
   return (
@@ -46,9 +49,11 @@ export function Dialog({
           {...focus}
           {...(description ? {} : { "aria-describedby": undefined })}
           className={cn(
-            "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-y-1/2 gap-6 overflow-auto rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2",
+            "p-pop fixed z-(--p-z-overlay) grid gap-6 overflow-auto p-6 md:p-8",
+            fullScreenOnPhone
+              ? [FULL_ON_PHONE, CENTERED_FROM_MD, "content-start", WIDTH_MD[size]]
+              : ["start-1/2 top-1/2 max-h-[calc(100dvh-2rem)] w-[calc(100%-2rem)] -translate-y-1/2 rounded-panel ltr:-translate-x-1/2 rtl:translate-x-1/2", WIDTH[size]],
             PANEL,
-            WIDTH[size],
             className,
           )}
         >
@@ -122,10 +127,7 @@ export function AlertDialog({
         <RadixAlert.Content
           {...(description ? {} : { "aria-describedby": undefined })}
           {...focus}
-          className={cn(
-            "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid w-[calc(100%-2rem)] max-w-md -translate-y-1/2 gap-6 rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2",
-            PANEL,
-          )}
+          className={cn(ALERT_PANEL, PANEL)}
         >
           <DialogHead title={title} description={description} Title={RadixAlert.Title} Description={RadixAlert.Description} />
           <div className="flex flex-wrap justify-end gap-2">
@@ -305,13 +307,13 @@ function usePhysicalSide(side: Placement["side"]) {
   return side === "start" ? (rtl ? "right" : "left") : side === "end" ? (rtl ? "left" : "right") : side;
 }
 
-export function Popover({ trigger, children, side, align = "start", className, ...state }: OpenState & Placement & { trigger: ReactNode; children: ReactNode; className?: string }) {
+export function Popover({ trigger, children, label, side, align = "start", className, ...state }: OpenState & Placement & { trigger: ReactNode; children: ReactNode; /** The accessible name of the popover. */ label?: string; className?: string }) {
   const physical = usePhysicalSide(side);
   return (
     <RadixPopover.Root {...state}>
       <RadixPopover.Trigger asChild>{trigger}</RadixPopover.Trigger>
       <RadixPopover.Portal>
-        <RadixPopover.Content side={physical} align={align} sideOffset={8} collisionPadding={16} className={cn(FLOAT, "w-72", className)}>
+        <RadixPopover.Content aria-label={label} side={physical} align={align} sideOffset={8} collisionPadding={16} className={cn(FLOAT, "w-72", className)}>
           {children}
         </RadixPopover.Content>
       </RadixPopover.Portal>
@@ -335,14 +337,70 @@ export function HoverCard({ trigger, children, side, align, className, ...state 
 }
 
 /** A short label for an icon button. Works without <PercentProvider>. */
-export function Tooltip({ content, children, side = "top", ...state }: OpenState & { content: ReactNode; children: ReactNode; side?: Placement["side"] }) {
+export function Tooltip({ content, children, side = "top", open, defaultOpen, onOpenChange }: OpenState & { content: ReactNode; children: ReactNode; side?: Placement["side"] }) {
   const physical = usePhysicalSide(side);
+  const [own, setOwn] = useState(defaultOpen ?? false);
+  // For 300 ms after a focus open, only a close that the person caused goes through: the focus moves the page to the trigger, and that must not close it.
+  // A smooth scroll can take longer: each scroll in the guard adds 200 ms, up to 1.5 s after the focus.
+  // The handlers of a click, a press on the trigger, Escape and a blur raise `person` for the close that they cause.
+  const guard = useRef(false);
+  const person = useRef(false);
+  const pointer = useRef(false);
+  const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const unlisten = useRef<() => void>(undefined);
+  const stop = useCallback(() => {
+    guard.current = false;
+    clearTimeout(timer.current);
+    unlisten.current?.();
+    unlisten.current = undefined;
+  }, []);
+  const start = () => {
+    stop();
+    guard.current = true;
+    const until = Date.now() + 1500;
+    timer.current = setTimeout(stop, 300);
+    const more = () => {
+      if (!guard.current) return;
+      clearTimeout(timer.current);
+      timer.current = setTimeout(stop, Math.max(0, Math.min(200, until - Date.now())));
+    };
+    document.addEventListener("scroll", more, { capture: true, passive: true });
+    unlisten.current = () => document.removeEventListener("scroll", more, { capture: true });
+  };
+  useEffect(() => stop, [stop]);
+  const byPerson = () => {
+    person.current = true;
+    setTimeout(() => (person.current = false), 0);
+  };
+  const change = (next: boolean) => {
+    if (!next && guard.current && !person.current) return;
+    setOwn(next);
+    onOpenChange?.(next);
+  };
   return (
     <RadixTooltip.Provider delayDuration={300}>
-      <RadixTooltip.Root {...state}>
-        <RadixTooltip.Trigger asChild>{children}</RadixTooltip.Trigger>
+      <RadixTooltip.Root open={open ?? own} onOpenChange={change}>
+        <RadixTooltip.Trigger
+          asChild
+          onPointerDown={() => {
+            pointer.current = true;
+            byPerson();
+          }}
+          onClick={byPerson}
+          onPointerUp={() => (pointer.current = false)}
+          onFocus={() => {
+            if (pointer.current) return;
+            start();
+          }}
+          onBlur={() => {
+            pointer.current = false;
+            stop();
+          }}
+        >
+          {children}
+        </RadixTooltip.Trigger>
         <RadixTooltip.Portal>
-          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP}>
+          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP} onEscapeKeyDown={byPerson}>
             {content}
           </RadixTooltip.Content>
         </RadixTooltip.Portal>

@@ -199,6 +199,9 @@ export function TimeInputExample() {
         <TimeInput value={time} onValueChange={setTime} name="opens" />
       </Field>
       <Text size="sm" tone="subtle" dir="ltr">value: {time}</Text>
+      <Field label={t("Closes at (24 hours)", "يغلق الساعة (24 ساعة)")}>
+        <TimeInput value={time} onValueChange={setTime} hourCycle="h23" />
+      </Field>
     </Stack>
   );
 }

@@ -1,5 +1,6 @@
-import { FileText, Folder } from "lucide-react";
-import { Accordion, Avatar, AvatarGroup, ConnectionCard, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree } from "@percentsa/ui";
+import { useState } from "react";
+import { Ellipsis, FileText, Folder } from "lucide-react";
+import { Accordion, Avatar, AvatarGroup, Button, ChangeList, ConnectionCard, DropdownMenu, FormBar, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree, UsageMeter, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function StatExample() {
@@ -39,6 +40,39 @@ export function TimelineExample() {
         { id: "delivered", time: t("Tomorrow", "غدًا"), title: t("Delivered", "تم التسليم"), status: "next" },
       ]}
     />
+  );
+}
+
+export function TimelineStepsExample() {
+  const t = useT();
+  const [selected, setSelected] = useState("build");
+  const names: Record<string, string> = { clone: t("Clone", "استنساخ"), build: t("Build", "بناء"), start: t("Start", "تشغيل"), check: t("Check", "فحص") };
+  return (
+    <div className="grid w-full max-w-sm gap-4">
+    <Timeline
+      onSelect={setSelected}
+      items={[
+        { id: "clone", title: t("Clone", "استنساخ"), status: "done", duration: t("4 s", "4 ث") },
+        {
+          id: "build",
+          title: t("Build", "بناء"),
+          status: "failed",
+          duration: t("1 min 12 s", "1 د 12 ث"),
+          detail: (
+            <pre dir="ltr" className="font-mono text-xs whitespace-pre-wrap">
+              {"$ bun run build\nerror: Cannot find module './shop'\nexit code 1"}
+            </pre>
+          ),
+        },
+        { id: "start", title: t("Start", "تشغيل"), status: "skipped" },
+        { id: "check", title: t("Check", "فحص"), status: "waiting" },
+      ]}
+    />
+    <p className="text-sm text-fg-2">
+      {t("Selected: ", "المحدد: ")}
+      {names[selected]}
+    </p>
+    </div>
   );
 }
 
@@ -225,6 +259,28 @@ export function MaskedValueExample() {
   );
 }
 
+export function MaskedValueOpenExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  return (
+    <Inline gap={3}>
+      <MaskedValue
+        label={t("Password", "كلمة المرور")}
+        canReveal
+        open={open}
+        onOpenChange={setOpen}
+        confirm={{ title: t("Show the password?", "عرض كلمة المرور؟"), action: t("Show the password", "اعرض كلمة المرور") }}
+        onReveal={async () => "p4ss-example-only"}
+      />
+      <DropdownMenu
+        align="end"
+        trigger={<Button size="sm" variant="ghost" iconOnly aria-label={t("Row actions", "إجراءات الصف")}><Ellipsis aria-hidden /></Button>}
+        items={[{ label: t("Reveal Password", "إظهار كلمة المرور"), onSelect: () => setOpen(true) }]}
+      />
+    </Inline>
+  );
+}
+
 export function ConnectionCardExample() {
   const t = useT();
   return (
@@ -232,11 +288,54 @@ export function ConnectionCardExample() {
       className="w-full max-w-lg"
       title={t("Connect", "الاتصال")}
       rows={[
-        { term: t("Host and port", "المضيف والمنفذ"), copy: "203.0.113.10:5432" },
-        { term: t("User", "المستخدم"), copy: "app_user" },
+        { term: t("Host and port", "المضيف والمنفذ"), copy: "203.0.113.10:5432", copyLabel: t("Copy host and port", "انسخ المضيف والمنفذ") },
+        { term: t("User", "المستخدم"), copy: "app_user", copyLabel: t("Copy user", "انسخ المستخدم") },
         { term: t("Password", "كلمة المرور"), masked: { label: t("Password", "كلمة المرور"), canReveal: true, onReveal: async () => "p4ss-example-only" } },
         { term: t("Command", "الأمر"), copy: "psql -h 203.0.113.10 -p 5432 -U app_user -d shop_example" },
       ]}
     />
+  );
+}
+
+export function UsageMeterExample() {
+  const t = useT();
+  const ar = useLang() === "ar";
+  // The number with its unit is isolated, so it keeps its order inside an Arabic sentence.
+  const limit = { value: 90, label: ar ? <>تنبيه عند <bdi dir="ltr">90 %</bdi></> : "Alert at 90 %" };
+  return (
+    <div className="grid w-full max-w-md gap-5">
+      <UsageMeter label={t("CPU", "المعالج")} value={42} limit={limit} />
+      <UsageMeter label={t("Memory", "الذاكرة")} value={93} limit={limit} />
+      <UsageMeter
+        label={t("Disk", "القرص")}
+        value={null}
+        max={200}
+        format={(n) => `${n} GB`}
+        parts={[
+          { label: t("Used", "مستخدم"), value: 120, tone: "used" },
+          { label: t("Held", "محجوز"), value: 40, tone: "held" },
+        ]}
+      />
+      <UsageMeter label={t("Network", "الشبكة")} value={61} at={new Date(Date.now() - 3 * 3600_000)} stale />
+    </div>
+  );
+}
+
+export function ChangeListExample() {
+  const t = useT();
+  const items = [
+    { group: t("Main website", "الموقع الرئيسي"), label: t("Domain", "النطاق"), before: "old.example.com", after: "shop.example.com" },
+    { group: t("Main website", "الموقع الرئيسي"), label: t("Memory", "الذاكرة"), before: "512 MB", after: "1 GB" },
+    { group: t("Shop", "المتجر"), label: t("Port", "المنفذ"), before: null, after: "8080" },
+    { group: t("Shop", "المتجر"), label: t("API key", "مفتاح الواجهة"), before: "", after: "", hidden: true },
+  ];
+  return (
+    <div className="grid w-full max-w-xl gap-6">
+      <ChangeList items={items} note={t("The site restarts after saving.", "يعاد تشغيل الموقع بعد الحفظ.")} />
+      <FormBar sticky={false} summary={<ChangeList compact items={items} />}>
+        <Button variant="ghost">{t("Cancel", "إلغاء")}</Button>
+        <Button>{t("Save", "حفظ")}</Button>
+      </FormBar>
+    </div>
   );
 }

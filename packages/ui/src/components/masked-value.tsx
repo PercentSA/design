@@ -13,17 +13,25 @@ export type MaskedValueProps = {
   /** Reads the value (and records the reveal). A rejection keeps the value hidden. */
   onReveal: () => Promise<string>;
   /** Asks before the reveal. */
-  confirm?: { title: ReactNode; description?: ReactNode };
+  confirm?: { title: ReactNode; description?: ReactNode; /** The confirm button's text (default "Show"). */ action?: ReactNode };
+  /** Controls the confirm dialog (for example, opened from a row menu). Works only with `confirm`; without `confirm` it is ignored. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
 /**
  * A secret value shown as dots. Reveal can ask first (`confirm`). The value lives only in this component's state
  * while it is shown: Hide removes it. After a reveal the focus is on Hide; after Hide it is on Reveal.
  */
-export function MaskedValue({ label, canReveal, onReveal, confirm }: MaskedValueProps) {
+export function MaskedValue({ label, canReveal, onReveal, confirm, open: openProp, onOpenChange }: MaskedValueProps) {
   const s = useStrings();
   const [value, setValue] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
+  const [inner, setInner] = useState(false);
+  const open = confirm && openProp !== undefined ? openProp : inner;
+  const setOpen = (o: boolean) => {
+    setInner(o);
+    onOpenChange?.(o);
+  };
   const [loading, setLoading] = useState(false);
   const reveal = useRef<HTMLButtonElement>(null);
   const hide = useRef<HTMLButtonElement>(null);
@@ -64,7 +72,7 @@ export function MaskedValue({ label, canReveal, onReveal, confirm }: MaskedValue
         <Eye aria-hidden />
         {s.reveal}
       </Button>
-      {confirm && <AlertDialog open={open} onOpenChange={setOpen} title={confirm.title} description={confirm.description} action={s.show} onAction={ask} />}
+      {confirm && <AlertDialog open={open} onOpenChange={setOpen} title={confirm.title} description={confirm.description} action={confirm.action ?? s.show} onAction={ask} />}
     </span>
   );
 }

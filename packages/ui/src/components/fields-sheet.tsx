@@ -8,7 +8,6 @@ import type { AutocompleteSuggestion } from "./autocomplete-match";
 import { FormSheet } from "./form-sheet";
 import { Input } from "./inputs";
 import { MONO_INPUT } from "./input-classes";
-import { useMediaQuery } from "./utility";
 import { cn } from "../lib/cn";
 
 export type SheetField = {
@@ -48,10 +47,10 @@ export function FieldsSheet({
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: Record<string, string>) => void | Promise<unknown>;
   submitLabel?: ReactNode;
-  children?: ReactNode;
+  /** Extra content in the form. A function gets the draft values and follows the typing. */
+  children?: ReactNode | ((draft: Record<string, string>) => ReactNode);
 }) {
   const uid = useId();
-  const wide = useMediaQuery("(min-width: 48rem)");
   const [draft, setDraft] = useState(() => initial(fields));
   const [submitted, setSubmitted] = useState(false);
   const [pending, setPending] = useState(false);
@@ -87,7 +86,7 @@ export function FieldsSheet({
   };
 
   return (
-    <FormSheet title={title} description={description} open={open} onOpenChange={onOpenChange} side={wide ? "end" : "bottom"} dirty={dirty} pending={pending} submitLabel={submitLabel} onSubmit={submit}>
+    <FormSheet title={title} description={description} open={open} onOpenChange={onOpenChange} side="auto" dirty={dirty} pending={pending} submitLabel={submitLabel} onSubmit={submit}>
       {fields.map((f) => {
         const set = (text: string) => setDraft((d) => ({ ...d, [f.key]: text }));
         return (
@@ -100,7 +99,7 @@ export function FieldsSheet({
           </Field>
         );
       })}
-      {children}
+      {typeof children === "function" ? children(Object.fromEntries(fields.map((f) => [f.key, value(f)]))) : children}
     </FormSheet>
   );
 }

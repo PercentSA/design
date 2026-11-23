@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ComponentProps, type Ref } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ComponentProps, type ReactNode, type Ref } from "react";
 import { Popover } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
@@ -29,6 +29,8 @@ export type AutocompleteProps = Omit<ComponentProps<"input">, "value" | "default
   onSuggestionSelect?: (suggestion: AutocompleteSuggestion) => void;
   /** Monospace, left-to-right text without corrections (names, hashes, paths). */
   mono?: boolean;
+  /** Content before the text (an icon), as in `Input`. */
+  start?: ReactNode;
   ref?: Ref<HTMLInputElement>;
 };
 
@@ -54,6 +56,7 @@ export function Autocomplete({
   limit = 8,
   onSuggestionSelect,
   mono,
+  start,
   className,
   ref,
   ...props
@@ -62,6 +65,8 @@ export function Autocomplete({
   const t = useText();
   const listId = useId();
   const inputEl = useRef<HTMLInputElement | null>(null);
+  // With `start`, Input draws a box around the input: the list attaches to the box, so it has the width and place of the field.
+  const anchorEl = useRef<HTMLElement | null>(null);
   const userFocus = useRef(false);
   const pendingCursor = useRef<number | null>(null);
   const [open, setOpen] = useState(false);
@@ -149,76 +154,77 @@ export function Autocomplete({
   return (
     <>
       <Popover.Root open={expanded} onOpenChange={(o) => !o && close()}>
-        <Popover.Anchor asChild>
-          <Input
-            {...(mono ? MONO_INPUT : {})}
-            {...props}
-            ref={(el) => {
-              inputEl.current = el;
-              if (typeof ref === "function") return ref(el);
-              if (ref) ref.current = el;
-            }}
-            className={cn(mono && "font-mono", className)}
-            role="combobox"
-            aria-expanded={expanded}
-            aria-controls={listId}
-            aria-autocomplete="list"
-            aria-activedescendant={expanded && active >= 0 && active < shown.length ? `${listId}-${active}` : undefined}
-            autoComplete="off"
-            value={text}
-            onChange={(e) => {
-              pendingCursor.current = null;
-              const at = e.target.selectionStart ?? e.target.value.length;
-              const r = token ? token(e.target.value, at) : { start: 0, end: e.target.value.length };
-              setCursor(at);
+        <Popover.Anchor virtualRef={anchorEl} />
+        <Input
+          {...(mono ? MONO_INPUT : {})}
+          {...props}
+          start={start}
+          ref={(el) => {
+            inputEl.current = el;
+            anchorEl.current = start ? (el?.parentElement ?? el) : el;
+            if (typeof ref === "function") return ref(el);
+            if (ref) ref.current = el;
+          }}
+          className={cn(mono && "font-mono", className)}
+          role="combobox"
+          aria-expanded={expanded}
+          aria-controls={listId}
+          aria-autocomplete="list"
+          aria-activedescendant={expanded && active >= 0 && active < shown.length ? `${listId}-${active}` : undefined}
+          autoComplete="off"
+          value={text}
+          onChange={(e) => {
+            pendingCursor.current = null;
+            const at = e.target.selectionStart ?? e.target.value.length;
+            const r = token ? token(e.target.value, at) : { start: 0, end: e.target.value.length };
+            setCursor(at);
+            setActive(-1);
+            setOpen(true);
+            onValueChange(e.target.value);
+            if (r) onQueryChange?.(e.target.value.slice(r.start, r.end));
+          }}
+          onClick={(e) => {
+            setCursor(e.currentTarget.selectionStart);
+            props.onClick?.(e);
+          }}
+          onKeyUp={(e) => {
+            setCursor(e.currentTarget.selectionStart);
+            props.onKeyUp?.(e);
+          }}
+          onFocus={(e) => {
+            if (openOnFocus && userFocus.current && !props.readOnly) {
+              setCursor(e.currentTarget.selectionStart);
               setActive(-1);
               setOpen(true);
-              onValueChange(e.target.value);
-              if (r) onQueryChange?.(e.target.value.slice(r.start, r.end));
-            }}
-            onClick={(e) => {
-              setCursor(e.currentTarget.selectionStart);
-              props.onClick?.(e);
-            }}
-            onKeyUp={(e) => {
-              setCursor(e.currentTarget.selectionStart);
-              props.onKeyUp?.(e);
-            }}
-            onFocus={(e) => {
-              if (openOnFocus && userFocus.current && !props.readOnly) {
-                setCursor(e.currentTarget.selectionStart);
-                setActive(-1);
+            }
+            props.onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            close();
+            props.onBlur?.(e);
+          }}
+          onKeyDown={(e) => {
+            if (e.nativeEvent.isComposing || e.keyCode === 229) return props.onKeyDown?.(e);
+            const down = e.key === "ArrowDown";
+            if ((down || e.key === "ArrowUp") && hasContent) {
+              if (!expanded) {
                 setOpen(true);
-              }
-              props.onFocus?.(e);
-            }}
-            onBlur={(e) => {
+                setActive(e.altKey || !shown.length ? -1 : down ? 0 : shown.length - 1);
+              } else if (shown.length) move(down ? 1 : -1);
+            } else if (e.key === "Enter" && expanded && shown[active]) choose(shown[active]);
+            else if (e.key === "Enter" && expanded) {
+              // No highlight: the text stays and the form submits.
               close();
-              props.onBlur?.(e);
-            }}
-            onKeyDown={(e) => {
-              if (e.nativeEvent.isComposing || e.keyCode === 229) return props.onKeyDown?.(e);
-              const down = e.key === "ArrowDown";
-              if ((down || e.key === "ArrowUp") && hasContent) {
-                if (!expanded) {
-                  setOpen(true);
-                  setActive(e.altKey || !shown.length ? -1 : down ? 0 : shown.length - 1);
-                } else if (shown.length) move(down ? 1 : -1);
-              } else if (e.key === "Enter" && expanded && shown[active]) choose(shown[active]);
-              else if (e.key === "Enter" && expanded) {
-                // No highlight: the text stays and the form submits.
-                close();
-                return props.onKeyDown?.(e);
-              }
-              else if (e.key === "Escape" && expanded) close();
-              else {
-                if (e.key === "Tab") close();
-                return props.onKeyDown?.(e);
-              }
-              e.preventDefault();
-            }}
-          />
-        </Popover.Anchor>
+              return props.onKeyDown?.(e);
+            }
+            else if (e.key === "Escape" && expanded) close();
+            else {
+              if (e.key === "Tab") close();
+              return props.onKeyDown?.(e);
+            }
+            e.preventDefault();
+          }}
+        />
         <Popover.Portal>
           <Popover.Content
             id={listId}

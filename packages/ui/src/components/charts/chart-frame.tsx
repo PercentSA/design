@@ -185,6 +185,8 @@ export function ChartFrame({
     const r = svg.current?.getBoundingClientRect();
     return r?.width ? hit(((e.clientX - r.left) * width) / r.width, ((e.clientY - r.top) * height) / r.height) : undefined;
   };
+  // Touch has no hover: the first tap on a point shows its value, a second tap on the same point selects it.
+  const tap = useRef<{ shown: boolean } | null>(null);
   const onPointer = (e: PointerEvent) => {
     const i = rowAt(e);
     if (i === undefined) return;
@@ -213,16 +215,22 @@ export function ChartFrame({
         <>
           <div
             ref={measure}
-            className={cn("relative", onSelect && "cursor-pointer")}
+            className={cn("relative", onSelect && "cursor-pointer touch-manipulation")}
             onClick={
               onSelect &&
               ((e) => {
                 const i = rowAt(e);
-                if (i != null) onSelect(i);
+                const t = tap.current;
+                tap.current = null;
+                if (i != null && (!t || t.shown)) onSelect(i);
               })
             }
             onPointerMove={onPointer}
-            onPointerDown={onPointer}
+            onPointerDown={(e) => {
+              const i = e.pointerType === "touch" ? rowAt(e) : undefined;
+              tap.current = i === undefined ? null : { shown: i !== null && active?.i === i };
+              onPointer(e);
+            }}
             // A lifted finger also "leaves": keep the tapped values until the next tap or the focus goes.
             onPointerLeave={(e) => e.pointerType !== "touch" && setActive(null)}
           >

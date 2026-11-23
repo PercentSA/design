@@ -4,6 +4,10 @@ import { STRINGS, type Strings } from "../i18n/strings";
 export type DateInput = Date | string | number | null | undefined;
 export type DateTimeStyle = "short" | "full" | "numeric" | "export";
 type Kind = "instant" | "date";
+/** The 12-hour clock (3:05 PM) or the 24-hour clock (15:05). */
+export type HourCycle = "h12" | "h23";
+/** "5 minutes ago" or "5 min ago" (English only). */
+export type AgoForm = "long" | "short";
 
 const ZONE = "Asia/Riyadh";
 const DAY = 86_400_000;
@@ -37,7 +41,7 @@ const period = (lang: Lang, pm: boolean) =>
   parts(formatter(locale(lang), { hour: "numeric", hour12: true, timeZone: "UTC" }), new Date(Date.UTC(2000, 0, 1, pm ? 15 : 9))).dayPeriod!;
 
 /** Numbers and names of a date in a zone, built from parts: no direction marks. */
-function clock(date: Date, lang: Lang, timeZone: string) {
+function clock(date: Date, lang: Lang, timeZone: string, h23 = false) {
   const n = parts(
     formatter("en-CA", { year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23", timeZone }),
     date,
@@ -52,13 +56,13 @@ function clock(date: Date, lang: Lang, timeZone: string) {
     weekday: w.weekday!,
     numeric: `${n.day}/${n.month}/${n.year}`,
     time24: `${n.hour}:${n.minute}`,
-    time: `${hm} ${period(lang, h >= 12)}`,
-    seconds: `${hm}:${n.second} ${period(lang, h >= 12)}`,
+    time: h23 ? `${n.hour}:${n.minute}` : `${hm} ${period(lang, h >= 12)}`,
+    seconds: h23 ? `${n.hour}:${n.minute}:${n.second}` : `${hm}:${n.second} ${period(lang, h >= 12)}`,
   };
 }
 
 /**
- * A date or time in Riyadh time (or `timeZone`), 12-hour clock, Western digits, Gregorian calendar.
+ * A date or time in Riyadh time (or `timeZone`), 12-hour clock (`hourCycle: "h23"`: 24-hour, "15:45", no day-period word), Western digits, Gregorian calendar.
  * `short`: today "3:45 PM", yesterday and tomorrow "Yesterday 3:45 PM", this year "12 September, 3:45 PM",
  * other years "12/09/2025". `full`: "Sunday 27 September 2026, 3:45:12 PM". `numeric`: "27/09/2026".
  * `export`: "2026-09-27 15:45" (24 h, sortable). A calendar day (`kind="date"`, or a "YYYY-MM-DD" string) has no time.
@@ -73,12 +77,13 @@ export function formatDateTime(
     now,
     timeZone = ZONE,
     strings = STRINGS[lang],
-  }: { lang?: Lang; kind?: Kind; style?: DateTimeStyle; now?: Date; timeZone?: string; strings?: Strings } = {},
+    hourCycle = "h12",
+  }: { lang?: Lang; kind?: Kind; style?: DateTimeStyle; now?: Date; timeZone?: string; strings?: Strings; hourCycle?: HourCycle } = {},
 ): string {
   const r = read(value);
   if (!r) return "";
   const day = r.day || kind === "date";
-  const c = clock(r.date, lang, r.day ? "UTC" : timeZone);
+  const c = clock(r.date, lang, r.day ? "UTC" : timeZone, hourCycle === "h23");
   const comma = lang === "ar" ? "،" : ",";
   if (style === "export") return day ? c.ymd : `${c.ymd} ${c.time24}`;
   if (style === "numeric") return c.numeric;
@@ -102,8 +107,8 @@ export function dateTimeAttribute(value: DateInput, kind?: Kind) {
 
 const relative = new Map<Lang, Intl.RelativeTimeFormat>();
 
-/** "now", "5 minutes ago", "yesterday", "2 months ago"; "الآن", "قبل 5 دقائق", "أمس", "قبل شهرين". */
-export function formatRelative(value: DateInput, { lang = "en", now = new Date() }: { lang?: Lang; now?: Date } = {}): string {
+/** "now", "5 minutes ago", "yesterday", "2 months ago"; "الآن", "قبل 5 دقائق", "أمس", "قبل شهرين". `form: "short"` writes English minutes as "5 min ago"; Arabic does not change. */
+export function formatRelative(value: DateInput, { lang = "en", now = new Date(), form = "long" }: { lang?: Lang; now?: Date; form?: AgoForm } = {}): string {
   const r = read(value);
   if (!r) return "";
   let f = relative.get(lang);
@@ -122,14 +127,16 @@ export function formatRelative(value: DateInput, { lang = "en", now = new Date()
             : Math.abs(days) < 365
               ? [days / 30, "month"]
               : [days / 365, "year"];
+  if (form === "short" && lang === "en" && unit === "minute") return n < 0 ? `${-Math.round(n)} min ago` : `in ${Math.round(n)} min`;
   return f.format(Math.round(n), unit).replace(MARKS, "");
 }
 
-/** A wall time "HH:mm[:ss]" (opening hours, appointment slots) on the 12-hour clock: "9:00 AM", "9:00 ص". */
-export function formatTimeOfDay(time: string | null | undefined, { lang = "en" }: { lang?: Lang } = {}): string {
+/** A wall time "HH:mm[:ss]" (opening hours, appointment slots) on the 12-hour clock: "9:00 AM", "9:00 ص"; `hourCycle: "h23"` gives "09:00". */
+export function formatTimeOfDay(time: string | null | undefined, { lang = "en", hourCycle = "h12" }: { lang?: Lang; hourCycle?: HourCycle } = {}): string {
   const m = /^(\d{1,2}):(\d{2})/.exec(time ?? "");
   const h = Number(m?.[1]);
   if (!m || h > 23) return "";
+  if (hourCycle === "h23") return `${String(h).padStart(2, "0")}:${m[2]}`;
   return `${h % 12 || 12}:${m[2]} ${period(lang, h >= 12)}`;
 }
 

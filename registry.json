@@ -501,6 +501,32 @@
       }
     },
     {
+      "name": "change-list",
+      "type": "registry:ui",
+      "title": "ChangeList",
+      "description": "@percentsa/ui: ChangeList",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/not-set",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/change-list.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/change-list.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "ChangeList"
+        ]
+      }
+    },
+    {
       "name": "bar-chart",
       "type": "registry:ui",
       "title": "BarChart",
@@ -528,7 +554,7 @@
       "name": "cartesian",
       "type": "registry:ui",
       "title": "Axes",
-      "description": "@percentsa/ui: cartesian, isolate, Axes",
+      "description": "@percentsa/ui: cartesian, isolate, strongDir, Axes",
       "registryDependencies": [
         "@percentsa/scale"
       ],
@@ -543,6 +569,7 @@
         "exports": [
           "cartesian",
           "isolate",
+          "strongDir",
           "Axes"
         ]
       }
@@ -1053,8 +1080,7 @@
         "@percentsa/field",
         "@percentsa/form-sheet",
         "@percentsa/input-classes",
-        "@percentsa/inputs",
-        "@percentsa/utility"
+        "@percentsa/inputs"
       ],
       "files": [
         {
@@ -1107,6 +1133,7 @@
       ],
       "registryDependencies": [
         "@percentsa/actions",
+        "@percentsa/autocomplete",
         "@percentsa/choices",
         "@percentsa/cn",
         "@percentsa/feedback",
@@ -1180,7 +1207,8 @@
         "@percentsa/cn",
         "@percentsa/dialog-parts",
         "@percentsa/overlays",
-        "@percentsa/provider"
+        "@percentsa/provider",
+        "@percentsa/utility"
       ],
       "files": [
         {
@@ -1710,10 +1738,38 @@
       }
     },
     {
+      "name": "once-value-dialog",
+      "type": "registry:ui",
+      "title": "OnceValueDialog",
+      "description": "@percentsa/ui: OnceValueDialog",
+      "dependencies": [
+        "radix-ui"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/dialog-parts",
+        "@percentsa/overlay-classes",
+        "@percentsa/provider"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/once-value-dialog.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/once-value-dialog.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "OnceValueDialog"
+        ]
+      }
+    },
+    {
       "name": "overlay-classes",
       "type": "registry:lib",
       "title": "BACKDROP, PANEL, CLOSE, TOOLTIP",
-      "description": "@percentsa/ui: BACKDROP, PANEL, CLOSE, TOOLTIP",
+      "description": "@percentsa/ui: BACKDROP, PANEL, CLOSE, TOOLTIP, FULL_ON_PHONE, CENTERED_FROM_MD, ALERT_PANEL",
       "files": [
         {
           "path": "packages/ui/src/components/overlay-classes.ts",
@@ -1726,7 +1782,10 @@
           "BACKDROP",
           "PANEL",
           "CLOSE",
-          "TOOLTIP"
+          "TOOLTIP",
+          "FULL_ON_PHONE",
+          "CENTERED_FROM_MD",
+          "ALERT_PANEL"
         ]
       }
     },
@@ -2043,6 +2102,42 @@
       }
     },
     {
+      "name": "secret-row",
+      "type": "registry:ui",
+      "title": "SecretRow",
+      "description": "@percentsa/ui: SecretRow",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/actions",
+        "@percentsa/cn",
+        "@percentsa/field",
+        "@percentsa/form-sheet",
+        "@percentsa/input-classes",
+        "@percentsa/inputs",
+        "@percentsa/menus",
+        "@percentsa/overlays",
+        "@percentsa/provider",
+        "@percentsa/saudi-date-time",
+        "@percentsa/settings",
+        "@percentsa/special-inputs",
+        "@percentsa/time-text"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/secret-row.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/secret-row.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "SecretRow"
+        ]
+      }
+    },
+    {
       "name": "settings",
       "type": "registry:ui",
       "title": "SettingsSection, SettingsRow, ValueRow",
@@ -2158,7 +2253,7 @@
       "name": "special-inputs",
       "type": "registry:ui",
       "title": "PasswordInput, SearchInput, NumberInput, UnitInput",
-      "description": "@percentsa/ui: reformat, PasswordInput, SearchInput, NumberInput, UnitInput, MoneyInput, IbanInput, NationalIdInput, CrInput, VatInput, OtpInput, PhoneInput, DigitsInput",
+      "description": "@percentsa/ui: reformat, PasswordInput, useSearchInputProps, SearchInput, NumberInput, UnitInput, MoneyInput, IbanInput, NationalIdInput, CrInput, VatInput, OtpInput, PhoneInput, DigitsInput",
       "dependencies": [
         "lucide-react",
         "radix-ui"
@@ -2186,6 +2281,7 @@
         "exports": [
           "reformat",
           "PasswordInput",
+          "useSearchInputProps",
           "SearchInput",
           "NumberInput",
           "UnitInput",
@@ -2252,8 +2348,8 @@
     {
       "name": "tab-classes",
       "type": "registry:lib",
-      "title": "TAB_BASE",
-      "description": "@percentsa/ui: TAB_BASE",
+      "title": "TAB_BASE, TAB_ROW",
+      "description": "@percentsa/ui: TAB_BASE, TAB_ROW",
       "files": [
         {
           "path": "packages/ui/src/components/tab-classes.ts",
@@ -2263,7 +2359,8 @@
       ],
       "meta": {
         "exports": [
-          "TAB_BASE"
+          "TAB_BASE",
+          "TAB_ROW"
         ]
       }
     },
@@ -2486,8 +2583,12 @@
       "type": "registry:ui",
       "title": "Timeline",
       "description": "@percentsa/ui: Timeline",
+      "dependencies": [
+        "lucide-react"
+      ],
       "registryDependencies": [
-        "@percentsa/cn"
+        "@percentsa/cn",
+        "@percentsa/provider"
       ],
       "files": [
         {
@@ -2575,6 +2676,32 @@
       "meta": {
         "exports": [
           "Tree"
+        ]
+      }
+    },
+    {
+      "name": "usage-meter",
+      "type": "registry:ui",
+      "title": "UsageMeter",
+      "description": "@percentsa/ui: UsageMeter",
+      "dependencies": [
+        "lucide-react"
+      ],
+      "registryDependencies": [
+        "@percentsa/cn",
+        "@percentsa/provider",
+        "@percentsa/time-text"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/src/components/usage-meter.tsx",
+          "type": "registry:ui",
+          "target": "components/percent/ui/components/usage-meter.tsx"
+        }
+      ],
+      "meta": {
+        "exports": [
+          "UsageMeter"
         ]
       }
     },
@@ -2804,12 +2931,13 @@
       "name": "provider",
       "type": "registry:ui",
       "title": "PercentProvider",
-      "description": "@percentsa/ui: PercentProvider, useLang, useDir, useStrings, useLinkComponent, useText, useBrand, usePendingHref",
+      "description": "@percentsa/ui: PercentProvider, useLang, useDir, useStrings, useLinkComponent, useText, useHourCycle, useAgoForm, useBrand, usePendingHref",
       "dependencies": [
         "radix-ui"
       ],
       "registryDependencies": [
         "@percentsa/localized",
+        "@percentsa/saudi-date-time",
         "@percentsa/strings"
       ],
       "files": [
@@ -2827,6 +2955,8 @@
           "useStrings",
           "useLinkComponent",
           "useText",
+          "useHourCycle",
+          "useAgoForm",
           "useBrand",
           "usePendingHref"
         ]

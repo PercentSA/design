@@ -2,14 +2,15 @@
 
 import { useState } from "react";
 import { cn } from "../lib/cn";
-import { useLang, useStrings } from "../provider";
-import { dateTimeAttribute, formatDateTime, formatRelative, type DateInput } from "../saudi/date-time";
+import { useAgoForm, useHourCycle, useLang, useStrings } from "../provider";
+import { dateTimeAttribute, formatDateTime, formatRelative, type AgoForm, type DateInput, type HourCycle } from "../saudi/date-time";
 import { Tooltip } from "./overlays";
 
 /**
  * A date or time in the short form (or "5 minutes ago" with `ago`), with the exact value on hover, focus or tap.
  * `interactive={false}` inside a clickable parent: no tab stop, the exact value is the `title`.
  * `kind="date"` for calendar days. `now` fixes the clock (tests, stable snapshots).
+ * `hourCycle="h23"` shows 15:05, not 3:05 PM; `agoForm="short"` shows "5 min ago". Both default to the PercentProvider setting.
  */
 export function TimeText({
   value,
@@ -17,6 +18,8 @@ export function TimeText({
   ago = false,
   interactive = true,
   now,
+  hourCycle,
+  agoForm,
   className,
 }: {
   value: DateInput;
@@ -24,14 +27,20 @@ export function TimeText({
   ago?: boolean;
   interactive?: boolean;
   now?: Date;
+  hourCycle?: HourCycle;
+  agoForm?: AgoForm;
   className?: string;
 }) {
   const lang = useLang();
   const strings = useStrings();
+  const providerCycle = useHourCycle();
+  const providerForm = useAgoForm();
+  const cycle = hourCycle ?? providerCycle;
+  const form = agoForm ?? providerForm;
   const [open, setOpen] = useState(false);
-  const text = ago ? formatRelative(value, { lang, now }) : formatDateTime(value, { lang, kind, now, strings });
+  const text = ago ? formatRelative(value, { lang, now, form }) : formatDateTime(value, { lang, kind, now, strings, hourCycle: cycle });
   if (!text) return null;
-  const full = formatDateTime(value, { lang, kind, style: "full", strings });
+  const full = formatDateTime(value, { lang, kind, style: "full", strings, hourCycle: cycle });
   // "Today" and "5 minutes ago" can differ between the server render and the browser.
   const props = { dateTime: dateTimeAttribute(value, kind), suppressHydrationWarning: true, className: cn("whitespace-nowrap", className) };
   if (!interactive)

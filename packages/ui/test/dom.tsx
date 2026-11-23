@@ -7,10 +7,36 @@ let roots: Root[] = [];
 
 export function useDom() {
   afterEach(async () => {
+    restoreMatchMedia();
     await act(async () => roots.forEach((r) => r.unmount()));
     roots = [];
     document.body.innerHTML = "";
   });
+}
+
+let ownMatchMedia: PropertyDescriptor | undefined | null = null; // null: not stubbed
+
+/** Replaces `matchMedia` with a stub that always answers `matches`. `useDom()` restores it after each test. */
+export function stubMatchMedia(matches: boolean) {
+  if (ownMatchMedia === null) ownMatchMedia = Object.getOwnPropertyDescriptor(globalThis, "matchMedia");
+  Object.defineProperty(globalThis, "matchMedia", {
+    configurable: true,
+    writable: true,
+    value: (q: string) => ({ matches, media: q, addEventListener() {}, removeEventListener() {} }),
+  });
+}
+
+/** Removes `matchMedia` from the window (an environment without it). */
+export function removeMatchMedia() {
+  stubMatchMedia(false);
+  delete (globalThis as { matchMedia?: unknown }).matchMedia;
+}
+
+function restoreMatchMedia() {
+  if (ownMatchMedia === null) return;
+  if (ownMatchMedia) Object.defineProperty(globalThis, "matchMedia", ownMatchMedia);
+  else delete (globalThis as { matchMedia?: unknown }).matchMedia;
+  ownMatchMedia = null;
 }
 
 export async function mount(node: ReactNode) {

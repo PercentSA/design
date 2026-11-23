@@ -181,8 +181,21 @@ const en = {
   hideValue: (label: string) => `Hide ${label}`,
   maskedHidden: "Hidden",
   whatHappens: "What happens",
+  whatStays: "What stays",
   typeToConfirm: (name: string) => `Type ${name} to confirm.`,
   notSet: "Not set",
+  secretSet: "Set",
+  secretNotSet: "Not set",
+  setValue: "Set",
+  changeValue: "Change",
+  changed: "Changed",
+  by: "by",
+  withoutIt: "Without it:",
+  removeValue: (label: string) => `Remove ${label}?`,
+  newValue: "New value",
+  enterValue: "Enter a value.",
+  removeAction: "Remove",
+  done: "Done",
   recordSummary: "Summary",
   uploading: "Uploading",
   replaceImage: "Replace image",
@@ -287,6 +300,27 @@ const en = {
   // Data display (0.3.1): CodeBlock region name, DonutChart table header.
   code: "Code",
   category: "Category",
+  // Timeline steps (0.23.0).
+  stepRunning: "Running",
+  stepFailed: "Failed",
+  stepWarning: "Warning",
+  stepSkipped: "Skipped",
+  stepWaiting: "Waiting",
+  stepDone: "Done",
+  showDetails: "Show details",
+  hideDetails: "Hide details",
+  // UsageMeter (0.23.0).
+  noData: "No data",
+  fromLastReport: "From the last report",
+  updated: "Updated",
+  aboveLimit: "Above limit",
+  // ChangeList (0.23.0).
+  changeHidden: "Changed (value hidden)",
+  changeFrom: "from",
+  changeTo: "to",
+  changeCount: (n: number) => (n === 1 ? "1 change" : `${n} changes`),
+  noChanges: "No changes",
+  listSeparator: ", ",
 };
 
 export type Strings = typeof en;
@@ -464,8 +498,21 @@ const ar: Strings = {
   hideValue: (label: string) => `إخفاء ${label}`,
   maskedHidden: "مخفي",
   whatHappens: "ما الذي سيحدث",
+  whatStays: "ما يبقى",
   typeToConfirm: (name: string) => `اكتب ${name} للتأكيد.`,
   notSet: "غير محدد",
+  secretSet: "مُعيّن",
+  secretNotSet: "غير مُعيّن",
+  setValue: "تعيين",
+  changeValue: "تغيير",
+  changed: "غُيّر",
+  by: "بواسطة",
+  withoutIt: "بدونه:",
+  removeValue: (label: string) => `حذف ${label}؟`,
+  newValue: "القيمة الجديدة",
+  enterValue: "أدخل قيمة.",
+  removeAction: "حذف",
+  done: "تم",
   recordSummary: "ملخص",
   uploading: "جارٍ الرفع",
   replaceImage: "استبدال الصورة",
@@ -567,6 +614,40 @@ const ar: Strings = {
   },
   code: "الشيفرة البرمجية",
   category: "الفئة",
+  // Timeline steps (0.23.0).
+  stepRunning: "قيد التشغيل",
+  stepFailed: "فشلت",
+  stepWarning: "تنبيه",
+  stepSkipped: "تم التخطي",
+  stepWaiting: "في الانتظار",
+  stepDone: "تمت",
+  showDetails: "عرض التفاصيل",
+  hideDetails: "إخفاء التفاصيل",
+  // UsageMeter (0.23.0).
+  noData: "لا توجد بيانات",
+  fromLastReport: "من آخر تقرير",
+  updated: "آخر تحديث",
+  aboveLimit: "فوق الحد",
+  // ChangeList (0.23.0).
+  changeHidden: "تغيّرت (القيمة مخفية)",
+  changeFrom: "من",
+  changeTo: "إلى",
+  changeCount: (n) => {
+    switch (new Intl.PluralRules("ar").select(n)) {
+      case "one":
+        return "تغيير واحد";
+      case "two":
+        return "تغييران";
+      case "few":
+        return `${n} تغييرات`;
+      case "many":
+        return `${n} تغييرًا`;
+      default:
+        return `${n} تغيير`;
+    }
+  },
+  noChanges: "لا تغييرات",
+  listSeparator: "، ",
 };
 
 export const STRINGS: Record<Lang, Strings> = { en, ar };

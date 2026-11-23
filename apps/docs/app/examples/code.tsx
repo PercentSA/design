@@ -68,6 +68,22 @@ export function CodeEditorExample() {
   );
 }
 
+export function CodeEditorOwnListExample() {
+  const t = useT();
+  const [value, setValue] = useState(CONFIG);
+  const found = checkConfig(value, t("Name a version, not latest", "حدّد إصدارًا بدل latest"));
+  return (
+    <div className="w-full max-w-xl">
+      <ul aria-live="polite" className="mb-2 list-none text-sm text-danger">
+        {found.map((d, i) => (
+          <li key={i}>{t(`Line ${d.line}: ${d.message}`, `السطر ${d.line}: ${d.message}`)}</li>
+        ))}
+      </ul>
+      <CodeEditor value={value} onValueChange={setValue} diagnostics={found} errorList={false} label={t("Service settings", "إعدادات الخدمات")} minLines={8} />
+    </div>
+  );
+}
+
 export function CodeEditorReadOnlyExample() {
   const t = useT();
   return <CodeEditor value={CONFIG} readOnly label={t("Service settings, read only", "إعدادات الخدمات، للقراءة فقط")} minLines={4} className="w-full max-w-xl" />;

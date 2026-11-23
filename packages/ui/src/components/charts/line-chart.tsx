@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { Axes, cartesian, isolate } from "./cartesian";
+import { Axes, cartesian, isolate, strongDir } from "./cartesian";
 import { ChartFrame, useChart, useChartWidth, type ChartLimit, type ChartProps } from "./chart-frame";
 import { ChartLegend, lookOf, Marker } from "./legend";
 import { areaPath, extent, linePath, runs, stack, type Point } from "./scale";
@@ -97,8 +97,14 @@ function PointChart({ curve = "linear", markers, area, stacked, height = 240, li
                 x={c.mirror ? L.box.left + 4 : L.box.right - 4}
                 y={limitY - 4 < 12 ? limitY + 4 : limitY - 4}
                 dominantBaseline={limitY - 4 < 12 ? "hanging" : undefined}
-                textAnchor={c.mirror ? "start" : "end"}
-                className="fill-fg-2 text-xs"
+                // The label grows into the plot: its left end at x on the mirrored (left) side, its right end at x on the other side.
+                textAnchor={c.mirror === (strongDir(limit.label) === "ltr") ? "start" : "end"}
+                strokeWidth={3}
+                strokeLinejoin="round"
+                // The label keeps its own word order; its direction is the one of its first strong letter.
+                style={{ unicodeBidi: "plaintext", direction: strongDir(limit.label) }}
+                // A halo in the surface colour keeps the label readable over the data line.
+                className="fill-fg-2 stroke-[color:var(--p-chart-surface,var(--p-bg))] text-xs [paint-order:stroke]"
               >
                 {isolate(limit.label)}
               </text>

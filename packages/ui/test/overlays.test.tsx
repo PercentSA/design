@@ -1,6 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import { act } from "react";
+import { CENTERED_FROM_MD, FULL_ON_PHONE } from "../src/components/overlay-classes";
 import {
+  ActionDialog,
   AlertDialog,
   Button,
   ConsentBanner,
@@ -121,5 +123,45 @@ describe("toast and consent", () => {
     expect(document.querySelector('[role="region"]')).toBeNull();
     expect(readConsent("a=1; consent=granted")).toBe("granted");
     expect(readConsent("")).toBeNull();
+  });
+});
+
+describe("Dialog phone and Popover label", () => {
+  const cls = () => document.querySelector('[role="dialog"]')!.getAttribute("class")!;
+  test("fullScreenOnPhone adds the phone classes; without it they are absent", async () => {
+    await mount(<Dialog open title="T" fullScreenOnPhone>x</Dialog>);
+    expect(cls()).toContain("max-md:inset-0");
+    expect(cls()).toContain("max-md:h-dvh");
+  });
+  test.each(["sm", "md", "lg"] as const)("fullScreenOnPhone, size %s: no width limit below md", async (size) => {
+    await mount(<Dialog open title="T" size={size} fullScreenOnPhone>x</Dialog>);
+    const tokens = cls().split(/\s+/);
+    expect(tokens.filter((t) => /(^|:)max-w-/.test(t) && !t.startsWith("md:"))).toEqual([]);
+    expect(tokens).toContain(`md:max-w-${{ sm: "sm", md: "lg", lg: "2xl" }[size]}`);
+    expect(tokens).not.toContain("start-1/2");
+  });
+  const shared = [...FULL_ON_PHONE.split(" "), ...CENTERED_FROM_MD.split(" ")];
+  test("Dialog has the shared phone and centering classes", async () => {
+    await mount(<Dialog open title="T" fullScreenOnPhone>x</Dialog>);
+    for (const t of shared) expect(cls().split(/\s+/)).toContain(t);
+  });
+  test("ActionDialog has the shared phone and centering classes", async () => {
+    await mount(<ActionDialog open onOpenChange={() => {}} onAction={() => {}} title="T" subject={{ title: "S" }} effects={[]} action="Go" />);
+    for (const t of shared) expect(cls().split(/\s+/)).toContain(t);
+  });
+  test("Dialog without fullScreenOnPhone is as before", async () => {
+    await mount(<Dialog open title="T">x</Dialog>);
+    const tokens = cls().split(/\s+/);
+    expect(tokens).not.toContain("max-md:inset-0");
+    for (const t of ["start-1/2", "top-1/2", "max-h-[calc(100dvh-2rem)]", "w-[calc(100%-2rem)]", "-translate-y-1/2", "rounded-panel", "ltr:-translate-x-1/2", "rtl:translate-x-1/2", "max-w-lg", "gap-6", "p-6", "md:p-8"]) expect(tokens).toContain(t);
+  });
+  test("Popover label names the dialog", async () => {
+    await mount(<Popover open label="Filters" trigger={<Button>Open</Button>}>x</Popover>);
+    const d = document.querySelector('[role="dialog"]')!;
+    expect(d.getAttribute("aria-label")).toBe("Filters");
+  });
+  test("Popover without label has no aria-label", async () => {
+    await mount(<Popover open trigger={<Button>Open</Button>}>x</Popover>);
+    expect(document.querySelector('[role="dialog"]')!.hasAttribute("aria-label")).toBe(false);
   });
 });

@@ -73,10 +73,11 @@ describe("LogViewer", () => {
     expect(b!.querySelector(".sr-only")!.textContent).toBe("Error");
   });
 
-  test("the region is named by the label and takes focus", async () => {
+  test("the region is named by the label; the row list is its one tab stop", async () => {
     const el = await open();
     expect(box(el).getAttribute("aria-label")).toBe("Build log");
-    expect(box(el).tabIndex).toBe(0);
+    expect(el.querySelectorAll("[tabindex]").length).toBe(1);
+    expect(el.querySelector("ol")!.tabIndex).toBe(0);
   });
 
   test("the scroll box is the positioned parent of the hidden Error words, so they do not make the page longer", async () => {
@@ -106,7 +107,7 @@ describe("LogViewer", () => {
     await click(jump);
     expect(top).toBe(1200);
     expect(byName(el, "Jump to newest")).toBeUndefined();
-    expect(document.activeElement).toBe(box(el));
+    expect(document.activeElement).toBe(el.querySelector("ol"));
     expect(calls).toEqual([]);
   });
 
@@ -283,5 +284,130 @@ describe("LogViewer follow after jumpTo, pause and a first search", () => {
     into = [];
     await open({ search: "line", onSearchChange: () => {} });
     expect(into.length).toBe(0);
+  });
+
+  describe("keyboard", () => {
+    const list = (el: Element) => el.querySelector("ol") as HTMLElement;
+    const activeText = (el: Element) => document.getElementById(list(el).getAttribute("aria-activedescendant")!)?.textContent;
+
+    test("arrow keys move the current row; Home and End go to the first and last row", async () => {
+      const el = await open({ rows: rows(4) });
+      expect(list(el).getAttribute("aria-activedescendant")).toBeNull();
+      await press(list(el), { key: "ArrowDown" });
+      expect(activeText(el)).toBe("line 0");
+      await press(list(el), { key: "ArrowDown" });
+      expect(activeText(el)).toBe("line 1");
+      await press(list(el), { key: "ArrowUp" });
+      expect(activeText(el)).toBe("line 0");
+      await press(list(el), { key: "End" });
+      expect(activeText(el)).toBe("line 3");
+      await press(list(el), { key: "ArrowDown" });
+      expect(activeText(el)).toBe("line 3");
+      await press(list(el), { key: "Home" });
+      expect(activeText(el)).toBe("line 0");
+      expect(lis(el)[0]!.hasAttribute("data-active")).toBe(true);
+    });
+
+    test("Shift+F10 and the ContextMenu key open the row menu with Copy line for the current row", async () => {
+      for (const init of [{ key: "F10", shiftKey: true }, { key: "ContextMenu" }]) {
+        const el = await open({ rows: rows(3) });
+        await press(list(el), { key: "End" });
+        await press(list(el), { key: "ArrowUp" });
+        await press(list(el), init);
+        const item = [...document.querySelectorAll('[role="menuitem"]')].find((i) => i.textContent === "Copy line")!;
+        await click(item);
+        expect(copied.at(-1)).toBe("line 1");
+      }
+    });
+
+    test("Ctrl+C and Cmd+C with no selection copy the current row text", async () => {
+      const el = await open({ rows: rows(3) });
+      await press(list(el), { key: "c", ctrlKey: true });
+      expect(copied).toEqual([]); // no current row yet
+      await press(list(el), { key: "End" });
+      await press(list(el), { key: "c", ctrlKey: true });
+      await press(list(el), { key: "c", metaKey: true });
+      expect(copied).toEqual(["line 2", "line 2"]);
+    });
+
+    test("Ctrl+C with a text selection keeps the browser copy", async () => {
+      const el = await open({ rows: rows(3) });
+      await press(list(el), { key: "Home" });
+      const range = document.createRange();
+      range.selectNodeContents(lis(el)[1]!);
+      window.getSelection()!.removeAllRanges();
+      window.getSelection()!.addRange(range);
+      await press(list(el), { key: "c", ctrlKey: true });
+      window.getSelection()!.removeAllRanges();
+      expect(copied).toEqual([]);
+    });
+
+    test("the list has no live region (new lines are not announced, as in 0.22.0)", async () => {
+      const el = await open({ rows: rows(2) });
+      expect(list(el).hasAttribute("aria-live")).toBe(false);
+      expect(list(el).hasAttribute("aria-relevant")).toBe(false);
+    });
+
+    test("the scroll box shows the focus ring while the list has focus and no row is current (the box clips a ring on the list); the current row takes over", async () => {
+      const el = await open({ rows: rows(3) });
+      const ring = "has-[[role=listbox]:focus-visible]:outline-2";
+      expect(box(el).className).toContain(ring);
+      expect(box(el).className).toContain("has-[[role=listbox]:focus-visible]:outline-solid");
+      expect(list(el).className).not.toContain("focus-visible:outline-2");
+      await press(list(el), { key: "ArrowDown" });
+      expect(box(el).className).not.toContain(ring);
+      expect(lis(el)[0]!.className).toContain("group-focus-visible/ol:data-active:outline-2");
+    });
+
+    test("the row id comes from the row key: removing old rows keeps the id of the current row", async () => {
+      const el = await open({ rows: rows(4) });
+      await press(list(el), { key: "End" });
+      const id = list(el).getAttribute("aria-activedescendant");
+      await update({ rows: rows(4).slice(1) });
+      expect(list(el).getAttribute("aria-activedescendant")).toBe(id);
+      expect(activeText(el)).toBe("line 3");
+    });
+
+    test("Shift+F10 and ContextMenu with no current row make the newest row current and open its menu", async () => {
+      for (const init of [{ key: "F10", shiftKey: true }, { key: "ContextMenu" }]) {
+        const el = await open({ rows: rows(3) });
+        const e = new KeyboardEvent("keydown", { bubbles: true, cancelable: true, ...init });
+        await act(async () => void list(el).dispatchEvent(e));
+        expect(e.defaultPrevented).toBe(true);
+        expect(activeText(el)).toBe("line 2");
+        await click([...document.querySelectorAll('[role="menuitem"]')].find((i) => i.textContent === "Copy line")!);
+        expect(copied.at(-1)).toBe("line 2");
+      }
+    });
+
+    test("the keyboard menu opens at the reading-start edge of the row: left in English, right in Arabic", async () => {
+      const edge = async (lang: "en" | "ar") => {
+        const el = await open({ rows: rows(2) }, lang);
+        const rect = Element.prototype.getBoundingClientRect;
+        Element.prototype.getBoundingClientRect = () => ({ left: 10, right: 310, top: 0, bottom: 20, width: 300, height: 20, x: 10, y: 0, toJSON() {} }) as DOMRect;
+        let x = -1;
+        lis(el)[1]!.addEventListener("contextmenu", (e) => (x = (e as MouseEvent).clientX));
+        try {
+          await press(list(el), { key: "End" });
+          await press(list(el), { key: "ContextMenu" });
+        } finally {
+          Element.prototype.getBoundingClientRect = rect;
+        }
+        return x;
+      };
+      expect(await edge("en")).toBe(18);
+      expect(await edge("ar")).toBe(302);
+    });
+
+    test("Jump to newest makes the newest row current", async () => {
+      const el = await open();
+      await press(list(el), { key: "Home" });
+      top = 100;
+      await act(async () => void box(el).dispatchEvent(new Event("scroll")));
+      height = 1200;
+      await update({ rows: rows(8) });
+      await click(byName(el, "Jump to newest")!);
+      expect(activeText(el)).toBe("line 7");
+    });
   });
 });

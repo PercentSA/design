@@ -7,17 +7,9 @@ import { Button } from "./actions";
 import { blockedProps } from "./button-class";
 import { BlockedStatus } from "./dialog-parts";
 import { AlertDialog, Sheet } from "./overlays";
+import { useMediaQuery } from "./utility";
 
-/**
- * An edit form in a Sheet, with Cancel and Save in a footer that stays at the bottom. `pending` shows Save
- * loading and refuses every close. With `dirty`, each close (Escape, outside click, the close button, a drag,
- * Cancel) asks first, and leaving the page asks the browser's question. The sheet does not close itself after a
- * submit: close it (`open`, `onOpenChange`) when the save succeeds.
- * `blocked`: why the submit is refused now. It shows above the buttons (announced), and the submit stays visible but disabled;
- * `pending` wins over it. `danger`: the submit is a danger button. `cancelLabel`: the close button's text (default Cancel).
- * `side="bottom"`: the two buttons fill the footer in two equal columns, large. `size="lg"`: a wider sheet (see Sheet).
- */
-export function FormSheet({
+function FormSheetInner({
   title,
   description,
   trigger,
@@ -123,4 +115,25 @@ export function FormSheet({
       />
     </>
   );
+}
+
+type Props = Omit<Parameters<typeof FormSheetInner>[0], "side"> & { side?: "end" | "bottom" | "auto" };
+
+// A child, so a sheet without `side="auto"` never calls matchMedia.
+function AutoSide(props: Props) {
+  const wide = useMediaQuery("(min-width: 48rem)");
+  return <FormSheetInner {...props} side={wide ? "end" : "bottom"} />;
+}
+
+/**
+ * An edit form in a Sheet, with Cancel and Save in a footer that stays at the bottom. `pending` shows Save
+ * loading and refuses every close. With `dirty`, each close (Escape, outside click, the close button, a drag,
+ * Cancel) asks first, and leaving the page asks the browser's question. The sheet does not close itself after a
+ * submit: close it (`open`, `onOpenChange`) when the save succeeds.
+ * `blocked`: why the submit is refused now. It shows above the buttons (announced), and the submit stays visible but disabled;
+ * `pending` wins over it. `danger`: the submit is a danger button. `cancelLabel`: the close button's text (default Cancel).
+ * `side="auto"`: the end from 768 px, the bottom below. `side="bottom"`: the two buttons fill the footer in two equal columns, large. `size="lg"`: a wider sheet (see Sheet).
+ */
+export function FormSheet(props: Props) {
+  return props.side === "auto" ? <AutoSide {...props} /> : <FormSheetInner {...props} side={props.side} />;
 }

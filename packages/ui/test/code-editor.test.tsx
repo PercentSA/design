@@ -59,6 +59,14 @@ describe("CodeEditor", () => {
     expect(hint.textContent).toBe("Press Escape, then Tab, to leave the editor.");
   });
 
+  test("errorList false draws no list but marks the lines", async () => {
+    const d = [{ line: 2, message: "bad" }];
+    await mount(<CodeEditor label="Compose file" value={"a: 1\nb: [\n"} diagnostics={d} errorList={false} />);
+    expect(document.querySelector("[data-diagnostics]")).toBeNull();
+    expect([...document.querySelectorAll(".cm-line")][1]!.classList.contains("pc-line-error")).toBe(true);
+    expect(document.querySelector(".cm-lint-marker-error")).not.toBeNull();
+  });
+
   test("Arabic: the line word and the way out", async () => {
     await mount(
       <PercentProvider lang="ar">

@@ -16,11 +16,12 @@ export const LiveRegion = ({ assertive, children }: { assertive?: boolean; child
 export function useMediaQuery(query: string) {
   return useSyncExternalStore(
     (onChange) => {
+      if (typeof matchMedia === "undefined") return () => {};
       const m = matchMedia(query);
       m.addEventListener("change", onChange);
       return () => m.removeEventListener("change", onChange);
     },
-    () => matchMedia(query).matches,
+    () => typeof matchMedia !== "undefined" && matchMedia(query).matches,
     () => false,
   );
 }
