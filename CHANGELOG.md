@@ -2,6 +2,23 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.25.0
+
+### Changed
+
+- [TimeText](https://design.percent.sa/en/components/time-text): `kind="time"` shows the clock only ("14:02" or "2:02 PM"), for lists grouped by day; the full date and time show on hover, focus or tap. With `ago`, `kind="time"` has no effect.
+- [OnceValueDialog](https://design.percent.sa/en/components/once-value-dialog): `returnFocusTo` names the element that gets the focus when the dialog closes, for a dialog that opens after another dialog closed. Without it, the focus goes back to the element that had the focus when the dialog opened.
+- [ActionDialog](https://design.percent.sa/en/components/action-dialog): `reason.maxLength` sets the longest reason, in characters.
+- [FieldsSheet](https://design.percent.sa/en/components/fields-sheet): a field takes `inputMode`, the keyboard that a phone shows (for example `numeric`).
+- [SecretRow](https://design.percent.sa/en/components/secret-row): `action` adds a second action to the row, after the Set or Change button and before the "⋯" menu, only when the row can be edited.
+- [DataTable](https://design.percent.sa/en/components/data-table): the title column takes `cardDescription`; with `"block"`, a card shows the title column's `description` as a full-width block after the meta line (default `"title"`: under the title, as before).
+- [AttentionList](https://design.percent.sa/en/components/attention-list): the item `href` is optional; an item without it has a plain-text title and no row link. The action and the menu stay.
+- Parts without the new props render as before.
+
+### Fixed
+
+- [SecretRow](https://design.percent.sa/en/components/secret-row): the sheet button says "Set" or "Change", the same word as the row button, not "Save".
+
 ## 0.24.0
 
 ### Changed

@@ -17,6 +17,22 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.25.0",
+    date: "2026-11-24",
+    summary: "TimeText clock-only form; OnceValueDialog focus target; ActionDialog reason length; FieldsSheet input mode; SecretRow second action and sheet button word; DataTable card description block; AttentionList items without a link.",
+    changes: [
+      c("better", "[TimeText](time-text): `kind=\"time\"` shows the clock only (\"14:02\" or \"2:02 PM\"), for lists grouped by day; the full date and time show on hover, focus or tap. With `ago`, `kind=\"time\"` has no effect."),
+      c("better", "[OnceValueDialog](once-value-dialog): `returnFocusTo` names the element that gets the focus when the dialog closes, for a dialog that opens after another dialog closed. Without it, the focus goes back to the element that had the focus when the dialog opened."),
+      c("better", "[ActionDialog](action-dialog): `reason.maxLength` sets the longest reason, in characters."),
+      c("better", "[FieldsSheet](fields-sheet): a field takes `inputMode`, the keyboard that a phone shows (for example `numeric`)."),
+      c("better", "[SecretRow](secret-row): `action` adds a second action to the row, after the Set or Change button and before the \"⋯\" menu, only when the row can be edited."),
+      c("better", "[DataTable](data-table): the title column takes `cardDescription`; with `\"block\"`, a card shows the title column's `description` as a full-width block after the meta line (default `\"title\"`: under the title, as before)."),
+      c("better", "[AttentionList](attention-list): the item `href` is optional; an item without it has a plain-text title and no row link. The action and the menu stay."),
+      c("better", "Parts without the new props render as before."),
+      c("fixed", "[SecretRow](secret-row): the sheet button says \"Set\" or \"Change\", the same word as the row button, not \"Save\"."),
+    ],
+  },
+  {
     version: "0.24.0",
     date: "2026-11-23",
     summary: "ActionDialog cancel label; DataTable title column and row label; SecretRow sheet texts and file input; UsageMeter hidden label; controlled ExpandableText; focus return from menus, phone row actions, times in linked rows and rail badge dots fixed.",
