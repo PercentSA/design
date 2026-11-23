@@ -300,3 +300,26 @@ describe("ActionDialog stays and confirmLabel", () => {
     expect(dialog().textContent).toContain("ما يبقى");
   });
 });
+
+describe("ActionDialog cancelLabel, 0.24", () => {
+  test("cancelLabel names the cancel button", async () => {
+    await mount(<Host cancelLabel="Keep site" />);
+    expect(named("Keep site")).toBeDefined();
+    expect(buttons().find((b) => b.textContent?.trim() === "Cancel")).toBeUndefined();
+    expect(named("Keep site").hasAttribute("data-ad-cancel")).toBe(true);
+  });
+
+  test("without cancelLabel the button says the provider word", async () => {
+    await mount(
+      <PercentProvider lang="ar">
+        <Host />
+      </PercentProvider>,
+    );
+    expect(dialog().querySelector("[data-ad-cancel]")!.textContent).toBe("إلغاء");
+  });
+
+  test("without cancelLabel the button says Cancel", async () => {
+    await mount(<Host />);
+    expect(dialog().querySelector("[data-ad-cancel]")!.textContent).toBe("Cancel");
+  });
+});
