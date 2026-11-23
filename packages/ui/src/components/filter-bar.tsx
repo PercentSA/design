@@ -1,7 +1,7 @@
 "use client";
 
-import { useRef, type ReactNode } from "react";
-import { Check, ChevronDown, ListFilter, Search } from "lucide-react";
+import { useRef, type KeyboardEvent, type ReactNode } from "react";
+import { Check, ChevronDown, ListFilter } from "lucide-react";
 import { DropdownMenu as RadixDropdown } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useFlip } from "../lib/flip";
@@ -13,7 +13,7 @@ import { Badge, Tag } from "./feedback";
 import { MENU_ITEM } from "./input-classes";
 import { Sheet } from "./overlays";
 import { Autocomplete } from "./autocomplete";
-import { SearchInput } from "./special-inputs";
+import { SearchInput, useSearchInputProps } from "./special-inputs";
 
 /** One filter: a button with a menu. `multiple` gives checkbox items, otherwise radio items (one choice). Labels are text: they also name the tags.
     `kind: "toggle"`: one chip that is pressed or not (`options` is not used). Its value is `["on"]` when pressed and `[]` when not. It has no tag and stays on the bar on a phone. */
@@ -21,6 +21,31 @@ export type FilterDef = { key: string; label: string; options: { value: string; 
 
 /** The chosen option values per filter key. */
 export type FilterValue = Record<string, string[]>;
+
+export type FilterSearch = {
+  value: string;
+  onValueChange: (value: string) => void;
+  placeholder?: string;
+  /** Runs when Enter is pressed in the field (not on each key; not while an input method composes). */
+  onSubmit?: (value: string) => void;
+  /** Words to suggest while typing. The text stays free: a word that is not a suggestion can be submitted. */
+  suggestions?: string[];
+  maxLength?: number;
+};
+
+/** The search field. One props object feeds both versions (plain input, or the suggestions list), so a change reaches both. */
+function SearchField({ search }: { search: FilterSearch }) {
+  const common = useSearchInputProps({
+    placeholder: search.placeholder,
+    maxLength: search.maxLength,
+    onKeyDown: (e: KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter" && !e.nativeEvent.isComposing && e.keyCode !== 229) search.onSubmit?.(search.value);
+    },
+    className: "h-(--p-control-h-sm) w-full sm:w-64",
+  });
+  if (!search.suggestions) return <SearchInput {...common} onChange={(e) => search.onValueChange(e.target.value)} value={search.value} />;
+  return <Autocomplete {...common} value={search.value} onValueChange={search.onValueChange} suggestions={search.suggestions.map((w) => ({ value: w }))} />;
+}
 
 const CONTENT = "p-float z-(--p-z-overlay) min-w-48 rounded-field border border-line bg-surface-2 p-1.5 text-fg shadow-overlay";
 
@@ -41,16 +66,7 @@ export function FilterBar({
   collapseOnPhone,
   className,
 }: {
-  search?: {
-    value: string;
-    onValueChange: (value: string) => void;
-    placeholder?: string;
-    /** Runs when Enter is pressed in the field (not on each key). */
-    onSubmit?: (value: string) => void;
-    /** Words to suggest while typing. The text stays free: a word that is not a suggestion can be submitted. */
-    suggestions?: string[];
-    maxLength?: number;
-  };
+  search?: FilterSearch;
   filters: FilterDef[];
   value: FilterValue;
   onValueChange: (value: FilterValue) => void;
@@ -75,38 +91,15 @@ export function FilterBar({
   const root = useRef<HTMLDivElement>(null);
   useFlip(root, [value]);
   const set = (key: string, values: string[]) => onValueChange({ ...value, [key]: values });
-  const clear = () => onValueChange({ ...value, ...Object.fromEntries(menus.map((f) => [f.key, []])) });
   const menus = filters.filter((f) => f.kind !== "toggle");
+  // "Clear filters" empties every filter, toggles too; keys that are not filters are removed, as before.
+  const clear = () => onValueChange(Object.fromEntries(filters.map((f) => [f.key, []])));
   const active = menus.flatMap((f) => (value[f.key] ?? []).map((v) => ({ f, v, label: f.options.find((o) => o.value === v)?.label ?? v })));
 
   return (
     <div ref={root} role="group" aria-label={s.filters} className={cn("grid gap-3", className)}>
       <div className="flex flex-wrap items-center gap-2">
-        {search &&
-          (search.suggestions ? (
-            <Autocomplete
-              value={search.value}
-              onValueChange={search.onValueChange}
-              suggestions={search.suggestions.map((w) => ({ value: w }))}
-              type="search"
-              enterKeyHint="search"
-              start={<Search aria-hidden />}
-              aria-label={s.search}
-              placeholder={search.placeholder}
-              maxLength={search.maxLength}
-              onKeyDown={(e) => e.key === "Enter" && search.onSubmit?.(search.value)}
-              className="h-(--p-control-h-sm) w-full sm:w-64"
-            />
-          ) : (
-            <SearchInput
-              value={search.value}
-              onChange={(e) => search.onValueChange(e.target.value)}
-              placeholder={search.placeholder}
-              maxLength={search.maxLength}
-              onKeyDown={(e) => e.key === "Enter" && search.onSubmit?.(search.value)}
-              className="h-(--p-control-h-sm) w-full sm:w-64"
-            />
-          ))}
+        {search && <SearchField search={search} />}
         {filters.map((f) => {
           const chosen = value[f.key] ?? [];
           if (f.kind === "toggle") {

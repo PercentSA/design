@@ -65,11 +65,15 @@ export function PasswordInput(props: Omit<ComponentProps<"input">, "type">) {
   );
 }
 
-/** Named "Search" only when no Field label and no aria-labelledby names it: aria-label would hide those. */
-export function SearchInput(props: Omit<ComponentProps<"input">, "type">) {
+/** The defaults of a search field: type, key hint, icon, and the name "Search" only when no Field label and no aria-labelledby names it (aria-label would hide those). Shared by `SearchInput` and the suggestions field of `FilterBar`. */
+export function useSearchInputProps<P extends ComponentProps<"input">>(props: P) {
   const s = useStrings();
   const named = useFieldLabelId() || props["aria-labelledby"];
-  return <Input type="search" enterKeyHint="search" aria-label={named ? undefined : s.search} start={<Search aria-hidden />} {...props} />;
+  return { type: "search", enterKeyHint: "search", "aria-label": named ? undefined : s.search, start: <Search aria-hidden />, ...props } as const;
+}
+
+export function SearchInput(props: Omit<ComponentProps<"input">, "type">) {
+  return <Input {...useSearchInputProps(props)} />;
 }
 
 /** Number with step buttons. Accepts Arabic digits; `value` is null while the field is empty. `format` shows a set value ("05"). */

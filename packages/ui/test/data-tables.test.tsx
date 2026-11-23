@@ -243,3 +243,23 @@ describe("RTL", () => {
     expect(out).toContain(">العميل</dt>");
   });
 });
+
+describe("DataTable phone toolbar row (0.23)", () => {
+  const table = (props: object) => (
+    <PercentProvider lang="en">
+      <DataTable cards columns={[{ key: "n", header: "Name" }]} rows={[{ id: "a", n: "Al Noor" }]} getRowId={(r) => r.id} caption="Apps" {...props} />
+    </PercentProvider>
+  );
+  test("as before: no viewKey and no toolbar draws no row", async () => {
+    const el = await mount(table({}));
+    expect(el.querySelector(".pb-4")).toBeNull();
+  });
+  test("viewKey without toolbar: the row is hidden below 768 px", async () => {
+    const el = await mount(table({ viewKey: "x" }));
+    expect(el.querySelector(".pb-4")!.className).toContain("max-md:hidden");
+  });
+  test("viewKey with toolbar: the row stays", async () => {
+    const el = await mount(table({ viewKey: "x", toolbar: <span>T</span> }));
+    expect(el.querySelector(".pb-4")!.className).not.toContain("max-md:hidden");
+  });
+});

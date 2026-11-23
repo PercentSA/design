@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { AtSign } from "lucide-react";
+import { AtSign, MapPin } from "lucide-react";
 import { useForm } from "react-hook-form";
 import {
   Autocomplete,
@@ -206,7 +206,7 @@ export function AutocompleteExample() {
   const cities = useCitySuggestions();
   return (
     <Field label={t("City", "المدينة")} hint={t("Type any text; suggestions open on focus", "اكتب أي نص؛ تظهر الاقتراحات عند التركيز على الحقل")} className="w-full max-w-xs">
-      <Autocomplete value={city} onValueChange={setCity} suggestions={cities} openOnFocus name="city" />
+      <Autocomplete value={city} onValueChange={setCity} suggestions={cities} openOnFocus name="city" start={<MapPin aria-hidden />} />
     </Field>
   );
 }
