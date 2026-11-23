@@ -43,6 +43,9 @@ const WORD = {
   waiting: "stepWaiting",
 } as const;
 
+// Words shown beside the title, so color is not the only sign. Tone classes only.
+const SHOWN = { failed: "text-danger", warning: "text-warning", running: "text-fg-2", skipped: "text-fg-3" } as const;
+
 const reached = (item?: TimelineItem) => !!item?.status && ["done", "current", "running", "failed", "warning"].includes(item.status);
 
 /** Steps or events in order (an order's progress, a job's steps). Vertical, with the line on the start side. */
@@ -59,10 +62,18 @@ export function Timeline({ items, onSelect, className }: { items: TimelineItem[]
 function Step({ item, next, last, onSelect }: { item: TimelineItem; next?: TimelineItem; last: boolean; onSelect?: (id: string) => void }) {
   const s = useStrings();
   const id = useId();
-  const [open, setOpen] = useState(item.open ?? item.status === "failed");
+  const start = item.open ?? item.status === "failed";
+  const [open, setOpen] = useState(start);
+  // A change of status or open resets the toggle to the new start state; a click holds until then.
+  const [seen, setSeen] = useState(`${item.status}|${item.open}`);
+  if (seen !== `${item.status}|${item.open}`) {
+    setSeen(`${item.status}|${item.open}`);
+    setOpen(start);
+  }
+  const hasDetail = item.detail != null && item.detail !== false && item.detail !== "";
   const status = item.status;
   const word = status && status in WORD ? s[WORD[status as keyof typeof WORD]] : undefined;
-  const titleClass = cn("text-sm font-medium", status === "next" || status === "skipped" ? "text-fg-3" : "text-fg");
+  const titleClass = cn("text-sm font-medium", status === "next" || status === "waiting" || status === "skipped" ? "text-fg-3" : "text-fg");
   return (
     <li data-status={status} aria-current={status === "current" ? "step" : undefined} className="grid grid-cols-[0.75rem_1fr] gap-x-4">
       <span aria-hidden="true" className="flex flex-col items-center">
@@ -73,22 +84,27 @@ function Step({ item, next, last, onSelect }: { item: TimelineItem; next?: Timel
         {item.time != null && <span className="text-xs text-fg-3 tabular-nums">{item.time}</span>}
         <div className="flex items-baseline justify-between gap-4">
           {onSelect ? (
-            <button type="button" onClick={() => onSelect(item.id)} className={cn(titleClass, "text-start hover:underline")}>
+            <button type="button" onClick={() => onSelect(item.id)} className={cn(titleClass, "min-h-6 text-start hover:underline")}>
               {item.title}
             </button>
           ) : (
             <span className={titleClass}>{item.title}</span>
           )}
+          {word && status! in SHOWN && (
+            <span aria-hidden="true" className={cn("ms-auto shrink-0 text-xs", SHOWN[status as keyof typeof SHOWN])}>
+              {word}
+            </span>
+          )}
           {item.duration != null && <span className="shrink-0 text-xs text-fg-3 tabular-nums">{item.duration}</span>}
         </div>
         {word && <span className="sr-only">{word}</span>}
         {item.description && <span className="text-sm text-fg-2">{item.description}</span>}
-        {item.detail != null && (
+        {hasDetail && (
           <>
             <button
               type="button"
               aria-expanded={open}
-              aria-controls={id}
+              aria-controls={open ? id : undefined}
               onClick={() => setOpen(!open)}
               className="inline-flex min-h-6 items-center gap-1 justify-self-start text-xs text-fg-2 hover:text-fg"
             >

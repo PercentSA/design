@@ -1,5 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { Timeline } from "../src/components/timeline";
+import { useState } from "react";
 import { click, mount, useDom } from "./dom";
 
 useDom();
@@ -43,7 +44,8 @@ describe("Timeline steps", () => {
     expect(dot("running")).toContain("motion-safe:animate-pulse");
     expect(word("running")).toBe("Running");
     expect(dot("skipped")).toContain("border-dashed");
-    expect(li("skipped").innerHTML).toContain("text-fg-3");
+    expect(li("skipped").querySelector(".text-sm.font-medium")!.className).toContain("text-fg-3");
+    expect(li("waiting").querySelector(".text-sm.font-medium")!.className).toContain("text-fg-3");
     expect(word("skipped")).toBe("Skipped");
     expect(dot("waiting")).toContain("border border-line-strong");
     expect(word("waiting")).toBe("Waiting");
@@ -98,5 +100,78 @@ describe("Timeline steps", () => {
   test("without onSelect the title is text", async () => {
     const el = await mount(<Timeline items={[{ id: "build", title: "Build" }]} />);
     expect(el.querySelector("button")).toBeNull();
+  });
+
+  test("the open state follows status and open; a click holds until then", async () => {
+    function Harness() {
+      const [status, setStatus] = useState<"running" | "failed">("running");
+      const [open, setOpen] = useState<boolean | undefined>(undefined);
+      return (
+        <>
+          <button id="fail" onClick={() => setStatus("failed")} />
+          <button id="close" onClick={() => setOpen(false)} />
+          <Timeline items={[{ id: "a", title: "Build", status, open, detail: log }]} />
+        </>
+      );
+    }
+    const el = await mount(<Harness />);
+    expect(el.textContent).not.toContain("line one");
+    await click(el.querySelector("#fail")!);
+    expect(el.textContent).toContain("line one");
+    await click(el.querySelector("li button")!); // person closes
+    expect(el.textContent).not.toContain("line one");
+    await click(el.querySelector("#close")!); // open changed: new start state is closed
+    expect(el.textContent).not.toContain("line one");
+  });
+
+  test("an empty detail gives no button and no region", async () => {
+    for (const detail of [false, null, ""]) {
+      const el = await mount(<Timeline items={[{ id: "a", title: "Build", status: "failed", detail }]} />);
+      expect(el.querySelector("button")).toBeNull();
+    }
+  });
+
+  test("aria-controls only while open", async () => {
+    const el = await mount(<Timeline items={[{ id: "a", title: "Build", detail: log, open: true }]} />);
+    const b = el.querySelector("button")!;
+    expect(b.hasAttribute("aria-controls")).toBe(true);
+    await click(b);
+    expect(b.hasAttribute("aria-controls")).toBe(false);
+  });
+
+  test("a visible status word with a tone color, hidden from screen readers", async () => {
+    const el = await mount(
+      <Timeline
+        items={(["failed", "warning", "running", "skipped", "done", "waiting"] as const).map((status) => ({ id: status, title: status, status }))}
+      />,
+    );
+    const tone = { failed: "text-danger", warning: "text-warning", running: "text-fg-2", skipped: "text-fg-3" } as const;
+    for (const [s, c] of Object.entries(tone)) {
+      const w = el.querySelector(`li[data-status="${s}"] div span.ms-auto`)!;
+      expect(w.className).toContain(c);
+      expect(w.textContent).toBe(el.querySelector(`li[data-status="${s}"] .sr-only`)!.textContent);
+    }
+    expect(el.querySelector('li[data-status="done"] span.ms-auto')).toBeNull();
+    expect(el.querySelector('li[data-status="waiting"] span.ms-auto')).toBeNull();
+  });
+
+  test("the onSelect title button is at least 24 px high", async () => {
+    const el = await mount(<Timeline onSelect={() => {}} items={[{ id: "a", title: "Build" }]} />);
+    expect(el.querySelector("button")!.className).toContain("min-h-6");
+  });
+
+  test("the line is primary when the next item is reached", async () => {
+    const statuses = ["next", "running", "failed", "warning", "done", "current", "skipped", "waiting", "next"] as const;
+    const el = await mount(<Timeline items={statuses.map((status, i) => ({ id: String(i), title: status, status }))} />);
+    const lines = [...el.querySelectorAll("li")].slice(0, -1).map((li) => li.querySelector("span > span.w-px")!.className.includes("bg-primary"));
+    expect(lines).toEqual([true, true, true, true, true, false, false, false]);
+  });
+
+  test("a next title is muted, a done title is not", async () => {
+    const el = await mount(<Timeline items={[{ id: "a", title: "A", status: "next" }, { id: "b", title: "B", status: "done" }]} />);
+    const t = (s: string) => el.querySelector(`li[data-status="${s}"] .font-medium`)!.className;
+    expect(t("next")).toContain("text-fg-3");
+    expect(t("done")).toContain("text-fg");
+    expect(t("done")).not.toContain("text-fg-3");
   });
 });

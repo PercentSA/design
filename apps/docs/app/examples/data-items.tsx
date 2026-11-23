@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { FileText, Folder } from "lucide-react";
 import { Accordion, Avatar, AvatarGroup, ConnectionCard, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree } from "@percentsa/ui";
 import { useT } from "~/lib/t";
@@ -44,17 +45,19 @@ export function TimelineExample() {
 
 export function TimelineStepsExample() {
   const t = useT();
+  const [selected, setSelected] = useState("build");
+  const names: Record<string, string> = { clone: t("Clone", "استنساخ"), build: t("Build", "بناء"), start: t("Start", "تشغيل"), check: t("Check", "فحص") };
   return (
+    <div className="grid w-full max-w-sm gap-4">
     <Timeline
-      className="w-full max-w-sm"
-      onSelect={() => {}}
+      onSelect={setSelected}
       items={[
-        { id: "clone", title: t("Clone", "استنساخ"), status: "done", duration: t("4 s", "٤ ث") },
+        { id: "clone", title: t("Clone", "استنساخ"), status: "done", duration: t("4 s", "4 ث") },
         {
           id: "build",
           title: t("Build", "بناء"),
           status: "failed",
-          duration: t("1 min 12 s", "١ د ١٢ ث"),
+          duration: t("1 min 12 s", "1 د 12 ث"),
           detail: (
             <pre className="font-mono text-xs whitespace-pre-wrap">
               {"$ bun run build\nerror: Cannot find module './shop'\nexit code 1"}
@@ -65,6 +68,11 @@ export function TimelineStepsExample() {
         { id: "check", title: t("Check", "فحص"), status: "waiting" },
       ]}
     />
+    <p className="text-sm text-fg-2">
+      {t("Selected: ", "المحدد: ")}
+      {names[selected]}
+    </p>
+    </div>
   );
 }
 

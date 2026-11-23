@@ -17,8 +17,8 @@ export const pages: DocPage[] = [
     "data",
     "Timeline",
     ["TimelineExample", "TimelineStepsExample"],
-    "Events in order, such as the progress of an order. The line is on the start side. Steps of a job with their state. A failed step opens to show its detail. With onSelect, each title is a button.",
-    "أحداث مرتبة، مثل مراحل تنفيذ الطلب. يقع الخط في جهة البداية. خطوات عملية مع حالتها. الخطوة الفاشلة تفتح لتعرض تفاصيلها. مع onSelect يصبح كل عنوان زرًا.",
+    "Events or steps in order, with the line on the start side. A step can show its state, its duration and a detail. A failed step opens to show its detail.",
+    "أحداث أو خطوات بالترتيب، والخط على جهة البداية. تعرض الخطوة حالتها ومدتها وتفاصيلها. الخطوة الفاشلة تفتح لتعرض تفاصيلها.",
   ),
   p(
     "accordion",
