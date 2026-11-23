@@ -348,14 +348,14 @@ describe("LogViewer follow after jumpTo, pause and a first search", () => {
       expect(list(el).hasAttribute("aria-relevant")).toBe(false);
     });
 
-    test("the list shows its own focus ring while no row is current; the current row takes over", async () => {
+    test("the scroll box shows the focus ring while the list has focus and no row is current (the box clips a ring on the list); the current row takes over", async () => {
       const el = await open({ rows: rows(3) });
-      expect(list(el).className).toContain("focus-visible:outline-2");
-      // outline-none sets the outline style to none, so the ring needs a solid style from the same variant.
-      expect(list(el).className).toContain("focus-visible:outline-solid");
-      await press(list(el), { key: "ArrowDown" });
+      const ring = "has-[[role=listbox]:focus-visible]:outline-2";
+      expect(box(el).className).toContain(ring);
+      expect(box(el).className).toContain("has-[[role=listbox]:focus-visible]:outline-solid");
       expect(list(el).className).not.toContain("focus-visible:outline-2");
-      expect(list(el).className).not.toContain("focus-visible:outline-solid");
+      await press(list(el), { key: "ArrowDown" });
+      expect(box(el).className).not.toContain(ring);
       expect(lis(el)[0]!.className).toContain("group-focus-visible/ol:data-active:outline-2");
     });
 

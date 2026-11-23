@@ -301,7 +301,7 @@ export function UsageMeterExample() {
   const t = useT();
   const ar = useLang() === "ar";
   // The number with its unit is isolated, so it keeps its order inside an Arabic sentence.
-  const limit = { value: 90, label: ar ? <>تنبيه عند <bdi>90 %</bdi></> : "Alert at 90 %" };
+  const limit = { value: 90, label: ar ? <>تنبيه عند <bdi dir="ltr">90 %</bdi></> : "Alert at 90 %" };
   return (
     <div className="grid w-full max-w-md gap-5">
       <UsageMeter label={t("CPU", "المعالج")} value={42} limit={limit} />

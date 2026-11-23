@@ -45,6 +45,15 @@ describe("tab scroll row", () => {
     }
     for (const tab of [t.querySelector('[role="tab"]')!, r.querySelector("nav > a")!]) expect(tab.classList.contains("focus-visible:-outline-offset-2")).toBe(true);
   });
+  test("the tab has 4 px inline padding, so the inner ring does not touch the text; the row gap is 8 px less, so the text spacing stays 24 px", async () => {
+    const t = await mount(<Tabs defaultValue="a" items={[{ value: "a", label: "A", content: "x" }]} />);
+    const r = await mount(<RouteTabs label="x" items={items} current="Overview" />);
+    for (const tab of [t.querySelector('[role="tab"]')!, r.querySelector("nav > a")!]) expect(tab.classList.contains("px-1")).toBe(true);
+    for (const row of [t.querySelector('[role="tablist"]')!, r.querySelector("nav")!]) {
+      expect(row.classList.contains("gap-4")).toBe(true);
+      expect(row.classList.contains("gap-6")).toBe(false);
+    }
+  });
 });
 
 // Stubs: the own descriptor is saved before the first stub of a test and put back after it; delete only when there was none.
@@ -297,6 +306,23 @@ describe("Tooltip focus open and scroll", () => {
   const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
   const open = () => !!document.querySelector('[role="tooltip"]');
   const scroll = () => act(async () => void document.dispatchEvent(new Event("scroll")));
+  test("a smooth scroll longer than 300 ms keeps it open: each scroll in the guard adds 200 ms (at most 1.5 s after the focus)", async () => {
+    const el = await mount(
+      <Tooltip content="Tip">
+        <button>t</button>
+      </Tooltip>,
+    );
+    const b = el.querySelector("button")!;
+    await act(async () => b.focus());
+    for (let n = 0; n < 4; n++) {
+      await act(() => wait(150));
+      await scroll();
+      expect(open()).toBe(true);
+    }
+    await act(() => wait(260));
+    await scroll();
+    expect(open()).toBe(false);
+  });
   test("a tooltip opened by focus stays open when the page scrolls in the next 300 ms", async () => {
     const el = await mount(
       <Tooltip content="Tip">

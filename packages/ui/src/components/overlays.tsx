@@ -341,15 +341,32 @@ export function Tooltip({ content, children, side = "top", open, defaultOpen, on
   const physical = usePhysicalSide(side);
   const [own, setOwn] = useState(defaultOpen ?? false);
   // For 300 ms after a focus open, only a close that the person caused goes through: the focus moves the page to the trigger, and that must not close it.
+  // A smooth scroll can take longer: each scroll in the guard adds 200 ms, up to 1.5 s after the focus.
   // The handlers of a click, a press on the trigger, Escape and a blur raise `person` for the close that they cause.
   const guard = useRef(false);
   const person = useRef(false);
   const pointer = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const unlisten = useRef<() => void>(undefined);
   const stop = useCallback(() => {
     guard.current = false;
     clearTimeout(timer.current);
+    unlisten.current?.();
+    unlisten.current = undefined;
   }, []);
+  const start = () => {
+    stop();
+    guard.current = true;
+    const until = Date.now() + 1500;
+    timer.current = setTimeout(stop, 300);
+    const more = () => {
+      if (!guard.current) return;
+      clearTimeout(timer.current);
+      timer.current = setTimeout(stop, Math.max(0, Math.min(200, until - Date.now())));
+    };
+    document.addEventListener("scroll", more, { capture: true, passive: true });
+    unlisten.current = () => document.removeEventListener("scroll", more, { capture: true });
+  };
   useEffect(() => stop, [stop]);
   const byPerson = () => {
     person.current = true;
@@ -373,9 +390,7 @@ export function Tooltip({ content, children, side = "top", open, defaultOpen, on
           onPointerUp={() => (pointer.current = false)}
           onFocus={() => {
             if (pointer.current) return;
-            stop();
-            guard.current = true;
-            timer.current = setTimeout(stop, 300);
+            start();
           }}
           onBlur={() => {
             pointer.current = false;

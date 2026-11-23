@@ -211,7 +211,11 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
           atEnd.current = atEndOf(e.currentTarget);
           setAway(!atEnd.current);
         }}
-        className="relative overflow-y-auto rounded-card border border-line bg-surface py-2"
+        // The box clips a ring on the list, so the box draws it while the list has focus and no row is current.
+        className={cn(
+          "relative overflow-y-auto rounded-card border border-line bg-surface py-2",
+          actIdx < 0 && "has-[[role=listbox]:focus-visible]:outline-solid has-[[role=listbox]:focus-visible]:outline-2 has-[[role=listbox]:focus-visible]:outline-offset-2 has-[[role=listbox]:focus-visible]:outline-fg",
+        )}
       >
         {loading ? (
           <div className="flex flex-col gap-2 px-3">
@@ -242,7 +246,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
               tabIndex={0}
               aria-activedescendant={actIdx >= 0 ? rowId(rows[actIdx]!.key) : undefined}
               onKeyDown={onListKey}
-              className={cn("group/ol grid outline-none grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]", actIdx < 0 && "focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-fg")}
+              className="group/ol grid outline-none grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]"
               // iOS opens the menu from a long press and sends no contextmenu event, so the row is also read at pointer down.
               onPointerDown={(e) => {
                 copyKey.current = rowKey(e.target);

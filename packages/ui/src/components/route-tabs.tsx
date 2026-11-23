@@ -139,7 +139,7 @@ export function RouteTabs({ label, items, current, className }: { label: string;
       </nav>
       {/* Natural widths of all tabs and of More, for the fit. No size, no output, no focus. */}
       {measuring && (
-        <div ref={measure} aria-hidden inert className="pointer-events-none invisible absolute start-0 top-0 flex h-0 w-0 gap-6 overflow-hidden">
+        <div ref={measure} aria-hidden inert className="pointer-events-none invisible absolute start-0 top-0 flex h-0 w-0 gap-4 overflow-hidden">
           {items.map((i) => (
             <span key={i.value} data-measure={i.value} className={cn(TAB_BASE, TAB, "shrink-0")}>
               {i.label}

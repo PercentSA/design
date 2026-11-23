@@ -29,6 +29,15 @@ describe("chart limit and point select", () => {
     expect(style("0.5 GB الحد")).toContain("direction:ltr");
     expect(style("0.5 الحد GB")).toContain("direction:rtl");
   });
+  test("the limit label grows into the plot: its text anchor follows the plot side and the label direction", () => {
+    const anchor = (wrap: (n: ReactNode) => string, label: string) => wrap(<LineChart {...base} limit={{ value: 100, label }} />).match(/<text[^>]*text-anchor="([a-z]+)"[^>]*style="[^"]*unicode-bidi:plaintext/)![1];
+    // English plot: the label sits at the right edge, so its right end is at x.
+    expect(anchor(en, "Limit 1 CPU")).toBe("end");
+    expect(anchor(en, "الحد: 0.5 GB")).toBe("start");
+    // Arabic plot: the label sits at the left edge, so its left end is at x.
+    expect(anchor(ar, "الحد: 0.5 GB")).toBe("end");
+    expect(anchor(ar, "Limit 1 CPU")).toBe("start");
+  });
   test("limit draws a dashed line with its label inside the plot", () => {
     const html = en(<LineChart {...base} limit={limit} />);
     const m = html.match(/<line[^>]*stroke-dasharray="4 4"[^>]*>/);
