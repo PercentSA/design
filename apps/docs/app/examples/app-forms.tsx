@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { ArrowLeft, Download, Ellipsis, Printer, RefreshCw } from "lucide-react";
-import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, FieldsSheet, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, NumberInput, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SettingsRow, SettingsSection, ValueRow, Stack, Switch, Textarea, toast } from "@percentsa/ui";
+import { AuthLayout, Blockquote, Button, Checkbox, ColumnsMenu, type DateRange, DateRangePicker, DropdownMenu, FieldsSheet, Field, FilterBar, type FilterValue, FormSheet, Input, Link, Mark, NumberInput, OtpInput, PasswordInput, PhoneText, RecordSection, Select, SecretRow, SettingsRow, SettingsSection, ValueRow, Stack, Switch, Textarea, toast } from "@percentsa/ui";
 import { Card, FormBar, Money, PinPad, Text } from "@percentsa/ui";
 import { useForm } from "react-hook-form";
 import { FormSettingsRow } from "@percentsa/ui/react-hook-form";
@@ -683,5 +683,17 @@ export function FieldsSheetExample() {
         )}
       </FieldsSheet>
     </>
+  );
+}
+
+export function SecretRowExample() {
+  const t = useT();
+  const save = (_value: string) => new Promise<void>((done) => setTimeout(done, 600));
+  return (
+    <SettingsSection className="w-full max-w-2xl" title={t("Secrets", "الأسرار")}>
+      <SecretRow label={t("Payment key", "مفتاح الدفع")} canEdit secret={{ set: true, changedAt: Date.now() - 3 * 86_400_000, changedBy: "Sara" }} onSave={save} onRemove={async () => {}} />
+      <SecretRow label={t("Mail password", "كلمة مرور البريد")} required stops={t("Order emails", "رسائل الطلبات")} canEdit secret={{ set: false }} onSave={save} />
+      <SecretRow label={t("Signing key", "مفتاح التوقيع")} canEdit={false} owner={t("Only the owner can change it.", "المالك وحده يستطيع تغييره.")} secret={{ set: true }} onSave={save} />
+    </SettingsSection>
   );
 }

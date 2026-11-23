@@ -29,6 +29,15 @@ export const pages: DocPage[] = [
     "إعداد يظهر نصًا، مع زر نسخ اختياري وإجراء مثل «تعديل». استخدمه أيضًا لمن لا يحق له تغيير القيمة.",
   ),
   p(
+    "secret-row",
+    "SecretRow",
+    "app",
+    "SecretRow, type SecretRowProps",
+    ["SecretRowExample"],
+    "A secret setting: shows only whether it is set, and when it changed. The new value goes in a sheet.",
+    "إعداد سري: يعرض فقط هل هو مُعيّن ومتى تغيّر. القيمة الجديدة تُدخل في لوحة جانبية.",
+  ),
+  p(
     "form-settings-row",
     "FormSettingsRow",
     "app",

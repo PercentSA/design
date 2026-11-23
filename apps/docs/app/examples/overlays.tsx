@@ -10,6 +10,7 @@ import {
   DialogClose,
   DropdownMenu,
   Field,
+  OnceValueDialog,
   HoverCard,
   Inline,
   Input,
@@ -310,6 +311,24 @@ export function ActionDialogDeleteExample() {
         action={t("Delete", "حذف")}
         destructive
         onAction={() => setOpen(false)}
+      />
+    </>
+  );
+}
+
+export function OnceValueDialogExample() {
+  const t = useT();
+  const [value, setValue] = useState<string | null>(null);
+  return (
+    <>
+      <Button onClick={() => setValue("pt_example_1234")}>{t("Rotate token", "تدوير الرمز")}</Button>
+      <OnceValueDialog
+        open={value !== null}
+        title={t("Server token", "رمز الخادم")}
+        description={t("Copy the new token now.", "انسخ الرمز الجديد الآن.")}
+        note={t("You cannot see this value again.", "لا يمكنك رؤية هذه القيمة مرة أخرى.")}
+        value={value ?? ""}
+        onDone={() => setValue(null)}
       />
     </>
   );
