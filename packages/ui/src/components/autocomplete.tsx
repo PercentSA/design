@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useLayoutEffect, useRef, useState, type ComponentProps, type Ref } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ComponentProps, type ReactNode, type Ref } from "react";
 import { Popover } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useStrings, useText } from "../provider";
@@ -29,6 +29,8 @@ export type AutocompleteProps = Omit<ComponentProps<"input">, "value" | "default
   onSuggestionSelect?: (suggestion: AutocompleteSuggestion) => void;
   /** Monospace, left-to-right text without corrections (names, hashes, paths). */
   mono?: boolean;
+  /** Content before the text (an icon), as in `Input`. */
+  start?: ReactNode;
   ref?: Ref<HTMLInputElement>;
 };
 

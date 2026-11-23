@@ -416,6 +416,35 @@ export function RecordSectionAutoExample() {
   );
 }
 
+/** A log list: an "Errors only" toggle chip, a level menu, and search with suggestions. Enter runs the search. */
+export function FilterBarLogExample() {
+  const t = useT();
+  const [query, setQuery] = useState("");
+  const [submitted, setSubmitted] = useState("");
+  const [value, setValue] = useState<FilterValue>({});
+  return (
+    <div className="grid w-full gap-2">
+      <FilterBar
+        search={{ value: query, onValueChange: setQuery, onSubmit: setSubmitted, suggestions: ["nginx", "postgres", "worker"], maxLength: 100, placeholder: t("Search logs", "ابحث في السجلات") }}
+        value={value}
+        onValueChange={setValue}
+        filters={[
+          { key: "errors", label: t("Errors only", "الأخطاء فقط"), kind: "toggle", options: [] },
+          {
+            key: "level",
+            label: t("Level", "المستوى"),
+            options: [
+              { value: "info", label: t("Info", "معلومات") },
+              { value: "warn", label: t("Warning", "تحذير") },
+            ],
+          },
+        ]}
+      />
+      <p className="text-sm text-fg-3">{t(`Searched for: ${submitted || "nothing yet"}`, `البحث عن: ${submitted || "لا شيء بعد"}`)}</p>
+    </div>
+  );
+}
+
 /** `collapseOnPhone`: below 768 px the two filter menus become one "Filters" button with a count, which opens a bottom sheet. Narrow the window to see it. */
 export function FilterBarCollapseExample() {
   const t = useT();
