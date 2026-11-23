@@ -5,8 +5,28 @@ import { ChevronDown } from "lucide-react";
 import { cn } from "../lib/cn";
 
 /** A long text cut at `lines` lines. A click, tap, Enter or Space opens the full text and `details`. A text that fits stays plain text. */
-export function ExpandableText({ text, lines = 1, details, className }: { text: string; lines?: number; details?: ReactNode; className?: string }) {
-  const [open, setOpen] = useState(false);
+export function ExpandableText({
+  text,
+  lines = 1,
+  details,
+  open: openProp,
+  onOpenChange,
+  className,
+}: {
+  text: string;
+  lines?: number;
+  details?: ReactNode;
+  /** Controlled: another control can open the text. Without it the text keeps its own state. */
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+  className?: string;
+}) {
+  const [inner, setInner] = useState(false);
+  const open = openProp ?? inner;
+  const toggle = () => {
+    if (openProp === undefined) setInner(!open);
+    onOpenChange?.(!open);
+  };
   const [fits, setFits] = useState(false);
   const ref = useRef<HTMLSpanElement>(null);
 
@@ -31,7 +51,7 @@ export function ExpandableText({ text, lines = 1, details, className }: { text: 
   if (fits && !details && !open) return <span className={cn("inline-block max-w-full", className)}>{body}</span>;
   return (
     <>
-      <button type="button" aria-expanded={open} onClick={() => setOpen(!open)} className={cn("flex min-h-6 w-full min-w-0 items-start gap-2 rounded-sm text-start", className)}>
+      <button type="button" aria-expanded={open} onClick={toggle} className={cn("flex min-h-6 w-full min-w-0 items-start gap-2 rounded-sm text-start", className)}>
         {body}
         <ChevronDown aria-hidden className={cn("mt-0.5 size-4 shrink-0 text-fg-3 transition-transform", open && "rotate-180")} />
       </button>
