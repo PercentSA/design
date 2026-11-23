@@ -55,7 +55,7 @@ function stubLayout(width: number) {
   rowWidth = width;
   Object.assign(widths, baseWidths);
   observers.length = 0;
-  saved = {
+  saved ??= {
     rect: Object.getOwnPropertyDescriptor(HTMLElement.prototype, "getBoundingClientRect"),
     ro: Object.getOwnPropertyDescriptor(globalThis, "ResizeObserver"),
   };
@@ -241,6 +241,39 @@ describe("RouteTabs phone measure", () => {
     const el = await mount(<RouteTabs label="x" items={items} current="Overview" />);
     expect(el.querySelector("[data-measure]")).toBeNull();
     expect(el.textContent!.split("Overview").length - 1).toBe(1);
+  });
+  test("a new count or label keeps the measured fit", async () => {
+    stubLayout(342);
+    const log: (string | null)[][] = [];
+    function Probe({ n }: { n: number }) {
+      useLayoutEffect(() => void log.push([...document.querySelectorAll("nav > a")].filter((a) => !a.classList.contains("max-md:hidden")).map((a) => a.textContent?.replace(/\d+$/, "") ?? null)), [n]);
+      return null;
+    }
+    function H() {
+      const [n, setN] = useState(1);
+      return (
+        <>
+          <button id="go" onClick={() => setN(n + 1)} />
+          <RouteTabs label="x" items={items.map((i) => (i.value === "Deployments" ? { ...i, count: n, label: `Deployments` } : i))} current="Overview" />
+          <Probe n={n} />
+        </>
+      );
+    }
+    const el = await mount(<H />);
+    log.length = 0;
+    await click(el.querySelector("#go")!);
+    expect(log[0]).toEqual(["Overview", "Deployments"]);
+  });
+  test("the phone query is the same rule as max-md", async () => {
+    stubLayout(342);
+    const queries: string[] = [];
+    Object.defineProperty(globalThis, "matchMedia", {
+      configurable: true,
+      writable: true,
+      value: (q: string) => (queries.push(q), { matches: true, media: q, addEventListener() {}, removeEventListener() {} }),
+    });
+    await mount(<RouteTabs label="x" items={items} current="Overview" />);
+    expect(queries).toEqual(["(width < 48rem)"]);
   });
   test("the hidden measure row is aria-hidden and inert", async () => {
     stubLayout(342);

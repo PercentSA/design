@@ -52,8 +52,8 @@ export function RouteTabs({ label, items, current, className }: { label: string;
   const [fit, setFit] = useState<Fit>();
   // The measure row exists only on the client below 768 px, so the server HTML and the desktop DOM have each label once.
   const [measuring, setMeasuring] = useState(false);
-  // A stable key: a parent that builds `items` in each render does not restart the observer.
-  const key = items.map((i) => `${i.value}\u0000${typeof i.label === "string" ? i.label : ""}\u0000${i.count ?? ""}`).join("\u0001");
+  // A stable key from the values only: a parent that builds `items` in each render does not restart the observer, and a new count or label keeps the fit (the observer on the measure spans re-fits it).
+  const key = items.map((i) => i.value).join("\u0001");
   const at = items.findIndex((i) => i.value === current);
   const measured = fit?.key === key ? fit : undefined;
   // The first three, or the first two and the current one, until the first measure. After it, the measured widths and the current tab decide in this render.
@@ -62,7 +62,7 @@ export function RouteTabs({ label, items, current, className }: { label: string;
   const rest = items.filter((i) => !phone.has(i.value));
   useEffect(() => {
     if (typeof matchMedia === "undefined") return setMeasuring(true);
-    const mq = matchMedia("(max-width: 767px)");
+    const mq = matchMedia("(width < 48rem)");
     const on = () => setMeasuring(mq.matches);
     on();
     mq.addEventListener?.("change", on);
