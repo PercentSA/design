@@ -134,7 +134,7 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
         }
       />
       {canEdit && (
-        <FormSheet title={label} side="auto" open={shown} onOpenChange={setOpen} pending={pending} onSubmit={submit}>
+        <FormSheet title={label} side="auto" open={shown} onOpenChange={setOpen} pending={pending} dirty={value !== ""} onSubmit={submit}>
           <Field id={`${id}-value`} label={s.newValue} error={error}>
             {pem ? (
               <Textarea rows={8} className="font-mono" {...MONO_INPUT} {...common} />

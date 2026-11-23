@@ -1,7 +1,7 @@
 import { describe, expect, mock, test } from "bun:test";
 import { act } from "react";
 import { SecretRow, SettingsSection } from "../src";
-import { click, mount, stubMatchMedia, useDom } from "./dom";
+import { click, mount, press, stubMatchMedia, useDom } from "./dom";
 
 useDom();
 
@@ -15,6 +15,12 @@ const type = async (el: HTMLInputElement | HTMLTextAreaElement, text: string) =>
     Object.getOwnPropertyDescriptor(proto, "value")!.set!.call(el, text);
     el.dispatchEvent(new Event("input", { bubbles: true }));
   });
+// A typed value makes Cancel ask first; this confirms the question.
+const discard = async () => {
+  await settle();
+  await click(button("Discard", document.body));
+  await settle();
+};
 const NOW = new Date("2026-11-23T12:00:00Z");
 const changedAt = new Date(NOW.getTime() - 5 * 60_000);
 const save = (onSave = async (_v: string) => {}) => mount(<SettingsSection title="Keys"><SecretRow label="API key" canEdit secret={{ set: false }} onSave={onSave} /></SettingsSection>);
@@ -85,10 +91,29 @@ describe("SecretRow", () => {
     await settle();
     expect(sheet()!.textContent).toContain("Bad key.");
     await click(button("Cancel", sheet()!));
+    await discard();
+    expect(sheet()).toBeNull();
+    await click(button("Set", el));
+    expect(field().value).toBe("");
+  });
+
+  test("a typed value asks before it is dropped; a saved value closes without the question", async () => {
+    const el = await save();
+    await click(button("Set", el));
+    await type(field(), "abc");
+    await press(sheet()!, { key: "Escape" });
+    await settle();
+    expect(document.body.textContent).toContain("Discard your changes?");
+    await click(button("Discard", document.body));
     await settle();
     expect(sheet()).toBeNull();
     await click(button("Set", el));
     expect(field().value).toBe("");
+    await type(field(), "abc");
+    await click(button("Save", sheet()!));
+    await settle();
+    expect(sheet()).toBeNull();
+    expect(document.body.textContent).not.toContain("Discard your changes?");
   });
 
   test("the typed value is empty after each close", async () => {
@@ -99,7 +124,7 @@ describe("SecretRow", () => {
     await click(button("Set", el));
     await type(field(), "one");
     await click(button("Cancel", sheet()!));
-    await settle();
+    await discard();
     await click(button("Set", el));
     expect(field().value).toBe("");
     // after a failed save, then Cancel
@@ -107,7 +132,7 @@ describe("SecretRow", () => {
     await click(button("Save", sheet()!));
     await settle();
     await click(button("Cancel", sheet()!));
-    await settle();
+    await discard();
     await click(button("Set", el));
     expect(field().value).toBe("");
     expect(document.body.innerHTML).not.toContain("two");
