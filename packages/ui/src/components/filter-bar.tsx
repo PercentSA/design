@@ -28,7 +28,7 @@ export type FilterSearch = {
   placeholder?: string;
   /** Runs when Enter is pressed in the field (not on each key; not while an input method composes). */
   onSubmit?: (value: string) => void;
-  /** Words to suggest while typing. The text stays free: a word that is not a suggestion can be submitted. */
+  /** Words to suggest while typing. The text stays free: a word that is not a suggestion can be submitted. Keep it defined for the life of the bar (pass `[]` for no words): a change between `undefined` and a list mounts a new field, and the focus goes away. */
   suggestions?: string[];
   maxLength?: number;
 };
