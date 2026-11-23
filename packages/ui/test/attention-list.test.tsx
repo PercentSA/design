@@ -148,3 +148,23 @@ describe("AttentionList action, 0.24", () => {
     expect(slot.className).toContain("md:justify-self-end");
   });
 });
+
+describe("AttentionList item href", () => {
+  test("an item without href has a plain title", async () => {
+    const el = await mount(<AttentionList label="x" items={[{ id: "n", level: "other", title: "Update ready", openedAt: ago(5), action: <button type="button">Fix</button>, menu: [{ label: "Dismiss" }] }]} />);
+    const li = rows(el)[0]!;
+    expect(li.querySelector("a")).toBeNull();
+    expect(li.textContent).toContain("Update ready");
+    // The menu button is still named by the title.
+    const menu = li.querySelector("button[aria-haspopup]")!;
+    expect(menu.getAttribute("aria-labelledby")!.split(" ").map((id) => document.getElementById(id)!.textContent).join(" ")).toBe("More actions Update ready");
+    expect(li.textContent).toContain("Fix");
+    const compact = await mount(<AttentionList label="x" compact items={[{ id: "n", level: "other", title: "Update ready", openedAt: ago(5) }]} />);
+    expect(compact.querySelector("a")).toBeNull();
+  });
+
+  test("an item with href keeps its row link", async () => {
+    const el = await mount(<AttentionList label="x" items={ITEMS} />);
+    expect(rows(el).map((r) => r.querySelector("a")!.getAttribute("href"))).toEqual(["/alerts/a", "/alerts/b", "/alerts/c"]);
+  });
+});

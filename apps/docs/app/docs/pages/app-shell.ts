@@ -61,7 +61,7 @@ export const pages: DocPage[] = [
     "app",
     "AttentionList, type AttentionItem",
     ["AttentionListExample", "AttentionListCompactExample"],
-    "The items that need a person, for example open alerts. Each row has the level, the title as a link, the area, the age and one next action; the app sorts the items. `compact` is the short form for a popover.",
-    "العناصر التي تحتاج إلى تدخّل، مثل التنبيهات المفتوحة. يعرض كل صف المستوى، والعنوان رابطًا، والقسم، ومنذ متى ظهر، وإجراءً تاليًا واحدًا، ويرتّب التطبيق العناصر. و`compact` شكل مختصر للنوافذ المنبثقة.",
+    "The items that need a person, for example open alerts. Each row has the level, the title as a link, the area, the age and one next action; the app sorts the items. `compact` is the short form for a popover. An item without `href` has a plain title and no link.",
+    "العناصر التي تحتاج إلى تدخّل، مثل التنبيهات المفتوحة. يعرض كل صف المستوى، والعنوان رابطًا، والقسم، ومنذ متى ظهر، وإجراءً تاليًا واحدًا، ويرتّب التطبيق العناصر. و`compact` شكل مختصر للنوافذ المنبثقة. والعنصر بلا `href` عنوانه نص عادي بلا رابط.",
   ),
 ];
