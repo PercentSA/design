@@ -354,6 +354,34 @@ export function DataTableViewExample() {
   );
 }
 
+/** The first column is a level badge and the title is in the second: `titleColumn` makes the second the row link and the card title; `rowLabel` keeps the links inside the title. */
+export function DataTableTitleExample() {
+  const t = useT();
+  const rows = [
+    { id: "1", level: "critical", at: "10:05", title: t("Disk full on", "القرص ممتلئ على"), site: "shop.example.com" },
+    { id: "2", level: "other", at: "09:40", title: t("Update ready for", "تحديث جاهز لـ"), site: "Al Noor" },
+  ];
+  const columns: DataTableColumn<(typeof rows)[number]>[] = [
+    { key: "level", header: t("Level", "المستوى"), cell: (r) => <StatusBadge tone={r.level === "critical" ? "danger" : "neutral"}>{r.level === "critical" ? t("Critical", "حرج") : t("Other", "أخرى")}</StatusBadge> },
+    { key: "title", header: t("Event", "الحدث"), cell: (r) => <span>{r.title} <a href="#" className="underline">{r.site}</a></span> },
+    { key: "at", header: t("Time", "الوقت") },
+  ];
+  return (
+    <DataTable
+      className="w-full"
+      columns={columns}
+      rows={rows}
+      getRowId={(r) => r.id}
+      caption={t("Events", "الأحداث")}
+      hideCaption
+      cards
+      rowHref={(r) => `#event-${r.id}`}
+      titleColumn="title"
+      rowLabel={(r) => `${r.title} ${r.site}`}
+    />
+  );
+}
+
 /** The table can shrink inside a grid box: below 768 px only the table scrolls, not the page. */
 export function DataTableInGridExample() {
   const t = useT();

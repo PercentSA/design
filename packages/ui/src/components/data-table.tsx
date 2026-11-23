@@ -72,6 +72,12 @@ export type DataTableProps<Row> = {
   rowHref?: (row: Row) => string | undefined;
   /** A "⋯" menu per row, in a last column. An empty array gives no button. */
   rowActions?: (row: Row) => MenuItem[];
+  /** The key of the column that holds the row link and is the card title. Default: the first column. The row checkbox and the row menu take their names from it.
+   *  Use it when the first column is a small value (a level badge, a time) and the title is in a later column. */
+  titleColumn?: string;
+  /** With `rowHref`: the row link is an empty link named by this text, and the title cell keeps its own content, so links inside it stay usable
+   *  (a title that is a sentence with links). Default: the title cell's content is the link. */
+  rowLabel?: (row: Row) => string;
   /** Below 768 px, and in the cards view (`viewKey`), each row is a card: the first cell is its title, and the other cells show their header. Default false. */
   cards?: boolean;
   /** `compact` for dense lists: cell py-2, header row h-9, card rows p-3 with gap-y-1. `print` for a printed report: cells
@@ -140,6 +146,8 @@ export function DataTable<Row>({
   empty,
   rowHref,
   rowActions,
+  titleColumn,
+  rowLabel,
   cards: cardsProp,
   density = "default",
   hiddenColumns,
@@ -231,7 +239,9 @@ export function DataTable<Row>({
   const headTab = cardsView || (cards && phone) ? -1 : undefined;
   const cellY = compact ? "py-2" : print ? "px-1 py-1 text-xs" : undefined;
   const headH = compact ? "h-9" : print ? "h-8 px-1" : undefined;
-  const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k > 0 ? c.cardSlot : undefined);
+  // The title column: the row link, the card title and the name of the checkbox and the row menu. A key that is not shown falls back to the first column.
+  const titleAt = Math.max(0, columns.findIndex((c) => c.key === titleColumn));
+  const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k !== titleAt ? c.cardSlot : undefined);
   const hasSlots = columns.some((c, k) => slotted(k, c));
   const hasMeta = columns.some((c, k) => slotted(k, c) === "meta");
   const slotGap = compact ? "p-cards:mt-1" : "p-cards:mt-1.5";
@@ -309,21 +319,28 @@ export function DataTable<Row>({
             return (
               <TableCell
                 key={c.key}
-                id={k === 0 ? `${uid}c${i}` : undefined}
+                id={k === titleAt ? `${uid}c${i}` : undefined}
                 align={c.align}
                 className={cn(
                   cellY,
-                  k === 0 && href && "font-medium",
-                  cards && (k === 0 ? "p-cards:min-w-0 p-cards:flex-1 p-cards:p-0 p-cards:font-medium" : fieldClass),
+                  k === titleAt && href && "font-medium",
+                  cards && (k === titleAt ? "p-cards:min-w-0 p-cards:flex-1 p-cards:p-0 p-cards:font-medium" : fieldClass),
                   cards && (c.hideOnCard || (slot && !hasValue(value) && !note)) && "p-cards:hidden",
                 )}
               >
-                {k === 0 && href ? (
+                {k === titleAt && href ? (
                   // -outline-offset keeps the row's focus ring inside the table's scroll box.
                   <>
-                    <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "p-cards:after:rounded-card")}>
-                      {value}
-                    </L>
+                    {rowLabel ? (
+                      <>
+                        <L href={href} data-stretched="" aria-label={rowLabel(row)} className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "p-cards:after:rounded-card")} />
+                        {value}
+                      </>
+                    ) : (
+                      <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "p-cards:after:rounded-card")}>
+                        {value}
+                      </L>
+                    )}
                     {note}
                     {c.afterLink?.(row)}
                   </>
@@ -332,7 +349,7 @@ export function DataTable<Row>({
                     {value}
                     {note}
                   </>
-                ) : cards && k > 0 ? (
+                ) : cards && k !== titleAt ? (
                   <>
                     <span className="hidden text-xs text-fg-3 p-cards:inline">{c.header}</span>
                     <span>
