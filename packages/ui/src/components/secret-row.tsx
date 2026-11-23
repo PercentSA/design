@@ -169,7 +169,7 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
         }
       />
       {canEdit && (
-        <FormSheet title={`${secret.set ? s.changeValue : s.setValue} ${label}`} description={sheetDescription} side="auto" open={shown} onOpenChange={setOpen} pending={pending} dirty={value !== ""} onSubmit={submit}>
+        <FormSheet title={`${secret.set ? s.changeValue : s.setValue} ${label}`} submitLabel={secret.set ? s.changeValue : s.setValue} description={sheetDescription} side="auto" open={shown} onOpenChange={setOpen} pending={pending} dirty={value !== ""} onSubmit={submit}>
           <Field id={`${id}-value`} label={s.newValue} hint={hint} error={error}>
             {pem ? (
               <Textarea rows={8} className="font-mono" {...MONO_INPUT} {...common} />
