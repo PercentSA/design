@@ -740,6 +740,18 @@ export function SecretRowExample() {
     <SettingsSection className="w-full max-w-2xl" title={t("Secrets", "الأسرار")}>
       <SecretRow label={t("Payment key", "مفتاح الدفع")} canEdit secret={{ set: true, changedAt: Date.now() - 3 * 86_400_000, changedBy: "Sara" }} onSave={save} onRemove={async () => {}} />
       <SecretRow label={t("Mail password", "كلمة مرور البريد")} required stops={t("Order emails", "رسائل الطلبات")} canEdit secret={{ set: false }} onSave={save} />
+      <SecretRow
+        label={t("TLS certificate key", "مفتاح شهادة TLS")}
+        pem
+        canEdit
+        secret={{ set: true }}
+        onRemove={async () => {}}
+        sheetDescription={t("The private key for shop.example.com.", "المفتاح الخاص لـ shop.example.com.")}
+        hint={t("Starts with -----BEGIN PRIVATE KEY-----.", "يبدأ بـ -----BEGIN PRIVATE KEY-----.")}
+        file={{ accept: ".pem,.key,text/plain", label: t("Choose a key file", "اختر ملف المفتاح") }}
+        removeLabel={t("Delete key", "حذف المفتاح")}
+        onSave={save}
+      />
       <SecretRow label={t("Signing key", "مفتاح التوقيع")} canEdit={false} owner={t("Only the owner can change it.", "المالك وحده يستطيع تغييره.")} secret={{ set: true }} onSave={save} />
     </SettingsSection>
   );

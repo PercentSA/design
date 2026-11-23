@@ -214,3 +214,73 @@ describe("SecretRow", () => {
     expect(onOpenChange.mock.calls).toEqual([[false]]);
   });
 });
+
+describe("SecretRow sheet, 0.24", () => {
+  const openMenu = async (el: Element) => {
+    await act(async () => {
+      el.querySelector('button[aria-label="More actions"]')!.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, button: 0, ctrlKey: false }));
+    });
+    await settle();
+  };
+
+  test("the sheet title follows the value state", async () => {
+    const a = await mount(<SecretRow label="API key" canEdit secret={{ set: false }} onSave={async () => {}} />);
+    await click(button("Set", a));
+    expect(sheet()!.textContent).toContain("Set API key");
+    expect(sheet()!.textContent).not.toContain("Change API key");
+    await click(sheet()!.querySelector('button[aria-label="Close"]')!);
+    await settle();
+    document.body.innerHTML = "";
+    const b = await mount(<SecretRow label="Token" canEdit secret={{ set: true }} onSave={async () => {}} />);
+    await click(button("Change", b));
+    expect(sheet()!.textContent).toContain("Change Token");
+  });
+
+  test("sheetDescription and hint show", async () => {
+    const el = await mount(<SecretRow label="API key" canEdit secret={{ set: false }} sheetDescription="Paste the key from the provider." hint="Starts with sk_." onSave={async () => {}} />);
+    await click(button("Set", el));
+    expect(sheet()!.textContent).toContain("Paste the key from the provider.");
+    const hint = [...sheet()!.querySelectorAll("*")].find((n) => n.children.length === 0 && n.textContent === "Starts with sk_.")!;
+    expect(hint).toBeTruthy();
+    expect(field().getAttribute("aria-describedby")).toContain(hint.id);
+  });
+
+  test("a chosen file fills the field", async () => {
+    const el = await mount(<SecretRow label="Key" pem canEdit secret={{ set: false }} file={{ accept: ".pem,text/plain", label: "Choose a key file" }} onSave={async () => {}} />);
+    await click(button("Set", el));
+    const input = sheet()!.querySelector<HTMLInputElement>('input[type="file"]')!;
+    expect(input.getAttribute("accept")).toBe(".pem,text/plain");
+    expect(button("Choose a key file", sheet()!)).toBeTruthy();
+    const file = new File(["-----BEGIN KEY-----\nabc\n-----END KEY-----"], "key.pem", { type: "text/plain" });
+    await act(async () => {
+      Object.defineProperty(input, "files", { configurable: true, value: [file] });
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await settle();
+    expect((field() as HTMLTextAreaElement).value).toBe("-----BEGIN KEY-----\nabc\n-----END KEY-----");
+    // The content is in the field only, not in the page text.
+    const elsewhere = [...sheet()!.querySelectorAll("*")].filter((n) => n !== field() && !n.contains(field()) && n.textContent!.includes("BEGIN KEY"));
+    expect(elsewhere).toEqual([]);
+  });
+
+  test("removeLabel names the item and the action", async () => {
+    const onRemove = mock(async () => {});
+    const el = await mount(<SecretRow label="API key" canEdit secret={{ set: true }} removeLabel="Delete key" onSave={async () => {}} onRemove={onRemove} />);
+    await openMenu(el);
+    const item = [...document.querySelectorAll('[role="menuitem"]')].find((i) => i.textContent === "Delete key")!;
+    expect(item).toBeTruthy();
+    await click(item);
+    await settle();
+    const alert = document.querySelector('[role="alertdialog"]') as HTMLElement;
+    await click(button("Delete key", alert));
+    await settle();
+    expect(onRemove.mock.calls.length).toBe(1);
+  });
+
+  test("without the new props the sheet and the menu say what they said before", async () => {
+    const el = await mount(<SecretRow label="API key" canEdit secret={{ set: true }} onSave={async () => {}} onRemove={async () => {}} />);
+    await openMenu(el);
+    expect([...document.querySelectorAll('[role="menuitem"]')].map((i) => i.textContent)).toEqual(["Remove"]);
+    expect(el.querySelector('input[type="file"]')).toBeNull();
+  });
+});

@@ -1,7 +1,7 @@
 "use client";
 
-import { useId, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
-import { Ellipsis } from "lucide-react";
+import { useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
+import { Ellipsis, Upload } from "lucide-react";
 import { useStrings } from "../provider";
 import type { DateInput } from "../saudi/date-time";
 import { Button } from "./actions";
@@ -35,6 +35,14 @@ export type SecretRowProps = {
   /** Shows "Remove" in a "⋯" menu while the value is set. A rejected Promise only stops the confirm dialog's spinner: the app shows the error (for example a toast). */
   onRemove?: () => Promise<void>;
   removeConfirm?: { title: ReactNode; description?: ReactNode };
+  /** The word for the menu item and the confirm action. Default: the provider string "Remove". */
+  removeLabel?: ReactNode;
+  /** A line under the sheet title. */
+  sheetDescription?: ReactNode;
+  /** A line under the field. */
+  hint?: ReactNode;
+  /** A button in the sheet that reads a chosen text file into the field (a certificate, a key file). `accept` is the file input's `accept`. The content goes only into the field. */
+  file?: { accept: string; label: ReactNode };
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
 };
@@ -44,7 +52,7 @@ export type SecretRowProps = {
  * The typed value stays in the sheet's state only and is emptied at each close.
  * The field has `autocomplete="off"`, not `new-password`: this is an API key, not an account password, and `new-password` makes browsers offer a generated password.
  */
-export function SecretRow({ label, description, secret, canEdit, required, stops, owner, pem, onSave, onRemove, removeConfirm, open, onOpenChange }: SecretRowProps) {
+export function SecretRow({ label, description, secret, canEdit, required, stops, owner, pem, onSave, onRemove, removeConfirm, removeLabel, sheetDescription, hint, file, open, onOpenChange }: SecretRowProps) {
   const s = useStrings();
   const id = useId();
   const [inner, setInner] = useState(false);
@@ -52,6 +60,7 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
   const [error, setError] = useState<string>();
   const [pending, setPending] = useState(false);
   const [removing, setRemoving] = useState(false);
+  const picker = useRef<HTMLInputElement>(null);
   const shown = open ?? inner;
   const [wasShown, setWasShown] = useState(shown);
   // Empty the typed value at each open and close, while rendering (not in an effect).
@@ -76,6 +85,20 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
       () => (setPending(false), setOpen(false)),
       (err: unknown) => (setPending(false), setError(err instanceof Error ? err.message : String(err))),
     );
+  };
+
+  const readFile = async (e: ChangeEvent<HTMLInputElement>) => {
+    const input = e.currentTarget;
+    const chosen = input.files?.[0];
+    // Emptied, so the same file can be chosen again.
+    input.value = "";
+    if (!chosen) return;
+    try {
+      setValue(await chosen.text());
+      setError(undefined);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : String(err));
+    }
   };
 
   const common = { value, onChange: (e: ChangeEvent<HTMLInputElement & HTMLTextAreaElement>) => setValue(e.target.value), autoComplete: "off", spellCheck: false } as const;
@@ -125,7 +148,7 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
                         <Ellipsis aria-hidden />
                       </Button>
                     }
-                    items={[{ label: s.removeAction, danger: true, onSelect: () => setRemoving(true) }]}
+                    items={[{ label: removeLabel ?? s.removeAction, danger: true, onSelect: () => setRemoving(true) }]}
                   />
                 )}
               </>
@@ -134,14 +157,23 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
         }
       />
       {canEdit && (
-        <FormSheet title={label} side="auto" open={shown} onOpenChange={setOpen} pending={pending} dirty={value !== ""} onSubmit={submit}>
-          <Field id={`${id}-value`} label={s.newValue} error={error}>
+        <FormSheet title={`${secret.set ? s.changeValue : s.setValue} ${label}`} description={sheetDescription} side="auto" open={shown} onOpenChange={setOpen} pending={pending} dirty={value !== ""} onSubmit={submit}>
+          <Field id={`${id}-value`} label={s.newValue} hint={hint} error={error}>
             {pem ? (
               <Textarea rows={8} className="font-mono" {...MONO_INPUT} {...common} />
             ) : (
               <PasswordInput {...common} />
             )}
           </Field>
+          {file && (
+            <>
+              <input ref={picker} type="file" accept={file.accept} tabIndex={-1} aria-hidden className="sr-only" onChange={readFile} />
+              <Button type="button" variant="secondary" size="sm" className="justify-self-start" onClick={() => picker.current?.click()}>
+                <Upload aria-hidden />
+                {file.label}
+              </Button>
+            </>
+          )}
         </FormSheet>
       )}
       {canEdit && onRemove && (
@@ -150,7 +182,7 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
           onOpenChange={setRemoving}
           title={removeConfirm?.title ?? s.removeValue(label)}
           description={removeConfirm?.description}
-          action={s.removeAction}
+          action={removeLabel ?? s.removeAction}
           destructive
           onAction={onRemove}
         />
