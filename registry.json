@@ -847,6 +847,7 @@
       ],
       "registryDependencies": [
         "@percentsa/cn",
+        "@percentsa/dialog-parts",
         "@percentsa/input-classes",
         "@percentsa/overlays",
         "@percentsa/provider",
@@ -958,7 +959,7 @@
       "name": "dialog-parts",
       "type": "registry:ui",
       "title": "BlockedStatus",
-      "description": "@percentsa/ui: BlockedStatus, useFocusReturn",
+      "description": "@percentsa/ui: BlockedStatus, rememberContextFocus, forgetContextFocus, returnTarget, useFocusReturn",
       "dependencies": [
         "lucide-react"
       ],
@@ -972,6 +973,9 @@
       "meta": {
         "exports": [
           "BlockedStatus",
+          "rememberContextFocus",
+          "forgetContextFocus",
+          "returnTarget",
           "useFocusReturn"
         ]
       }
@@ -1637,6 +1641,7 @@
       ],
       "registryDependencies": [
         "@percentsa/cn",
+        "@percentsa/dialog-parts",
         "@percentsa/input-classes",
         "@percentsa/provider"
       ],
@@ -2113,6 +2118,7 @@
         "@percentsa/actions",
         "@percentsa/cn",
         "@percentsa/field",
+        "@percentsa/files",
         "@percentsa/form-sheet",
         "@percentsa/input-classes",
         "@percentsa/inputs",
@@ -2176,7 +2182,8 @@
         "@percentsa/cn",
         "@percentsa/feedback",
         "@percentsa/overlays",
-        "@percentsa/provider"
+        "@percentsa/provider",
+        "@percentsa/sidebar"
       ],
       "files": [
         {
@@ -2194,8 +2201,8 @@
     {
       "name": "sidebar",
       "type": "registry:ui",
-      "title": "SidebarInSheet, Sidebar",
-      "description": "@percentsa/ui: SidebarInSheet, useSidebarRail, Sidebar",
+      "title": "SidebarInSheet, RAIL_DOT, RAIL_ITEM_RING, Sidebar",
+      "description": "@percentsa/ui: SidebarInSheet, useSidebarRail, RAIL_DOT, RAIL_ITEM_RING, Sidebar",
       "dependencies": [
         "lucide-react"
       ],
@@ -2217,6 +2224,8 @@
         "exports": [
           "SidebarInSheet",
           "useSidebarRail",
+          "RAIL_DOT",
+          "RAIL_ITEM_RING",
           "Sidebar"
         ]
       }
