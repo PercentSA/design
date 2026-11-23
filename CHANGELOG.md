@@ -22,7 +22,7 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 - [Alert](https://design.percent.sa/en/components/alert): `collapsible` shows only the icon, the title and a Show button below 768 px; the text and the action open on press, at full width below the title row. It uses CSS only, so the server page is the same.
 - [LogViewer](https://design.percent.sa/en/components/log-viewer): keyboard use. The line list is one tab stop; the arrow keys, Home and End move the current line; Shift+F10 or the menu key opens the line menu; Ctrl+C or Cmd+C copies the current line. [CodeEditor](https://design.percent.sa/en/components/code-editor): `errorList={false}` keeps the line marks and draws no list under the editor.
 - [LineChart](https://design.percent.sa/en/components/line-chart) and [AreaChart](https://design.percent.sa/en/components/area-chart): on touch, the first tap on a point shows its value and a second tap on the same point calls `onSelectPoint`. The limit label has a halo in `--p-chart-surface` (the page colour by default; [Card](https://design.percent.sa/en/components/card) sets its surface).
-- [RouteTabs](https://design.percent.sa/en/components/route-tabs): `className` is now on a new wrapper element.
+- [RouteTabs](https://design.percent.sa/en/components/route-tabs): `className` is now on a new wrapper element. The tabs take the full width of their parent. In a flex row, give the other items `shrink-0`.
 - `useMediaQuery` returns false when `matchMedia` is missing (test set-ups without it).
 - Parts without the new props render as before.
 
@@ -30,6 +30,7 @@ All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) s
 
 - [Sidebar](https://design.percent.sa/en/components/sidebar): folding section titles are in capitals, as the plain titles are.
 - [Tabs](https://design.percent.sa/en/components/tabs) and [RouteTabs](https://design.percent.sa/en/components/route-tabs): the focus ring is drawn inside the tab, so the scroll row never cuts it; each tab has 4 px inline padding and the gap between tabs is 8 px less, so the text spacing does not change. On phones RouteTabs measures the row: the tabs that fit stay in list order, the current one is always there, and the rest go into More.
+- [RouteTabs](https://design.percent.sa/en/components/route-tabs): after a resize to a wide screen, the current tab scrolls into view.
 - [Tooltip](https://design.percent.sa/en/components/tooltip): a tooltip that opens on keyboard focus stays open while the focus scrolls the page (also a smooth scroll, up to 1.5 s); a click, a press on the trigger, Escape or a blur closes it.
 - [LogViewer](https://design.percent.sa/en/components/log-viewer): the line list shows a focus ring when it gets the focus before a line is current.
 - [ChangeList](https://design.percent.sa/en/components/change-list), [UsageMeter](https://design.percent.sa/en/components/usage-meter) and the chart limit label: values with a unit keep their order in Arabic; the chart limit label always grows into the plot.
