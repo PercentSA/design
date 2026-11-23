@@ -20,10 +20,10 @@ describe("UsageMeter", () => {
     expect(el.textContent).toContain("42 %");
   });
 
-  test("null value shows No data and an empty track", async () => {
+  test("null value shows No data and has no meter role", async () => {
     const el = await mount(<UsageMeter label="CPU" value={null} />);
     expect(el.textContent).toContain("No data");
-    expect(meter(el).hasAttribute("aria-valuenow")).toBe(false);
+    expect(el.querySelector('[role="meter"]')).toBeNull();
     expect(fills(el)).toHaveLength(0);
   });
 
@@ -31,7 +31,7 @@ describe("UsageMeter", () => {
     for (const v of [NaN, Infinity]) {
       const el = await mount(<UsageMeter label="CPU" value={v} />);
       expect(el.textContent).toContain("No data");
-      expect(meter(el).hasAttribute("aria-valuenow")).toBe(false);
+      expect(el.querySelector('[role="meter"]')).toBeNull();
     }
   });
 
@@ -113,7 +113,7 @@ describe("UsageMeter", () => {
       expect(el.textContent).toContain("No data");
       expect(el.textContent).not.toMatch(/NaN|Infinity/);
       expect(el.innerHTML).not.toMatch(/NaN|Infinity/);
-      expect(meter(el).hasAttribute("aria-valuenow")).toBe(false);
+      expect(el.querySelector('[role="meter"]')).toBeNull();
     }
   });
 

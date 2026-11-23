@@ -63,12 +63,14 @@ export function UsageMeter({ label, value, max = 100, parts, limit, format, at, 
       </div>
       <div
         data-track
-        role="meter"
-        aria-labelledby={id}
-        aria-valuemin={0}
+        // No data: no meter role (a meter needs a value); the "No data" text above says it.
+        role={hasData ? "meter" : undefined}
+        aria-hidden={hasData ? undefined : true}
+        aria-labelledby={hasData ? id : undefined}
+        aria-valuemin={hasData ? 0 : undefined}
         aria-valuemax={hasData ? max : undefined}
         aria-valuenow={hasData ? Math.min(Math.max(total, 0), max) : undefined}
-        aria-valuetext={hasData ? fmt(total) : s.noData}
+        aria-valuetext={hasData ? fmt(total) : undefined}
         className={cn("relative h-2 rounded-pill bg-fg/10", stale && "opacity-50")}
       >
         <div className="flex h-full overflow-hidden rounded-pill">
