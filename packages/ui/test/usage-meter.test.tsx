@@ -70,8 +70,8 @@ describe("UsageMeter", () => {
     expect(el.textContent).toContain("50 %");
     expect(fills(el).map((f) => f.style.inlineSize)).toEqual(["30%", "20%"]);
     expect(fills(el)[1]!.className).toContain("bg-primary/40");
-    expect(el.querySelector("ul")!.textContent).toContain("Used");
-    expect(el.querySelector("ul")!.textContent).toContain("20 %");
+    const legend = el.querySelector("ul")!.textContent!;
+    for (const w of ["Used", "30 %", "Held", "20 %"]) expect(legend).toContain(w);
     const big = await mount(
       <UsageMeter label="Disk" value={0} parts={[{ label: "A", value: 100, tone: "used" }, { label: "B", value: 30, tone: "held" }]} />,
     );
@@ -96,5 +96,41 @@ describe("UsageMeter", () => {
     expect(l2.textContent).toContain("Updated");
     expect(l2.querySelector("time")).not.toBeNull();
     expect(l2.className).not.toContain("text-warning");
+  });
+
+  test("held stripes use a variable the tokens define", async () => {
+    const tokens = await Bun.file(new URL("../../tokens/dist/tokens.css", import.meta.url)).text();
+    const el = await mount(<UsageMeter label="Disk" value={0} parts={[{ label: "H", value: 20, tone: "held" }]} />);
+    const style = (fills(el)[0] as HTMLElement).getAttribute("style")!;
+    const names = [...style.matchAll(/var\((--[\w-]+)\)/g)].map((m) => m[1]!);
+    expect(names.length).toBeGreaterThan(0);
+    for (const n of names) expect(tokens).toContain(`${n}:`);
+  });
+
+  test("a bad max counts as no data", async () => {
+    for (const max of [0, -5, NaN, Infinity]) {
+      const el = await mount(<UsageMeter label="X" value={10} max={max} />);
+      expect(el.textContent).toContain("No data");
+      expect(el.textContent).not.toMatch(/NaN|Infinity/);
+      expect(el.innerHTML).not.toMatch(/NaN|Infinity/);
+      expect(meter(el).hasAttribute("aria-valuenow")).toBe(false);
+    }
+  });
+
+  test("a negative value counts as 0 for the bar and aria-valuenow, and the text keeps it", async () => {
+    const el = await mount(<UsageMeter label="X" value={-5} format={(n) => `${n} GB`} />);
+    expect(meter(el).getAttribute("aria-valuenow")).toBe("0");
+    expect(fills(el)[0]!.style.inlineSize).toBe("0%");
+    expect(el.textContent).toContain("-5 GB");
+  });
+
+  test("the limit mark stays inside the track and is centered", async () => {
+    for (const v of [100, 150, -10]) {
+      const el = await mount(<UsageMeter label="X" value={10} limit={{ value: v }} />);
+      const mark = el.querySelector("[data-limit]") as HTMLElement;
+      expect(mark.style.insetInlineStart).toBe(v === -10 ? "0%" : "100%");
+      expect(mark.className).toContain("-translate-x-1/2");
+      expect(mark.className).toContain("rtl:translate-x-1/2");
+    }
   });
 });

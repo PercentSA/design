@@ -26,8 +26,9 @@ export type UsageMeterProps = {
 };
 
 const pct = (n: number, max: number) => Math.min(100, Math.max(0, (n / max) * 100));
+// A bad `max` never reaches the math: the meter shows no data.
 // Diagonal stripes over a light fill: the held part differs by pattern, not only by color.
-const STRIPES = { backgroundImage: "repeating-linear-gradient(135deg, var(--color-primary) 0 2px, transparent 2px 5px)" };
+const STRIPES = { backgroundImage: "repeating-linear-gradient(135deg, var(--p-primary) 0 2px, transparent 2px 5px)" };
 
 /** How much of a limit is in use: a bar with an optional limit line, stacked used and held parts, and an old-data state. */
 export function UsageMeter({ label, value, max = 100, parts, limit, format, at, stale, hint, className }: UsageMeterProps) {
@@ -35,7 +36,7 @@ export function UsageMeter({ label, value, max = 100, parts, limit, format, at, 
   const id = useId();
   const fmt = format ?? ((n: number) => `${Math.round((n / max) * 100)} %`);
   const total = parts ? parts.reduce((sum, p) => sum + p.value, 0) : value;
-  const hasData = total !== null && Number.isFinite(total);
+  const hasData = total !== null && Number.isFinite(total) && Number.isFinite(max) && max > 0;
   const over = hasData && !!limit && total > limit.value;
   // Each segment is cut so that the segments together never pass the track.
   let room = 100;
@@ -65,8 +66,8 @@ export function UsageMeter({ label, value, max = 100, parts, limit, format, at, 
         role="meter"
         aria-labelledby={id}
         aria-valuemin={0}
-        aria-valuemax={max}
-        aria-valuenow={hasData ? Math.min(total, max) : undefined}
+        aria-valuemax={hasData ? max : undefined}
+        aria-valuenow={hasData ? Math.min(Math.max(total, 0), max) : undefined}
         aria-valuetext={hasData ? fmt(total) : s.noData}
         className={cn("relative h-2 rounded-pill bg-fg/10", stale && "opacity-50")}
       >
@@ -80,11 +81,11 @@ export function UsageMeter({ label, value, max = 100, parts, limit, format, at, 
             />
           ))}
         </div>
-        {limit && (
-          <span data-limit aria-hidden style={{ insetInlineStart: `${pct(limit.value, max)}%` }} className="absolute -top-1 -bottom-1 w-0.5 bg-fg" />
+        {limit && hasData && (
+          <span data-limit aria-hidden style={{ insetInlineStart: `${pct(limit.value, max)}%` }} className="absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 bg-fg rtl:translate-x-1/2" />
         )}
       </div>
-      {(limit?.label || parts) && (
+      {hasData && (limit?.label || parts) && (
         <ul className="flex flex-wrap gap-x-3 gap-y-1 text-xs text-fg-3">
           {parts?.map((p, i) => (
             <li key={i} className="inline-flex items-center gap-1.5">

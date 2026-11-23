@@ -590,6 +590,7 @@ const ar: Strings = {
   stepDone: "تمت",
   showDetails: "عرض التفاصيل",
   hideDetails: "إخفاء التفاصيل",
+  // UsageMeter (0.23.0).
   noData: "لا توجد بيانات",
   fromLastReport: "من آخر تقرير",
   updated: "آخر تحديث",
