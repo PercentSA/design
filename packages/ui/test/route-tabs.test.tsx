@@ -1,7 +1,8 @@
 import { describe, expect, test } from "bun:test";
 import type { ComponentProps } from "react";
 import { PercentProvider, RouteTabs, type RouteTab } from "../src";
-import { click, mount, press, useDom } from "./dom";
+import { act } from "react";
+import { click, mount, press, stubMatchMedia, useDom } from "./dom";
 
 useDom();
 
@@ -96,6 +97,29 @@ describe("RouteTabs", () => {
       else delete (proto as { getBoundingClientRect?: unknown }).getBoundingClientRect;
       if (into) Object.defineProperty(proto, "scrollIntoView", into);
       else delete (proto as { scrollIntoView?: unknown }).scrollIntoView;
+    }
+  });
+  test("after a resize from phone to desktop the current tab is brought into view", async () => {
+    stubMatchMedia(true); // registers the restore; replaced below by a media query that can change
+    const listeners = new Set<() => void>();
+    const mq = { matches: true, media: "", addEventListener: (_: string, f: () => void) => listeners.add(f), removeEventListener: (_: string, f: () => void) => listeners.delete(f) };
+    Object.defineProperty(globalThis, "matchMedia", { configurable: true, writable: true, value: () => mq });
+    const proto = HTMLElement.prototype;
+    const rect = Object.getOwnPropertyDescriptor(proto, "getBoundingClientRect");
+    proto.getBoundingClientRect = function (this: HTMLElement) {
+      const box = this.tagName === "NAV" ? [0, 100] : this.getAttribute("aria-current") ? [150, 230] : [0, 50];
+      return { left: box[0], right: box[1], top: 0, bottom: 0, width: box[1]! - box[0]!, height: 0, x: box[0]!, y: 0, toJSON() {} } as DOMRect;
+    };
+    try {
+      const el = await mount(<RouteTabs label="x" items={items.slice(0, 3)} current="environment" />);
+      nav(el).scrollLeft = 0; // the row was scrolled back, for example by the layout change
+      mq.matches = false;
+      await act(async () => listeners.forEach((f) => f()));
+      await act(() => new Promise<void>((r) => setTimeout(r, 10)));
+      expect(nav(el).scrollLeft).toBe(130);
+    } finally {
+      if (rect) Object.defineProperty(proto, "getBoundingClientRect", rect);
+      else delete (proto as { getBoundingClientRect?: unknown }).getBoundingClientRect;
     }
   });
   test("the scroll test leaves no stub behind on HTMLElement.prototype (later files stub Element.prototype)", () => {

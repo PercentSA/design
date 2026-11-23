@@ -95,7 +95,7 @@ export function RouteTabs({ label, items, current, className }: { label: string;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [key, measuring, listRef]);
   useEffect(() => {
-    // Scroll only the row: scrollIntoView would also scroll the window.
+    // Scroll only the row: scrollIntoView would also scroll the window. `measuring` is a dependency: a resize to a wide screen shows all tabs again.
     const nav = listRef.current;
     const a = nav?.querySelector('[aria-current="page"]');
     if (!nav || !a) return;
@@ -103,7 +103,7 @@ export function RouteTabs({ label, items, current, className }: { label: string;
     const r = a.getBoundingClientRect();
     // A physical difference is correct in RTL too.
     nav.scrollLeft += Math.min(0, r.left - n.left) || Math.max(0, r.right - n.right);
-  }, [current, listRef]);
+  }, [current, listRef, measuring]);
   return (
     <div ref={wrap} data-route-tabs className={cn("relative w-full min-w-0", className)}>
       <nav
