@@ -42,6 +42,32 @@ export function TimelineExample() {
   );
 }
 
+export function TimelineStepsExample() {
+  const t = useT();
+  return (
+    <Timeline
+      className="w-full max-w-sm"
+      onSelect={() => {}}
+      items={[
+        { id: "clone", title: t("Clone", "استنساخ"), status: "done", duration: t("4 s", "٤ ث") },
+        {
+          id: "build",
+          title: t("Build", "بناء"),
+          status: "failed",
+          duration: t("1 min 12 s", "١ د ١٢ ث"),
+          detail: (
+            <pre className="font-mono text-xs whitespace-pre-wrap">
+              {"$ bun run build\nerror: Cannot find module './shop'\nexit code 1"}
+            </pre>
+          ),
+        },
+        { id: "start", title: t("Start", "تشغيل"), status: "skipped" },
+        { id: "check", title: t("Check", "فحص"), status: "waiting" },
+      ]}
+    />
+  );
+}
+
 export function AccordionExample() {
   const t = useT();
   return (

@@ -287,6 +287,15 @@ const en = {
   // Data display (0.3.1): CodeBlock region name, DonutChart table header.
   code: "Code",
   category: "Category",
+  // Timeline steps (0.23.0).
+  stepRunning: "Running",
+  stepFailed: "Failed",
+  stepWarning: "Warning",
+  stepSkipped: "Skipped",
+  stepWaiting: "Waiting",
+  stepDone: "Done",
+  showDetails: "Show details",
+  hideDetails: "Hide details",
 };
 
 export type Strings = typeof en;
@@ -567,6 +576,15 @@ const ar: Strings = {
   },
   code: "الشيفرة البرمجية",
   category: "الفئة",
+  // Timeline steps (0.23.0).
+  stepRunning: "قيد التشغيل",
+  stepFailed: "فشلت",
+  stepWarning: "تنبيه",
+  stepSkipped: "تم التخطي",
+  stepWaiting: "في الانتظار",
+  stepDone: "تمت",
+  showDetails: "عرض التفاصيل",
+  hideDetails: "إخفاء التفاصيل",
 };
 
 export const STRINGS: Record<Lang, Strings> = { en, ar };
