@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useMemo, useState, type ReactNode } from "react";
+import { Fragment, useEffect, useId, useMemo, useState, type ReactNode } from "react";
 import { ArrowDown, ArrowUp, ChevronsUpDown, Ellipsis } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useLang, useLinkComponent, useStrings, useText } from "../provider";
@@ -40,6 +40,8 @@ export type DataTableColumn<Row> = {
    *  "meta": in one wrapped line under the title, without the header. "block": full width under the meta, without the header
    *  (long text). A cell with no value shows nothing. Default: a "header … value" line. Not for the title column. "end" columns belong after the title column in `columns`: on the card they show in column order on the title line. */
   cardSlot?: "end" | "meta" | "block";
+  /** The title column only, with `cards`: "block" shows `description` on the cards as a full-width block after the meta line, not under the title. Default "title". The table view does not change. */
+  cardDescription?: "title" | "block";
 };
 
 export type DataTableSort = { key: string; direction: "asc" | "desc" };
@@ -242,7 +244,8 @@ export function DataTable<Row>({
   // The title column: the row link, the card title and the name of the checkbox and the row menu. A key that is not shown falls back to the first column.
   const titleAt = Math.max(0, columns.findIndex((c) => c.key === titleColumn));
   const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k !== titleAt ? c.cardSlot : undefined);
-  const hasSlots = columns.some((c, k) => slotted(k, c));
+  const blockNote = cards && columns[titleAt]?.cardDescription === "block";
+  const hasSlots = blockNote || columns.some((c, k) => slotted(k, c));
   const hasMeta = columns.some((c, k) => slotted(k, c) === "meta");
   const slotGap = compact ? "p-cards:mt-1" : "p-cards:mt-1.5";
   const rowClass = cn(
@@ -309,14 +312,15 @@ export function DataTable<Row>({
           columns.map((c, k) => {
             const value = c.cell ? c.cell(row) : (field(row, c.key) as ReactNode);
             const text = c.description?.(row);
+            const toBlock = blockNote && k === titleAt && hasValue(text);
             const note = hasValue(text) ? (
-              <Text as="span" size="sm" tone="muted" className="block font-normal">
+              <Text as="span" size="sm" tone="muted" className={cn("block font-normal", toBlock && "p-cards:hidden")}>
                 {text}
               </Text>
             ) : null;
             const slot = slotted(k, c);
             const fieldClass = slot === "end" ? SLOT_END : slot === "meta" ? cn(SLOT_META, slotGap) : slot === "block" ? cn(SLOT_BLOCK, slotGap) : cn(CARD_FIELD, hasSlots && "p-cards:order-3", hasSlots && slotGap);
-            return (
+            const cell = (
               <TableCell
                 key={c.key}
                 id={k === titleAt ? `${uid}c${i}` : undefined}
@@ -366,6 +370,19 @@ export function DataTable<Row>({
                   value
                 )}
               </TableCell>
+            );
+            // A copy of the description for the cards, as its own flex item: the table view hides it.
+            return toBlock ? (
+              <Fragment key={c.key}>
+                {cell}
+                <TableCell className={cn("hidden p-cards:block", SLOT_BLOCK, slotGap)}>
+                  <Text as="span" size="sm" tone="muted" className="block font-normal">
+                    {text}
+                  </Text>
+                </TableCell>
+              </Fragment>
+            ) : (
+              cell
             );
           }),
           () => (
