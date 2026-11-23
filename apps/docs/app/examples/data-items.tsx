@@ -317,6 +317,11 @@ export function UsageMeterExample() {
         ]}
       />
       <UsageMeter label={t("Network", "الشبكة")} value={61} at={new Date(Date.now() - 3 * 3600_000)} stale />
+      {/* The fact has its own visible label, so the meter's label is for screen readers only. */}
+      <div className="grid grid-cols-[6rem_1fr] items-center gap-3 text-sm">
+        <span className="text-fg-3">{t("Storage", "التخزين")}</span>
+        <UsageMeter label={t("Storage", "التخزين")} value={35} hideLabel />
+      </div>
     </div>
   );
 }
