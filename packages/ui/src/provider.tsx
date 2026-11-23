@@ -16,7 +16,10 @@ const plain: TextRenderer = (s) => s;
 /** A project's own logo and loading indicator. Components use Percent's where a slot is empty. */
 export type BrandSlots = { mark?: ReactNode; wordmark?: ReactNode; spinner?: ReactNode };
 
-type Ctx = { lang: Lang; dir: Dir; strings: Strings; link: LinkComponent | "a"; text: TextRenderer; brand?: BrandSlots };
+export type HourCycle = "h12" | "h23";
+export type AgoForm = "long" | "short";
+
+type Ctx = { lang: Lang; dir: Dir; strings: Strings; link: LinkComponent | "a"; text: TextRenderer; brand?: BrandSlots; hourCycle: HourCycle; agoForm: AgoForm };
 
 /** Strings to replace; groups (errors, address, invoice) may replace single entries. */
 type StringOverrides = {
@@ -29,7 +32,7 @@ const mergeStrings = (base: Strings, over: StringOverrides) => {
   return out as Strings;
 };
 
-const PercentContext = createContext<Ctx>({ lang: "en", dir: "ltr", strings: STRINGS.en, link: "a", text: plain });
+const PercentContext = createContext<Ctx>({ lang: "en", dir: "ltr", strings: STRINGS.en, link: "a", text: plain, hourCycle: "h12", agoForm: "long" });
 
 // Its own context, so a click does not render every component that reads the main one.
 type Pending = { href: string | null; location?: string; start: (href: string) => void };
@@ -76,6 +79,8 @@ export function PercentProvider({
   text = plain,
   brand,
   location,
+  hourCycle = "h12",
+  agoForm = "long",
   children,
 }: {
   lang: Lang;
@@ -95,6 +100,10 @@ export function PercentProvider({
    * (Sidebar, menus, Breadcrumbs, cards, list and table rows) shows a pending state from the click until the location changes.
    */
   location?: string;
+  /** The clock of `TimeText`: "h12" (3:05 PM, the default) or "h23" (15:05). A `TimeText` `hourCycle` prop wins. */
+  hourCycle?: HourCycle;
+  /** "5 minutes ago" ("long", the default) or "5 min ago" ("short", English only) in `TimeText ago`. A `TimeText` `agoForm` prop wins. */
+  agoForm?: AgoForm;
   children: ReactNode;
 }) {
   const outerBrand = useContext(PercentContext).brand;
@@ -108,10 +117,12 @@ export function PercentProvider({
       strings: strings ? mergeStrings(STRINGS[lang], strings) : STRINGS[lang],
       link: shownLink,
       text,
+      hourCycle,
+      agoForm,
       // A brand with one logo uses it in both places, so Percent's never shows by accident.
       brand: brand ? { ...brand, mark: brand.mark ?? brand.wordmark, wordmark: brand.wordmark ?? brand.mark } : outerBrand,
     }),
-    [lang, strings, shownLink, text, brand, outerBrand],
+    [lang, strings, shownLink, text, brand, outerBrand, hourCycle, agoForm],
   );
   const [click, setClick] = useState<{ href: string; at: string } | null>(null);
   // A new location ends the pending state during render (no effect, so no frame with the old state).
@@ -132,6 +143,8 @@ export const useDir = () => useContext(PercentContext).dir;
 export const useStrings = () => useContext(PercentContext).strings;
 export const useLinkComponent = () => useContext(PercentContext).link;
 export const useText = () => useContext(PercentContext).text;
+export const useHourCycle = () => useContext(PercentContext).hourCycle;
+export const useAgoForm = () => useContext(PercentContext).agoForm;
 export const useBrand = () => useContext(PercentContext).brand;
 /** The href of the link that was clicked and waits for its page (PercentProvider `location`), else null. */
 export const usePendingHref = () => useContext(PendingContext).href;

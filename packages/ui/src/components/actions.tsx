@@ -37,6 +37,7 @@ export function Button({ variant, size, loading, asChild, blocked, iconOnly, cla
               {...rest}
               // preventDefault (in blockedProps) keeps the tooltip trigger from closing it again; a tap shows the reason.
               {...blockedProps(reasonId, () => setTip(true))}
+              aria-describedby={[rest["aria-describedby"], reasonId].filter(Boolean).join(" ")}
               className={cn(buttonClass(variant, size, iconOnly), blockedProps(reasonId).className, className)}
             >
               {children}
@@ -177,8 +178,8 @@ export function ToggleGroup({
   );
 }
 
-/** Copies `value`; shows "Copied" for 2 s and announces it. */
-export function CopyButton({ value, iconOnly, className }: { value: string; iconOnly?: boolean; className?: string }) {
+/** Copies `value`; shows "Copied" for 2 s and announces it. `label` replaces "Copy" as the visible text, or as the name of an icon-only button ("Copy host"). */
+export function CopyButton({ value, iconOnly, label: copyLabel, className }: { value: string; iconOnly?: boolean; label?: string; className?: string }) {
   const s = useStrings();
   const [copied, setCopied] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -193,7 +194,7 @@ export function CopyButton({ value, iconOnly, className }: { value: string; icon
     clearTimeout(timer.current);
     timer.current = setTimeout(() => setCopied(false), 2000);
   };
-  const label = copied ? s.copied : s.copy;
+  const label = copied ? s.copied : (copyLabel ?? s.copy);
   const icon = copied ? <Check aria-hidden /> : <Copy aria-hidden />;
   return (
     <>

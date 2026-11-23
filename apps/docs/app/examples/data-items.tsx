@@ -259,6 +259,24 @@ export function MaskedValueExample() {
   );
 }
 
+export function MaskedValueOpenExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  return (
+    <Inline gap={3}>
+      <MaskedValue
+        label={t("Password", "كلمة المرور")}
+        canReveal
+        open={open}
+        onOpenChange={setOpen}
+        confirm={{ title: t("Show the password?", "عرض كلمة المرور؟"), action: t("Show the password", "اعرض كلمة المرور") }}
+        onReveal={async () => "p4ss-example-only"}
+      />
+      <Button size="sm" variant="secondary" onClick={() => setOpen(true)}>{t("Show from the menu", "العرض من القائمة")}</Button>
+    </Inline>
+  );
+}
+
 export function ConnectionCardExample() {
   const t = useT();
   return (
@@ -266,8 +284,8 @@ export function ConnectionCardExample() {
       className="w-full max-w-lg"
       title={t("Connect", "الاتصال")}
       rows={[
-        { term: t("Host and port", "المضيف والمنفذ"), copy: "203.0.113.10:5432" },
-        { term: t("User", "المستخدم"), copy: "app_user" },
+        { term: t("Host and port", "المضيف والمنفذ"), copy: "203.0.113.10:5432", copyLabel: t("Copy host and port", "انسخ المضيف والمنفذ") },
+        { term: t("User", "المستخدم"), copy: "app_user", copyLabel: t("Copy user", "انسخ المستخدم") },
         { term: t("Password", "كلمة المرور"), masked: { label: t("Password", "كلمة المرور"), canReveal: true, onReveal: async () => "p4ss-example-only" } },
         { term: t("Command", "الأمر"), copy: "psql -h 203.0.113.10 -p 5432 -U app_user -d shop_example" },
       ]}
