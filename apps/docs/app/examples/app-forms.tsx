@@ -711,6 +711,7 @@ export function FieldsSheetExample() {
             key: "port",
             label: t("Port", "المنفذ"),
             value: saved.port,
+            inputMode: "numeric",
             check: (x) => (/^\d+$/.test(x) && +x >= 1 && +x <= 65535 ? undefined : t("Enter a port from 1 to 65535.", "أدخل منفذًا من 1 إلى 65535.")),
           },
           {

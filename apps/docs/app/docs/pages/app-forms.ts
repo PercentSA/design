@@ -62,8 +62,8 @@ export const pages: DocPage[] = [
     "app",
     "FieldsSheet, type SheetField",
     ["FieldsSheetExample"],
-    "An edit sheet for one to three text fields. Errors show only after Save, then follow the input. It closes when `onSubmit` succeeds, stays open when its Promise is rejected, and opens from the bottom below 768 px. The content can be a function that gets the draft values, so a note can follow the typing.",
-    "لوحة تعديل لحقل إلى ثلاثة حقول نصية. لا تظهر الأخطاء إلا بعد الحفظ، ثم تتبع الكتابة. تُغلق إذا نجح `onSubmit`، وتبقى مفتوحة إذا رُفض الوعد (Promise)، وتُفتح من الأسفل تحت 768 بكسل. يمكن أن يكون المحتوى دالة تستلم القيم المكتوبة حاليًا، فيتغير النص مع ما يكتبه المستخدم.",
+    "An edit sheet for one to three text fields. Errors show only after Save, then follow the input. It closes when `onSubmit` succeeds, stays open when its Promise is rejected, and opens from the bottom below 768 px. The content can be a function that gets the draft values, so a note can follow the typing. A field `inputMode` sets the keyboard a phone shows, for example `numeric` for a port.",
+    "لوحة تعديل لحقل إلى ثلاثة حقول نصية. لا تظهر الأخطاء إلا بعد الحفظ، ثم تتبع الكتابة. تُغلق إذا نجح `onSubmit`، وتبقى مفتوحة إذا رُفض الوعد (Promise)، وتُفتح من الأسفل تحت 768 بكسل. يمكن أن يكون المحتوى دالة تستلم القيم المكتوبة حاليًا، فيتغير النص مع ما يكتبه المستخدم. ويحدد `inputMode` في الحقل لوحة المفاتيح على الهاتف، مثل `numeric` للمنفذ.",
   ),
   p(
     "record-section",
