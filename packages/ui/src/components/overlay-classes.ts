@@ -7,3 +7,5 @@ export const TOOLTIP = "p-float z-(--p-z-overlay) rounded-lg bg-fg px-2.5 py-1.5
 export const FULL_ON_PHONE = "max-md:inset-0 max-md:h-dvh";
 // The dialog centered from 768 px (md). The caller adds its own max width (`md:max-w-*`).
 export const CENTERED_FROM_MD = "md:start-1/2 md:top-1/2 md:max-h-[calc(100dvh-2rem)] md:w-[calc(100%-2rem)] md:-translate-y-1/2 md:rounded-panel ltr:md:-translate-x-1/2 rtl:md:translate-x-1/2";
+// The panel of an alert dialog: centered, narrow. Shared by AlertDialog and OnceValueDialog.
+export const ALERT_PANEL = "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid w-[calc(100%-2rem)] max-w-md -translate-y-1/2 gap-6 rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2";

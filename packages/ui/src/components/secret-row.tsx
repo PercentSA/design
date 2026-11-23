@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type FormEvent, type ReactNode } from "react";
+import { useId, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import { Ellipsis } from "lucide-react";
 import { useStrings } from "../provider";
 import type { DateInput } from "../saudi/date-time";
@@ -8,7 +8,8 @@ import { Button } from "./actions";
 import { Field } from "./field";
 import { FormSheet } from "./form-sheet";
 import { MONO_INPUT } from "./input-classes";
-import { Input, Textarea } from "./inputs";
+import { Textarea } from "./inputs";
+import { PasswordInput } from "./special-inputs";
 import { DropdownMenu } from "./menus";
 import { AlertDialog } from "./overlays";
 import { SettingsRow } from "./settings";
@@ -31,7 +32,7 @@ export type SecretRowProps = {
   pem?: boolean;
   /** Saves the new value. A rejected Promise keeps the sheet open and shows the error's `message` under the field. */
   onSave: (value: string) => Promise<void>;
-  /** Shows "Remove" in a "⋯" menu while the value is set. */
+  /** Shows "Remove" in a "⋯" menu while the value is set. A rejected Promise only stops the confirm dialog's spinner: the app shows the error (for example a toast). */
   onRemove?: () => Promise<void>;
   removeConfirm?: { title: ReactNode; description?: ReactNode };
   open?: boolean;
@@ -66,7 +67,8 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    if (pending || value === "") return;
+    if (pending) return;
+    if (value === "") return setError(s.enterValue);
     setPending(true);
     setError(undefined);
     onSave(value).then(
@@ -75,6 +77,7 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
     );
   };
 
+  const common = { value, onChange: (e: ChangeEvent<HTMLInputElement & HTMLTextAreaElement>) => setValue(e.target.value), autoComplete: "off", spellCheck: false } as const;
   const missing = !secret.set;
   const status = (
     <div className="grid gap-0.5 text-sm md:justify-items-end">
@@ -99,7 +102,6 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
     </div>
   );
 
-  const Control = pem ? Textarea : Input;
   return (
     <>
       <SettingsRow
@@ -133,13 +135,11 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
       {canEdit && (
         <FormSheet title={label} side="auto" open={shown} onOpenChange={setOpen} pending={pending} onSubmit={submit}>
           <Field id={`${id}-value`} label={s.newValue} error={error}>
-            <Control
-              {...(pem ? { rows: 8, className: "font-mono", ...MONO_INPUT } : { type: "password" })}
-              value={value}
-              onChange={(e) => setValue(e.target.value)}
-              autoComplete="off"
-              spellCheck={false}
-            />
+            {pem ? (
+              <Textarea rows={8} className="font-mono" {...MONO_INPUT} {...common} />
+            ) : (
+              <PasswordInput {...common} />
+            )}
           </Field>
         </FormSheet>
       )}

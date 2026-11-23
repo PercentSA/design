@@ -8,7 +8,7 @@ import { useDir, useStrings } from "../provider";
 import { Button } from "./actions";
 import { buttonClass } from "./button-class";
 import { useFocusReturn } from "./dialog-parts";
-import { BACKDROP, CENTERED_FROM_MD, CLOSE, FULL_ON_PHONE, PANEL, TOOLTIP } from "./overlay-classes";
+import { ALERT_PANEL, BACKDROP, CENTERED_FROM_MD, CLOSE, FULL_ON_PHONE, PANEL, TOOLTIP } from "./overlay-classes";
 
 type OpenState = { open?: boolean; defaultOpen?: boolean; onOpenChange?: (open: boolean) => void };
 
@@ -127,10 +127,7 @@ export function AlertDialog({
         <RadixAlert.Content
           {...(description ? {} : { "aria-describedby": undefined })}
           {...focus}
-          className={cn(
-            "p-pop fixed start-1/2 top-1/2 z-(--p-z-overlay) grid w-[calc(100%-2rem)] max-w-md -translate-y-1/2 gap-6 rounded-panel p-6 md:p-8 ltr:-translate-x-1/2 rtl:translate-x-1/2",
-            PANEL,
-          )}
+          className={cn(ALERT_PANEL, PANEL)}
         >
           <DialogHead title={title} description={description} Title={RadixAlert.Title} Description={RadixAlert.Description} />
           <div className="flex flex-wrap justify-end gap-2">

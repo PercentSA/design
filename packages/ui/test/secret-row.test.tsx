@@ -1,7 +1,7 @@
 import { describe, expect, mock, test } from "bun:test";
 import { act } from "react";
 import { SecretRow, SettingsSection } from "../src";
-import { click, mount, useDom } from "./dom";
+import { click, mount, stubMatchMedia, useDom } from "./dom";
 
 useDom();
 
@@ -97,6 +97,43 @@ describe("SecretRow", () => {
     expect(document.body.innerHTML).not.toContain("two");
   });
 
+  test("Save with an empty field shows an error and does not call onSave", async () => {
+    const onSave = mock(async (_v: string) => {});
+    const el = await save(onSave);
+    await click(button("Set", el));
+    await click(button("Save", sheet()!));
+    expect(sheet()!.textContent).toContain("Enter a value.");
+    expect(field().getAttribute("aria-invalid")).toBe("true");
+    expect(onSave.mock.calls.length).toBe(0);
+  });
+
+  test("the password field has a Show button and keeps its attributes", async () => {
+    const el = await save();
+    await click(button("Set", el));
+    await click(sheet()!.querySelector('button[aria-label="Show password"]')!);
+    const input = field() as HTMLInputElement;
+    expect([input.type, input.getAttribute("autocomplete"), input.getAttribute("spellcheck")]).toEqual(["text", "off", "false"]);
+  });
+
+  test("the sheet opens again empty after a successful save", async () => {
+    const el = await save();
+    await click(button("Set", el));
+    await type(field(), "first");
+    await click(button("Save", sheet()!));
+    await settle();
+    expect(sheet()).toBeNull();
+    await click(button("Set", el));
+    expect(field().value).toBe("");
+  });
+
+  test("the sheet is at the end from 768 px and at the bottom below", async () => {
+    stubMatchMedia(true);
+    const el = await save();
+    await click(button("Set", el));
+    expect(sheet()!.className).toContain("end-0");
+    expect(sheet()!.className).not.toContain("bottom-0");
+  });
+
   test("pem: a mono text area of 8 rows", async () => {
     const el = await mount(<SecretRow label="Certificate key" pem canEdit secret={{ set: false }} onSave={async () => {}} />);
     await click(button("Set", el));
@@ -107,7 +144,6 @@ describe("SecretRow", () => {
   test("remove: the menu asks, then calls onRemove", async () => {
     const onRemove = mock(async () => {});
     const el = await mount(<SecretRow label="API key" canEdit secret={{ set: true }} onSave={async () => {}} onRemove={onRemove} />);
-    await click(el.querySelector('button[aria-label="More actions"]')!);
     await act(async () => {
       const trigger = el.querySelector('button[aria-label="More actions"]')!;
       trigger.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, button: 0, ctrlKey: false }));

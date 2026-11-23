@@ -24,6 +24,13 @@ describe("OnceValueDialog", () => {
     expect(button("Cancel")).toBeUndefined();
   });
 
+  test("the note is in aria-describedby with the description", async () => {
+    await open();
+    const ids = dialog()!.getAttribute("aria-describedby")!.split(" ");
+    const text = ids.map((id) => document.getElementById(id)?.textContent);
+    expect(text).toEqual(["Copy it now.", "You cannot see this value again."]);
+  });
+
   test("first focus is on Copy", async () => {
     await open();
     await settle();
