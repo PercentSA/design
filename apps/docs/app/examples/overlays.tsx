@@ -309,6 +309,7 @@ export function ActionDialogDeleteExample() {
         confirmName="Main website"
         confirmLabel={t("Type the site name to delete it.", "اكتب اسم الموقع لحذفه.")}
         action={t("Delete", "حذف")}
+        cancelLabel={t("Keep site", "إبقاء الموقع")}
         destructive
         onAction={() => setOpen(false)}
       />

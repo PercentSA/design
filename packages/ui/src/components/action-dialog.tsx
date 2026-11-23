@@ -35,6 +35,8 @@ export type ActionDialogProps = {
   /** Replaces the line "Type <name> to confirm." above the name field. The label must show the exact name to type. */
   confirmLabel?: ReactNode;
   action: ReactNode;
+  /** The word on the cancel button. Default: the provider string "Cancel". */
+  cancelLabel?: ReactNode;
   destructive?: boolean;
   /** Why the action is refused now. It shows above the buttons (announced). */
   blocked?: string;
@@ -94,7 +96,7 @@ export function ActionDialog(props: ActionDialogProps) {
   );
 }
 
-function Body({ title, subject, notice, children, effects, effectsEmpty, stays, reason, confirmName, confirmLabel, action, destructive, blocked, pending, onAction, onOpenChange }: ActionDialogProps) {
+function Body({ title, subject, notice, children, effects, effectsEmpty, stays, reason, confirmName, confirmLabel, action, cancelLabel, destructive, blocked, pending, onAction, onOpenChange }: ActionDialogProps) {
   const s = useStrings();
   const reasonId = useId();
   const [typed, setTyped] = useState("");
@@ -158,7 +160,7 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, stays, 
         <BlockedStatus id={reasonId}>{blocked && !pending ? blocked : undefined}</BlockedStatus>
         <div className="flex flex-wrap justify-end gap-2 max-md:flex-col-reverse *:max-md:w-full">
           <Button variant="secondary" data-ad-cancel disabled={pending} onClick={() => onOpenChange(false)}>
-            {s.cancel}
+            {cancelLabel ?? s.cancel}
           </Button>
           <Button
             type="submit"

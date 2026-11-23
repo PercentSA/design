@@ -17,6 +17,23 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.24.0",
+    date: "2026-11-23",
+    summary: "ActionDialog cancel label; DataTable title column and row label; SecretRow sheet texts and file input; UsageMeter hidden label; controlled ExpandableText; focus return from menus, phone row actions, times in linked rows and rail badge dots fixed.",
+    changes: [
+      c("better", "[ActionDialog](action-dialog): `cancelLabel` names the cancel button (\"Keep running\"). Without it, the built-in word \"Cancel\"."),
+      c("better", "[DataTable](data-table): `titleColumn` sets the column that holds the row link and is the card title (default: the first column); the row checkbox and the row menu take their names from it. With `rowLabel`, the row link is an empty link named by that text, and the title cell keeps its own content and links (a title that is a sentence with links)."),
+      c("better", "[SecretRow](secret-row): the sheet title is \"Set <label>\" or \"Change <label>\"; new `sheetDescription` (under the title), `hint` (under the field), `file` (a button that reads a chosen text file of up to 1 MB into the field; another type or a larger file is refused) and `removeLabel` (the menu item and the confirm action). New built-in string for a file that cannot be read, in English and Arabic."),
+      c("better", "[UsageMeter](usage-meter): `hideLabel` keeps the label for screen readers only, for a meter that is the value of a fact with its own visible label."),
+      c("better", "[ExpandableText](expandable-text): `open` and `onOpenChange` make it controlled, so another control can open it."),
+      c("better", "Parts without the new props render as before."),
+      c("fixed", "A dialog, sheet or command palette that opens from a [DropdownMenu](dropdown-menu) item gives the focus back to the menu trigger; from a [ContextMenu](context-menu) item, to the element that had the focus when the menu opened. Before, the focus went to the page."),
+      c("fixed", "[AttentionList](attention-list): below 768 px the action of a row and its button are full width."),
+      c("fixed", "A [TimeText](time-text) in a linked row or card ([Card](card), [DataTable](data-table), [List](list)) is above the row link: a hover or a tap shows the exact time and does not open the row."),
+      c("fixed", "The badge dot of an icon rail item ([Sidebar](sidebar) rail, [SideNav](side-nav) `iconOnly`) is 8 px with a 2 px ring, so it is easy to see. The ring takes `--p-dot-ring` (the page colour by default; the Sidebar sets its own background and the current and hover backgrounds of an item)."),
+    ],
+  },
+  {
     version: "0.23.0",
     date: "2026-11-23",
     summary: "New UsageMeter, ChangeList, OnceValueDialog and SecretRow; Timeline steps with state; FilterBar toggles and search suggestions; 24-hour times; phone fixes for tabs, dialogs, sheets and notices.",

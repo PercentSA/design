@@ -90,7 +90,7 @@ export function AttentionList({
             <div className={cn("text-sm text-fg-3 max-md:col-start-2 max-md:row-start-1 max-md:self-center max-md:justify-self-end md:col-start-3 md:pt-0.5", !i.menu?.length && "max-md:col-span-2")}>
               <TimeText value={i.openedAt} ago />
             </div>
-            {i.action && <div className="max-md:col-span-3 max-md:row-start-3 md:col-start-4 md:justify-self-end">{i.action}</div>}
+            {i.action && <div className="max-md:col-span-3 max-md:row-start-3 max-md:justify-self-stretch max-md:*:w-full md:col-start-4 md:justify-self-end">{i.action}</div>}
             {i.menu && i.menu.length > 0 && (
               <div className="max-md:col-start-3 max-md:row-start-1 max-md:self-center md:col-start-5">
                 <DropdownMenu

@@ -21,7 +21,7 @@ export type DataTableColumn<Row> = {
   header: ReactNode;
   /** Default: the row's field named `key`. */
   cell?: (row: Row) => ReactNode;
-  /** First column of a row with `rowHref`: content after the row link, outside it (links and buttons here stay clickable). */
+  /** Title column of a row with `rowHref` (default: the first column): content after the row link, outside it (links and buttons here stay clickable). */
   afterLink?: (row: Row) => ReactNode;
   /** Default: the row's field named `key`. */
   sortValue?: (row: Row) => string | number;
@@ -34,11 +34,11 @@ export type DataTableColumn<Row> = {
   /** ColumnsMenu can hide the column. Default true. */
   hideable?: boolean;
   /** A muted second line under the cell (the phone under a name, the type under a number). null, undefined and "" show nothing.
-   *  In the first column of a row with `rowHref` it comes after the link, outside it (links in it stay clickable). */
+   *  In the title column of a row with `rowHref` it comes after the link, outside it (links in it stay clickable). */
   description?: (row: Row) => ReactNode;
   /** With `cards`, on the cards: below 768 px and in the cards view (the table rows do not change). "end": at the end of the title line, without the header.
    *  "meta": in one wrapped line under the title, without the header. "block": full width under the meta, without the header
-   *  (long text). A cell with no value shows nothing. Default: a "header … value" line. Not for the first column. */
+   *  (long text). A cell with no value shows nothing. Default: a "header … value" line. Not for the title column. "end" columns belong after the title column in `columns`: on the card they show in column order on the title line. */
   cardSlot?: "end" | "meta" | "block";
 };
 
@@ -68,11 +68,17 @@ export type DataTableProps<Row> = {
   loading?: boolean;
   /** Shown when there are no rows. Default: EmptyState with "No results". */
   empty?: ReactNode;
-  /** The whole row opens the record: the first cell becomes a link to this URL. `undefined`: a plain row. */
+  /** The whole row opens the record: the title cell (default: the first) becomes a link to this URL. `undefined`: a plain row. */
   rowHref?: (row: Row) => string | undefined;
   /** A "⋯" menu per row, in a last column. An empty array gives no button. */
   rowActions?: (row: Row) => MenuItem[];
-  /** Below 768 px, and in the cards view (`viewKey`), each row is a card: the first cell is its title, and the other cells show their header. Default false. */
+  /** The key of the column that holds the row link and is the card title. Default: the first column. The row checkbox and the row menu take their names from it.
+   *  Use it when the first column is a small value (a level badge, a time) and the title is in a later column. */
+  titleColumn?: string;
+  /** With `rowHref`: the row link is an empty link named by this text, and the title cell keeps its own content, so links inside it stay usable
+   *  (a title that is a sentence with links). Default: the title cell's content is the link. */
+  rowLabel?: (row: Row) => string;
+  /** Below 768 px, and in the cards view (`viewKey`), each row is a card: the title cell (default: the first) is its title, and the other cells show their header. Default false. */
   cards?: boolean;
   /** `compact` for dense lists: cell py-2, header row h-9, card rows p-3 with gap-y-1. `print` for a printed report: cells
    *  text-xs px-1 py-1, header row h-8 px-1 with wrapping text, no scroll box (overflow visible), no cards, no sticky header;
@@ -140,6 +146,8 @@ export function DataTable<Row>({
   empty,
   rowHref,
   rowActions,
+  titleColumn,
+  rowLabel,
   cards: cardsProp,
   density = "default",
   hiddenColumns,
@@ -231,7 +239,9 @@ export function DataTable<Row>({
   const headTab = cardsView || (cards && phone) ? -1 : undefined;
   const cellY = compact ? "py-2" : print ? "px-1 py-1 text-xs" : undefined;
   const headH = compact ? "h-9" : print ? "h-8 px-1" : undefined;
-  const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k > 0 ? c.cardSlot : undefined);
+  // The title column: the row link, the card title and the name of the checkbox and the row menu. A key that is not shown falls back to the first column.
+  const titleAt = Math.max(0, columns.findIndex((c) => c.key === titleColumn));
+  const slotted = (k: number, c: DataTableColumn<Row>) => (cards && k !== titleAt ? c.cardSlot : undefined);
   const hasSlots = columns.some((c, k) => slotted(k, c));
   const hasMeta = columns.some((c, k) => slotted(k, c) === "meta");
   const slotGap = compact ? "p-cards:mt-1" : "p-cards:mt-1.5";
@@ -276,14 +286,14 @@ export function DataTable<Row>({
       <TableRow
         key={id}
         data-state={isSelected ? "selected" : undefined}
-        // The first cell's link covers the row; the checkbox and "⋯" sit above it.
+        // The title cell's link covers the row; the checkbox and "⋯" sit above it.
         className={cn(href && cn("relative hover:bg-surface-2", ABOVE_STRETCHED_LINK), rowClass)}
       >
         {selectable && (
           <TableCell className={cn(cellY, cards && "p-cards:p-0")}>
             <Checkbox
               className="gap-0 align-middle"
-              // Named "Select row" + the first cell, so each checkbox says which row it selects.
+              // Named "Select row" + the title cell, so each checkbox says which row it selects.
               aria-labelledby={`${uid}s${i} ${uid}c${i}`}
               label={
                 <span id={`${uid}s${i}`} className="sr-only">
@@ -309,21 +319,28 @@ export function DataTable<Row>({
             return (
               <TableCell
                 key={c.key}
-                id={k === 0 ? `${uid}c${i}` : undefined}
+                id={k === titleAt ? `${uid}c${i}` : undefined}
                 align={c.align}
                 className={cn(
                   cellY,
-                  k === 0 && href && "font-medium",
-                  cards && (k === 0 ? "p-cards:min-w-0 p-cards:flex-1 p-cards:p-0 p-cards:font-medium" : fieldClass),
+                  k === titleAt && href && "font-medium",
+                  cards && (k === titleAt ? "p-cards:min-w-0 p-cards:flex-1 p-cards:p-0 p-cards:font-medium" : fieldClass),
                   cards && (c.hideOnCard || (slot && !hasValue(value) && !note)) && "p-cards:hidden",
                 )}
               >
-                {k === 0 && href ? (
+                {k === titleAt && href ? (
                   // -outline-offset keeps the row's focus ring inside the table's scroll box.
                   <>
-                    <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "p-cards:after:rounded-card")}>
-                      {value}
-                    </L>
+                    {rowLabel ? (
+                      <>
+                        <L href={href} data-stretched="" aria-label={rowLabel(row)} className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "p-cards:after:rounded-card")} />
+                        {value}
+                      </>
+                    ) : (
+                      <L href={href} data-stretched="" className={cn(STRETCHED_LINK, "focus-visible:after:-outline-offset-2", cards && "p-cards:after:rounded-card")}>
+                        {value}
+                      </L>
+                    )}
                     {note}
                     {c.afterLink?.(row)}
                   </>
@@ -332,7 +349,7 @@ export function DataTable<Row>({
                     {value}
                     {note}
                   </>
-                ) : cards && k > 0 ? (
+                ) : cards && k !== titleAt ? (
                   <>
                     <span className="hidden text-xs text-fg-3 p-cards:inline">{c.header}</span>
                     <span>
@@ -358,7 +375,7 @@ export function DataTable<Row>({
                   align="end"
                   items={actions}
                   trigger={
-                    // Named "Row actions" + the first cell, like the select checkbox.
+                    // Named "Row actions" + the title cell, like the select checkbox.
                     <button type="button" aria-labelledby={`${uid}a${i} ${uid}c${i}`} className={buttonClass("ghost", "sm", true)}>
                       <span id={`${uid}a${i}`} className="sr-only">
                         {s.rowActions}

@@ -22,6 +22,8 @@ export type UsageMeterProps = {
   /** The value is old: the bar is muted and the data line warns. */
   stale?: boolean;
   hint?: ReactNode;
+  /** The label text is for screen readers only (the meter keeps its name). For a meter that is the value of a summary fact with its own visible label. */
+  hideLabel?: boolean;
   className?: string;
 };
 
@@ -31,7 +33,7 @@ const pct = (n: number, max: number) => Math.min(100, Math.max(0, (n / max) * 10
 const STRIPES = { backgroundImage: "repeating-linear-gradient(135deg, var(--p-primary) 0 2px, transparent 2px 5px)" };
 
 /** How much of a limit is in use: a bar with an optional limit line, stacked used and held parts, and an old-data state. */
-export function UsageMeter({ label, value, max = 100, parts, limit, format, at, stale, hint, className }: UsageMeterProps) {
+export function UsageMeter({ label, value, max = 100, parts, limit, format, at, stale, hint, hideLabel, className }: UsageMeterProps) {
   const s = useStrings();
   const id = useId();
   const fmt = format ?? ((n: number) => `${Math.round((n / max) * 100)} %`);
@@ -50,7 +52,7 @@ export function UsageMeter({ label, value, max = 100, parts, limit, format, at, 
   return (
     <div className={cn("grid gap-1.5", className)}>
       <div className="flex items-baseline justify-between gap-3 text-sm">
-        <span id={id} className="text-fg-3">{label}</span>
+        <span id={id} className={hideLabel ? "sr-only" : "text-fg-3"}>{label}</span>
         <span data-value className={cn("inline-flex items-center gap-1 font-medium tabular-nums", over ? "text-warning" : "text-fg")}>
           {over && (
             <span data-over className="inline-flex items-center gap-1 text-xs">

@@ -2,6 +2,24 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.24.0
+
+### Changed
+
+- [ActionDialog](https://design.percent.sa/en/components/action-dialog): `cancelLabel` names the cancel button ("Keep running"). Without it, the built-in word "Cancel".
+- [DataTable](https://design.percent.sa/en/components/data-table): `titleColumn` sets the column that holds the row link and is the card title (default: the first column); the row checkbox and the row menu take their names from it. With `rowLabel`, the row link is an empty link named by that text, and the title cell keeps its own content and links (a title that is a sentence with links).
+- [SecretRow](https://design.percent.sa/en/components/secret-row): the sheet title is "Set <label>" or "Change <label>"; new `sheetDescription` (under the title), `hint` (under the field), `file` (a button that reads a chosen text file of up to 1 MB into the field; another type or a larger file is refused) and `removeLabel` (the menu item and the confirm action). New built-in string for a file that cannot be read, in English and Arabic.
+- [UsageMeter](https://design.percent.sa/en/components/usage-meter): `hideLabel` keeps the label for screen readers only, for a meter that is the value of a fact with its own visible label.
+- [ExpandableText](https://design.percent.sa/en/components/expandable-text): `open` and `onOpenChange` make it controlled, so another control can open it.
+- Parts without the new props render as before.
+
+### Fixed
+
+- A dialog, sheet or command palette that opens from a [DropdownMenu](https://design.percent.sa/en/components/dropdown-menu) item gives the focus back to the menu trigger; from a [ContextMenu](https://design.percent.sa/en/components/context-menu) item, to the element that had the focus when the menu opened. Before, the focus went to the page.
+- [AttentionList](https://design.percent.sa/en/components/attention-list): below 768 px the action of a row and its button are full width.
+- A [TimeText](https://design.percent.sa/en/components/time-text) in a linked row or card ([Card](https://design.percent.sa/en/components/card), [DataTable](https://design.percent.sa/en/components/data-table), [List](https://design.percent.sa/en/components/list)) is above the row link: a hover or a tap shows the exact time and does not open the row.
+- The badge dot of an icon rail item ([Sidebar](https://design.percent.sa/en/components/sidebar) rail, [SideNav](https://design.percent.sa/en/components/side-nav) `iconOnly`) is 8 px with a 2 px ring, so it is easy to see. The ring takes `--p-dot-ring` (the page colour by default; the Sidebar sets its own background and the current and hover backgrounds of an item).
+
 ## 0.23.0
 
 ### New

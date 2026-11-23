@@ -142,3 +142,18 @@ describe("UsageMeter values keep their word order", () => {
     expect(bdi).toEqual(["30 %", "30 %", "Limit 90 %"]);
   });
 });
+
+describe("UsageMeter hideLabel, 0.24", () => {
+  test("hideLabel keeps the meter name and hides the label text", async () => {
+    const el = await mount(<UsageMeter label="CPU" value={42} hideLabel />);
+    const name = document.getElementById(meter(el).getAttribute("aria-labelledby")!)!;
+    expect(name.textContent).toBe("CPU");
+    expect(name.className).toContain("sr-only");
+    expect(el.querySelector("[data-value]")!.textContent).toBe("42 %");
+  });
+
+  test("without hideLabel the label shows as before", async () => {
+    const el = await mount(<UsageMeter label="CPU" value={42} />);
+    expect(document.getElementById(meter(el).getAttribute("aria-labelledby")!)!.className).toBe("text-fg-3");
+  });
+});

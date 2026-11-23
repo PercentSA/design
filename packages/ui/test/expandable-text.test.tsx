@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test } from "bun:test";
-import type { ComponentProps } from "react";
+import { useState, type ComponentProps } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { DataTable, ExpandableText, PercentProvider } from "../src";
 import { click, mount, useDom } from "./dom";
@@ -150,5 +150,53 @@ describe("ExpandableText", () => {
       globalThis.ResizeObserver = Original;
     }
     expect(disconnected).toBe(1);
+  });
+});
+
+describe("ExpandableText controlled, 0.24", () => {
+  function Host({ calls }: { calls?: boolean[] }) {
+    const [open, setOpen] = useState(false);
+    return (
+      <>
+        <button type="button" id="outside" onClick={() => setOpen(true)}>Show</button>
+        <ExpandableText text={LONG} details={<p id="more">Details</p>} open={open} onOpenChange={(o) => (calls?.push(o), setOpen(o))} />
+      </>
+    );
+  }
+
+  test("a controlled ExpandableText opens from outside", async () => {
+    stub(40, 20);
+    const calls: boolean[] = [];
+    const el = await mount(<Host calls={calls} />);
+    const button = () => el.querySelector<HTMLButtonElement>("button[aria-expanded]")!;
+    expect(button().getAttribute("aria-expanded")).toBe("false");
+    expect(el.querySelector("#more")).toBeNull();
+    await click(el.querySelector("#outside")!);
+    expect(button().getAttribute("aria-expanded")).toBe("true");
+    expect(el.querySelector("#more")).not.toBeNull();
+    // A click on the text asks to close; the parent decides.
+    await click(button());
+    expect(calls).toEqual([false]);
+    expect(button().getAttribute("aria-expanded")).toBe("false");
+  });
+
+  test("a controlled open stays as given until the parent changes it", async () => {
+    stub(40, 20);
+    const el = await mount(<ExpandableText text={LONG} open={false} onOpenChange={() => {}} />);
+    await click(el.querySelector("button")!);
+    expect(el.querySelector("button")!.getAttribute("aria-expanded")).toBe("false");
+  });
+
+  test("the uncontrolled form does not change", async () => {
+    stub(40, 20);
+    const calls: boolean[] = [];
+    const el = await mount(<ExpandableText text={LONG} details={<p id="more">Details</p>} onOpenChange={(o) => calls.push(o)} />);
+    const button = el.querySelector("button")!;
+    await click(button);
+    expect(button.getAttribute("aria-expanded")).toBe("true");
+    expect(el.querySelector("#more")).not.toBeNull();
+    await click(button);
+    expect(button.getAttribute("aria-expanded")).toBe("false");
+    expect(calls).toEqual([true, false]);
   });
 });

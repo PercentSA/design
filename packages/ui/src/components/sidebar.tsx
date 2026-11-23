@@ -53,6 +53,11 @@ export const useSidebarRail = () => useContext(SidebarRail);
 const ITEM =
   "relative flex h-9 items-center gap-3 rounded-field px-3 text-sm text-fg-2 transition-colors hover:bg-surface-2 hover:text-fg aria-[current=page]:bg-surface-2 aria-[current=page]:font-medium aria-[current=page]:text-fg [&_svg]:size-4 [&_svg]:shrink-0";
 
+/** The badge dot on an icon rail item (Sidebar rail, SideNav `iconOnly`). The ring takes `--p-dot-ring`: the page colour unless a parent with another background sets it. */
+export const RAIL_DOT = "absolute size-2 rounded-pill bg-fg ring-2 ring-[color:var(--p-dot-ring,var(--p-bg))]";
+// An item's own current and hover backgrounds are not the rail background: the ring follows them.
+export const RAIL_ITEM_RING = "hover:[--p-dot-ring:var(--p-surface-2)] aria-[current=page]:[--p-dot-ring:var(--p-surface-2)]";
+
 const PLAIN = "relative flex h-9 items-center gap-3 rounded-field px-3 text-sm text-fg-3 [&_svg]:size-4 [&_svg]:shrink-0";
 
 const DOT = { danger: "bg-danger", warning: "bg-warning" };
@@ -98,14 +103,14 @@ function itemLink(L: LinkComponent | "a", item: SidebarItem, collapsed: boolean,
       aria-current={item.current ? "page" : undefined}
       // A folded group (or the rail) with the current page inside looks selected; only the link to the page itself has aria-current.
       data-has-current={childCurrent || undefined}
-      className={cn(ITEM, childCurrent && "bg-surface-2 font-medium text-fg", slid && "aria-[current=page]:bg-transparent", collapsed && "justify-center px-0", grow && "min-w-0 flex-1")}
+      className={cn(ITEM, childCurrent && "bg-surface-2 font-medium text-fg", slid && "aria-[current=page]:bg-transparent", collapsed && cn("justify-center px-0", RAIL_ITEM_RING, childCurrent && "[--p-dot-ring:var(--p-surface-2)]"), grow && "min-w-0 flex-1")}
     >
       {item.icon}
       <span className={cn(collapsed ? "sr-only" : "min-w-0 flex-1 truncate")}>{item.label}</span>
       <StatusText item={item} />
       {statusDot(item, collapsed)}
       {item.badge != null && <Badge className={cn("h-5 px-2", collapsed && "sr-only")}>{item.badge}</Badge>}
-      {item.badge != null && collapsed && !item.status && <span aria-hidden className="absolute end-2.5 top-1.5 size-1.5 rounded-pill bg-fg" />}
+      {item.badge != null && collapsed && !item.status && <span aria-hidden className={cn(RAIL_DOT, "end-2 top-1.5")} />}
     </L>
   );
 }
@@ -309,7 +314,7 @@ export function Sidebar({
     <div
       data-collapsed={rail || undefined}
       className={cn(
-        "flex h-full flex-col gap-4 bg-surface p-3 transition-[width] duration-(--p-duration-base) motion-reduce:transition-none",
+        "flex h-full flex-col gap-4 bg-surface p-3 [--p-dot-ring:var(--p-surface)] transition-[width] duration-(--p-duration-base) motion-reduce:transition-none",
         inSheet ? "w-full" : cn("border-e border-line", rail ? "w-16" : "w-64"),
         className,
       )}

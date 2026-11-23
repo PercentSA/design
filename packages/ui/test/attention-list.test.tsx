@@ -137,3 +137,14 @@ describe("AttentionList", () => {
     for (const c of cells) expect(c.className.split(" ")).toContain("max-md:self-center");
   });
 });
+
+describe("AttentionList action, 0.24", () => {
+  test("below 768 px the action and its button are full width", async () => {
+    const el = await mount(<AttentionList label="x" items={ITEMS} />);
+    const slot = rows(el)[0]!.querySelector("button")!.parentElement!;
+    expect(slot.className).toContain("max-md:col-span-3");
+    expect(slot.className).toContain("max-md:justify-self-stretch");
+    expect(slot.className).toContain("max-md:*:w-full");
+    expect(slot.className).toContain("md:justify-self-end");
+  });
+});

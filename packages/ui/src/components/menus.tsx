@@ -1,9 +1,10 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
+import { useEffect, useId, type ReactNode } from "react";
 import { ContextMenu as RadixContextMenu, DropdownMenu as RadixDropdown } from "radix-ui";
 import { cn } from "../lib/cn";
 import { useLinkComponent, useStrings } from "../provider";
+import { forgetContextFocus, rememberContextFocus } from "./dialog-parts";
 import { MENU_ITEM } from "./input-classes";
 
 export type MenuItem =
@@ -98,11 +99,14 @@ export function DropdownMenu({
   defaultOpen?: boolean;
   onOpenChange?: (open: boolean) => void;
 }) {
+  const menuId = useId();
   return (
     <RadixDropdown.Root open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>
-      <RadixDropdown.Trigger asChild>{trigger}</RadixDropdown.Trigger>
+      <RadixDropdown.Trigger asChild data-p-menu={menuId}>
+        {trigger}
+      </RadixDropdown.Trigger>
       <RadixDropdown.Portal>
-        <RadixDropdown.Content align={align} sideOffset={6} collisionPadding={16} className={CONTENT}>
+        <RadixDropdown.Content align={align} sideOffset={6} collisionPadding={16} className={CONTENT} data-p-menu={menuId}>
           <Items parts={RadixDropdown} items={items} />
         </RadixDropdown.Content>
       </RadixDropdown.Portal>
@@ -112,11 +116,15 @@ export function DropdownMenu({
 
 /** Right-click (long-press on touch) menu for an area. Offer the same actions elsewhere too. */
 export function ContextMenu({ children, items }: { children: ReactNode; items: MenuItem[] }) {
+  const menuId = useId();
+  useEffect(() => () => forgetContextFocus(menuId), [menuId]);
   return (
-    <RadixContextMenu.Root>
-      <RadixContextMenu.Trigger asChild>{children}</RadixContextMenu.Trigger>
+    <RadixContextMenu.Root onOpenChange={(o) => o && rememberContextFocus(menuId, document.activeElement)}>
+      <RadixContextMenu.Trigger asChild data-p-menu={menuId}>
+        {children}
+      </RadixContextMenu.Trigger>
       <RadixContextMenu.Portal>
-        <RadixContextMenu.Content collisionPadding={16} className={CONTENT}>
+        <RadixContextMenu.Content collisionPadding={16} className={CONTENT} data-p-menu={menuId}>
           <Items parts={RadixContextMenu} items={items} />
         </RadixContextMenu.Content>
       </RadixContextMenu.Portal>

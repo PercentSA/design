@@ -1,4 +1,5 @@
-import { Blockquote, Code, Display, ExpandableText, FormattedNumber, Heading, Highlight, Kbd, Label, Link, Prose, Stack, Text } from "@percentsa/ui";
+import { useState } from "react";
+import { Blockquote, Button, Code, Display, ExpandableText, FormattedNumber, Heading, Highlight, Kbd, Label, Link, Prose, Stack, Text } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function DisplayExample() {
@@ -125,6 +126,25 @@ export function ExpandableTextExample() {
         details={<Code>job 4f2a</Code>}
       />
       <ExpandableText text={t("Build finished.", "اكتمل البناء.")} />
+    </Stack>
+  );
+}
+
+/** Controlled: a button outside the text opens it. */
+export function ExpandableTextControlledExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  return (
+    <Stack gap={4}>
+      <Button size="sm" variant="secondary" className="justify-self-start" onClick={() => setOpen(true)}>
+        {t("Show the error", "أظهر الخطأ")}
+      </Button>
+      <ExpandableText
+        open={open}
+        onOpenChange={setOpen}
+        text={t("Build failed: the step could not read the file because the path is longer than the limit of the file system.", "فشل البناء: تعذّرت على الخطوة قراءة الملف لأن المسار أطول من حد نظام الملفات.")}
+        details={<Code>job 4f2a</Code>}
+      />
     </Stack>
   );
 }
