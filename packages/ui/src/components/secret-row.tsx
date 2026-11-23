@@ -41,6 +41,8 @@ export type SecretRowProps = {
   removeConfirm?: { title: ReactNode; description?: ReactNode };
   /** The word for the menu item and the confirm action. Default: the provider string "Remove". */
   removeLabel?: ReactNode;
+  /** A second action in the row control, after the Set or Change button and before the "⋯" menu (for example a "Test" button). Shown only when `canEdit`. */
+  action?: ReactNode;
   /** A line under the sheet title. */
   sheetDescription?: ReactNode;
   /** A line under the field. */
@@ -56,7 +58,7 @@ export type SecretRowProps = {
  * The typed value stays in the sheet's state only and is emptied at each close.
  * The field has `autocomplete="off"`, not `new-password`: this is an API key, not an account password, and `new-password` makes browsers offer a generated password.
  */
-export function SecretRow({ label, description, secret, canEdit, required, stops, owner, pem, onSave, onRemove, removeConfirm, removeLabel, sheetDescription, hint, file, open, onOpenChange }: SecretRowProps) {
+export function SecretRow({ label, description, secret, canEdit, required, stops, owner, pem, onSave, onRemove, removeConfirm, removeLabel, action, sheetDescription, hint, file, open, onOpenChange }: SecretRowProps) {
   const s = useStrings();
   const id = useId();
   const [inner, setInner] = useState(false);
@@ -152,6 +154,7 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
                 <Button variant="secondary" size="sm" onClick={() => setOpen(true)}>
                   {secret.set ? s.changeValue : s.setValue}
                 </Button>
+                {action}
                 {onRemove && secret.set && (
                   <DropdownMenu
                     align="end"

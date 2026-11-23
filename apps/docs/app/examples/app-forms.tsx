@@ -739,7 +739,7 @@ export function SecretRowExample() {
   const save = (_value: string) => new Promise<void>((done) => setTimeout(done, 600));
   return (
     <SettingsSection className="w-full max-w-2xl" title={t("Secrets", "الأسرار")}>
-      <SecretRow label={t("Payment key", "مفتاح الدفع")} canEdit secret={{ set: true, changedAt: Date.now() - 3 * 86_400_000, changedBy: "Sara" }} onSave={save} onRemove={async () => {}} />
+      <SecretRow label={t("Payment key", "مفتاح الدفع")} canEdit secret={{ set: true, changedAt: Date.now() - 3 * 86_400_000, changedBy: "Sara" }} onSave={save} onRemove={async () => {}} action={<Button variant="secondary" size="sm">{t("Test", "اختبار")}</Button>} />
       <SecretRow label={t("Mail password", "كلمة مرور البريد")} required stops={t("Order emails", "رسائل الطلبات")} canEdit secret={{ set: false }} onSave={save} />
       <SecretRow
         label={t("TLS certificate key", "مفتاح شهادة TLS")}
