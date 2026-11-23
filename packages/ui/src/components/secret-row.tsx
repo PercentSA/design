@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
+import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent, type ReactNode } from "react";
 import { Ellipsis, Upload } from "lucide-react";
 import { useStrings } from "../provider";
 import type { DateInput } from "../saudi/date-time";
@@ -15,6 +15,10 @@ import { AlertDialog } from "./overlays";
 import { SettingsRow } from "./settings";
 import { TimeText } from "./time-text";
 import { cn } from "../lib/cn";
+import { acceptsFile } from "../lib/files";
+
+// A key or a certificate is a few KB; a larger file is not a secret text file.
+const MAX_FILE_BYTES = 1_000_000;
 
 export type SecretRowProps = {
   label: string;
@@ -41,7 +45,7 @@ export type SecretRowProps = {
   sheetDescription?: ReactNode;
   /** A line under the field. */
   hint?: ReactNode;
-  /** A button in the sheet that reads a chosen text file into the field (a certificate, a key file). `accept` is the file input's `accept`. The content goes only into the field. */
+  /** A button in the sheet that reads a chosen text file into the field (a certificate, a key file). `accept` is the file input's `accept`. Another type or a file over 1 MB is refused. The content goes only into the field. */
   file?: { accept: string; label: ReactNode };
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
@@ -61,7 +65,10 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
   const [pending, setPending] = useState(false);
   const [removing, setRemoving] = useState(false);
   const picker = useRef<HTMLInputElement>(null);
+  // A file read that ends after the sheet closed (or closed and opened again) is ignored.
+  const reads = useRef(0);
   const shown = open ?? inner;
+  useEffect(() => void reads.current++, [shown]);
   const [wasShown, setWasShown] = useState(shown);
   // Empty the typed value at each open and close, while rendering (not in an effect).
   if (shown !== wasShown) {
@@ -92,12 +99,17 @@ export function SecretRow({ label, description, secret, canEdit, required, stops
     const chosen = input.files?.[0];
     // Emptied, so the same file can be chosen again.
     input.value = "";
-    if (!chosen) return;
+    if (!chosen || !file) return;
+    if (!acceptsFile(chosen, file.accept)) return setError(s.errors.fileType);
+    if (chosen.size > MAX_FILE_BYTES) return setError(s.errors.fileTooLarge(MAX_FILE_BYTES / 1_000_000));
+    const mine = ++reads.current;
     try {
-      setValue(await chosen.text());
+      const text = await chosen.text();
+      if (mine !== reads.current) return;
+      setValue(text);
       setError(undefined);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+    } catch {
+      if (mine === reads.current) setError(s.errors.fileRead);
     }
   };
 

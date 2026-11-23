@@ -296,6 +296,7 @@ const en = {
     shortAddress: "Enter 4 letters and 4 digits, for example RRRD2929.",
     fileTooLarge: (maxMb: number) => `This file is larger than ${maxMb} MB.`,
     fileType: "This file type is not accepted.",
+    fileRead: "The file could not be read.",
   },
   // Data display (0.3.1): CodeBlock region name, DonutChart table header.
   code: "Code",
@@ -611,6 +612,7 @@ const ar: Strings = {
     shortAddress: "أدخل 4 أحرف و4 أرقام، مثل RRRD2929.",
     fileTooLarge: (maxMb) => `حجم هذا الملف أكبر من ${maxMb} ميغابايت.`,
     fileType: "نوع هذا الملف غير مقبول.",
+    fileRead: "تعذّرت قراءة الملف.",
   },
   code: "الشيفرة البرمجية",
   category: "الفئة",

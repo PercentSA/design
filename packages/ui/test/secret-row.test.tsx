@@ -284,3 +284,47 @@ describe("SecretRow sheet, 0.24", () => {
     expect(el.querySelector('input[type="file"]')).toBeNull();
   });
 });
+
+describe("SecretRow file check, 0.24 fix round 1", () => {
+  const withFile = () => mount(<SecretRow label="Key" pem canEdit secret={{ set: false }} file={{ accept: ".pem,text/plain", label: "Choose a key file" }} onSave={async () => {}} />);
+  const choose = async (el: Element, f: unknown) => {
+    await click(button("Set", el));
+    const input = sheet()!.querySelector<HTMLInputElement>('input[type="file"]')!;
+    await act(async () => {
+      Object.defineProperty(input, "files", { configurable: true, value: [f] });
+      input.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await settle();
+  };
+  const fake = (over: object) => ({ name: "key.pem", type: "text/plain", size: 3, text: async () => "abc", ...over });
+
+  test("a file of a wrong type is refused with the shared message", async () => {
+    await choose(await withFile(), fake({ name: "a.png", type: "image/png" }));
+    expect(sheet()!.textContent).toContain("This file type is not accepted.");
+    expect((field() as HTMLTextAreaElement).value).toBe("");
+  });
+
+  test("a file larger than 1 MB is refused", async () => {
+    await choose(await withFile(), fake({ size: 1_000_001 }));
+    expect(sheet()!.textContent).toContain("This file is larger than 1 MB.");
+    expect((field() as HTMLTextAreaElement).value).toBe("");
+  });
+
+  test("a failed read shows a provider string, not the browser text", async () => {
+    await choose(await withFile(), fake({ text: () => Promise.reject(new Error("NotReadableError raw")) }));
+    expect(sheet()!.textContent).toContain("The file could not be read.");
+    expect(sheet()!.textContent).not.toContain("NotReadableError");
+  });
+
+  test("a read that ends after the sheet closed is ignored", async () => {
+    let finish!: (t: string) => void;
+    const el = await withFile();
+    await choose(el, fake({ text: () => new Promise<string>((r) => (finish = r)) }));
+    await click(sheet()!.querySelector('button[aria-label="Close"]')!);
+    await settle();
+    await click(button("Set", el));
+    await act(async () => finish("late secret"));
+    await settle();
+    expect((field() as HTMLTextAreaElement).value).toBe("");
+  });
+});

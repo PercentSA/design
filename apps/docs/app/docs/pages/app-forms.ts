@@ -34,8 +34,8 @@ export const pages: DocPage[] = [
     "app",
     "SecretRow, type SecretRowProps",
     ["SecretRowExample"],
-    "A secret setting: shows only whether it is set, and when it changed. The new value goes in a sheet; its title is \"Set\" or \"Change\" with the label. `sheetDescription` adds a line under the title and `hint` a line under the field. `file` adds a button that reads a chosen text file (a key or a certificate) into the field. `removeLabel` replaces the word \"Remove\" in the menu and the confirm dialog.",
-    "إعداد سري: يعرض فقط هل هو مُعيّن ومتى تغيّر. القيمة الجديدة تُدخل في لوحة جانبية، وعنوانها «تعيين» أو «تغيير» مع الاسم. تضيف `sheetDescription` سطرًا تحت العنوان، وتضيف `hint` سطرًا تحت الحقل. وتضيف `file` زرًا يقرأ ملفًا نصيًا مختارًا (مفتاحًا أو شهادة) إلى الحقل. وتستبدل `removeLabel` كلمة «حذف» في القائمة وفي نافذة التأكيد.",
+    "A secret setting: shows only whether it is set, and when it changed. The new value goes in a sheet; its title is \"Set\" or \"Change\" with the label. `sheetDescription` adds a line under the title and `hint` a line under the field. `file` adds a button that reads a chosen text file (a key or a certificate) into the field. A file of another type, or over 1 MB, is refused with a message. `removeLabel` replaces the word \"Remove\" in the menu and the confirm dialog.",
+    "إعداد سري: يعرض فقط هل هو مُعيّن ومتى تغيّر. القيمة الجديدة تُدخل في لوحة جانبية، وعنوانها «تعيين» أو «تغيير» مع الاسم. تضيف `sheetDescription` سطرًا تحت العنوان، وتضيف `hint` سطرًا تحت الحقل. وتضيف `file` زرًا يقرأ ملفًا نصيًا مختارًا (مفتاحًا أو شهادة) إلى الحقل. ويُرفض ملف من نوع آخر أو أكبر من 1 ميغابايت برسالة. وتستبدل `removeLabel` كلمة «حذف» في القائمة وفي نافذة التأكيد.",
   ),
   p(
     "form-settings-row",
