@@ -2,6 +2,38 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.23.0
+
+### New
+
+- [UsageMeter](https://design.percent.sa/en/components/usage-meter): how much of a limit is in use, with a limit line, stacked parts (used and held) and an old-data state. Above the limit the value shows in the warning colour with the words "Above limit".
+- [ChangeList](https://design.percent.sa/en/components/change-list): values before and after a change, with groups, hidden secret values ("Changed (value hidden)") and a one-line form for a save bar.
+- [OnceValueDialog](https://design.percent.sa/en/components/once-value-dialog): shows a new value one time, for example a token, with Copy. It closes only with Done. [SecretRow](https://design.percent.sa/en/components/secret-row): a secret setting that shows only if it is set and when it changed, with a sheet for a new value and an optional Remove.
+- New built-in strings, in English and Arabic.
+
+### Changed
+
+- [Timeline](https://design.percent.sa/en/components/timeline): new step states `running`, `failed`, `warning`, `skipped` and `waiting`, each with a word, not only a colour; `duration`; `detail` that opens with a button (open at the start for a failed step); `time` is optional; `onSelect` makes each step title a button.
+- [ActionDialog](https://design.percent.sa/en/components/action-dialog): `stays` lists what does not change ("What stays"); `confirmLabel` replaces the typed-name line. [Dialog](https://design.percent.sa/en/components/dialog): `fullScreenOnPhone` fills the screen below 768 px, as ActionDialog does. [Popover](https://design.percent.sa/en/components/popover): `label` names the popover for screen readers.
+- [FormSheet](https://design.percent.sa/en/components/form-sheet): `side="auto"` opens at the end from 768 px and at the bottom below. [FieldsSheet](https://design.percent.sa/en/components/fields-sheet) uses it, and a function child gets the draft values.
+- [FilterBar](https://design.percent.sa/en/components/filter-bar): a filter with `kind: "toggle"` is one chip that is pressed or not ("Clear filters" turns it off); `search` gets `onSubmit` (Enter), `suggestions` and `maxLength`. [Autocomplete](https://design.percent.sa/en/components/autocomplete): `start` puts an icon before the text; the list has the width of the whole field.
+- [CopyButton](https://design.percent.sa/en/components/copy-button): `label` names the button ("Copy host"); [ConnectionCard](https://design.percent.sa/en/components/connection-card) rows take `copyLabel`. [MaskedValue](https://design.percent.sa/en/components/masked-value): `open` and `onOpenChange` control the confirm dialog (with `confirm`), so a row menu can open it; `confirm.action` sets the confirm button text.
+- `hourCycle="h23"` gives 24-hour times (15:05) in `formatDateTime`, `formatTimeOfDay`, [TimeText](https://design.percent.sa/en/components/time-text), [TimeInput](https://design.percent.sa/en/components/time-input) (hours 00–23, no AM/PM; the value does not change) and `PercentProvider`. `agoForm="short"` gives "5 min ago" in `formatRelative`, TimeText and `PercentProvider`. A prop wins over the provider.
+- [Alert](https://design.percent.sa/en/components/alert): `collapsible` shows only the icon, the title and a Show button below 768 px; the text and the action open on press. It uses CSS only, so the server page is the same.
+- [LogViewer](https://design.percent.sa/en/components/log-viewer): keyboard use. The line list is one tab stop; the arrow keys, Home and End move the current line; Shift+F10 or the menu key opens the line menu; Ctrl+C or Cmd+C copies the current line. [CodeEditor](https://design.percent.sa/en/components/code-editor): `errorList={false}` keeps the line marks and draws no list under the editor.
+- [LineChart](https://design.percent.sa/en/components/line-chart) and [AreaChart](https://design.percent.sa/en/components/area-chart): on touch, the first tap on a point shows its value and a second tap on the same point calls `onSelectPoint`. The limit label has a halo in `--p-chart-surface` (the page colour by default; [Card](https://design.percent.sa/en/components/card) sets its surface).
+- [RouteTabs](https://design.percent.sa/en/components/route-tabs): `className` is now on a new wrapper element.
+- `useMediaQuery` returns false when `matchMedia` is missing (test set-ups without it).
+- Parts without the new props render as before.
+
+### Fixed
+
+- [Sidebar](https://design.percent.sa/en/components/sidebar): folding section titles are in capitals, as the plain titles are.
+- [Tabs](https://design.percent.sa/en/components/tabs) and [RouteTabs](https://design.percent.sa/en/components/route-tabs): the focus ring shows in full in the scroll row. On phones RouteTabs measures the row: the tabs that fit stay in list order, the current one is always there, and the rest go into More.
+- [Tooltip](https://design.percent.sa/en/components/tooltip): a tooltip that opens on focus stays open when the focus scrolls the page.
+- [DataTable](https://design.percent.sa/en/components/data-table): with `viewKey` and no `toolbar`, phones show no empty toolbar row.
+- [Button](https://design.percent.sa/en/components/button): a `blocked` button keeps the caller's `aria-describedby` and adds its reason.
+
 ## 0.22.0
 
 ### New
