@@ -46,24 +46,25 @@ export function Alert({
   return (
     <div
       role={tone === "danger" || tone === "warning" ? "alert" : "status"}
-      className={cn("flex items-start gap-3 rounded-field border bg-surface p-4 text-sm", t.border, className)}
+      className={cn("rounded-field border bg-surface p-4 text-sm", fold ? "grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-x-3 gap-y-1 md:flex md:gap-3" : "flex items-start gap-3", t.border, className)}
     >
       <t.icon aria-hidden className={cn("mt-0.5 size-4 shrink-0", t.color)} />
-      <div className="grid flex-1 gap-1">
+      {/* On a phone the text column dissolves: the title row holds the icon, the title and the button; the opened body and the action take the full width below it. */}
+      <div className={cn("flex-1", fold ? "max-md:contents md:grid md:gap-1" : "grid gap-1")}>
         <p className="font-medium text-fg">{title}</p>
         {children && (
-          <div id={bodyId} className={cn("text-fg-2", hidden)}>
+          <div id={bodyId} className={cn("text-fg-2", fold && "max-md:col-span-3", hidden)}>
             {children}
           </div>
         )}
       </div>
       {fold && (
-        <Button variant="ghost" size="sm" className="-my-1.5 md:hidden" aria-expanded={open} aria-controls={open ? bodyId : undefined} onClick={() => setOpen(!open)}>
+        <Button variant="ghost" size="sm" className="-my-1.5 md:hidden max-md:col-start-3 max-md:row-start-1" aria-expanded={open} aria-controls={open ? bodyId : undefined} onClick={() => setOpen(!open)}>
           {open ? s.hide : s.show}
         </Button>
       )}
       {action && (
-        <div id={children ? undefined : bodyId} className={cn("shrink-0", hidden)}>
+        <div id={children ? undefined : bodyId} className={cn("shrink-0", fold && "max-md:col-span-3", hidden)}>
           {action}
         </div>
       )}

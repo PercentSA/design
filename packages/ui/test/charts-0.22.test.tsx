@@ -22,6 +22,13 @@ const limit = { value: 100, label: "Limit 1 CPU" };
 
 
 describe("chart limit and point select", () => {
+  test("the limit label has its own word order: plaintext bidi and the direction of its first strong letter", () => {
+    const style = (label: string) => en(<LineChart {...base} limit={{ value: 100, label }} />).match(/<text[^>]*style="([^"]*)"[^>]*>\u2068/)![1]!;
+    expect(style("0.5 GB")).toContain("unicode-bidi:plaintext");
+    expect(style("0.5 GB")).toContain("direction:ltr");
+    expect(style("0.5 GB الحد")).toContain("direction:ltr");
+    expect(style("0.5 الحد GB")).toContain("direction:rtl");
+  });
   test("limit draws a dashed line with its label inside the plot", () => {
     const html = en(<LineChart {...base} limit={limit} />);
     const m = html.match(/<line[^>]*stroke-dasharray="4 4"[^>]*>/);

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Ellipsis, FileText, Folder } from "lucide-react";
-import { Accordion, Avatar, AvatarGroup, Button, ChangeList, ConnectionCard, DropdownMenu, FormBar, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree, UsageMeter } from "@percentsa/ui";
+import { Accordion, Avatar, AvatarGroup, Button, ChangeList, ConnectionCard, DropdownMenu, FormBar, FormattedNumber, Inline, MaskedValue, Money, RecordSummary, Stack, Stat, Thumbnail, Timeline, Tree, UsageMeter, useLang } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function StatExample() {
@@ -59,7 +59,7 @@ export function TimelineStepsExample() {
           status: "failed",
           duration: t("1 min 12 s", "1 د 12 ث"),
           detail: (
-            <pre className="font-mono text-xs whitespace-pre-wrap">
+            <pre dir="ltr" className="font-mono text-xs whitespace-pre-wrap">
               {"$ bun run build\nerror: Cannot find module './shop'\nexit code 1"}
             </pre>
           ),
@@ -299,7 +299,9 @@ export function ConnectionCardExample() {
 
 export function UsageMeterExample() {
   const t = useT();
-  const limit = { value: 90, label: t("Alert at 90 %", "تنبيه عند 90 %") };
+  const ar = useLang() === "ar";
+  // The number with its unit is isolated, so it keeps its order inside an Arabic sentence.
+  const limit = { value: 90, label: ar ? <>تنبيه عند <bdi>90 %</bdi></> : "Alert at 90 %" };
   return (
     <div className="grid w-full max-w-md gap-5">
       <UsageMeter label={t("CPU", "المعالج")} value={42} limit={limit} />

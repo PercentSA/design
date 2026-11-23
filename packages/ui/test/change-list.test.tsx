@@ -116,3 +116,11 @@ describe("ChangeList", () => {
     expect(STRINGS.en.changeCount(4)).toBe("4 changes");
   });
 });
+
+describe("values keep their word order", () => {
+  test("each before and after value is in a bdi", async () => {
+    const el = await mount(<ChangeList items={[{ label: "Memory", before: "512 MB", after: "1 GB" }]} />);
+    expect(el.querySelector("[data-before] bdi")!.textContent).toBe("512 MB");
+    expect(el.querySelector("[data-after] bdi")!.textContent).toBe("1 GB");
+  });
+});

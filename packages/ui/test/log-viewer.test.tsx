@@ -351,8 +351,11 @@ describe("LogViewer follow after jumpTo, pause and a first search", () => {
     test("the list shows its own focus ring while no row is current; the current row takes over", async () => {
       const el = await open({ rows: rows(3) });
       expect(list(el).className).toContain("focus-visible:outline-2");
+      // outline-none sets the outline style to none, so the ring needs a solid style from the same variant.
+      expect(list(el).className).toContain("focus-visible:outline-solid");
       await press(list(el), { key: "ArrowDown" });
       expect(list(el).className).not.toContain("focus-visible:outline-2");
+      expect(list(el).className).not.toContain("focus-visible:outline-solid");
       expect(lis(el)[0]!.className).toContain("group-focus-visible/ol:data-active:outline-2");
     });
 

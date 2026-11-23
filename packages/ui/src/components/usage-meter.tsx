@@ -58,7 +58,7 @@ export function UsageMeter({ label, value, max = 100, parts, limit, format, at, 
               {s.aboveLimit}
             </span>
           )}
-          {hasData ? <span dir="ltr">{fmt(total)}</span> : <span className="text-fg-3">{s.noData}</span>}
+          {hasData ? <bdi dir="ltr">{fmt(total)}</bdi> : <span className="text-fg-3">{s.noData}</span>}
         </span>
       </div>
       <div
@@ -90,13 +90,13 @@ export function UsageMeter({ label, value, max = 100, parts, limit, format, at, 
           {parts?.map((p, i) => (
             <li key={i} className="inline-flex items-center gap-1.5">
               <span aria-hidden style={p.tone === "held" ? STRIPES : undefined} className={cn("size-2 rounded-sm", p.tone === "held" ? "bg-primary/40" : "bg-primary")} />
-              {p.label} <span dir="ltr" className="tabular-nums">{fmt(p.value)}</span>
+              {p.label} <bdi dir="ltr" className="tabular-nums">{fmt(p.value)}</bdi>
             </li>
           ))}
           {limit?.label && (
             <li className="inline-flex items-center gap-1.5">
               <span aria-hidden className="h-3 w-0.5 bg-fg" />
-              {limit.label}
+              <bdi>{limit.label}</bdi>
             </li>
           )}
         </ul>

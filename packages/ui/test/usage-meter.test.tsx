@@ -134,3 +134,11 @@ describe("UsageMeter", () => {
     }
   });
 });
+
+describe("UsageMeter values keep their word order", () => {
+  test("the total, the part values and the limit label are in bdi", async () => {
+    const el = await mount(<UsageMeter label="Disk" value={42} parts={[{ label: "Used", value: 30, tone: "used" }]} limit={{ value: 90, label: "Limit 90 %" }} />);
+    const bdi = [...el.querySelectorAll("bdi")].map((b) => b.textContent);
+    expect(bdi).toEqual(["30 %", "30 %", "Limit 90 %"]);
+  });
+});

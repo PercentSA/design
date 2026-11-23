@@ -242,7 +242,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
               tabIndex={0}
               aria-activedescendant={actIdx >= 0 ? rowId(rows[actIdx]!.key) : undefined}
               onKeyDown={onListKey}
-              className={cn("group/ol grid outline-none grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]", actIdx < 0 && "focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-fg")}
+              className={cn("group/ol grid outline-none grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]", actIdx < 0 && "focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-fg")}
               // iOS opens the menu from a long press and sends no contextmenu event, so the row is also read at pointer down.
               onPointerDown={(e) => {
                 copyKey.current = rowKey(e.target);

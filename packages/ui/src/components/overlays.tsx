@@ -340,24 +340,23 @@ export function HoverCard({ trigger, children, side, align, className, ...state 
 export function Tooltip({ content, children, side = "top", open, defaultOpen, onOpenChange }: OpenState & { content: ReactNode; children: ReactNode; side?: Placement["side"] }) {
   const physical = usePhysicalSide(side);
   const [own, setOwn] = useState(defaultOpen ?? false);
-  // For 300 ms after a focus open, a close that a scroll caused is ignored: the focus moves the page to the trigger.
-  // Our scroll listener is added at the focus, before Radix adds its own on open, so it runs first and marks the scroll.
+  // For 300 ms after a focus open, only a close that the person caused goes through: the focus moves the page to the trigger, and that must not close it.
+  // The handlers of a click, a press on the trigger, Escape and a blur raise `person` for the close that they cause.
   const guard = useRef(false);
-  const scrolled = useRef(false);
+  const person = useRef(false);
   const pointer = useRef(false);
   const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
-  const mark = useCallback(() => {
-    scrolled.current = true;
-    setTimeout(() => (scrolled.current = false), 0);
-  }, []);
   const stop = useCallback(() => {
     guard.current = false;
     clearTimeout(timer.current);
-    window.removeEventListener("scroll", mark, true);
-  }, [mark]);
+  }, []);
   useEffect(() => stop, [stop]);
+  const byPerson = () => {
+    person.current = true;
+    setTimeout(() => (person.current = false), 0);
+  };
   const change = (next: boolean) => {
-    if (!next && guard.current && scrolled.current) return;
+    if (!next && guard.current && !person.current) return;
     setOwn(next);
     onOpenChange?.(next);
   };
@@ -366,13 +365,16 @@ export function Tooltip({ content, children, side = "top", open, defaultOpen, on
       <RadixTooltip.Root open={open ?? own} onOpenChange={change}>
         <RadixTooltip.Trigger
           asChild
-          onPointerDown={() => (pointer.current = true)}
+          onPointerDown={() => {
+            pointer.current = true;
+            byPerson();
+          }}
+          onClick={byPerson}
           onPointerUp={() => (pointer.current = false)}
           onFocus={() => {
             if (pointer.current) return;
             stop();
             guard.current = true;
-            window.addEventListener("scroll", mark, true);
             timer.current = setTimeout(stop, 300);
           }}
           onBlur={() => {
@@ -383,7 +385,7 @@ export function Tooltip({ content, children, side = "top", open, defaultOpen, on
           {children}
         </RadixTooltip.Trigger>
         <RadixTooltip.Portal>
-          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP}>
+          <RadixTooltip.Content side={physical} sideOffset={6} className={TOOLTIP} onEscapeKeyDown={byPerson}>
             {content}
           </RadixTooltip.Content>
         </RadixTooltip.Portal>

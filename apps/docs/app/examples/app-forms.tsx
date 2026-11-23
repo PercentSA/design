@@ -648,6 +648,24 @@ export function FormSheetLargeExample() {
   );
 }
 
+/** `side="auto"`: at the end of the screen from 768 px, at the bottom on a phone. */
+export function FormSheetAutoExample() {
+  const t = useT();
+  return (
+    <FormSheet
+      side="auto"
+      trigger={<Button variant="secondary">{t("Opens at the bottom on a phone", "يفتح من الأسفل على الهاتف")}</Button>}
+      title={t("Rename the site", "تغيير اسم الموقع")}
+      submitLabel={t("Save", "حفظ")}
+      onSubmit={noSubmit}
+    >
+      <Field label={t("Name", "الاسم")}>
+        <Input />
+      </Field>
+    </FormSheet>
+  );
+}
+
 export function SettingsActionExample() {
   const t = useT();
   return (

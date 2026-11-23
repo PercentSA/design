@@ -554,7 +554,7 @@
       "name": "cartesian",
       "type": "registry:ui",
       "title": "Axes",
-      "description": "@percentsa/ui: cartesian, isolate, Axes",
+      "description": "@percentsa/ui: cartesian, isolate, strongDir, Axes",
       "registryDependencies": [
         "@percentsa/scale"
       ],
@@ -569,6 +569,7 @@
         "exports": [
           "cartesian",
           "isolate",
+          "strongDir",
           "Axes"
         ]
       }

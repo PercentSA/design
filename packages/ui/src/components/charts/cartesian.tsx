@@ -38,6 +38,8 @@ export type Cartesian = ReturnType<typeof cartesian>;
 
 /** The plot is dir="ltr": an isolate keeps the word order of a label that mixes Arabic with numbers or Latin text. */
 export const isolate = (t: string) => `\u2068${t}\u2069`;
+/** The direction of the first strong letter of a label (a number or a unit before it does not count). */
+export const strongDir = (t: string) => (/^[^\p{L}]*[\p{Script=Arabic}\p{Script=Hebrew}]/u.test(t) ? "rtl" : "ltr");
 
 /** Gridlines (`line`, the zero line `line-strong`), value labels and category labels (`fg-3`, tabular digits). */
 export function Axes({ c }: { c: Cartesian }) {

@@ -165,6 +165,17 @@ describe("Alert collapsible", () => {
     await click(btn("Hide"));
     expect(body(el).className).toContain("max-md:hidden");
   });
+  test("phone layout: the title row holds the icon, the title and the button; the body and the action are full width below", async () => {
+    const el = await mount(alert(true));
+    const root = el.firstElementChild!;
+    expect(root.className).toContain("grid-cols-[auto_minmax(0,1fr)_auto]");
+    expect(root.className).toContain("md:flex");
+    expect(root.querySelector("p")!.parentElement!.className).toContain("max-md:contents");
+    expect(body(el).className).toContain("max-md:col-span-3");
+    expect(btn("Retry").parentElement!.className).toContain("max-md:col-span-3");
+    expect(btn("Show").className).toContain("max-md:col-start-3");
+    expect(btn("Show").className).toContain("max-md:row-start-1");
+  });
   test("server HTML equals the first client HTML (no width state)", () => {
     const html = renderToStaticMarkup(alert(true));
     expect(html).toContain("Show");

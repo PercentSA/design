@@ -66,12 +66,12 @@ export function ChangeList({ items, compact, note, className }: { items: ChangeI
                   <span className="flex min-w-0 flex-wrap items-center gap-2 break-words">
                     <span data-before className="min-w-0 break-all text-fg-3">
                       <span className="sr-only">{s.changeFrom}</span>
-                      {value(it.before)}
+                      <bdi>{value(it.before)}</bdi>
                     </span>
                     <ArrowRight aria-hidden className="size-4 shrink-0 text-fg-3 rtl:-scale-x-100" />
                     <span data-after className="min-w-0 break-all text-fg">
                       <span className="sr-only">{s.changeTo}</span>
-                      {value(it.after)}
+                      <bdi>{value(it.after)}</bdi>
                     </span>
                   </span>
                 )}

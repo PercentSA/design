@@ -35,13 +35,15 @@ const items: RouteTab[] = names.map((value) => ({
 const baseWidths: Record<string, number> = { Overview: 96, Deployments: 118, Logs: 64, Metrics: 80, Environment: 116, Settings: 88, more: 72 };
 
 describe("tab scroll row", () => {
-  test("the tab scroll row has block padding and a negative block margin", async () => {
+  test("the tab focus ring is inside the tab; the scroll row has no block padding or margin", async () => {
     const t = await mount(<Tabs defaultValue="a" items={[{ value: "a", label: "A", content: "x" }]} />);
     const r = await mount(<RouteTabs label="x" items={items} current="Overview" />);
     for (const row of [t.querySelector('[role="tablist"]')!, r.querySelector("nav")!]) {
-      expect(row.classList.contains("py-1")).toBe(true);
-      expect(row.classList.contains("-my-1")).toBe(true);
+      expect(row.classList.contains("py-1")).toBe(false);
+      expect(row.classList.contains("-my-1")).toBe(false);
+      expect(row.className).not.toMatch(/(^| )-?(p|m)y-/);
     }
+    for (const tab of [t.querySelector('[role="tab"]')!, r.querySelector("nav > a")!]) expect(tab.classList.contains("focus-visible:-outline-offset-2")).toBe(true);
   });
 });
 
@@ -308,6 +310,17 @@ describe("Tooltip focus open and scroll", () => {
     expect(open()).toBe(true);
     await act(() => wait(320));
     await scroll();
+    expect(open()).toBe(false);
+  });
+  test("a close request with no person action in the 300 ms after a focus open is ignored", async () => {
+    await focusOpen();
+    await act(() => wait(60));
+    // A press outside the trigger is not one of the person actions that may close it.
+    const outside = () => act(async () => void document.body.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, pointerType: "mouse" })));
+    await outside();
+    expect(open()).toBe(true);
+    await act(() => wait(320));
+    await outside();
     expect(open()).toBe(false);
   });
   const focusOpen = async () => {
