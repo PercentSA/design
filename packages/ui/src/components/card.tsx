@@ -46,7 +46,7 @@ export function Card({ title, description, action, footer, href, onSelect, disab
   // The press button holds the title; a screen reader also hears the description and the body (price, state).
   const describedBy = onSelect ? [description && `${id}d`, children != null && children !== false && `${id}b`].filter(Boolean).join(" ") || undefined : undefined;
   return (
-    <Surface className={cn("relative flex flex-col gap-4 [--p-avatar-ring:var(--p-surface)]", compact ? "p-4" : "p-6", (href || onSelect) && cn("transition-colors", !disabled && "hover:border-fg-3", ABOVE_STRETCHED_LINK), disabled && "opacity-50", className)}>
+    <Surface className={cn("relative flex flex-col gap-4 [--p-avatar-ring:var(--p-surface)] [--p-chart-surface:var(--p-surface)]", compact ? "p-4" : "p-6", (href || onSelect) && cn("transition-colors", !disabled && "hover:border-fg-3", ABOVE_STRETCHED_LINK), disabled && "opacity-50", className)}>
       {media}
       {(title || description || action) && (
         <div className={cn("flex items-start", compact ? "gap-3" : "gap-4")}>

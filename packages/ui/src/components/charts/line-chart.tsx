@@ -98,7 +98,10 @@ function PointChart({ curve = "linear", markers, area, stacked, height = 240, li
                 y={limitY - 4 < 12 ? limitY + 4 : limitY - 4}
                 dominantBaseline={limitY - 4 < 12 ? "hanging" : undefined}
                 textAnchor={c.mirror ? "start" : "end"}
-                className="fill-fg-2 text-xs"
+                strokeWidth={3}
+                strokeLinejoin="round"
+                // A halo in the surface colour keeps the label readable over the data line.
+                className="fill-fg-2 stroke-[color:var(--p-chart-surface,var(--p-bg))] text-xs [paint-order:stroke]"
               >
                 {isolate(limit.label)}
               </text>

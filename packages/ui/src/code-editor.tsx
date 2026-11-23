@@ -141,6 +141,7 @@ export function CodeEditor({
   readOnly = false,
   label,
   minLines = 12,
+  errorList = true,
   className,
 }: {
   value: string;
@@ -150,6 +151,8 @@ export function CodeEditor({
   readOnly?: boolean;
   label: string;
   minLines?: number;
+  /** `false`: the line marks and gutter marks stay, and the editor draws no list under it (the page shows its own). */
+  errorList?: boolean;
   className?: string;
 }) {
   const host = useRef<HTMLDivElement>(null);
@@ -235,12 +238,14 @@ export function CodeEditor({
           <span className="block px-3 py-1 text-xs text-fg-3">{strings.codeEditorLeave}</span>
         </p>
       )}
-      <ul data-diagnostics dir={dir} aria-live="polite" className="m-0 list-none border-t border-line px-3 py-2 text-xs text-danger empty:border-0 empty:p-0">
-        {/* A diagnostic is never hidden: a line outside the text only gets no mark. */}
-        {diagnostics.map((d, i) => (
-          <li key={i}>{Number.isInteger(d.line) && d.line >= 1 ? `${strings.codeEditorLine(d.line)}: ${d.message}` : d.message}</li>
-        ))}
-      </ul>
+      {errorList && (
+        <ul data-diagnostics dir={dir} aria-live="polite" className="m-0 list-none border-t border-line px-3 py-2 text-xs text-danger empty:border-0 empty:p-0">
+          {/* A diagnostic is never hidden: a line outside the text only gets no mark. */}
+          {diagnostics.map((d, i) => (
+            <li key={i}>{Number.isInteger(d.line) && d.line >= 1 ? `${strings.codeEditorLine(d.line)}: ${d.message}` : d.message}</li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

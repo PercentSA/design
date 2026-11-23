@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import type { ReactNode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
-import { PercentProvider } from "../src";
+import { Card, PercentProvider } from "../src";
 import { AreaChart, LineChart } from "../src/components/charts/line-chart";
 import { mount, press, useDom } from "./dom";
 
@@ -152,5 +152,61 @@ describe("chart limit and point select", () => {
     expect(html).not.toContain("4 4");
     expect(html).not.toContain("cursor-pointer");
     expect(html).not.toContain("aria-describedby");
+  });
+
+  test("the limit label has a halo: paint-order stroke with the chart surface colour; Card sets that colour to its surface", () => {
+    const html = en(<LineChart {...base} limit={limit} />);
+    const text = html.match(/<text[^>]*>\u2068Limit 1 CPU/)![0];
+    expect(text).toContain("[paint-order:stroke]");
+    expect(text).toContain("stroke-[color:var(--p-chart-surface,var(--p-bg))]");
+    expect(text).not.toContain("var(--color-");
+    expect(en(<Card>x</Card>)).toContain("[--p-chart-surface:var(--p-surface)]");
+  });
+
+  describe("touch", () => {
+    const tapAt = async (plot: Element, x: number, pointerType: string) => {
+      const { act } = await import("react");
+      await act(async () => {
+        plot.dispatchEvent(new PointerEvent("pointerdown", { bubbles: true, clientX: x, clientY: 100, pointerType }));
+        plot.dispatchEvent(new MouseEvent("click", { bubbles: true, clientX: x, clientY: 100 }));
+      });
+    };
+    const run = async (fn: (plot: Element, calls: [string, number][], el: HTMLElement) => Promise<void>) => {
+      const calls: [string, number][] = [];
+      const el = await mount(<PercentProvider lang="en"><LineChart {...base} onSelectPoint={(x, i) => calls.push([x, i])} /></PercentProvider>);
+      const rect = Element.prototype.getBoundingClientRect;
+      Element.prototype.getBoundingClientRect = () => ({ left: 0, top: 0, width: 640, height: 240, right: 640, bottom: 240, x: 0, y: 0, toJSON() {} }) as DOMRect;
+      try {
+        await fn(el.querySelector("svg")!.parentElement!.parentElement!, calls, el);
+      } finally {
+        Element.prototype.getBoundingClientRect = rect;
+      }
+    };
+    const shown = (el: Element) => el.querySelector("[data-tooltip] p")?.textContent;
+
+    test("the first tap shows the value, the second tap on the same point calls onSelectPoint once", () =>
+      run(async (plot, calls, el) => {
+        await tapAt(plot, 215, "touch");
+        expect(calls).toEqual([]);
+        expect(shown(el)).toBe("10:05");
+        await tapAt(plot, 215, "touch");
+        expect(calls).toEqual([["10:05", 1]]);
+      }));
+
+    test("a tap on another point moves the value and does not select", () =>
+      run(async (plot, calls, el) => {
+        await tapAt(plot, 215, "touch");
+        await tapAt(plot, 520, "touch");
+        expect(calls).toEqual([]);
+        expect(shown(el)).toBe("10:15");
+        await tapAt(plot, 520, "touch");
+        expect(calls).toEqual([["10:15", 3]]);
+      }));
+
+    test("a mouse click calls onSelectPoint at once, as before", () =>
+      run(async (plot, calls) => {
+        await tapAt(plot, 215, "mouse");
+        expect(calls).toEqual([["10:05", 1]]);
+      }));
   });
 });

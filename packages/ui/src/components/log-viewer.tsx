@@ -1,6 +1,6 @@
 "use client";
 
-import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useId, useLayoutEffect, useRef, useState, type KeyboardEvent, type ReactNode } from "react";
 import { ChevronDown, ChevronUp, Search } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
@@ -49,6 +49,9 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
   const started = useRef(false);
   const [away, setAway] = useState(false);
   const [cur, setCur] = useState<string>();
+  const [act, setAct] = useState<string>(); // the current row of the keyboard
+  const list = useRef<HTMLOListElement>(null);
+  const uid = useId();
 
   const toEnd = () => {
     if (!box.current) return;
@@ -96,6 +99,37 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
     if (matches[0]) items.current.get(matches[0])?.scrollIntoView?.({ block: "center" });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search]);
+
+  const actIdx = rows.findIndex((r) => r.key === act);
+  const rowId = (i: number) => `${uid}-${i}`;
+  const moveTo = (i: number) => {
+    const r = rows[Math.max(0, Math.min(rows.length - 1, i))];
+    if (!r) return;
+    setAct(r.key);
+    items.current.get(r.key)?.scrollIntoView?.({ block: "nearest" });
+  };
+  const onListKey = (e: KeyboardEvent<HTMLOListElement>) => {
+    if (e.altKey) return;
+    const k = e.key;
+    if ((e.ctrlKey || e.metaKey) && k.toLowerCase() === "c") {
+      // A text selection keeps the browser's own copy.
+      if (window.getSelection()?.toString() || !rows[actIdx]) return;
+      e.preventDefault();
+      navigator.clipboard?.writeText(rows[actIdx].text).catch(() => {});
+    } else if (e.ctrlKey || e.metaKey) return;
+    else if (k === "ArrowDown") (e.preventDefault(), moveTo(actIdx + 1));
+    else if (k === "ArrowUp") (e.preventDefault(), moveTo(actIdx < 0 ? rows.length - 1 : actIdx - 1));
+    else if (k === "Home") (e.preventDefault(), moveTo(0));
+    else if (k === "End") (e.preventDefault(), moveTo(rows.length - 1));
+    else if ((k === "F10" && e.shiftKey) || k === "ContextMenu") {
+      // The row menu opens from a contextmenu event on the row, as a right click does.
+      const li = actIdx >= 0 ? items.current.get(rows[actIdx]!.key) : undefined;
+      if (!li) return;
+      e.preventDefault();
+      const b = li.getBoundingClientRect();
+      li.dispatchEvent(new MouseEvent("contextmenu", { bubbles: true, cancelable: true, clientX: b.left + 8, clientY: b.top + b.height / 2 }));
+    }
+  };
 
   const parts = (text: string, isCurrent: boolean) =>
     re
@@ -156,7 +190,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
             onClick={() => {
               toEnd();
               setAway(false);
-              box.current?.focus(); // the button removes itself; keep focus in the log
+              (list.current ?? box.current)?.focus(); // the button removes itself; keep focus in the log
             }}
           >
             {s.logJumpToNewest}
@@ -168,13 +202,12 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
         role="region"
         aria-label={label}
         aria-busy={loading || undefined}
-        tabIndex={0}
         style={{ height }}
         onScroll={(e) => {
           atEnd.current = atEndOf(e.currentTarget);
           setAway(!atEnd.current);
         }}
-        className="relative overflow-y-auto rounded-card border border-line bg-surface py-2 focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-fg"
+        className="relative overflow-y-auto rounded-card border border-line bg-surface py-2"
       >
         {loading ? (
           <div className="flex flex-col gap-2 px-3">
@@ -197,14 +230,31 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
             ]}
           >
             <ol
-              className="grid grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]"
+              ref={list}
+              // One tab stop: the list. Arrow keys move the current row (aria-activedescendant), so a screen reader reads that row. New rows are announced politely while live is on.
+              role="listbox"
+              aria-label={label}
+              aria-readonly="true"
+              tabIndex={0}
+              aria-activedescendant={actIdx >= 0 ? rowId(actIdx) : undefined}
+              aria-live={live === "on" ? "polite" : "off"}
+              aria-relevant="additions"
+              onKeyDown={onListKey}
+              className="group/ol grid outline-none grid-cols-[auto_1fr] md:grid-cols-[auto_9rem_1fr]"
               // iOS opens the menu from a long press and sends no contextmenu event, so the row is also read at pointer down.
-              onPointerDown={(e) => (copyKey.current = rowKey(e.target))}
+              onPointerDown={(e) => {
+                copyKey.current = rowKey(e.target);
+                if (copyKey.current) setAct(copyKey.current);
+              }}
               onContextMenu={(e) => (copyKey.current = rowKey(e.target) ?? copyKey.current)}
             >
-              {rows.map((r) => (
+              {rows.map((r, i) => (
                 <li
                   key={r.key}
+                  id={rowId(i)}
+                  role="option"
+                  aria-selected={r.key === act}
+                  data-active={r.key === act ? "" : undefined}
                   ref={(el) => {
                     if (el) items.current.set(r.key, el);
                     else items.current.delete(r.key);
@@ -215,6 +265,7 @@ export function LogViewer({ label, rows, live, onLiveChange, search, onSearchCha
                   className={cn(
                     "col-span-full grid grid-cols-subgrid gap-x-3 border-s-2 border-transparent px-3 py-0.5 font-mono text-[13px] leading-6",
                     "data-jumped:bg-surface-2",
+                    "-outline-offset-2 outline-fg group-focus-visible/ol:data-active:outline-2",
                     r.error && "border-danger",
                   )}
                 >
