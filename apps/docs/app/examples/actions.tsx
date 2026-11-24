@@ -137,7 +137,7 @@ export function SegmentedControlWrapExample() {
           { value: "all", label: t("All 12", "الكل 12") },
           { value: "orders", label: t("Orders 4", "الطلبات 4") },
           { value: "payments", label: t("Payments 3", "المدفوعات 3") },
-          { value: "refunds", label: t("Refunds 2", "المرتجعات 2") },
+          { value: "refunds", label: t("Refunds 2", "الاستردادات 2") },
           { value: "stock", label: t("Stock 2", "المخزون 2") },
           { value: "other", label: t("Other 1", "أخرى 1") },
         ]}

@@ -257,7 +257,7 @@ export function RecordSummaryWrapExample() {
         { id: "state", label: t("State", "الحالة"), status: { tone: "danger", label: t("Closed", "مغلق") } },
         { id: "next", label: t("Next", "التالي"), value: t("Stays closed until the review ends", "يبقى مغلقًا حتى تنتهي المراجعة"), wrap: true },
         { id: "branch", label: t("Branch", "الفرع"), value: t("Riyadh", "الرياض") },
-        { id: "customer", label: t("Customer", "العميل"), value: "Al Noor" },
+        { id: "customer", label: t("Customer", "العميل"), value: t("Al Noor", "النور") },
       ]}
     />
   );
