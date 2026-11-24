@@ -247,6 +247,22 @@ export function RecordSummaryStatusExample() {
   );
 }
 
+/** A long state sentence shown whole. */
+export function RecordSummaryWrapExample() {
+  const t = useT();
+  return (
+    <RecordSummary
+      className="w-full max-w-sm"
+      items={[
+        { id: "state", label: t("State", "الحالة"), status: { tone: "danger", label: t("Closed", "مغلق") } },
+        { id: "next", label: t("Next", "التالي"), value: t("Stays closed until the review ends", "يبقى مغلقًا حتى تنتهي المراجعة"), wrap: true },
+        { id: "branch", label: t("Branch", "الفرع"), value: t("Riyadh", "الرياض") },
+        { id: "customer", label: t("Customer", "العميل"), value: "Al Noor" },
+      ]}
+    />
+  );
+}
+
 export function MaskedValueExample() {
   const t = useT();
   return (
