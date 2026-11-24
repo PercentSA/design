@@ -1,6 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { PercentProvider, TimeText, formatDateTime } from "../src";
 import { click, mount, useDom } from "./dom";
+import { STRINGS } from "../src/i18n/strings";
 
 useDom();
 
@@ -29,6 +30,13 @@ describe("inSentence", () => {
     expect(formatDateTime(tomorrow, { lang: "ar", now, inSentence: true })).toBe(ar);
     expect(formatDateTime("2026-09-12T12:45:00Z", { now, inSentence: true })).toBe(formatDateTime("2026-09-12T12:45:00Z", { now }));
     expect(formatDateTime("2025-03-02T08:00:00Z", { now, inSentence: true })).toBe(formatDateTime("2025-03-02T08:00:00Z", { now }));
+  });
+  test("a calendar day and a custom word", () => {
+    expect(formatDateTime("2026-09-28", { now, inSentence: true })).toBe("tomorrow");
+    expect(formatDateTime("2026-09-27", { now, inSentence: true })).toBe("today");
+    expect(formatDateTime("2026-09-27", { now })).toBe("Today");
+    const strings = { ...STRINGS.en, tomorrow: "TomorrowNow" };
+    expect(formatDateTime(tomorrow, { now, strings, inSentence: true })).toBe("tomorrowNow 3:45 PM");
   });
   test("with ago it has no effect", async () => {
     const el = await mount(

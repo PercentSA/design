@@ -94,10 +94,11 @@ export function formatDateTime(
   const today = clock(now ?? new Date(), lang, timeZone).ymd;
   const distance = Math.round((Date.parse(c.ymd) - Date.parse(today)) / DAY);
   const word = distance === 0 ? strings.today : distance === -1 ? strings.yesterday : distance === 1 ? strings.tomorrow : null;
+  const w = word && inSentence ? word.charAt(0).toLocaleLowerCase(lang) + word.slice(1) : word;
   const thisYear = c.year === today.slice(0, 4);
-  if (day) return word ?? (thisYear ? c.dayMonth : c.numeric);
+  if (day) return w ?? (thisYear ? c.dayMonth : c.numeric);
   if (distance === 0) return c.time;
-  if (word) return `${inSentence ? word.toLocaleLowerCase(lang) : word} ${c.time}`;
+  if (w) return `${w} ${c.time}`;
   return thisYear ? `${c.dayMonth}${comma} ${c.time}` : c.numeric;
 }
 

@@ -36,6 +36,12 @@ describe("feedback", () => {
     expect(root.childNodes.length).toBe(2);
     expect(root.childNodes[1]!.textContent).toBe("Agent: Seen now");
   });
+  test("StatusDot: false or an empty text gives no empty element", () => {
+    for (const c of [false, ""]) {
+      const root = new DOMParser().parseFromString(renderToStaticMarkup(<StatusDot status="live">{c}</StatusDot>), "text/html").body.firstElementChild!;
+      expect(root.childNodes.length).toBe(1);
+    }
+  });
   test("Tag removal button is labelled with the tag", () => {
     const out = html(<PercentProvider lang="ar"><Tag onRemove={() => {}}>تصميم</Tag></PercentProvider>);
     expect(out).toContain('aria-label="إزالة تصميم"');
