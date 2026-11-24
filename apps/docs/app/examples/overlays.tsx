@@ -267,9 +267,8 @@ export function ActionDialogFocusExample() {
         onOpenChange={setOpen}
         title={t("Refund this payment?", "استرداد هذه الدفعة؟")}
         subject={{ title: "Al Noor", meta: "INV-1042" }}
-        effects={[
-          <a key="link" href="#payments-heading" className="underline" onClick={(e) => { e.preventDefault(); back.current = heading.current; setOpen(false); }}>{t("Go to Payments", "الانتقال إلى المدفوعات")}</a>,
-        ]}
+        notice={<a href="#payments-heading" className="underline" onClick={(e) => { e.preventDefault(); back.current = heading.current; setOpen(false); }}>{t("Go to Payments", "الانتقال إلى المدفوعات")}</a>}
+        effects={[t("The payment goes back to the card.", "يعود المبلغ إلى البطاقة.")]}
         action={t("Refund", "استرداد")}
         onAction={() => setOpen(false)}
         returnFocusTo={back}
