@@ -383,6 +383,32 @@ export function DataTableTitleExample() {
   );
 }
 
+/** `cardTitle` gives each card its own title: the order and the customer, while the customer column is hidden on cards. */
+export function DataTableCardTitleExample() {
+  const t = useT();
+  const rows = [
+    { id: "1042", customer: t("Al Noor", "النور"), total: "49" },
+    { id: "1043", customer: t("Al Amal", "الأمل"), total: "120" },
+  ];
+  const columns: DataTableColumn<(typeof rows)[number]>[] = [
+    { key: "id", header: t("Order", "الطلب"), cell: (r) => `${t("Order", "الطلب")} ${r.id}` },
+    { key: "customer", header: t("Customer", "العميل"), hideOnCard: true },
+    { key: "total", header: t("Total", "الإجمالي"), align: "end" },
+  ];
+  return (
+    <DataTable
+      className="w-full"
+      columns={columns}
+      rows={rows}
+      getRowId={(r) => r.id}
+      caption={t("Orders", "الطلبات")}
+      hideCaption
+      cards
+      cardTitle={(r) => `${t("Order", "الطلب")} ${r.id} · ${r.customer}`}
+    />
+  );
+}
+
 /** The table can shrink inside a grid box: below 768 px only the table scrolls, not the page. */
 export function DataTableInGridExample() {
   const t = useT();

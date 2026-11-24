@@ -83,6 +83,9 @@ export type DataTableProps<Row> = {
   rowLabel?: (row: Row) => string;
   /** Below 768 px, and in the cards view (`viewKey`), each row is a card: the title cell (default: the first) is its title, and the other cells show their header. Default false. */
   cards?: boolean;
+  /** With `cards`: the title of each card, in place of the title cell (the table view keeps the title cell). For example the order and the customer when the customer column is hidden on cards.
+   *  The title renders two times (one copy for each view): use no fixed id in it. */
+  cardTitle?: (row: Row) => ReactNode;
   /** `compact` for dense lists: cell py-2, header row h-9, card rows p-3 with gap-y-1. `print` for a printed report: cells
    *  text-xs px-1 py-1, header row h-8 px-1 with wrapping text, no scroll box (overflow visible), no cards, no sticky header;
    *  totals and group rows follow. The caller leaves out pages and row links. Default `default`. */
@@ -151,6 +154,7 @@ export function DataTable<Row>({
   rowActions,
   titleColumn,
   rowLabel,
+  cardTitle,
   cards: cardsProp,
   density = "default",
   hiddenColumns,
@@ -324,7 +328,17 @@ export function DataTable<Row>({
         )}
         {withActions(
           columns.map((c, k) => {
-            const value = c.cell ? c.cell(row) : (field(row, c.key) as ReactNode);
+            const plain = c.cell ? c.cell(row) : (field(row, c.key) as ReactNode);
+            // With `cardTitle` the title cell has one copy for the table and one for the cards.
+            const value =
+              cards && cardTitle && k === titleAt ? (
+                <>
+                  <span className="p-cards:hidden">{plain}</span>
+                  <span className="hidden p-cards:inline">{cardTitle(row)}</span>
+                </>
+              ) : (
+                plain
+              );
             const text = c.description?.(row);
             const toBlock = blockNote && k === titleAt && hasValue(text);
             const note = hasValue(text) ? (
