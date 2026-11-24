@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent, type PointerEvent, type ReactNode, type RefObject } from "react";
 import { X } from "lucide-react";
 import { AlertDialog as RadixAlert, Dialog as RadixDialog, HoverCard as RadixHoverCard, Popover as RadixPopover, Tooltip as RadixTooltip } from "radix-ui";
 import { cn } from "../lib/cn";
@@ -36,10 +36,11 @@ export function Dialog({
   fullScreenOnPhone,
   children,
   className,
+  returnFocusTo,
   ...state
-}: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; /** Fills the screen below 768 px (a form with many fields). */ fullScreenOnPhone?: boolean; children?: ReactNode; className?: string }) {
+}: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; /** Fills the screen below 768 px (a form with many fields). */ fullScreenOnPhone?: boolean; children?: ReactNode; className?: string; /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. Used only without `trigger`. */ returnFocusTo?: RefObject<HTMLElement | null> }) {
   const s = useStrings();
-  const focus = useFocusReturn(!!trigger);
+  const focus = useFocusReturn(!!trigger, returnFocusTo);
   return (
     <RadixDialog.Root {...state}>
       {trigger && <RadixDialog.Trigger asChild>{trigger}</RadixDialog.Trigger>}
@@ -86,6 +87,7 @@ export function AlertDialog({
   open,
   defaultOpen,
   onOpenChange,
+  returnFocusTo,
 }: OpenState & {
   trigger?: ReactNode;
   title: ReactNode;
@@ -95,11 +97,13 @@ export function AlertDialog({
   destructive?: boolean;
   /** Return a Promise to keep the dialog open until it resolves. Typed `unknown` so callbacks that return a value still fit. */
   onAction: () => unknown;
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. Used only without `trigger`. */
+  returnFocusTo?: RefObject<HTMLElement | null>;
 }) {
   const s = useStrings();
   const [inner, setInner] = useState(defaultOpen ?? false);
   const [pending, setPending] = useState(false);
-  const focus = useFocusReturn(!!trigger);
+  const focus = useFocusReturn(!!trigger, returnFocusTo);
   const setOpen = (o: boolean) => {
     if (open === undefined) setInner(o);
     onOpenChange?.(o);
@@ -253,6 +257,7 @@ export function Sheet({
   size = "md",
   children,
   className,
+  returnFocusTo,
   ...state
 }: OpenState & {
   trigger?: ReactNode;
@@ -263,10 +268,12 @@ export function Sheet({
   size?: "md" | "lg";
   children?: ReactNode;
   className?: string;
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. Used only without `trigger`. */
+  returnFocusTo?: RefObject<HTMLElement | null>;
 }) {
   const s = useStrings();
   const drag = useSheetDrag(side);
-  const focus = useFocusReturn(!!trigger);
+  const focus = useFocusReturn(!!trigger, returnFocusTo);
   const head = <DialogHead title={title} description={description} Title={RadixDialog.Title} Description={RadixDialog.Description} />;
   return (
     <RadixDialog.Root {...state}>

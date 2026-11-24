@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useId, useRef, useState, type FormEvent, type ReactNode, type RefObject } from "react";
 import { X } from "lucide-react";
 import { Dialog as RadixDialog } from "radix-ui";
 import { cn } from "../lib/cn";
@@ -43,6 +43,8 @@ export type ActionDialogProps = {
   /** The action runs: it shows loading and every close and a second press do nothing. */
   pending?: boolean;
   onAction: (reason?: string) => void;
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. */
+  returnFocusTo?: RefObject<HTMLElement | null>;
 };
 
 
@@ -55,7 +57,7 @@ export type ActionDialogProps = {
 export function ActionDialog(props: ActionDialogProps) {
   const { open, onOpenChange, pending } = props;
   const s = useStrings();
-  const focus = useFocusReturn();
+  const focus = useFocusReturn(false, props.returnFocusTo);
   const content = useRef<HTMLDivElement>(null);
   const request = (o: boolean) => pending && !o ? undefined : onOpenChange(o);
   return (
