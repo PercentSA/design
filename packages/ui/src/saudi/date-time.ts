@@ -66,6 +66,7 @@ function clock(date: Date, lang: Lang, timeZone: string, h23 = false) {
  * `short`: today "3:45 PM", yesterday and tomorrow "Yesterday 3:45 PM", this year "12 September, 3:45 PM",
  * other years "12/09/2025". `full`: "Sunday 27 September 2026, 3:45:12 PM". `numeric`: "27/09/2026".
  * `kind="time"` (short style): the clock only, "3:45 PM". `export`: "2026-09-27 15:45" (24 h, sortable). A calendar day (`kind="date"`, or a "YYYY-MM-DD" string) has no time.
+ * `inSentence`: the day word starts with a lower-case letter ("until tomorrow 3:45 PM"); Arabic and other forms do not change.
  * A date-time string without a zone is read as UTC. Empty or bad input gives "".
  */
 export function formatDateTime(
@@ -78,7 +79,8 @@ export function formatDateTime(
     timeZone = ZONE,
     strings = STRINGS[lang],
     hourCycle = "h12",
-  }: { lang?: Lang; kind?: Kind; style?: DateTimeStyle; now?: Date; timeZone?: string; strings?: Strings; hourCycle?: HourCycle } = {},
+    inSentence = false,
+  }: { lang?: Lang; kind?: Kind; style?: DateTimeStyle; now?: Date; timeZone?: string; strings?: Strings; hourCycle?: HourCycle; inSentence?: boolean } = {},
 ): string {
   const r = read(value);
   if (!r) return "";
@@ -95,7 +97,7 @@ export function formatDateTime(
   const thisYear = c.year === today.slice(0, 4);
   if (day) return word ?? (thisYear ? c.dayMonth : c.numeric);
   if (distance === 0) return c.time;
-  if (word) return `${word} ${c.time}`;
+  if (word) return `${inSentence ? word.toLocaleLowerCase(lang) : word} ${c.time}`;
   return thisYear ? `${c.dayMonth}${comma} ${c.time}` : c.numeric;
 }
 
