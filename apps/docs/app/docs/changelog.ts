@@ -17,6 +17,22 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.26.0",
+    date: "2026-11-24",
+    summary: "SegmentedControl and RecordSummary wrap forms; DataTable card title; focus target on ActionDialog, Dialog, AlertDialog and Sheet; TimeText sentence form; DataTable row names, PageHeader phone focus return and StatusDot text fixed.",
+    changes: [
+      c("better", "[SegmentedControl](segmented-control): `wrap` lets the options go to more rows when the row is too narrow, for a filter with many options on a phone. The fill moves to the chosen option on any row."),
+      c("better", "[RecordSummary](record-summary): an item with `wrap` shows its whole value, not cut at 2 lines, for a state sentence that a person must read on a phone."),
+      c("better", "[DataTable](data-table): `cardTitle` gives each card its own title, for example the order and the customer when the customer column is hidden on cards. The table view keeps the title cell."),
+      c("better", "[ActionDialog](action-dialog): `returnFocusTo` names the element that gets the focus when the dialog closes, for example a section heading after a link in the dialog moved the person there. Without it, the focus goes back to the element that had the focus when the dialog opened. `Dialog`, `AlertDialog` and `Sheet` take the same prop when they have no `trigger`."),
+      c("better", "[TimeText](time-text): `inSentence` writes \"today\", \"yesterday\" and \"tomorrow\" in lower case, for a time inside a sentence (\"until tomorrow 3:45 PM\"). `formatDateTime` takes the same option. Arabic does not change."),
+      c("better", "Parts without the new props render as before."),
+      c("fixed", "[DataTable](data-table): with `rowLabel`, the row checkbox and the row menu take their names from that text only. Before, the name joined that text and the title cell text."),
+      c("fixed", "[PageHeader](page-header): below 768 px, a dialog that opens from a \"More actions\" item gives the focus back to \"More actions\". Before, the focus went to the page."),
+      c("fixed", "[StatusDot](status-dot): the text after the dot is now inside one `<span>`, so text with a link or a time inside stays one text, with no wide gap. A style that selects the direct children of StatusDot now finds the dot and this span."),
+    ],
+  },
+  {
     version: "0.25.0",
     date: "2026-11-24",
     summary: "TimeText clock-only form; OnceValueDialog focus target; ActionDialog reason length; FieldsSheet input mode; SecretRow second action and sheet button word; DataTable card description block; AttentionList items without a link.",
