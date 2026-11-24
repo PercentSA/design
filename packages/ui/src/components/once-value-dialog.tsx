@@ -28,7 +28,7 @@ export function OnceValueDialog({
   /** A line under the value, for example "You cannot see this value again." */
   note?: ReactNode;
   onDone: () => void;
-  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. */
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. The element must take the focus (a heading needs `tabIndex={-1}`). */
   returnFocusTo?: RefObject<HTMLElement | null>;
 }) {
   const s = useStrings();

@@ -75,11 +75,11 @@ export type DataTableProps<Row> = {
   rowHref?: (row: Row) => string | undefined;
   /** A "⋯" menu per row, in a last column. An empty array gives no button. */
   rowActions?: (row: Row) => MenuItem[];
-  /** The key of the column that holds the row link and is the card title. Default: the first column. The row checkbox and the row menu take their names from it.
+  /** The key of the column that holds the row link and is the card title. Default: the first column. The row checkbox and the row menu take their names from it, unless `rowLabel` is set.
    *  Use it when the first column is a small value (a level badge, a time) and the title is in a later column. */
   titleColumn?: string;
   /** With `rowHref`: the row link is an empty link named by this text, and the title cell keeps its own content, so links inside it stay usable
-   *  (a title that is a sentence with links). Default: the title cell's content is the link. */
+   *  (a title that is a sentence with links). Default: the title cell's content is the link. It also names the row checkbox and the row menu. */
   rowLabel?: (row: Row) => string;
   /** Below 768 px, and in the cards view (`viewKey`), each row is a card: the title cell (default: the first) is its title, and the other cells show their header. Default false. */
   cards?: boolean;

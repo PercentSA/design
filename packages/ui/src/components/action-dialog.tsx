@@ -43,7 +43,7 @@ export type ActionDialogProps = {
   /** The action runs: it shows loading and every close and a second press do nothing. */
   pending?: boolean;
   onAction: (reason?: string) => void;
-  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. */
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. The element must take the focus (a heading needs `tabIndex={-1}`). */
   returnFocusTo?: RefObject<HTMLElement | null>;
 };
 

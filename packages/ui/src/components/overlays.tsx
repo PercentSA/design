@@ -38,7 +38,7 @@ export function Dialog({
   className,
   returnFocusTo,
   ...state
-}: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; /** Fills the screen below 768 px (a form with many fields). */ fullScreenOnPhone?: boolean; children?: ReactNode; className?: string; /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. Used only without `trigger`. */ returnFocusTo?: RefObject<HTMLElement | null> }) {
+}: OpenState & { trigger?: ReactNode; title: ReactNode; description?: ReactNode; footer?: ReactNode; size?: keyof typeof WIDTH; /** Fills the screen below 768 px (a form with many fields). */ fullScreenOnPhone?: boolean; children?: ReactNode; className?: string; /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. Used only without `trigger`. The element must take the focus (a heading needs `tabIndex={-1}`). */ returnFocusTo?: RefObject<HTMLElement | null> }) {
   const s = useStrings();
   const focus = useFocusReturn(!!trigger, returnFocusTo);
   return (
@@ -97,7 +97,7 @@ export function AlertDialog({
   destructive?: boolean;
   /** Return a Promise to keep the dialog open until it resolves. Typed `unknown` so callbacks that return a value still fit. */
   onAction: () => unknown;
-  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. Used only without `trigger`. */
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. Used only without `trigger`. The element must take the focus (a heading needs `tabIndex={-1}`). */
   returnFocusTo?: RefObject<HTMLElement | null>;
 }) {
   const s = useStrings();
@@ -268,7 +268,7 @@ export function Sheet({
   size?: "md" | "lg";
   children?: ReactNode;
   className?: string;
-  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. Used only without `trigger`. */
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the dialog opens after another dialog closed. Used only without `trigger`. The element must take the focus (a heading needs `tabIndex={-1}`). */
   returnFocusTo?: RefObject<HTMLElement | null>;
 }) {
   const s = useStrings();
