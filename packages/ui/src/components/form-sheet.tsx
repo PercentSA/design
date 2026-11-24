@@ -46,7 +46,7 @@ function FormSheetInner({
   side?: "end" | "bottom";
   size?: "md" | "lg";
   className?: string;
-  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the sheet opens after a dialog closed. The element must take the focus (a heading needs `tabIndex={-1}`). */
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the sheet opens after a dialog closed. The element must take the focus (a heading needs `tabIndex={-1}`). Used only without `trigger`. */
   returnFocusTo?: RefObject<HTMLElement | null>;
   children: ReactNode;
 }) {
