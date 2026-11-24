@@ -311,7 +311,7 @@ export function DataTable<Row>({
             <Checkbox
               className="gap-0 align-middle"
               // Named "Select row" + the title cell, so each checkbox says which row it selects.
-              aria-labelledby={`${uid}s${i} ${uid}c${i}`}
+              aria-labelledby={`${uid}s${i} ${uid}${rowLabel ? "n" : "c"}${i}`}
               label={
                 <span id={`${uid}s${i}`} className="sr-only">
                   {s.selectRow}
@@ -346,6 +346,8 @@ export function DataTable<Row>({
                   cards && (c.hideOnCard || (slot && !hasValue(value) && !note)) && "p-cards:hidden",
                 )}
               >
+                {/* A hidden text names the row for the checkbox and the row menu (the cell also holds the link's own name). */}
+                {k === titleAt && rowLabel && <span id={`${uid}n${i}`} hidden>{rowLabel(row)}</span>}
                 {k === titleAt && href ? (
                   // -outline-offset keeps the row's focus ring inside the table's scroll box.
                   <>
@@ -395,7 +397,7 @@ export function DataTable<Row>({
                   items={actions}
                   trigger={
                     // Named "Row actions" + the title cell, like the select checkbox.
-                    <button type="button" aria-labelledby={`${uid}a${i} ${uid}c${i}`} className={buttonClass("ghost", "sm", true)}>
+                    <button type="button" aria-labelledby={`${uid}a${i} ${uid}${rowLabel ? "n" : "c"}${i}`} className={buttonClass("ghost", "sm", true)}>
                       <span id={`${uid}a${i}`} className="sr-only">
                         {s.rowActions}
                       </span>

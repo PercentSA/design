@@ -378,6 +378,7 @@ export function DataTableTitleExample() {
       rowHref={(r) => `#event-${r.id}`}
       titleColumn="title"
       rowLabel={(r) => `${r.title} ${r.site}`}
+      rowActions={() => [{ label: t("Open", "فتح") }]}
     />
   );
 }
