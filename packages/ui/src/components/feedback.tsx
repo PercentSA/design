@@ -130,7 +130,7 @@ export function StatusDot({ status, children, className }: { status: StatusDotSt
         {status === "live" && <span className="absolute inset-0 animate-ping rounded-pill bg-live opacity-60 motion-reduce:animate-none" />}
         <span className={cn("relative size-2 rounded-pill", DOT[status])} />
       </span>
-      {children}
+      {children != null && <span>{children}</span>}
     </span>
   );
 }

@@ -30,6 +30,12 @@ describe("feedback", () => {
     expect(html(<StatusDot status="live" />)).toContain('aria-hidden="true"');
     expect(html(<StatusDot status="live" />)).toContain("bg-live");
   });
+  test("StatusDot: text with a link or a time stays one element after the dot", () => {
+    const out = renderToStaticMarkup(<StatusDot status="live">Agent: <time>Seen now</time></StatusDot>);
+    const root = new DOMParser().parseFromString(out, "text/html").body.firstElementChild!;
+    expect(root.childNodes.length).toBe(2);
+    expect(root.childNodes[1]!.textContent).toBe("Agent: Seen now");
+  });
   test("Tag removal button is labelled with the tag", () => {
     const out = html(<PercentProvider lang="ar"><Tag onRemove={() => {}}>تصميم</Tag></PercentProvider>);
     expect(out).toContain('aria-label="إزالة تصميم"');
