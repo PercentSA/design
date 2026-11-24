@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState, type FormEvent, type HTMLAttributes, type ReactNode } from "react";
+import { useId, useState, type FormEvent, type HTMLAttributes, type ReactNode, type RefObject } from "react";
 import { flushSync } from "react-dom";
 import { Field } from "./field";
 import { Autocomplete } from "./autocomplete";
@@ -40,6 +40,7 @@ export function FieldsSheet({
   onOpenChange,
   onSubmit,
   submitLabel,
+  returnFocusTo,
   children,
 }: {
   title: ReactNode;
@@ -49,6 +50,8 @@ export function FieldsSheet({
   onOpenChange: (open: boolean) => void;
   onSubmit: (values: Record<string, string>) => void | Promise<unknown>;
   submitLabel?: ReactNode;
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the sheet opens after a dialog closed. The element must take the focus (a heading needs `tabIndex={-1}`). */
+  returnFocusTo?: RefObject<HTMLElement | null>;
   /** Extra content in the form. A function gets the draft values and follows the typing. */
   children?: ReactNode | ((draft: Record<string, string>) => ReactNode);
 }) {
@@ -88,7 +91,7 @@ export function FieldsSheet({
   };
 
   return (
-    <FormSheet title={title} description={description} open={open} onOpenChange={onOpenChange} side="auto" dirty={dirty} pending={pending} submitLabel={submitLabel} onSubmit={submit}>
+    <FormSheet title={title} description={description} open={open} onOpenChange={onOpenChange} side="auto" dirty={dirty} pending={pending} submitLabel={submitLabel} onSubmit={submit} returnFocusTo={returnFocusTo}>
       {fields.map((f) => {
         const set = (text: string) => setDraft((d) => ({ ...d, [f.key]: text }));
         return (

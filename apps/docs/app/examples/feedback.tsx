@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FolderOpen } from "lucide-react";
-import { Alert, Badge, Button, Card, EmptyState, Forbidden, Inline, NotFound, Progress, ProgressRing, Skeleton, Spinner, Stack, StatusBadge, StatusDot, Tag } from "@percentsa/ui";
+import { Alert, Badge, Button, Card, EmptyState, Forbidden, Inline, NotFound, Progress, ProgressRing, Skeleton, Spinner, Stack, StatusBadge, StatusDot, Tag, TimeText } from "@percentsa/ui";
 import { useT } from "~/lib/t";
 
 export function AlertExample() {
@@ -59,6 +59,7 @@ export function StatusDotExample() {
       <StatusDot status="idle">{t("Paused", "متوقف مؤقتًا")}</StatusDot>
       <StatusDot status="warning">{t("Degraded", "أداء منخفض")}</StatusDot>
       <StatusDot status="danger">{t("Down", "متوقف")}</StatusDot>
+      <StatusDot status="live">{t("Agent:", "الوكيل:")} <TimeText value="2026-09-27T12:40:00Z" ago now={new Date("2026-09-27T12:45:00Z")} /></StatusDot>
     </Stack>
   );
 }

@@ -254,6 +254,30 @@ export function ActionDialogExample() {
   );
 }
 
+export function ActionDialogFocusExample() {
+  const t = useT();
+  const [open, setOpen] = useState(false);
+  const heading = useRef<HTMLHeadingElement>(null);
+  const back = useRef<HTMLElement | null>(null);
+  return (
+    <Stack gap={4}>
+      <Button variant="secondary" onClick={() => { back.current = null; setOpen(true); }}>{t("Refund", "استرداد")}</Button>
+      <ActionDialog
+        open={open}
+        onOpenChange={setOpen}
+        title={t("Refund this payment?", "استرداد هذه الدفعة؟")}
+        subject={{ title: "Al Noor", meta: "INV-1042" }}
+        notice={<a href="#payments-heading" className="underline" onClick={(e) => { e.preventDefault(); back.current = heading.current; setOpen(false); }}>{t("Go to Payments", "الانتقال إلى المدفوعات")}</a>}
+        effects={[t("The payment goes back to the card.", "يعود المبلغ إلى البطاقة.")]}
+        action={t("Refund", "استرداد")}
+        onAction={() => setOpen(false)}
+        returnFocusTo={back}
+      />
+      <h3 id="payments-heading" ref={heading} tabIndex={-1} className="heading text-lg">{t("Payments", "المدفوعات")}</h3>
+    </Stack>
+  );
+}
+
 export function ActionDialogChoiceExample() {
   const t = useT();
   const [open, setOpen] = useState(false);

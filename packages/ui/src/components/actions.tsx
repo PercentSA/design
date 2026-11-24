@@ -105,8 +105,15 @@ export function SegmentedControl({
   defaultValue,
   onValueChange,
   className,
+  wrap,
   ...rest
-}: GroupBase & { value?: string; defaultValue?: string; onValueChange?: (value: string) => void }) {
+}: GroupBase & {
+  value?: string;
+  defaultValue?: string;
+  onValueChange?: (value: string) => void;
+  /** The options go to more rows when the row is too narrow (a filter with many options on a phone). Default: one row. */
+  wrap?: boolean;
+}) {
   // Radix clears the choice when the chosen item is clicked; a segmented control keeps one chosen,
   // so the component holds the value itself when the app does not.
   const [inner, setInner] = useState(defaultValue);
@@ -137,7 +144,7 @@ export function SegmentedControl({
       onValueChange={(v) => {
         if (v) choose(v);
       }}
-      className={cn(GROUP, "relative isolate", className)}
+      className={cn(GROUP, "relative isolate", wrap && "flex-wrap", className)}
       {...rest}
     >
       {pill && <span {...pill} className={cn(pill.className, "rounded-[calc(var(--p-control-h-xs)/2)] bg-primary")} />}

@@ -75,14 +75,17 @@ export type DataTableProps<Row> = {
   rowHref?: (row: Row) => string | undefined;
   /** A "⋯" menu per row, in a last column. An empty array gives no button. */
   rowActions?: (row: Row) => MenuItem[];
-  /** The key of the column that holds the row link and is the card title. Default: the first column. The row checkbox and the row menu take their names from it.
+  /** The key of the column that holds the row link and is the card title. Default: the first column. The row checkbox and the row menu take their names from it, unless `rowLabel` is set.
    *  Use it when the first column is a small value (a level badge, a time) and the title is in a later column. */
   titleColumn?: string;
   /** With `rowHref`: the row link is an empty link named by this text, and the title cell keeps its own content, so links inside it stay usable
-   *  (a title that is a sentence with links). Default: the title cell's content is the link. */
+   *  (a title that is a sentence with links). Default: the title cell's content is the link. It also names the row checkbox and the row menu. */
   rowLabel?: (row: Row) => string;
   /** Below 768 px, and in the cards view (`viewKey`), each row is a card: the title cell (default: the first) is its title, and the other cells show their header. Default false. */
   cards?: boolean;
+  /** With `cards`: the title of each card, in place of the title cell (the table view keeps the title cell). For example the order and the customer when the customer column is hidden on cards.
+   *  The title renders two times (one copy for each view): use no fixed id in it. */
+  cardTitle?: (row: Row) => ReactNode;
   /** `compact` for dense lists: cell py-2, header row h-9, card rows p-3 with gap-y-1. `print` for a printed report: cells
    *  text-xs px-1 py-1, header row h-8 px-1 with wrapping text, no scroll box (overflow visible), no cards, no sticky header;
    *  totals and group rows follow. The caller leaves out pages and row links. Default `default`. */
@@ -151,6 +154,7 @@ export function DataTable<Row>({
   rowActions,
   titleColumn,
   rowLabel,
+  cardTitle,
   cards: cardsProp,
   density = "default",
   hiddenColumns,
@@ -311,7 +315,7 @@ export function DataTable<Row>({
             <Checkbox
               className="gap-0 align-middle"
               // Named "Select row" + the title cell, so each checkbox says which row it selects.
-              aria-labelledby={`${uid}s${i} ${uid}c${i}`}
+              aria-labelledby={`${uid}s${i} ${uid}${rowLabel ? "n" : "c"}${i}`}
               label={
                 <span id={`${uid}s${i}`} className="sr-only">
                   {s.selectRow}
@@ -324,7 +328,17 @@ export function DataTable<Row>({
         )}
         {withActions(
           columns.map((c, k) => {
-            const value = c.cell ? c.cell(row) : (field(row, c.key) as ReactNode);
+            const plain = c.cell ? c.cell(row) : (field(row, c.key) as ReactNode);
+            // With `cardTitle` the title cell has one copy for the table and one for the cards.
+            const value =
+              cards && cardTitle && k === titleAt ? (
+                <>
+                  <span className="p-cards:hidden">{plain}</span>
+                  <span className="hidden p-cards:inline">{cardTitle(row)}</span>
+                </>
+              ) : (
+                plain
+              );
             const text = c.description?.(row);
             const toBlock = blockNote && k === titleAt && hasValue(text);
             const note = hasValue(text) ? (
@@ -346,6 +360,8 @@ export function DataTable<Row>({
                   cards && (c.hideOnCard || (slot && !hasValue(value) && !note)) && "p-cards:hidden",
                 )}
               >
+                {/* A hidden text names the row for the checkbox and the row menu (the cell also holds the link's own name). */}
+                {k === titleAt && rowLabel && <span id={`${uid}n${i}`} hidden>{rowLabel(row)}</span>}
                 {k === titleAt && href ? (
                   // -outline-offset keeps the row's focus ring inside the table's scroll box.
                   <>
@@ -395,7 +411,7 @@ export function DataTable<Row>({
                   items={actions}
                   trigger={
                     // Named "Row actions" + the title cell, like the select checkbox.
-                    <button type="button" aria-labelledby={`${uid}a${i} ${uid}c${i}`} className={buttonClass("ghost", "sm", true)}>
+                    <button type="button" aria-labelledby={`${uid}a${i} ${uid}${rowLabel ? "n" : "c"}${i}`} className={buttonClass("ghost", "sm", true)}>
                       <span id={`${uid}a${i}`} className="sr-only">
                         {s.rowActions}
                       </span>

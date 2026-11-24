@@ -17,6 +17,8 @@ export type RecordSummaryItem = {
   hint?: ReactNode;
   /** The value is a link (customer, supplier, parent document). */
   href?: string;
+  /** Show the whole value, not cut at 2 lines (a state sentence a person must read on a phone). */
+  wrap?: boolean;
 };
 
 // Cells per row by the width of the strip itself (container queries, not the screen): 2 below 36rem (1 for a single
@@ -35,7 +37,7 @@ const CLAMP = "line-clamp-2 break-words";
 /**
  * The key facts of a record in one dense strip, for example under a record's header: 1 to 6 items (label, value, hint).
  * `media` sits at the start (a Thumbnail), above the cells on narrow strips. Long text is cut at 2 lines with the full
- * text in `title`. `loading` shows a skeleton in place of each value.
+ * text in `title`, unless the item has `wrap`. `loading` shows a skeleton in place of each value.
  */
 export function RecordSummary({
   items,
@@ -71,6 +73,7 @@ export function RecordSummary({
       <dl className={cn("-mb-px -me-px grid min-w-0 flex-1", BASE[n], MID[n], WIDE[n])}>
         {items.map((item) => {
           const shown = item.status ? item.status.label : item.value;
+          const clamp = item.wrap ? "break-words" : CLAMP;
           return (
           <div key={item.id} className="grid min-w-0 content-start gap-1 border-b border-e border-line px-4 py-3">
             <dt className="text-xs text-fg-3">{item.label}</dt>
@@ -81,7 +84,7 @@ export function RecordSummary({
               </dd>
             ) : (
               <>
-                <dd title={typeof shown === "string" ? shown : undefined} className="min-w-0 text-lg font-semibold text-fg tabular-nums">
+                <dd title={typeof shown === "string" && !item.wrap ? shown : undefined} className="min-w-0 text-lg font-semibold text-fg tabular-nums">
                   {item.status ? (
                     <StatusDot status={item.status.tone} className="text-lg font-semibold text-fg">
                       {item.href ? (
@@ -96,10 +99,10 @@ export function RecordSummary({
                     <NotSet className="text-base font-normal" />
                   ) : item.href ? (
                     <L href={item.href} className="rounded-field underline decoration-line-strong underline-offset-4 transition-colors hover:decoration-fg">
-                      <bdi className={CLAMP}>{item.value}</bdi>
+                      <bdi className={clamp}>{item.value}</bdi>
                     </L>
                   ) : (
-                    <span className={CLAMP}>{item.value}</span>
+                    <span className={clamp}>{item.value}</span>
                   )}
                 </dd>
                 {item.hint != null && <dd className="text-xs text-fg-3">{item.hint}</dd>}

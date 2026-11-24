@@ -122,6 +122,8 @@ const DOT = { live: "bg-live", idle: "bg-fg-3", warning: "bg-warning", danger: "
 
 export type StatusDotStatus = keyof typeof DOT;
 
+const hasText = (c: ReactNode) => !(c == null || typeof c === "boolean" || c === "" || (Array.isArray(c) && c.length === 0));
+
 /** Small coloured dot: the only place green is allowed. Give it text; colour alone says nothing. */
 export function StatusDot({ status, children, className }: { status: StatusDotStatus; children?: ReactNode; className?: string }) {
   return (
@@ -130,7 +132,7 @@ export function StatusDot({ status, children, className }: { status: StatusDotSt
         {status === "live" && <span className="absolute inset-0 animate-ping rounded-pill bg-live opacity-60 motion-reduce:animate-none" />}
         <span className={cn("relative size-2 rounded-pill", DOT[status])} />
       </span>
-      {children}
+      {hasText(children) && <span>{children}</span>}
     </span>
   );
 }

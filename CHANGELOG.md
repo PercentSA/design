@@ -2,6 +2,23 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.26.0
+
+### Changed
+
+- [SegmentedControl](https://design.percent.sa/en/components/segmented-control): `wrap` lets the options go to more rows when the row is too narrow, for a filter with many options on a phone. The fill moves to the chosen option on any row.
+- [RecordSummary](https://design.percent.sa/en/components/record-summary): an item with `wrap` shows its whole value, not cut at 2 lines, for a state sentence that a person must read on a phone.
+- [DataTable](https://design.percent.sa/en/components/data-table): `cardTitle` gives each card its own title, for example the order and the customer when the customer column is hidden on cards. The table view keeps the title cell.
+- [ActionDialog](https://design.percent.sa/en/components/action-dialog): `returnFocusTo` names the element that gets the focus when the dialog closes, for example a section heading after a link in the dialog moved the person there. Without it, the focus goes back to the element that had the focus when the dialog opened. `Dialog`, `AlertDialog` and `Sheet` take the same prop when they have no `trigger`. `FormSheet` and `FieldsSheet` take it too.
+- [TimeText](https://design.percent.sa/en/components/time-text): `inSentence` writes "today", "yesterday" and "tomorrow" in lower case, for a time inside a sentence ("until tomorrow 3:45 PM"). `formatDateTime` takes the same option. Arabic does not change.
+- Parts without the new props render as before.
+
+### Fixed
+
+- [DataTable](https://design.percent.sa/en/components/data-table): with `rowLabel`, the row checkbox and the row menu take their names from that text only. Before, the name joined that text and the title cell text. Without `rowHref`, `rowLabel` did not name them before. The hidden text is in the title cell, so the cell's text content now holds it too.
+- [PageHeader](https://design.percent.sa/en/components/page-header): below 768 px, a dialog that opens from a "More actions" item gives the focus back to "More actions". Before, the focus went to the page.
+- [StatusDot](https://design.percent.sa/en/components/status-dot): the text after the dot is now inside one `<span>`, so text with a link or a time inside stays one text, with no wide gap. A style that selects the direct children of StatusDot now finds the dot and this span.
+
 ## 0.25.0
 
 ### Changed

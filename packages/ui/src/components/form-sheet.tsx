@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useId, useState, type FormEvent, type ReactNode, type RefObject } from "react";
 import { cn } from "../lib/cn";
 import { useStrings } from "../provider";
 import { Button } from "./actions";
@@ -25,6 +25,7 @@ function FormSheetInner({
   side = "end",
   size,
   className,
+  returnFocusTo,
   children,
 }: {
   title: ReactNode;
@@ -45,6 +46,8 @@ function FormSheetInner({
   side?: "end" | "bottom";
   size?: "md" | "lg";
   className?: string;
+  /** Where the focus goes on close. Default: the element that had the focus at open. Use it when the sheet opens after a dialog closed. The element must take the focus (a heading needs `tabIndex={-1}`). Used only without `trigger`. */
+  returnFocusTo?: RefObject<HTMLElement | null>;
   children: ReactNode;
 }) {
   const s = useStrings();
@@ -74,7 +77,7 @@ function FormSheetInner({
 
   return (
     <>
-      <Sheet trigger={trigger} title={title} description={description} side={side} size={size} open={shown} onOpenChange={request} className={className}>
+      <Sheet trigger={trigger} title={title} description={description} side={side} size={size} open={shown} onOpenChange={request} className={className} returnFocusTo={returnFocusTo}>
         <form
           noValidate
           // Enter in a field cannot reach a disabled submit button; this also covers a script.
