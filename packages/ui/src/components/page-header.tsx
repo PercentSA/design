@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment, useId, useState, type ReactNode } from "react";
+import { Fragment, useId, useRef, useState, type ReactNode } from "react";
 import { ArrowLeft, ChevronDown, Ellipsis } from "lucide-react";
 import { cn } from "../lib/cn";
 import { useLinkComponent, useStrings, useText } from "../provider";
@@ -120,6 +120,7 @@ export function PageHeader({
   const t = useText();
   const L = useLinkComponent();
   const panelId = useId();
+  const toggle = useRef<HTMLButtonElement>(null);
   const [open, setOpen] = useState(false);
   const items = dangerLast(menu ?? []);
   const more = !!secondary || items.length > 0;
@@ -177,6 +178,7 @@ export function PageHeader({
           {primary && <div className="grid md:flex">{primary}</div>}
           {more && (
             <button
+              ref={toggle}
               type="button"
               aria-expanded={open}
               aria-controls={panelId}
@@ -190,7 +192,7 @@ export function PageHeader({
           {more && (
             <div id={panelId} className={cn(open ? "flex" : "hidden", "flex-col gap-2 md:flex md:flex-row md:items-center max-md:[&>*]:w-full")}>
               {secondary}
-              {items.length > 0 && <PanelItems items={items} onDone={() => setOpen(false)} />}
+              {items.length > 0 && <PanelItems items={items} onDone={() => { toggle.current?.focus(); setOpen(false); }} />}
             </div>
           )}
           {items.length > 0 && (
