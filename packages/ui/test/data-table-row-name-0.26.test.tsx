@@ -24,5 +24,6 @@ describe("DataTable row names with rowLabel", () => {
     expect(name(box)).toBe("Select row Open Disk full");
     expect(name(menu)).toBe("Row actions Open Disk full");
     for (const control of [box, menu]) for (const id of ids(control)) expect(document.getElementById(id)!.querySelector("[aria-label]")).toBeNull();
+    expect(document.getElementById(ids(box)[1]!)!.hasAttribute("hidden")).toBe(true);
   });
 });

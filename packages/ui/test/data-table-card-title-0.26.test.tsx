@@ -32,4 +32,12 @@ describe("DataTable cardTitle", () => {
     const wrap = (node: React.ReactNode) => norm(renderToStaticMarkup(<PercentProvider lang="en">{node}</PercentProvider>));
     expect(wrap(table({ cardTitle: undefined }))).toBe(wrap(table()));
   });
+
+  test("without cardTitle the title cell has no view copies", async () => {
+    for (const extra of [{}, { rowHref: (r: Row) => `/o/${r.id}` }]) {
+      const cell = (await mount(table(extra))).querySelector("tbody td")!;
+      expect(cell.querySelector(".p-cards\\:hidden, .p-cards\\:inline")).toBeNull();
+      expect(cell.textContent).toBe("Order 1042");
+    }
+  });
 });
