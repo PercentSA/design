@@ -42,6 +42,12 @@ describe("feedback", () => {
       expect(root.childNodes.length).toBe(1);
     }
   });
+  test("StatusDot: true and an empty array give only the dot", () => {
+    for (const c of [true, []]) {
+      const root = new DOMParser().parseFromString(renderToStaticMarkup(<StatusDot status="live">{c}</StatusDot>), "text/html").body.firstElementChild!;
+      expect(root.childNodes.length).toBe(1);
+    }
+  });
   test("Tag removal button is labelled with the tag", () => {
     const out = html(<PercentProvider lang="ar"><Tag onRemove={() => {}}>تصميم</Tag></PercentProvider>);
     expect(out).toContain('aria-label="إزالة تصميم"');
