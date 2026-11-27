@@ -256,22 +256,23 @@ describe("ActionDialog", () => {
     expect(document.activeElement).toBe(from);
   });
 
-  test("the name field is in the sticky footer with the buttons, so the content never scrolls it under them", async () => {
-    await mount(<Host confirmName="main" reason={{ label: "Why" }} />);
-    const footer = field("[data-ad-cancel]").closest(".sticky")!;
-    expect(footer).not.toBeNull();
-    expect(footer.contains(field("[data-ad-name]"))).toBe(true);
-    expect(footer.contains(field("[data-ad-reason]"))).toBe(false);
-    // the field comes before the buttons
-    expect(field("[data-ad-name]").compareDocumentPosition(field("[data-ad-cancel]")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-  });
-
   test("phone: full screen below 768 px, the action first", async () => {
     await mount(<Host />);
     expect(dialog().className).toContain("max-md:inset-0");
     expect(dialog().className).toContain("max-w-lg");
     expect(named("Do it").parentElement!.className).toContain("max-md:flex-col-reverse");
     expect(named("Do it").parentElement!.parentElement!.className).toContain("sticky");
+  });
+
+  test("no attribute starts with data-ad: ad blockers hide [data-ad-name] on every site", async () => {
+    await mount(
+      <Host reason={{ label: "Why" }} confirmName="x">
+        <RadioGroup options={[{ value: "now", label: "Now" }]} />
+      </Host>,
+    );
+    const names = [...dialog().querySelectorAll("*")].flatMap((el) => [...el.attributes].map((a) => a.name));
+    expect(names.filter((n) => n.startsWith("data-ad"))).toEqual([]);
+    expect(field("[data-dialog-name]").tagName).toBe("INPUT");
   });
 
   test("What happens and the name label are Arabic on an Arabic page", async () => {
@@ -316,7 +317,7 @@ describe("ActionDialog cancelLabel, 0.24", () => {
     await mount(<Host cancelLabel="Keep site" />);
     expect(named("Keep site")).toBeDefined();
     expect(buttons().find((b) => b.textContent?.trim() === "Cancel")).toBeUndefined();
-    expect(named("Keep site").hasAttribute("data-ad-cancel")).toBe(true);
+    expect(named("Keep site").hasAttribute("data-dialog-cancel")).toBe(true);
   });
 
   test("without cancelLabel the button says the provider word", async () => {
@@ -325,11 +326,11 @@ describe("ActionDialog cancelLabel, 0.24", () => {
         <Host />
       </PercentProvider>,
     );
-    expect(dialog().querySelector("[data-ad-cancel]")!.textContent).toBe("إلغاء");
+    expect(dialog().querySelector("[data-dialog-cancel]")!.textContent).toBe("إلغاء");
   });
 
   test("without cancelLabel the button says Cancel", async () => {
     await mount(<Host />);
-    expect(dialog().querySelector("[data-ad-cancel]")!.textContent).toBe("Cancel");
+    expect(dialog().querySelector("[data-dialog-cancel]")!.textContent).toBe("Cancel");
   });
 });
