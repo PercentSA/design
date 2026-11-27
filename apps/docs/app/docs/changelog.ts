@@ -18,7 +18,7 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 export const RELEASES: Release[] = [
   {
     version: "0.26.1",
-    date: null,
+    date: "2026-11-27",
     summary: "ActionDialog: the typed-name field is with the buttons, so a phone never hides it.",
     changes: [
       c("fixed", "[ActionDialog](action-dialog): the typed-name field (`confirmName`) is now in the bottom area with the buttons. Before, on a phone, a long dialog showed the line \"Type <name> to confirm.\" just above the buttons and kept the field under them until the person scrolled to the very end, so the field looked missing."),
