@@ -2,6 +2,13 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.26.2
+
+### Fixed
+
+- [ActionDialog](https://design.percent.sa/en/components/action-dialog): ad blockers hid the typed-name field (`confirmName`). The field had the attribute `data-ad-name`, and the common block lists (EasyList, AdGuard Base) hide every element with that attribute on every site. With a blocker, a person could not type the name, so the action stayed refused. The internal attributes of the dialog now start with `data-dialog-`, and a test keeps every `data-ad` attribute out of the dialog.
+- ActionDialog: the typed-name field is back in the body, above the buttons, as in 0.26.0. The 0.26.1 change did not fix the cause (above).
+
 ## 0.26.1
 
 ### Fixed

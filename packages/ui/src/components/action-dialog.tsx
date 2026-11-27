@@ -71,11 +71,12 @@ export function ActionDialog(props: ActionDialogProps) {
             e.preventDefault();
             focus.onOpenAutoFocus();
             const el = content.current;
+            // the parts are marked data-dialog-*: block lists hide [data-ad-name] on every site
             const target =
-              el?.querySelector<HTMLElement>(`[data-ad-choices] :is(${FOCUSABLE})`) ??
-              el?.querySelector<HTMLElement>("[data-ad-reason]") ??
-              el?.querySelector<HTMLElement>("[data-ad-name]") ??
-              el?.querySelector<HTMLElement>("[data-ad-cancel]");
+              el?.querySelector<HTMLElement>(`[data-dialog-choices] :is(${FOCUSABLE})`) ??
+              el?.querySelector<HTMLElement>("[data-dialog-reason]") ??
+              el?.querySelector<HTMLElement>("[data-dialog-name]") ??
+              el?.querySelector<HTMLElement>("[data-dialog-cancel]");
             target?.focus();
           }}
           onCloseAutoFocus={focus.onCloseAutoFocus}
@@ -124,7 +125,7 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, stays, 
           {subject.facts && <DescriptionList layout="columns" density="compact" items={subject.facts.map((f) => ({ term: f.term, details: f.value }))} />}
         </div>
         {notice}
-        {children != null && <div data-ad-choices className="grid gap-4">{children}</div>}
+        {children != null && <div data-dialog-choices className="grid gap-4">{children}</div>}
         <section aria-live="polite" className="grid gap-2">
           <h3 className="label text-fg-3">{s.whatHappens}</h3>
           {shown ? (
@@ -149,20 +150,19 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, stays, 
         )}
         {reason && (
           <Field label={reason.label} required={reason.required}>
-            <Textarea data-ad-reason maxLength={reason.maxLength} value={why} onChange={(e) => setWhy(e.target.value)} />
+            <Textarea data-dialog-reason maxLength={reason.maxLength} value={why} onChange={(e) => setWhy(e.target.value)} />
+          </Field>
+        )}
+        {confirmName != null && (
+          <Field label={confirmLabel ?? s.typeToConfirm(confirmName)}>
+            <Input data-dialog-name value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} />
           </Field>
         )}
       </div>
       <div className="sticky bottom-0 grid gap-3 border-t border-line bg-surface-2 px-6 py-4 md:px-8">
-        {/* The name field sits with the buttons it unlocks: in the body, a long dialog on a phone scrolled it under them. */}
-        {confirmName != null && (
-          <Field label={confirmLabel ?? s.typeToConfirm(confirmName)}>
-            <Input data-ad-name value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} />
-          </Field>
-        )}
         <BlockedStatus id={reasonId}>{blocked && !pending ? blocked : undefined}</BlockedStatus>
         <div className="flex flex-wrap justify-end gap-2 max-md:flex-col-reverse *:max-md:w-full">
-          <Button variant="secondary" data-ad-cancel disabled={pending} onClick={() => onOpenChange(false)}>
+          <Button variant="secondary" data-dialog-cancel disabled={pending} onClick={() => onOpenChange(false)}>
             {cancelLabel ?? s.cancel}
           </Button>
           <Button

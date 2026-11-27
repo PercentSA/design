@@ -17,6 +17,15 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.26.2",
+    date: "2026-11-27",
+    summary: "ActionDialog: ad blockers no longer hide the typed-name field; the field is back above the buttons.",
+    changes: [
+      c("fixed", "[ActionDialog](action-dialog): ad blockers hid the typed-name field (`confirmName`). The field had the attribute `data-ad-name`, and the common block lists (EasyList, AdGuard Base) hide every element with that attribute on every site. With a blocker, a person could not type the name, so the action stayed refused. The internal attributes of the dialog now start with `data-dialog-`, and a test keeps every `data-ad` attribute out of the dialog."),
+      c("fixed", "ActionDialog: the typed-name field is back in the body, above the buttons, as in 0.26.0. The 0.26.1 change did not fix the cause (above)."),
+    ],
+  },
+  {
     version: "0.26.1",
     date: "2026-11-27",
     summary: "ActionDialog: the typed-name field is with the buttons, so a phone never hides it.",
