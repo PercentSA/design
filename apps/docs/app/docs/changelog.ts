@@ -17,6 +17,14 @@ export const LINK = /\[([^\]]+)\]\(([a-z0-9-]+)\)/;
 /** What each version changes, in plain words, newest first. One entry per "## X.Y.Z" in CHANGELOG.md (test/changelog.test.ts). */
 export const RELEASES: Release[] = [
   {
+    version: "0.26.1",
+    date: "2026-11-27",
+    summary: "ActionDialog: the typed-name field is with the buttons, so a phone never hides it.",
+    changes: [
+      c("fixed", "[ActionDialog](action-dialog): the typed-name field (`confirmName`) is now in the bottom area with the buttons. Before, on a phone, a long dialog showed the line \"Type <name> to confirm.\" just above the buttons and kept the field under them until the person scrolled to the very end, so the field looked missing."),
+    ],
+  },
+  {
     version: "0.26.0",
     date: "2026-11-24",
     summary: "SegmentedControl and RecordSummary wrap forms; DataTable card title; focus target on ActionDialog, Dialog, AlertDialog and Sheet; TimeText sentence form; DataTable row names, PageHeader phone focus return and StatusDot text fixed.",

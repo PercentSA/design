@@ -256,6 +256,16 @@ describe("ActionDialog", () => {
     expect(document.activeElement).toBe(from);
   });
 
+  test("the name field is in the sticky footer with the buttons, so the content never scrolls it under them", async () => {
+    await mount(<Host confirmName="main" reason={{ label: "Why" }} />);
+    const footer = field("[data-ad-cancel]").closest(".sticky")!;
+    expect(footer).not.toBeNull();
+    expect(footer.contains(field("[data-ad-name]"))).toBe(true);
+    expect(footer.contains(field("[data-ad-reason]"))).toBe(false);
+    // the field comes before the buttons
+    expect(field("[data-ad-name]").compareDocumentPosition(field("[data-ad-cancel]")) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   test("phone: full screen below 768 px, the action first", async () => {
     await mount(<Host />);
     expect(dialog().className).toContain("max-md:inset-0");

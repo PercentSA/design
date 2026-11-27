@@ -2,6 +2,12 @@
 
 All three packages (`@percentsa/tokens`, `@percentsa/ui`, `@percentsa/motion`) share one version. A tag `vX.Y.Z` publishes them (`.github/workflows/release.yml`).
 
+## 0.26.1
+
+### Fixed
+
+- [ActionDialog](https://design.percent.sa/en/components/action-dialog): the typed-name field (`confirmName`) is now in the bottom area with the buttons. Before, on a phone, a long dialog showed the line "Type <name> to confirm." just above the buttons and kept the field under them until the person scrolled to the very end, so the field looked missing.
+
 ## 0.26.0
 
 ### Changed
