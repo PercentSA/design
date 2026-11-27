@@ -152,13 +152,14 @@ function Body({ title, subject, notice, children, effects, effectsEmpty, stays, 
             <Textarea data-ad-reason maxLength={reason.maxLength} value={why} onChange={(e) => setWhy(e.target.value)} />
           </Field>
         )}
+      </div>
+      <div className="sticky bottom-0 grid gap-3 border-t border-line bg-surface-2 px-6 py-4 md:px-8">
+        {/* The name field sits with the buttons it unlocks: in the body, a long dialog on a phone scrolled it under them. */}
         {confirmName != null && (
           <Field label={confirmLabel ?? s.typeToConfirm(confirmName)}>
             <Input data-ad-name value={typed} onChange={(e) => setTyped(e.target.value)} autoComplete="off" spellCheck={false} />
           </Field>
         )}
-      </div>
-      <div className="sticky bottom-0 grid gap-3 border-t border-line bg-surface-2 px-6 py-4 md:px-8">
         <BlockedStatus id={reasonId}>{blocked && !pending ? blocked : undefined}</BlockedStatus>
         <div className="flex flex-wrap justify-end gap-2 max-md:flex-col-reverse *:max-md:w-full">
           <Button variant="secondary" data-ad-cancel disabled={pending} onClick={() => onOpenChange(false)}>
